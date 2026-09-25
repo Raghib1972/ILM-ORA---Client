@@ -1,0 +1,2055 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import {
+  Code2, Terminal, Database, Coffee, Braces,
+  ChevronLeft, Play, Save, FolderOpen, Trophy,
+  FlaskConical, Trash2, RefreshCw, X, FileCode2,
+  LayoutGrid, History, Gamepad2, Zap, ChevronDown,
+  ChevronUp, AlertTriangle, BookOpen, CheckCircle2,
+  XCircle, Clock, Cpu, User, Hash, Eye, EyeOff,
+  RotateCcw, Table2, PanelLeft, FileText, Loader2
+} from "lucide-react";
+import API, {
+  deleteCodeFile,
+  getCodeFileById,
+  getMyCodeFiles,
+  getMyCodeSubmissions,
+  getMySQLState,
+  getStudentProblemById,
+  getStudentProblems,
+  resetMySQLDatabase,
+  runCode,
+  saveCodeFile,
+  submitCodeForJudge,
+  getCodingSolveUsage,
+  getPlaygroundRunUsage,
+  getSaveFileUsage,
+} from "../services/assessmentService";
+import { getStudentClassroom } from "../services/batchService";
+import UpgradeModal from "../components/plan/UpgradeModal";
+import { parsePlanError } from "../services/planErrorHandler";
+import {
+  T,
+  FONT_FAMILY,
+  RADIUS,
+  CLAUDE_ACCENT,
+  CLAUDE_ACCENT_HOVER,
+  ACCENT_PURPLE,
+  STAT_COLORS_FLAT,
+} from "@/design-system";
+
+const codeFilesAPI = {
+  save: (data) => saveCodeFile(data),
+  getAll: (_studentEmail, batchId) => getMyCodeFiles(batchId),
+  getById: (id) => getCodeFileById(id),
+  delete: (id) => deleteCodeFile(id),
+  getProfile: () =>
+    API.default
+      ? API.default.get?.("/students/profile")
+      : fetch(
+          (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9000/api") +
+            "/students/profile",
+          {
+            headers: {
+              Authorization: `Bearer ${
+                localStorage.getItem("lms_token") ||
+                localStorage.getItem("token") ||
+                localStorage.getItem("accessToken") ||
+                localStorage.getItem("jwt") ||
+                ""
+              }`,
+            },
+          },
+        ).then((r) => r.json().then((d) => ({ data: d }))),
+};
+
+/* ── Design-system color → "r,g,b" helper, so accent tints (rgba(var(--x-rgb),alpha))
+   always stay in sync with the token hex values above. Styling utility only. ── */
+const hexToRgbStr = (hex) => {
+  const h = hex.replace("#", "");
+  const n = h.length === 3 ? h.split("").map((c) => c + c).join("") : h;
+  const r = parseInt(n.substring(0, 2), 16);
+  const g = parseInt(n.substring(2, 4), 16);
+  const b = parseInt(n.substring(4, 6), 16);
+  return `${r},${g},${b}`;
+};
+
+/* ── Inject global styles once ── */
+const STYLES = `
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap');
+
+  :root {
+    --bg:          ${T.light.pageBg};
+    --card:        ${T.light.cardBg};
+    --text:        ${T.light.text};
+    --text-muted:  ${T.light.textSub};
+    --border:      ${T.light.border};
+    --accent1:     ${CLAUDE_ACCENT};
+    --accent1-rgb: ${hexToRgbStr(CLAUDE_ACCENT)};
+    --accent2:     ${STAT_COLORS_FLAT.amber.solid};
+    --accent2-rgb: ${hexToRgbStr(STAT_COLORS_FLAT.amber.solid)};
+    --accent3:     ${T.light.liveColor};
+    --accent3-rgb: ${hexToRgbStr(T.light.liveColor)};
+    --accent4:     ${ACCENT_PURPLE.light};
+    --accent4-rgb: ${hexToRgbStr(ACCENT_PURPLE.light)};
+    --accent-blue: ${STAT_COLORS_FLAT.blue.solid};
+    --accent-blue-rgb: ${hexToRgbStr(STAT_COLORS_FLAT.blue.solid)};
+    --icon-bg:     ${T.light.iconBg};
+    --icon-border: ${T.light.iconBorder};
+    --danger:      ${T.light.overdueText};
+    --danger-bg:   ${T.light.overdueBg};
+    --danger-border: ${T.light.overdueBorder};
+    --shadow:      ${T.light.shadow};
+    --shadow-lg:   ${T.light.shadowHov};
+    --radius:      ${RADIUS.standardCard}px;
+    --radius-sm:   ${RADIUS.messageBubble}px;
+    --radius-xs:   ${RADIUS.chip}px;
+  }
+
+  .sc-dark {
+    --bg:          ${T.dark.pageBg};
+    --card:        ${T.dark.cardBg};
+    --text:        ${T.dark.text};
+    --text-muted:  ${T.dark.textSub};
+    --border:      ${T.dark.border};
+    --accent1:     ${CLAUDE_ACCENT};
+    --accent1-rgb: ${hexToRgbStr(CLAUDE_ACCENT)};
+    --accent3:     ${T.dark.liveColor};
+    --accent3-rgb: ${hexToRgbStr(T.dark.liveColor)};
+    --icon-bg:     ${T.dark.iconBg};
+    --icon-border: ${T.dark.iconBorder};
+    --danger:      ${T.dark.overdueText};
+    --danger-bg:   ${T.dark.overdueBg};
+    --danger-border: ${T.dark.overdueBorder};
+    --shadow:      ${T.dark.shadow};
+    --shadow-lg:   ${T.dark.shadowHov};
+  }
+
+  .sc-root {
+    font-family: ${FONT_FAMILY};
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    transition: background 0.3s, color 0.3s;
+  }
+
+  .sc-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 28px;
+    min-height: 60px;
+    height: auto;
+    background: var(--card);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+    box-shadow: var(--shadow);
+    gap: 12px;
+    row-gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .sc-header-left  { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; row-gap: 6px; }
+  .sc-header-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; row-gap: 6px; justify-content: flex-end; }
+
+  .sc-logo-wrap { display: flex; align-items: center; gap: 8px; }
+  .sc-logo-icon {
+    display: flex; align-items: center; justify-content: center;
+    color: var(--text);
+  }
+  .sc-logo-text {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text);
+    letter-spacing: 0.02em;
+  }
+
+  .sc-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 12px;
+    border-radius: ${RADIUS.pill}px;
+    border: 1px solid var(--border);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+  .sc-badge-student  { background: var(--icon-bg); color: var(--text); border-color: var(--icon-border); }
+  .sc-badge-play     { background: var(--icon-bg); color: var(--text); border-color: var(--icon-border); }
+  .sc-badge-batch    { background: var(--bg); color: var(--text-muted); }
+  .sc-badge-diff-easy,
+  .sc-badge-diff-medium,
+  .sc-badge-diff-hard   { background: var(--icon-bg); color: var(--text); border-color: var(--icon-border); }
+
+  .sc-nav-tabs { display: flex; gap: 4px; }
+  .sc-nav-tab {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    padding: 8px 18px;
+    border-radius: var(--radius-xs);
+    cursor: pointer;
+    font-size: 13px;
+    font-family: ${FONT_FAMILY};
+    font-weight: 600;
+    transition: background 0.18s, color 0.18s;
+    display: flex; align-items: center; gap: 6px;
+    white-space: nowrap;
+  }
+  .sc-nav-tab:hover  { background: var(--bg); color: var(--text); }
+  .sc-nav-tab.active { background: var(--icon-bg); color: var(--text); }
+
+  .sc-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 16px;
+    border-radius: var(--radius-xs);
+    border: 1px solid var(--border);
+    font-family: ${FONT_FAMILY};
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.15s, box-shadow 0.2s;
+    background: var(--card);
+    color: var(--text);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .sc-btn:hover { opacity: 0.85; transform: translateY(-1px); }
+  .sc-btn:active { transform: translateY(0); }
+
+  .sc-btn-back    { background: var(--bg); color: var(--text-muted); }
+  .sc-btn-play    { background: var(--icon-bg); color: var(--text); border-color: var(--icon-border); }
+  .sc-btn-files   { background: var(--icon-bg); color: var(--text); border-color: var(--icon-border); }
+  .sc-btn-save    { background: var(--icon-bg); color: var(--text); border-color: var(--icon-border); }
+  .sc-btn-run     { background: var(--bg); color: var(--text); }
+  .sc-btn-run-primary { background: var(--text); color: var(--card); border-color: transparent; }
+  .sc-btn-submit  { background: var(--text); color: var(--card); border-color: transparent; }
+  .sc-btn-solve   { background: var(--text); color: var(--card); border-color: transparent; font-size: 12px; padding: 9px 18px; border-radius: var(--radius-xs); }
+
+  .sc-lang-toggle { display: flex; gap: 4px; flex-wrap: wrap; row-gap: 6px; }
+  .sc-lang-btn {
+    padding: 5px 12px;
+    border-radius: var(--radius-xs);
+    border: 1px solid var(--border);
+    background: var(--bg);
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.18s;
+    display: flex; align-items: center; gap: 5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .sc-lang-btn:hover { border-color: var(--accent1); color: var(--accent1); }
+  .sc-lang-btn.active { background: var(--icon-bg); color: var(--text); border-color: var(--icon-border); }
+
+  .sc-main {
+    flex: 1;
+    padding: 32px 36px;
+    max-width: 1300px;
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+
+  .sc-page-title {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--text);
+    flex-wrap: wrap;
+  }
+
+  .sc-count-badge {
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--bg);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    border-radius: ${RADIUS.pill}px;
+    padding: 4px 14px;
+  }
+
+  .sc-problem-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+  }
+
+  .sc-problem-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    box-shadow: var(--shadow);
+    transition: transform 0.22s, box-shadow 0.22s, border-color 0.22s;
+  }
+  .sc-problem-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    border-color: rgba(var(--accent1-rgb),0.25);
+  }
+
+  .sc-problem-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .sc-problem-index { color: var(--text-muted); font-size: 11px; font-weight: 600; display: flex; align-items: center; gap: 4px; }
+
+  .sc-problem-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.4;
+    transition: color 0.2s;
+  }
+  .sc-problem-card:hover .sc-problem-title { color: var(--text); }
+
+  .sc-problem-desc { font-size: 12px; color: var(--text-muted); line-height: 1.7; }
+
+  .sc-problem-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 6px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .sc-problem-meta { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  .sc-chip-marks {
+    font-size: 11px; font-weight: 700;
+    background: var(--icon-bg); color: var(--text);
+    border: 1px solid var(--icon-border);
+    border-radius: ${RADIUS.pill}px; padding: 3px 10px;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .sc-chip-tests {
+    font-size: 11px; font-weight: 600;
+    background: var(--icon-bg); color: var(--text);
+    border: 1px solid var(--icon-border);
+    border-radius: ${RADIUS.pill}px; padding: 3px 10px;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+
+  .sc-history-list { display: flex; flex-direction: column; gap: 10px; }
+
+  .sc-history-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 14px 20px;
+    cursor: pointer;
+    box-shadow: var(--shadow);
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .sc-history-card.open { border-color: var(--accent1); background: var(--bg); }
+
+  .sc-history-row {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .sc-history-lang {
+    font-size: 11px; font-weight: 700;
+    background: rgba(var(--accent1-rgb),0.08); color: var(--accent1);
+    border-radius: var(--radius-xs); padding: 3px 10px;
+    font-family: 'JetBrains Mono', monospace;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+
+  .sc-history-time  { color: var(--text-muted); font-size: 12px; margin-left: auto; display: flex; align-items: center; gap: 4px; }
+  .sc-history-ms    { color: var(--text-muted); font-size: 12px; display: flex; align-items: center; gap: 4px; }
+  .sc-expand-icon   { color: var(--text-muted); font-size: 11px; }
+
+  .sc-history-body  {
+    margin-top: 14px;
+    border-top: 1px solid var(--border);
+    padding-top: 12px;
+  }
+  .sc-history-out-label {
+    font-size: 10px; font-weight: 700; color: var(--accent1);
+    text-transform: uppercase; letter-spacing: 0.07em;
+    margin-bottom: 8px; display: flex; align-items: center; gap: 5px;
+  }
+
+  .sc-empty {
+    text-align: center;
+    padding: 100px 0;
+  }
+  .sc-empty-icon { font-size: 52px; margin-bottom: 14px; opacity: 0.5; display: flex; justify-content: center; color: var(--text-muted); }
+  .sc-empty-text { color: var(--text-muted); font-size: 15px; font-weight: 600; }
+
+  .sc-loading-screen {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg);
+    gap: 14px;
+  }
+  @keyframes sc-spin { to { transform: rotate(360deg); } }
+  .sc-spinner {
+    width: 36px; height: 36px;
+    border: 3px solid var(--border);
+    border-top-color: var(--accent1);
+    border-radius: 50%;
+    animation: sc-spin 0.8s linear infinite;
+  }
+  .sc-spinner-sm {
+    display: inline-block;
+    width: 14px; height: 14px;
+    border: 2px solid var(--border);
+    border-top-color: currentColor;
+    border-radius: 50%;
+    animation: sc-spin 0.8s linear infinite;
+    flex-shrink: 0;
+  }
+
+  .sc-editor-layout {
+    display: flex;
+    overflow: hidden;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .sc-problem-panel {
+    width: 380px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--border);
+    overflow-y: auto;
+    background: var(--bg);
+  }
+
+  .sc-problem-detail { padding: 24px 24px 40px; }
+
+  .sc-problem-detail-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: var(--text);
+    margin: 0 0 12px;
+    line-height: 1.4;
+  }
+
+  .sc-info-row {
+    display: flex; gap: 10px; align-items: center; margin-bottom: 20px; flex-wrap: wrap;
+  }
+
+  .sc-section-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 7px;
+    display: flex; align-items: center; gap: 5px;
+  }
+
+  .sc-desc-text {
+    font-size: 13px; color: var(--text-muted); line-height: 1.7; margin: 0;
+  }
+
+  .sc-mono-block {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xs);
+    padding: 10px 14px;
+    font-size: 12px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    white-space: pre-wrap;
+  }
+
+  .sc-io-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px;
+  }
+  .sc-io-box {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xs);
+    padding: 12px;
+  }
+  .sc-io-label {
+    font-size: 10px; font-weight: 700; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 7px;
+    display: flex; align-items: center; gap: 4px;
+  }
+  .sc-io-content {
+    margin: 0; font-size: 12px; color: var(--text);
+    font-family: 'JetBrains Mono', monospace; white-space: pre-wrap;
+  }
+
+  .sc-test-case {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-xs);
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+  .sc-test-case-label { font-size: 11px; color: var(--text-muted); font-weight: 700; margin-bottom: 7px; display: flex; align-items: center; gap: 4px; }
+  .sc-test-row { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 5px; flex-wrap: wrap; }
+  .sc-test-key { color: var(--text-muted); font-size: 11px; min-width: 62px; font-weight: 600; }
+  .sc-test-val {
+    color: var(--accent1); font-size: 11px;
+    background: rgba(var(--accent1-rgb),0.08); padding: 1px 7px;
+    border-radius: 5px; word-break: break-all;
+    font-family: 'JetBrains Mono', monospace;
+    border: 1px solid rgba(var(--accent1-rgb),0.18);
+  }
+
+  .sc-no-problem {
+    display: flex; flex-direction: column; align-items: center;
+    justify-content: center; height: 100%; gap: 14px; padding: 40px;
+    text-align: center;
+  }
+
+  .sc-editor-area-wrap {
+    flex: 1; display: flex; overflow: hidden;
+    background: #0f172a; min-height: 0;
+  }
+  .sc-dark .sc-editor-area-wrap { background: #090e1a; }
+
+  .sc-line-numbers {
+    padding: 16px 12px 16px 10px;
+    background: transparent;
+    border-right: 1px solid rgba(255,255,255,0.06);
+    min-width: 46px;
+    text-align: right;
+    user-select: none;
+    overflow-y: hidden;
+    flex-shrink: 0;
+  }
+  .sc-line-num {
+    font-size: 12px;
+    line-height: 21.5px;
+    color: #475569;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .sc-code-textarea {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #e2e8f0;
+    font-size: 13px;
+    line-height: 21.5px;
+    padding: 16px;
+    resize: none;
+    font-family: 'JetBrains Mono', monospace;
+    overflow-y: auto;
+    tab-size: 4;
+  }
+  .sc-sql-textarea { color: #7dd3fc; }
+
+  .sc-output-panel {
+    height: 220px;
+    border-top: 1px solid var(--border);
+    background: var(--card);
+    overflow-y: auto;
+    padding: 16px 20px;
+    flex-shrink: 0;
+  }
+
+  .sc-output-placeholder {
+    color: var(--text-muted); font-size: 13px;
+    padding: 24px 0; text-align: center;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+
+  .sc-output-running {
+    display: flex; align-items: center; gap: 10px;
+    padding: 20px 0; color: var(--text-muted); font-size: 13px;
+  }
+
+  .sc-status-chip {
+    display: inline-flex; align-items: center; gap: 5px;
+    border-radius: ${RADIUS.pill}px;
+    padding: 4px 14px; font-size: 11px; font-weight: 700; margin-bottom: 10px;
+  }
+  .sc-exec-time { color: var(--text-muted); font-size: 12px; display: flex; align-items: center; gap: 4px; }
+
+  .sc-output-pre {
+    margin: 0; font-size: 13px; color: var(--text); line-height: 1.6;
+    white-space: pre-wrap; word-break: break-all;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .sc-sql-output-pre {
+    margin: 0; font-size: 12px; color: var(--text); line-height: 1.6;
+    white-space: pre; font-family: 'Courier New', monospace; overflow-x: auto;
+  }
+
+  .sc-judge-header {
+    display: flex; gap: 16px; align-items: center;
+    margin-bottom: 14px; flex-wrap: wrap;
+  }
+  .sc-verdict-big { font-size: 16px; font-weight: 900; display: flex; align-items: center; gap: 6px; }
+  .sc-score-chip {
+    background: rgba(var(--accent2-rgb),0.10); color: var(--accent2);
+    border: 1px solid rgba(var(--accent2-rgb),0.25);
+    border-radius: ${RADIUS.pill}px; padding: 4px 14px; font-size: 12px; font-weight: 700;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  .sc-judge-grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .sc-judge-card {
+    border: 1px solid;
+    border-radius: var(--radius-xs);
+    padding: 10px 14px;
+    min-width: 130px;
+    font-size: 12px;
+    font-family: ${FONT_FAMILY};
+  }
+  .sc-judge-card-top { display: flex; justify-content: space-between; margin-bottom: 4px; font-weight: 700; align-items: center; gap: 8px; }
+
+  .sc-bottom-panel {
+    height: 220px;
+    border-top: 1px solid var(--border);
+    background: var(--card);
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+  .sc-bottom-tabs {
+    display: flex; border-bottom: 1px solid var(--border); flex-shrink: 0;
+    overflow-x: auto;
+  }
+  .sc-bottom-tab {
+    padding: 10px 18px; font-size: 12px; font-weight: 600;
+    font-family: ${FONT_FAMILY};
+    background: none; border: none; cursor: pointer;
+    color: var(--text-muted);
+    border-bottom: 2px solid transparent;
+    transition: color 0.18s, border-color 0.18s;
+    display: flex; align-items: center; gap: 6px;
+    white-space: nowrap;
+  }
+  .sc-bottom-tab.active { color: var(--accent1); border-bottom-color: var(--accent1); }
+  .sc-bottom-content { flex: 1; padding: 14px 18px; overflow-y: auto; }
+
+  .sc-custom-input-area {
+    width: 100%; height: 100%;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: var(--radius-xs); color: var(--text);
+    font-size: 13px; font-family: 'JetBrains Mono', monospace;
+    padding: 10px; resize: none; outline: none; box-sizing: border-box;
+  }
+
+  .sc-mysql-toolbar {
+    display: flex; justify-content: space-between; align-items: center;
+    background: rgba(var(--accent1-rgb),0.06); border-bottom: 1px solid rgba(var(--accent1-rgb),0.15);
+    color: var(--accent1); font-size: 12px; font-weight: 600;
+    padding: 9px 18px; flex-shrink: 0; gap: 10px;
+    flex-wrap: wrap;
+  }
+  .sc-mysql-toolbar-left { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; }
+  .sc-mysql-actions { display: flex; gap: 8px; flex-shrink: 0; flex-wrap: wrap; }
+  .sc-db-explorer-btn {
+    background: rgba(var(--accent1-rgb),0.10); color: var(--accent1);
+    border: 1px solid rgba(var(--accent1-rgb),0.25);
+    border-radius: var(--radius-xs); padding: 5px 14px;
+    cursor: pointer; font-size: 11px; font-weight: 700;
+    font-family: ${FONT_FAMILY};
+    display: flex; align-items: center; gap: 5px;
+    white-space: nowrap;
+  }
+  .sc-db-reset-btn {
+    background: var(--danger-bg); color: var(--danger);
+    border: 1px solid var(--danger-border);
+    border-radius: var(--radius-xs); padding: 5px 14px;
+    cursor: pointer; font-size: 11px; font-weight: 700;
+    font-family: ${FONT_FAMILY};
+    display: flex; align-items: center; gap: 5px;
+    white-space: nowrap;
+  }
+  .sc-db-explorer-panel {
+    background: var(--bg); border-bottom: 1px solid var(--border);
+    max-height: 200px; overflow-y: auto; flex-shrink: 0;
+  }
+  .sc-db-explorer-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 9px 18px; font-size: 12px; font-weight: 700; color: var(--text);
+    border-bottom: 1px solid var(--border); background: var(--card);
+    gap: 8px; flex-wrap: wrap;
+  }
+  .sc-db-explorer-header-left { display: flex; align-items: center; gap: 6px; }
+  .sc-db-explorer-body { padding: 12px 18px; }
+  .sc-refresh-btn {
+    background: none; border: 1px solid var(--border); border-radius: 5px;
+    padding: 3px 12px; cursor: pointer; font-size: 11px;
+    font-family: ${FONT_FAMILY}; color: var(--text-muted);
+    display: flex; align-items: center; gap: 4px;
+  }
+
+  .sc-lang-banner {
+    font-size: 12px; font-weight: 600;
+    padding: 9px 18px; flex-shrink: 0; border-bottom: 1px solid;
+    display: flex; align-items: center; gap: 7px;
+    flex-wrap: wrap;
+  }
+
+  .sc-run-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.50);
+    z-index: 9999; display: flex;
+    align-items: center; justify-content: center;
+    padding: 20px; box-sizing: border-box;
+  }
+  .sc-run-overlay-box {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 36px 44px;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 14px;
+    box-shadow: var(--shadow-lg); min-width: 260px;
+    max-width: 100%; box-sizing: border-box;
+  }
+  .sc-run-spinner {
+    width: 44px; height: 44px;
+    border: 4px solid var(--border);
+    border-top-color: var(--accent1);
+    border-radius: 50%;
+    animation: sc-spin 0.8s linear infinite;
+  }
+  .sc-run-overlay-text { font-size: 15px; font-weight: 700; color: var(--text); font-family: ${FONT_FAMILY}; display: flex; align-items: center; gap: 8px; text-align: center; }
+  .sc-run-overlay-sub  { font-size: 12px; color: var(--text-muted); text-align: center; }
+
+  .sc-drawer-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 8888; display: flex;
+    align-items: stretch; justify-content: flex-end;
+  }
+  .sc-drawer-panel {
+    width: 370px;
+    max-width: 100vw;
+    background: var(--card);
+    box-shadow: -4px 0 30px rgba(0,0,0,0.15);
+    display: flex; flex-direction: column; height: 100%;
+    border-left: 1px solid var(--border);
+  }
+  .sc-drawer-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 22px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg); flex-shrink: 0;
+  }
+  .sc-drawer-title { font-size: 14px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 8px; }
+  .sc-drawer-close {
+    background: none; border: none; cursor: pointer;
+    color: var(--text-muted);
+    padding: 4px; border-radius: 5px;
+    display: flex; align-items: center; justify-content: center;
+    transition: color 0.2s;
+  }
+  .sc-drawer-close:hover { color: var(--text); }
+  .sc-drawer-body { flex: 1; overflow-y: auto; padding: 14px 0; }
+  .sc-drawer-footer {
+    padding: 14px 22px;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .sc-drawer-refresh {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: var(--radius-xs); padding: 8px 0;
+    cursor: pointer; font-size: 12px; font-weight: 700;
+    font-family: ${FONT_FAMILY}; color: var(--text-muted);
+    width: 100%;
+    transition: background 0.18s;
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+  }
+  .sc-drawer-refresh:hover { background: var(--border); }
+  .sc-drawer-loading {
+    display: flex; align-items: center; gap: 12px;
+    padding: 36px 22px; justify-content: center; color: var(--text-muted); font-size: 13px;
+  }
+  .sc-drawer-empty { text-align: center; padding: 56px 22px; }
+
+  .sc-file-list { display: flex; flex-direction: column; gap: 4px; padding: 0 10px; }
+  .sc-file-card {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 14px; border-radius: var(--radius-xs);
+    border: 1px solid var(--border); cursor: pointer;
+    background: var(--card); transition: background 0.15s, border-color 0.15s;
+    gap: 8px;
+  }
+  .sc-file-card:hover { background: var(--bg); border-color: rgba(var(--accent1-rgb),0.25); }
+  .sc-file-card-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .sc-file-icon { flex-shrink: 0; display: flex; align-items: center; color: var(--text-muted); }
+  .sc-file-name {
+    font-size: 13px; font-weight: 700; color: var(--text);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px;
+  }
+  .sc-file-meta { display: flex; gap: 8px; align-items: center; margin-top: 3px; flex-wrap: wrap; }
+  .sc-file-lang-badge {
+    font-size: 10px; background: rgba(var(--accent1-rgb),0.08); color: var(--accent1);
+    border: 1px solid rgba(var(--accent1-rgb),0.20); border-radius: ${RADIUS.pill}px;
+    padding: 2px 8px; font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    display: inline-flex; align-items: center; gap: 4px;
+  }
+  .sc-file-date { font-size: 10px; color: var(--text-muted); display: flex; align-items: center; gap: 3px; }
+  .sc-file-delete {
+    background: none; border: none; cursor: pointer;
+    padding: 4px 6px; border-radius: 5px; flex-shrink: 0; opacity: 0.5;
+    transition: opacity 0.2s; display: flex; align-items: center; color: var(--danger);
+  }
+  .sc-file-delete:hover { opacity: 1; }
+
+  .sc-save-modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 8888; display: flex;
+    align-items: center; justify-content: center;
+    padding: 20px; box-sizing: border-box;
+  }
+  .sc-save-modal {
+    width: 380px; max-width: 100%; background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); box-shadow: var(--shadow-lg); overflow: hidden;
+  }
+  .sc-save-body { padding: 22px 22px 16px; }
+  .sc-save-label {
+    font-size: 10px; font-weight: 700; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 8px;
+  }
+  .sc-save-input {
+    width: 100%; border: 1px solid var(--border); border-radius: var(--radius-xs);
+    padding: 10px 14px; font-size: 13px; font-family: ${FONT_FAMILY};
+    color: var(--text); outline: none; box-sizing: border-box;
+    background: var(--bg); transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .sc-save-input:focus {
+    border-color: var(--accent1);
+    box-shadow: 0 0 0 3px rgba(var(--accent1-rgb),0.12);
+  }
+  .sc-save-error { color: var(--danger); font-size: 12px; margin-top: 7px; font-weight: 500; display: flex; align-items: center; gap: 5px; }
+  .sc-save-meta-row { display: flex; gap: 12px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
+  .sc-save-footer {
+    display: flex; gap: 10px; padding: 14px 22px 20px;
+    justify-content: flex-end;
+  }
+  .sc-save-cancel {
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: var(--radius-xs); padding: 8px 20px; cursor: pointer;
+    font-size: 12px; font-weight: 700; font-family: ${FONT_FAMILY};
+    color: var(--text-muted);
+  }
+  .sc-save-confirm {
+    background: var(--accent1); color: #0a0a0a;
+    border: none; border-radius: var(--radius-xs);
+    padding: 8px 20px; cursor: pointer;
+    font-size: 12px; font-weight: 700; font-family: ${FONT_FAMILY};
+    transition: opacity 0.2s; display: flex; align-items: center; gap: 6px;
+  }
+  .sc-save-confirm:hover { opacity: 0.85; }
+
+  /* ══════════════ RESPONSIVE BREAKPOINTS ══════════════ */
+
+  /* Laptops / small desktops */
+  @media (max-width: 1200px) {
+    .sc-problem-panel { width: 320px; }
+  }
+
+  /* Tablets (iPad, iPad mini landscape) */
+  @media (max-width: 1024px) {
+    .sc-header { padding: 10px 18px; }
+    .sc-main { padding: 24px 20px; }
+    .sc-editor-layout { flex-direction: column; overflow-y: auto; }
+    .sc-problem-panel {
+      width: 100%;
+      max-height: 260px;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+    }
+    .sc-editor-area-wrap { min-height: 320px; }
+    .sc-io-grid { grid-template-columns: 1fr; }
+  }
+
+  /* Tablets portrait / iPad mini portrait */
+  @media (max-width: 820px) {
+    .sc-header { padding: 8px 16px; gap: 10px; }
+    .sc-logo-text { font-size: 14px; }
+    .sc-nav-tabs { order: 3; width: 100%; justify-content: center; }
+    .sc-header-right { justify-content: flex-start; }
+    .sc-btn { padding: 6px 12px; font-size: 11px; }
+    .sc-lang-toggle { order: 2; }
+  }
+
+  /* Phones (iPhone, Pixel, small Android) */
+  @media (max-width: 640px) {
+    .sc-header { padding: 8px 12px; }
+    .sc-header-left { gap: 8px; }
+    .sc-badge-batch { display: none; }
+    .sc-btn span.sc-btn-label { display: none; }
+    .sc-btn { padding: 7px 10px; }
+    .sc-lang-toggle { width: 100%; overflow-x: auto; flex-wrap: nowrap; padding-bottom: 2px; }
+    .sc-lang-btn { flex-shrink: 0; }
+    .sc-main { padding: 18px 14px; }
+    .sc-page-title { font-size: 19px; gap: 10px; }
+    .sc-problem-grid { grid-template-columns: 1fr; }
+    .sc-problem-detail { padding: 16px 16px 28px; }
+    .sc-output-panel { height: 180px; }
+    .sc-bottom-panel { height: 180px; }
+    .sc-drawer-panel { width: 100%; }
+    .sc-save-modal { width: 100%; }
+    .sc-run-overlay-box { padding: 28px 24px; min-width: 0; width: 100%; }
+    .sc-judge-card { min-width: 100%; }
+  }
+
+  /* Very small phones */
+  @media (max-width: 380px) {
+    .sc-header { padding: 8px 10px; }
+    .sc-logo-text { display: none; }
+    .sc-lang-btn span.sc-lang-btn-label { display: none; }
+  }
+`;
+
+if (!document.getElementById("sc-styles")) {
+  const tag = document.createElement("style");
+  tag.id = "sc-styles";
+  tag.textContent = STYLES;
+  document.head.appendChild(tag);
+}
+
+const LANGUAGES = ["JAVA", "PYTHON", "JAVASCRIPT", "MYSQL", "BASH"];
+
+/* ── Language icons using Lucide — always inherits the current text color
+   from the design system (no arbitrary per-language colors). ── */
+const LangIcon = ({ lang, size = 12 }) => {
+  const props = { size, strokeWidth: 2.2 };
+  switch (lang) {
+    case "JAVA":       return <Coffee {...props} />;
+    case "PYTHON":     return <Code2 {...props} />;
+    case "JAVASCRIPT": return <Braces {...props} />;
+    case "MYSQL":      return <Database {...props} />;
+    case "BASH":       return <Terminal {...props} />;
+    default:           return <FileCode2 {...props} />;
+  }
+};
+
+const LANG_LABEL = {
+  JAVA:       "Java",
+  PYTHON:     "Python",
+  JAVASCRIPT: "JS",
+  MYSQL:      "MySQL",
+  BASH:       "Bash",
+};
+
+/* ── File icon by language — uses the design system's muted text color
+   only, matching every other icon in the app (no one-off hex colors). ── */
+const FileIcon = ({ lang }) => {
+  const size = 22;
+  const props = { size, strokeWidth: 1.8, color: "var(--text-muted)" };
+  switch (lang) {
+    case "JAVA":       return <Coffee {...props} />;
+    case "PYTHON":     return <Code2 {...props} />;
+    case "JAVASCRIPT": return <Braces {...props} />;
+    case "MYSQL":      return <Database {...props} />;
+    case "BASH":       return <Terminal {...props} />;
+    default:           return <FileText {...props} />;
+  }
+};
+
+const DEFAULT_CODE = {
+  JAVA: `public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello, World!");
+    }
+}`,
+  PYTHON: `# Write your solution here
+print("Hello, World!")`,
+  JAVASCRIPT: `// Write your solution here
+process.stdin.resume();
+process.stdin.setEncoding('utf8');
+let input = '';
+process.stdin.on('data', d => input += d);
+process.stdin.on('end', () => {
+    console.log("Hello, World!");
+});`,
+  MYSQL: `-- Your database persists across runs!
+CREATE TABLE IF NOT EXISTS students (
+    id     INT PRIMARY KEY AUTO_INCREMENT,
+    name   VARCHAR(100) NOT NULL,
+    age    INT,
+    course VARCHAR(100)
+);
+
+INSERT INTO students (name, age, course) VALUES
+    ('Alice', 20, 'Java'),
+    ('Bob',   22, 'Python'),
+    ('Carol', 21, 'MySQL');
+
+SELECT * FROM students;`,
+  BASH: `#!/bin/bash
+echo "=== System Info ==="
+uname -a
+
+echo ""
+echo "=== Directory Listing ==="
+ls -la
+
+echo ""
+echo "=== Simple Loop ==="
+for i in 1 2 3 4 5; do
+  echo "Item: $i"
+done
+
+echo ""
+echo "=== Math ==="
+echo "5 + 3 = $((5 + 3))"
+echo "10 * 4 = $((10 * 4))"`,
+};
+
+const NO_INPUT_LANGS = ["MYSQL", "BASH"];
+
+const getAuthTokenUserId = () => {
+  try {
+    const token = localStorage.getItem("lms_token");
+    if (!token) return null;
+    return JSON.parse(atob(token.split(".")[1]))?.userId ?? null;
+  } catch {
+    return null;
+  }
+};
+
+const isDarkMode = () =>
+  document.documentElement.classList.contains("dark") ||
+  document.body.classList.contains("dark") ||
+  window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+export default function StudentCompilerPage() {
+  const [mode, setMode] = useState("problems");
+  const [tab, setTab] = useState("problems");
+  const [problems, setProblems] = useState([]);
+  const [selectedProblem, setSelectedProblem] = useState(null);
+  const [language, setLanguage] = useState("PYTHON");
+  const [code, setCode] = useState(DEFAULT_CODE["PYTHON"]);
+  const [output, setOutput] = useState(null);
+  const [judgeResult, setJudgeResult] = useState(null);
+  const [history, setHistory] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [runLoading, setRunLoading] = useState(false);
+  const [problemLoading, setProblemLoading] = useState(false);
+  const [activeHistoryItem, setActiveHistoryItem] = useState(null);
+  const [batchId, setBatchId] = useState(null);
+  const [batchLoading, setBatchLoading] = useState(true);
+  const [batchError, setBatchError] = useState(false);
+  const [customInput, setCustomInput] = useState("");
+  const [showCustomInput, setShowCustomInput] = useState(false);
+  const [mysqlTables, setMysqlTables] = useState(null);
+  const [mysqlStateLoading, setMysqlStateLoading] = useState(false);
+  const [showDbExplorer, setShowDbExplorer] = useState(false);
+  const [showMyFiles, setShowMyFiles] = useState(false);
+  const [myFiles, setMyFiles] = useState([]);
+  const [myFilesLoading, setMyFilesLoading] = useState(false);
+  const [studentEmail, setStudentEmail] = useState(null);
+  const [saveFileModal, setSaveFileModal] = useState(false);
+  const [saveFileName, setSaveFileName] = useState("");
+  const [saveFileLoading, setSaveFileLoading] = useState(false);
+  const [saveFileError, setSaveFileError] = useState("");
+  const [dark, setDark] = useState(isDarkMode);
+  const [usage, setUsage] = useState(null);
+  const [runUsage, setRunUsage] = useState(null);
+  const [saveUsage, setSaveUsage] = useState(null);
+  const [upgradeConfig, setUpgradeConfig] = useState(null);
+
+  const fetchUsage = () => {
+    getCodingSolveUsage()
+      .then((res) => setUsage(res.data))
+      .catch(() => setUsage(null));
+  };
+
+  const fetchRunUsage = () => {
+    getPlaygroundRunUsage()
+      .then((res) => setRunUsage(res.data))
+      .catch(() => setRunUsage(null));
+  };
+
+  const fetchSaveUsage = () => {
+    getSaveFileUsage()
+      .then((res) => setSaveUsage(res.data))
+      .catch(() => setSaveUsage(null));
+  };
+
+  const textareaRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => setDark(isDarkMode()));
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    observer.observe(document.body, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const initBatch = async () => {
+      setBatchLoading(true);
+      try {
+        const res = await getStudentClassroom();
+        const classroom = res?.data || res;
+        const resolvedId = classroom?.batchId || classroom?.id || null;
+        if (resolvedId) setBatchId(resolvedId);
+        else setBatchError(true);
+      } catch {
+        setBatchError(true);
+      } finally {
+        setBatchLoading(false);
+      }
+    };
+    initBatch();
+  }, []);
+
+  useEffect(() => {
+    const fetchEmail = async () => {
+      try {
+        const res = await codeFilesAPI.getProfile();
+        setStudentEmail(res?.data?.email || null);
+      } catch {}
+    };
+    fetchEmail();
+  }, []);
+
+  useEffect(() => { if (batchId) fetchProblems(); }, [batchId]);
+  useEffect(() => { if (tab === "history" && batchId) fetchHistory(); }, [tab, batchId]);
+  useEffect(() => {
+    if (batchId) {
+      fetchRunUsage();
+      fetchSaveUsage();
+    }
+  }, [batchId]);
+
+  const fetchProblems = async () => {
+    try { const res = await getStudentProblems(batchId); setProblems(res.data || []); }
+    catch { setProblems([]); }
+  };
+
+  const fetchHistory = async () => {
+    try { const res = await getMyCodeSubmissions(batchId); setHistory(res.data || []); }
+    catch { setHistory([]); }
+  };
+
+  const fetchMySQLState = async () => {
+    setMysqlStateLoading(true);
+    try { const res = await getMySQLState(); setMysqlTables(res.data); }
+    catch { setMysqlTables({ output: "Could not fetch database state.", status: "RUNTIME_ERROR" }); }
+    finally { setMysqlStateLoading(false); }
+  };
+
+  const handleMySQLReset = async () => {
+    if (!window.confirm("⚠️ This will DROP your entire database and all tables.\n\nAre you sure?")) return;
+    setRunLoading(true); setOutput(null);
+    try { const res = await resetMySQLDatabase(); setOutput(res.data); setMysqlTables(null); setShowDbExplorer(false); }
+    catch (e) { setOutput({ output: e.response?.data?.message || "Reset failed.", status: "RUNTIME_ERROR" }); }
+    finally { setRunLoading(false); }
+  };
+
+  const fetchMyFiles = async () => {
+    if (!batchId) return;
+    setMyFilesLoading(true);
+    try { const res = await codeFilesAPI.getAll(studentEmail, batchId); setMyFiles(res.data || []); }
+    catch { setMyFiles([]); }
+    finally { setMyFilesLoading(false); }
+  };
+
+  const handleOpenMyFiles = () => { setShowMyFiles(true); fetchMyFiles(); };
+
+  const handleLoadFile = async (file) => {
+    try {
+      const res = await codeFilesAPI.getById(file.id);
+      const f = res.data;
+      const lang = (f.language || file.language || language).toUpperCase();
+      setLanguage(lang); setCode(f.code || f.content || "");
+      setOutput(null); setJudgeResult(null); setShowMyFiles(false);
+    } catch { alert("Could not load file."); }
+  };
+
+  const handleDeleteFile = async (fileId, e) => {
+    e.stopPropagation();
+    if (!window.confirm("Delete this file?")) return;
+    try { await codeFilesAPI.delete(fileId); setMyFiles((prev) => prev.filter((f) => f.id !== fileId)); }
+    catch { alert("Could not delete file."); }
+  };
+
+  const handleSaveFile = async () => {
+    const trimmed = saveFileName.trim();
+    if (!trimmed) { setSaveFileError("File name is required."); return; }
+    setSaveFileLoading(true); setSaveFileError("");
+    try {
+      await codeFilesAPI.save({ fileName: trimmed, language, code, batchId, ...(studentEmail ? { studentEmail } : {}) });
+      setSaveFileModal(false); setSaveFileName("");
+      fetchSaveUsage();
+    } catch (e) {
+      const planError = parsePlanError(e);
+      if (planError) {
+        setSaveFileModal(false);
+        setUpgradeConfig({ featureLabel: planError.message });
+      } else {
+        setSaveFileError(e.response?.data?.message || "Save failed. Please try again.");
+      }
+    }
+    finally { setSaveFileLoading(false); }
+  };
+
+  const openProblem = async (problemId) => {
+    setProblemLoading(true);
+    fetchUsage();
+    try {
+      const res = await getStudentProblemById(problemId);
+      setSelectedProblem(res.data); setCode(DEFAULT_CODE[language]);
+      setOutput(null); setJudgeResult(null); setMode("editor"); setTab("editor");
+    } catch { alert("Could not load problem."); }
+    finally { setProblemLoading(false); }
+  };
+
+  const handleLanguageChange = (lang) => {
+    setLanguage(lang); setCode(DEFAULT_CODE[lang]);
+    setOutput(null); setJudgeResult(null);
+    if (NO_INPUT_LANGS.includes(lang)) setShowCustomInput(false);
+    if (lang !== "MYSQL") { setShowDbExplorer(false); setMysqlTables(null); }
+  };
+
+  const handleRunCode = async () => {
+    setRunLoading(true); setOutput(null); setJudgeResult(null);
+    try {
+      let stdinInput = "";
+      if (!NO_INPUT_LANGS.includes(language)) {
+        stdinInput = mode === "playground" ? customInput : selectedProblem?.sampleInput || "";
+      }
+      const res = await runCode(batchId, language, code, stdinInput);
+      setOutput(res.data);
+      fetchRunUsage();
+    } catch (e) {
+      const planError = parsePlanError(e);
+      if (planError) {
+        setUpgradeConfig({ featureLabel: planError.message });
+      } else {
+        setOutput({ output: e.response?.data?.message || "Run failed.", status: "RUNTIME_ERROR" });
+      }
+      fetchRunUsage();
+    }
+    finally { setRunLoading(false); }
+  };
+
+  const handleSubmit = async () => {
+    if (!selectedProblem) return;
+    setLoading(true); setJudgeResult(null); setOutput(null);
+    try {
+      const res = await submitCodeForJudge(selectedProblem.id, batchId, language, code);
+      setJudgeResult(res.data);
+      fetchUsage();
+    }
+    catch (err) {
+      const planError = parsePlanError(err);
+      if (planError) {
+        setUpgradeConfig({ featureLabel: planError.message });
+      } else {
+        setJudgeResult({ overallVerdict: "ERROR", marksObtained: 0, totalMarks: 0 });
+      }
+    }
+    finally { setLoading(false); }
+  };
+
+  const handleTabKey = (e) => {
+    if (e.key === "Tab") {
+      e.preventDefault();
+      const ta = textareaRef.current;
+      const start = ta.selectionStart; const end = ta.selectionEnd;
+      const newCode = code.substring(0, start) + "    " + code.substring(end);
+      setCode(newCode);
+      setTimeout(() => { ta.selectionStart = ta.selectionEnd = start + 4; }, 0);
+    }
+  };
+
+  const themeT = T[dark ? "dark" : "light"];
+  const verdictColor = (v) => v === "ACCEPTED" ? themeT.statusCompletedText : v === "PARTIAL" ? themeT.newBadgeText : themeT.overdueText;
+  const diffClass = (d) => d === "EASY" ? "sc-badge-diff-easy" : d === "MEDIUM" ? "sc-badge-diff-medium" : "sc-badge-diff-hard";
+  const statusColor = (s) => s === "SUCCESS" ? themeT.statusCompletedText : s === "COMPILE_ERROR" ? themeT.newBadgeText : themeT.overdueText;
+  const statusBg = (s) => s === "SUCCESS" ? themeT.statusCompletedBg : s === "COMPILE_ERROR" ? themeT.newBadgeBg : themeT.overdueBg;
+
+  const rootClass = `sc-root${dark ? " sc-dark" : ""}`;
+
+  /* ── Sub-components ── */
+  const MySQLToolbar = () => (
+    <>
+      <div className="sc-mysql-toolbar">
+        <div className="sc-mysql-toolbar-left">
+          <Database size={14} strokeWidth={2} />
+          <strong>MySQL</strong>
+          <span style={{ fontWeight: 400, opacity: 0.8 }}>— Your database persists across runs. CREATE once, INSERT/SELECT in separate runs.</span>
+        </div>
+        <div className="sc-mysql-actions">
+          <button className="sc-db-explorer-btn" onClick={() => { const next = !showDbExplorer; setShowDbExplorer(next); if (next) fetchMySQLState(); }}>
+            <Table2 size={12} strokeWidth={2} />
+            {showDbExplorer ? "Hide Tables" : "Show Tables"}
+          </button>
+          <button className="sc-db-reset-btn" onClick={handleMySQLReset}>
+            <RotateCcw size={12} strokeWidth={2} />
+            Reset DB
+          </button>
+        </div>
+      </div>
+      {showDbExplorer && (
+        <div className="sc-db-explorer-panel">
+          <div className="sc-db-explorer-header">
+            <span className="sc-db-explorer-header-left">
+              <Table2 size={13} strokeWidth={2} /> Your Tables
+            </span>
+            <button className="sc-refresh-btn" onClick={fetchMySQLState} disabled={mysqlStateLoading}>
+              <RefreshCw size={11} strokeWidth={2} />
+              {mysqlStateLoading ? "Loading..." : "Refresh"}
+            </button>
+          </div>
+          <div className="sc-db-explorer-body">
+            {mysqlStateLoading ? (
+              <span style={{ color: "var(--text-muted)", fontSize: 12 }}>Loading...</span>
+            ) : mysqlTables ? (
+              <pre className="sc-sql-output-pre">{mysqlTables.output || "No tables found."}</pre>
+            ) : (
+              <span style={{ color: "var(--text-muted)", fontSize: 12 }}>Click Refresh to see your tables.</span>
+            )}
+          </div>
+        </div>
+      )}
+    </>
+  );
+
+  const RunLoadingOverlay = () => (
+    <div className="sc-run-overlay">
+      <div className="sc-run-overlay-box">
+        <div className="sc-run-spinner" />
+        <div className="sc-run-overlay-text">
+          {language === "MYSQL"
+            ? <><Database size={16} strokeWidth={2} /> Running SQL on your database...</>
+            : language === "BASH"
+            ? <><Terminal size={16} strokeWidth={2} /> Executing shell script...</>
+            : <><Play size={16} strokeWidth={2} /> Running code...</>}
+        </div>
+        <div className="sc-run-overlay-sub">
+          {language === "MYSQL"
+            ? "Your data will persist after this run"
+            : language === "BASH"
+            ? "Running in sandbox environment"
+            : "Please wait..."}
+        </div>
+      </div>
+    </div>
+  );
+
+  const MyFilesDrawer = () => (
+    <div className="sc-drawer-overlay" onClick={() => setShowMyFiles(false)}>
+      <div className="sc-drawer-panel" onClick={(e) => e.stopPropagation()}>
+        <div className="sc-drawer-header">
+          <span className="sc-drawer-title"><FolderOpen size={16} strokeWidth={2} /> My Saved Files</span>
+          <button className="sc-drawer-close" onClick={() => setShowMyFiles(false)}><X size={16} strokeWidth={2} /></button>
+        </div>
+        <div className="sc-drawer-body">
+          {myFilesLoading ? (
+            <div className="sc-drawer-loading">
+              <div className="sc-spinner" />
+              <span>Loading files...</span>
+            </div>
+          ) : myFiles.length === 0 ? (
+            <div className="sc-drawer-empty">
+              <div style={{ display: "flex", justifyContent: "center", marginBottom: 10, opacity: 0.4, color: "var(--text-muted)" }}>
+                <FolderOpen size={40} strokeWidth={1.5} />
+              </div>
+              <div style={{ color: "var(--text-muted)", fontSize: 13, fontWeight: 600 }}>No saved files yet.</div>
+              <div style={{ color: "var(--text-muted)", fontSize: 12, marginTop: 6, opacity: 0.7 }}>
+                Use the Save button in the editor to save your code.
+              </div>
+            </div>
+          ) : (
+            <div className="sc-file-list">
+              {myFiles.map((file) => (
+                <div key={file.id} className="sc-file-card" onClick={() => handleLoadFile(file)}>
+                  <div className="sc-file-card-left">
+                    <span className="sc-file-icon">
+                      <FileIcon lang={file.language} />
+                    </span>
+                    <div>
+                      <div className="sc-file-name">{file.fileName || file.name}</div>
+                      <div className="sc-file-meta">
+                        <span className="sc-file-lang-badge">
+                          <LangIcon lang={file.language} size={10} />
+                          {file.language}
+                        </span>
+                        {file.updatedAt && (
+                          <span className="sc-file-date">
+                            <Clock size={10} strokeWidth={2} />
+                            {new Date(file.updatedAt).toLocaleDateString()}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <button className="sc-file-delete" onClick={(e) => handleDeleteFile(file.id, e)} title="Delete file">
+                    <Trash2 size={15} strokeWidth={2} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="sc-drawer-footer">
+          <button className="sc-drawer-refresh" onClick={fetchMyFiles} disabled={myFilesLoading}>
+            <RefreshCw size={13} strokeWidth={2} /> Refresh
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const SaveFileModal = () => (
+    <div className="sc-save-modal-overlay" onClick={() => { setSaveFileModal(false); setSaveFileName(""); setSaveFileError(""); }}>
+      <div className="sc-save-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="sc-drawer-header">
+          <span className="sc-drawer-title"><Save size={16} strokeWidth={2} /> Save File</span>
+          <button className="sc-drawer-close" onClick={() => { setSaveFileModal(false); setSaveFileName(""); setSaveFileError(""); }}>
+            <X size={16} strokeWidth={2} />
+          </button>
+        </div>
+        <div className="sc-save-body">
+          <div className="sc-save-label">File Name</div>
+          <input
+            className="sc-save-input"
+            value={saveFileName}
+            onChange={(e) => { setSaveFileName(e.target.value); setSaveFileError(""); }}
+            placeholder="e.g. bubble_sort.py"
+            autoFocus
+            onKeyDown={(e) => { if (e.key === "Enter") handleSaveFile(); }}
+          />
+          {saveFileError && (
+            <div className="sc-save-error">
+              <AlertTriangle size={12} strokeWidth={2} /> {saveFileError}
+            </div>
+          )}
+          <div className="sc-save-meta-row">
+            <span className="sc-file-lang-badge">
+              <LangIcon lang={language} size={10} />
+              {LANG_LABEL[language]}
+            </span>
+            <span style={{ color: "var(--text-muted)", fontSize: 11 }}>{code.split("\n").length} lines</span>
+          </div>
+        </div>
+        <div className="sc-save-footer">
+          <button className="sc-save-cancel" onClick={() => { setSaveFileModal(false); setSaveFileName(""); setSaveFileError(""); }}>Cancel</button>
+          <button className="sc-save-confirm" onClick={handleSaveFile} disabled={saveFileLoading}>
+            {saveFileLoading
+              ? <><Loader2 size={13} strokeWidth={2} style={{ animation: "sc-spin 0.8s linear infinite" }} /> Saving...</>
+              : <><Save size={13} strokeWidth={2} /> Save</>}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+
+  /* ── Plan upgrade modal (shared by playground + editor views) ── */
+  const upgradeModal = upgradeConfig ? (
+    <UpgradeModal
+      isOpen={!!upgradeConfig}
+      onClose={() => setUpgradeConfig(null)}
+      planType="individual"
+      userId={getAuthTokenUserId()}
+      currentPlan={usage?.tier || "free"}
+      availableTargetPlans={["pro", "premium"]}
+      featureLabel={upgradeConfig.featureLabel}
+      onSuccess={() => {
+        setUpgradeConfig(null);
+        fetchUsage();
+        fetchRunUsage();
+        fetchSaveUsage();
+      }}
+    />
+  ) : null;
+
+  /* ── Loading screens ── */
+  if (batchLoading) {
+    return (
+      <div className={rootClass}>
+        <div className="sc-loading-screen">
+          <div className="sc-spinner" />
+          <p style={{ color: "var(--text-muted)", fontSize: 14, margin: 0 }}>Loading your workspace...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (batchError || !batchId) {
+    return (
+      <div className={rootClass}>
+        <div className="sc-loading-screen">
+          <AlertTriangle size={36} color={themeT.overdueText} strokeWidth={1.8} />
+          <p style={{ color: "var(--danger)", fontSize: 14, margin: 0 }}>Could not load your batch. Please contact your trainer.</p>
+        </div>
+      </div>
+    );
+  }
+
+  /* ── Lang toggle shared ── */
+  const LangToggle = () => (
+    <div className="sc-lang-toggle">
+      {LANGUAGES.map((l) => (
+        <button key={l} className={`sc-lang-btn${language === l ? " active" : ""}`} onClick={() => handleLanguageChange(l)}>
+          <LangIcon lang={l} size={12} />
+          <span className="sc-lang-btn-label">{LANG_LABEL[l]}</span>
+        </button>
+      ))}
+    </div>
+  );
+
+  /* ── Output section shared ── */
+  const OutputSection = ({ isPlayground }) => (
+    <>
+      {runLoading && (
+        <div className="sc-output-running">
+          <div className="sc-spinner-sm" />
+          <span>
+            {language === "MYSQL" ? "Running SQL on your database..." : language === "BASH" ? "Executing shell script..." : "Running code..."}
+          </span>
+        </div>
+      )}
+      {!output && !runLoading && (
+        <div className="sc-output-placeholder">
+          <Terminal size={14} strokeWidth={2} style={{ opacity: 0.5 }} />
+          {isPlayground
+            ? "Run your code to see output here"
+            : <>Click <strong>Run</strong> to test, or <strong>Submit</strong> to judge against all test cases.</>}
+        </div>
+      )}
+      {output && !runLoading && (
+        <div>
+          <div style={{ display: "flex", gap: 10, alignItems: "center", marginBottom: 10, flexWrap: "wrap" }}>
+            <span className="sc-status-chip" style={{ background: statusBg(output.status), color: statusColor(output.status) }}>
+              {output.status === "SUCCESS"
+                ? <CheckCircle2 size={11} strokeWidth={2.5} />
+                : <XCircle size={11} strokeWidth={2.5} />}
+              {output.status}
+            </span>
+            {output.executionTimeMs && (
+              <span className="sc-exec-time">
+                <Clock size={11} strokeWidth={2} />
+                {output.executionTimeMs}ms
+              </span>
+            )}
+          </div>
+          <pre className={language === "MYSQL" ? "sc-sql-output-pre" : "sc-output-pre"}>
+            {output.output || "(no output)"}
+          </pre>
+        </div>
+      )}
+    </>
+  );
+
+  /* ── PLAYGROUND MODE ── */
+  if (mode === "playground") {
+    return (
+      <div className={rootClass}>
+        {runLoading && <RunLoadingOverlay />}
+        {showMyFiles && <MyFilesDrawer />}
+        {saveFileModal && <SaveFileModal />}
+
+        <div className="sc-header">
+          <div className="sc-header-left">
+            <button className="sc-btn sc-btn-back" onClick={() => setMode("problems")}>
+              <ChevronLeft size={14} strokeWidth={2.5} /> <span className="sc-btn-label">Back</span>
+            </button>
+            <div className="sc-logo-wrap">
+              <span className="sc-logo-icon"><Code2 size={20} strokeWidth={2.5} /></span>
+              <span className="sc-logo-text">CodeLab</span>
+            </div>
+            <span className="sc-badge sc-badge-play">
+              <Gamepad2 size={10} strokeWidth={2.5} /> Playground
+            </span>
+            {runUsage && (
+              <span className="sc-badge sc-badge-batch">
+                {runUsage.limit === "unlimited"
+                  ? "Unlimited runs"
+                  : `${runUsage.used}/${runUsage.limit} runs this month`}
+              </span>
+            )}
+            {saveUsage && (
+              <span className="sc-badge sc-badge-batch">
+                {saveUsage.limit === "unlimited"
+                  ? "Unlimited saved files"
+                  : `${saveUsage.used}/${saveUsage.limit} files saved`}
+              </span>
+            )}
+          </div>
+          <div className="sc-header-right">
+            <LangToggle />
+            <button className="sc-btn sc-btn-files" onClick={handleOpenMyFiles}>
+              <FolderOpen size={13} strokeWidth={2} /> <span className="sc-btn-label">My Files</span>
+            </button>
+            <button className="sc-btn sc-btn-save" onClick={() => { setSaveFileName(""); setSaveFileError(""); setSaveFileModal(true); }}>
+              <Save size={13} strokeWidth={2} /> <span className="sc-btn-label">Save</span>
+            </button>
+            <button className="sc-btn sc-btn-run-primary" onClick={handleRunCode} disabled={runLoading}>
+              {runLoading
+                ? <><span className="sc-spinner-sm" /> <span className="sc-btn-label">Running...</span></>
+                : <><Play size={13} strokeWidth={2.5} fill="currentColor" /> <span className="sc-btn-label">Run Code</span></>}
+            </button>
+          </div>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", flex: 1, minHeight: 0, overflow: "hidden" }}>
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden" }}>
+            {language === "MYSQL" && <MySQLToolbar />}
+            {language === "BASH" && (
+              <div className="sc-lang-banner" style={{ background: "rgba(var(--accent3-rgb),0.06)", borderColor: "rgba(var(--accent3-rgb),0.20)", color: "var(--accent3)" }}>
+                <Terminal size={13} strokeWidth={2} />
+                <strong>Bash Mode</strong> — Your script runs in a sandboxed shell environment.
+              </div>
+            )}
+            <div className="sc-editor-area-wrap">
+              <div className="sc-line-numbers">
+                {code.split("\n").map((_, i) => <div key={i} className="sc-line-num">{i + 1}</div>)}
+              </div>
+              <textarea
+                ref={textareaRef}
+                className={`sc-code-textarea${language === "MYSQL" ? " sc-sql-textarea" : ""}`}
+                value={code}
+                onChange={(e) => setCode(e.target.value)}
+                onKeyDown={handleTabKey}
+                spellCheck={false}
+                autoCapitalize="none"
+                autoCorrect="off"
+                placeholder={language === "MYSQL" ? "-- Write your SQL here..." : language === "BASH" ? "#!/bin/bash\n# Write your shell script here..." : "// Start coding here..."}
+              />
+            </div>
+
+            <div className="sc-bottom-panel">
+              <div className="sc-bottom-tabs">
+                <button className={`sc-bottom-tab${!showCustomInput ? " active" : ""}`} onClick={() => setShowCustomInput(false)}>
+                  <Terminal size={13} strokeWidth={2} /> Output
+                </button>
+                {!NO_INPUT_LANGS.includes(language) && (
+                  <button className={`sc-bottom-tab${showCustomInput ? " active" : ""}`} onClick={() => setShowCustomInput(true)}>
+                    <PanelLeft size={13} strokeWidth={2} /> Custom Input
+                  </button>
+                )}
+              </div>
+              <div className="sc-bottom-content">
+                {showCustomInput ? (
+                  <textarea
+                    className="sc-custom-input-area"
+                    value={customInput}
+                    onChange={(e) => setCustomInput(e.target.value)}
+                    placeholder="Enter custom input here (stdin)..."
+                  />
+                ) : (
+                  <OutputSection isPlayground />
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+        {upgradeModal}
+      </div>
+    );
+  }
+
+  /* ── PROBLEMS / HISTORY MODE ── */
+  if (mode === "problems") {
+    return (
+      <div className={rootClass}>
+        {showMyFiles && <MyFilesDrawer />}
+        {saveFileModal && <SaveFileModal />}
+
+        <div className="sc-header">
+          <div className="sc-header-left">
+            <div className="sc-logo-wrap">
+              <span className="sc-logo-icon"><Code2 size={20} strokeWidth={2.5} /></span>
+              <span className="sc-logo-text">CodeLab</span>
+            </div>
+            <span className="sc-badge sc-badge-student">
+              <User size={9} strokeWidth={2.5} /> Student
+            </span>
+            <span className="sc-badge sc-badge-batch">
+              <Hash size={9} strokeWidth={2.5} /> Batch: {batchId}
+            </span>
+          </div>
+          <div className="sc-nav-tabs">
+            <button className={`sc-nav-tab${tab === "problems" ? " active" : ""}`} onClick={() => setTab("problems")}>
+              <LayoutGrid size={13} strokeWidth={2} /> Problems
+            </button>
+            <button className={`sc-nav-tab${tab === "history" ? " active" : ""}`} onClick={() => setTab("history")}>
+              <History size={13} strokeWidth={2} /> History
+            </button>
+          </div>
+          <div className="sc-header-right">
+            <button className="sc-btn sc-btn-files" onClick={handleOpenMyFiles}>
+              <FolderOpen size={13} strokeWidth={2} /> <span className="sc-btn-label">My Files</span>
+            </button>
+            <button className="sc-btn sc-btn-play" onClick={() => { setMode("playground"); setCode(DEFAULT_CODE[language]); setOutput(null); setJudgeResult(null); }}>
+              <Gamepad2 size={13} strokeWidth={2} /> <span className="sc-btn-label">Playground</span>
+            </button>
+          </div>
+        </div>
+
+        <div className="sc-main">
+          {tab === "problems" && (
+            <>
+              <div className="sc-page-title">
+                <span>Assigned Problems</span>
+                <span className="sc-count-badge">{problems.length} Problems</span>
+              </div>
+              {problems.length === 0 ? (
+                <div className="sc-empty">
+                  <div className="sc-empty-icon"><BookOpen size={52} strokeWidth={1.2} /></div>
+                  <p className="sc-empty-text">No problems assigned yet.</p>
+                </div>
+              ) : (
+                <div className="sc-problem-grid">
+                  {problems.map((p, i) => (
+                    <div key={p.id} className="sc-problem-card">
+                      <div className="sc-problem-card-header">
+                        <span className="sc-problem-index">
+                          <Hash size={10} strokeWidth={2.5} />{i + 1}
+                        </span>
+                        <span className={`sc-badge ${diffClass(p.difficulty)}`}>{p.difficulty}</span>
+                      </div>
+                      <div className="sc-problem-title">{p.title}</div>
+                      <div className="sc-problem-desc">
+                        {p.description?.slice(0, 110)}{p.description?.length > 110 ? "..." : ""}
+                      </div>
+                      <div className="sc-problem-footer">
+                        <div className="sc-problem-meta">
+                          <span className="sc-chip-marks"><Trophy size={11} strokeWidth={2} /> {p.totalMarks} pts</span>
+                          <span className="sc-chip-tests"><FlaskConical size={11} strokeWidth={2} /> {p.visibleTestCases?.length || 0} tests</span>
+                        </div>
+                        <button className="sc-btn sc-btn-solve" onClick={() => openProblem(p.id)} disabled={problemLoading}>
+                          {problemLoading ? "..." : <><Play size={11} strokeWidth={2.5} fill="currentColor" /> Solve</>}
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+
+          {tab === "history" && (
+            <>
+              <div className="sc-page-title">
+                <span>My Submissions</span>
+                <span className="sc-count-badge">{history.length} runs</span>
+              </div>
+              {history.length === 0 ? (
+                <div className="sc-empty">
+                  <div className="sc-empty-icon"><History size={52} strokeWidth={1.2} /></div>
+                  <p className="sc-empty-text">No submissions yet.</p>
+                </div>
+              ) : (
+                <div className="sc-history-list">
+                  {history.map((h) => (
+                    <div
+                      key={h.submissionId}
+                      className={`sc-history-card${activeHistoryItem === h.submissionId ? " open" : ""}`}
+                      onClick={() => setActiveHistoryItem(activeHistoryItem === h.submissionId ? null : h.submissionId)}
+                    >
+                      <div className="sc-history-row">
+                        <span className="sc-history-lang">
+                          <LangIcon lang={h.language} size={11} />
+                          {h.language}
+                        </span>
+                        <span className="sc-status-chip" style={{ background: statusBg(h.status), color: statusColor(h.status), fontSize: 11, padding: "3px 12px", borderRadius: 50 }}>
+                          {h.status === "SUCCESS"
+                            ? <CheckCircle2 size={10} strokeWidth={2.5} />
+                            : <XCircle size={10} strokeWidth={2.5} />}
+                          {h.status}
+                        </span>
+                        <span className="sc-history-time">
+                          <Clock size={11} strokeWidth={2} />
+                          {new Date(h.timestamp).toLocaleString()}
+                        </span>
+                        <span className="sc-history-ms">
+                          <Cpu size={11} strokeWidth={2} />
+                          {h.executionTimeMs}ms
+                        </span>
+                        <span className="sc-expand-icon">
+                          {activeHistoryItem === h.submissionId
+                            ? <ChevronUp size={14} strokeWidth={2} />
+                            : <ChevronDown size={14} strokeWidth={2} />}
+                        </span>
+                      </div>
+                      {activeHistoryItem === h.submissionId && (
+                        <div className="sc-history-body">
+                          <div className="sc-history-out-label">
+                            <Terminal size={11} strokeWidth={2} /> Output
+                          </div>
+                          <pre className={h.language === "MYSQL" ? "sc-sql-output-pre" : "sc-output-pre"}>
+                            {h.output || "(no output)"}
+                          </pre>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  /* ── EDITOR MODE ── */
+  return (
+    <div className={rootClass}>
+      {runLoading && <RunLoadingOverlay />}
+      {showMyFiles && <MyFilesDrawer />}
+      {saveFileModal && <SaveFileModal />}
+
+      <div className="sc-header">
+        <div className="sc-header-left">
+          <button className="sc-btn sc-btn-back" onClick={() => { setMode("problems"); setTab("problems"); }}>
+            <ChevronLeft size={14} strokeWidth={2.5} /> <span className="sc-btn-label">Problems</span>
+          </button>
+          <div className="sc-logo-wrap">
+            <span className="sc-logo-icon"><Code2 size={20} strokeWidth={2.5} /></span>
+            <span className="sc-logo-text">CodeLab</span>
+          </div>
+          {selectedProblem && (
+            <span className={`sc-badge ${diffClass(selectedProblem.difficulty)}`}>{selectedProblem.difficulty}</span>
+          )}
+          {usage && (
+            <span className="sc-badge sc-badge-batch">
+              {usage.limit === "unlimited"
+                ? "Unlimited solves"
+                : `${usage.used}/${usage.limit} solves this month`}
+            </span>
+          )}
+          {runUsage && (
+            <span className="sc-badge sc-badge-batch">
+              {runUsage.limit === "unlimited"
+                ? "Unlimited runs"
+                : `${runUsage.used}/${runUsage.limit} runs this month`}
+            </span>
+          )}
+          {saveUsage && (
+            <span className="sc-badge sc-badge-batch">
+              {saveUsage.limit === "unlimited"
+                ? "Unlimited saved files"
+                : `${saveUsage.used}/${saveUsage.limit} files saved`}
+            </span>
+          )}
+        </div>
+        <div className="sc-header-right">
+          <LangToggle />
+          <button className="sc-btn sc-btn-files" onClick={handleOpenMyFiles}>
+            <FolderOpen size={13} strokeWidth={2} /> <span className="sc-btn-label">My Files</span>
+          </button>
+          <button className="sc-btn sc-btn-save" onClick={() => { setSaveFileName(""); setSaveFileError(""); setSaveFileModal(true); }}>
+            <Save size={13} strokeWidth={2} /> <span className="sc-btn-label">Save</span>
+          </button>
+          <button className="sc-btn sc-btn-run" onClick={handleRunCode} disabled={runLoading}>
+            {runLoading
+              ? <><span className="sc-spinner-sm" /> <span className="sc-btn-label">Running...</span></>
+              : <><Play size={13} strokeWidth={2.5} fill="currentColor" /> <span className="sc-btn-label">Run</span></>}
+          </button>
+          {selectedProblem && (
+            <button className="sc-btn sc-btn-submit" onClick={handleSubmit} disabled={loading}>
+              {loading
+                ? <><span className="sc-spinner-sm" style={{ borderTopColor: "#fff" }} /> <span className="sc-btn-label">Judging...</span></>
+                : <><Zap size={13} strokeWidth={2.5} fill="currentColor" /> <span className="sc-btn-label">Submit</span></>}
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="sc-editor-layout">
+        {/* Problem Panel */}
+        <div className="sc-problem-panel">
+          {selectedProblem ? (
+            <div className="sc-problem-detail">
+              <h2 className="sc-problem-detail-title">{selectedProblem.title}</h2>
+              <div className="sc-info-row">
+                <span className={`sc-badge ${diffClass(selectedProblem.difficulty)}`}>{selectedProblem.difficulty}</span>
+                <span className="sc-chip-marks"><Trophy size={11} strokeWidth={2} /> {selectedProblem.totalMarks} pts</span>
+              </div>
+
+              <Section label="Description" icon={<BookOpen size={10} strokeWidth={2.5} />}>
+                <p className="sc-desc-text">{selectedProblem.description}</p>
+              </Section>
+              {selectedProblem.inputFormat && (
+                <Section label="Input Format" icon={<PanelLeft size={10} strokeWidth={2.5} />}>
+                  <p className="sc-desc-text">{selectedProblem.inputFormat}</p>
+                </Section>
+              )}
+              {selectedProblem.outputFormat && (
+                <Section label="Output Format" icon={<Terminal size={10} strokeWidth={2.5} />}>
+                  <p className="sc-desc-text">{selectedProblem.outputFormat}</p>
+                </Section>
+              )}
+              {selectedProblem.constraints && (
+                <Section label="Constraints" icon={<Cpu size={10} strokeWidth={2.5} />}>
+                  <div className="sc-mono-block">{selectedProblem.constraints}</div>
+                </Section>
+              )}
+              <div className="sc-io-grid">
+                {selectedProblem.sampleInput && (
+                  <div className="sc-io-box">
+                    <div className="sc-io-label">
+                      <Eye size={10} strokeWidth={2} /> Sample Input
+                    </div>
+                    <pre className="sc-io-content">{selectedProblem.sampleInput}</pre>
+                  </div>
+                )}
+                {selectedProblem.sampleOutput && (
+                  <div className="sc-io-box">
+                    <div className="sc-io-label">
+                      <CheckCircle2 size={10} strokeWidth={2} /> Sample Output
+                    </div>
+                    <pre className="sc-io-content">{selectedProblem.sampleOutput}</pre>
+                  </div>
+                )}
+              </div>
+              {selectedProblem.visibleTestCases?.filter((tc) => !tc.isHidden).length > 0 && (
+                <Section label="Sample Test Cases" icon={<FlaskConical size={10} strokeWidth={2.5} />}>
+                  {selectedProblem.visibleTestCases.filter((tc) => !tc.isHidden).map((tc, i) => (
+                    <div key={tc.id} className="sc-test-case">
+                      <div className="sc-test-case-label">
+                        <Hash size={10} strokeWidth={2.5} /> Case {i + 1}
+                      </div>
+                      {tc.input && (
+                        <div className="sc-test-row">
+                          <span className="sc-test-key">Input</span>
+                          <code className="sc-test-val">{tc.input}</code>
+                        </div>
+                      )}
+                      <div className="sc-test-row">
+                        <span className="sc-test-key">Expected</span>
+                        <code className="sc-test-val">{tc.expectedOutput}</code>
+                      </div>
+                    </div>
+                  ))}
+                </Section>
+              )}
+            </div>
+          ) : (
+            <div className="sc-no-problem">
+              <LayoutGrid size={44} strokeWidth={1.5} style={{ opacity: 0.3, color: "var(--text-muted)" }} />
+              <p style={{ color: "var(--text-muted)", fontSize: 14, margin: 0 }}>Select a problem to start solving</p>
+              <button className="sc-btn sc-btn-solve" onClick={() => { setMode("problems"); setTab("problems"); }}>
+                <LayoutGrid size={12} strokeWidth={2} /> Browse Problems
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Editor Panel */}
+        <div style={{ flex: 1, display: "flex", flexDirection: "column", overflow: "hidden", minWidth: 0, minHeight: 0 }}>
+          {language === "MYSQL" && <MySQLToolbar />}
+          {language === "BASH" && (
+            <div className="sc-lang-banner" style={{ background: "rgba(var(--accent3-rgb),0.06)", borderColor: "rgba(var(--accent3-rgb),0.20)", color: "var(--accent3)" }}>
+              <Terminal size={13} strokeWidth={2} />
+              <strong>Bash Mode</strong> — Runs in a sandboxed shell environment.
+            </div>
+          )}
+          <div className="sc-editor-area-wrap">
+            <div className="sc-line-numbers">
+              {code.split("\n").map((_, i) => <div key={i} className="sc-line-num">{i + 1}</div>)}
+            </div>
+            <textarea
+              ref={textareaRef}
+              className={`sc-code-textarea${language === "MYSQL" ? " sc-sql-textarea" : ""}`}
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              onKeyDown={handleTabKey}
+              spellCheck={false}
+              autoCapitalize="none"
+              autoCorrect="off"
+            />
+          </div>
+
+          <div className="sc-output-panel">
+            {!judgeResult ? (
+              <OutputSection isPlayground={false} />
+            ) : (
+              <div>
+                <div className="sc-judge-header">
+                  <span className="sc-verdict-big" style={{ color: verdictColor(judgeResult.overallVerdict) }}>
+                    {judgeResult.overallVerdict === "ACCEPTED"
+                      ? <CheckCircle2 size={18} strokeWidth={2.5} />
+                      : <XCircle size={18} strokeWidth={2.5} />}
+                    {judgeResult.overallVerdict}
+                  </span>
+                  <span className="sc-score-chip">
+                    <Trophy size={11} strokeWidth={2} />
+                    {judgeResult.marksObtained}/{judgeResult.totalMarks} pts
+                  </span>
+                  <span className="sc-exec-time">
+                    <FlaskConical size={11} strokeWidth={2} />
+                    {judgeResult.testCasesPassed}/{judgeResult.totalTestCases} tests
+                  </span>
+                </div>
+                <div className="sc-judge-grid">
+                  {judgeResult.judgeResults?.map((r, i) => (
+                    <div key={i} className="sc-judge-card" style={{ background: r.passed ? "rgba(var(--accent3-rgb),0.08)" : "var(--danger-bg)", borderColor: r.passed ? "rgba(var(--accent3-rgb),0.25)" : "var(--danger-border)" }}>
+                      <div className="sc-judge-card-top">
+                        <span style={{ color: "var(--text)", display: "flex", alignItems: "center", gap: 4 }}>
+                          <Hash size={10} strokeWidth={2.5} /> Test {i + 1}
+                        </span>
+                        <span style={{ color: r.passed ? themeT.statusCompletedText : themeT.overdueText, display: "flex", alignItems: "center", gap: 4 }}>
+                          {r.passed
+                            ? <CheckCircle2 size={12} strokeWidth={2.5} />
+                            : <XCircle size={12} strokeWidth={2.5} />}
+                          {r.verdict}
+                        </span>
+                      </div>
+                      {!r.isHidden && r.actualOutput && (
+                        <div style={{ marginTop: 5, fontSize: 12, color: "var(--text-muted)" }}>
+                          <span style={{ fontWeight: 600 }}>Output: </span>
+                          <code className="sc-test-val">{r.actualOutput}</code>
+                        </div>
+                      )}
+                      {r.isHidden && (
+                        <div style={{ color: "var(--text-muted)", fontSize: 11, marginTop: 5, display: "flex", alignItems: "center", gap: 4 }}>
+                          <EyeOff size={10} strokeWidth={2} /> Hidden test case
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+      {upgradeModal}
+    </div>
+  );
+}
+
+function Section({ label, icon, children }) {
+  return (
+    <div style={{ marginBottom: 18 }}>
+      <div className="sc-section-label">
+        {icon && icon}
+        {label}
+      </div>
+      {children}
+    </div>
+  );
+}

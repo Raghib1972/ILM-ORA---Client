@@ -1,0 +1,308 @@
+"use client";
+
+import axios from "axios";
+
+const API = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9000/api",
+});
+
+// attach JWT automatically
+API.interceptors.request.use((req) => {
+  const token = localStorage.getItem("lms_token");
+  if (token) req.headers.Authorization = `Bearer ${token}`;
+  return req;
+});
+
+/* =====================================================
+   TRAINER → GET STUDENTS IN A BATCH
+   GET /api/chat/trainer/students?batchId=
+   ===================================================== */
+export const getTrainerStudents = (batchId) =>
+  API.get(`/chat/trainer/students?batchId=${batchId}`);
+
+/* =====================================================
+   STUDENT → GET TRAINER
+   GET /api/chat/student/trainer?batchId=
+   ===================================================== */
+export const getStudentTrainer = (batchId) =>
+  API.get(`/chat/student/trainer?batchId=${batchId}`);
+
+/* =====================================================
+   GET CONVERSATION
+   GET /api/chat/conversation?batchId=&otherUser=
+   ===================================================== */
+export const getConversation = (batchId, otherUser) =>
+  API.get(
+    `/chat/conversation?batchId=${batchId}&otherUser=${encodeURIComponent(otherUser)}`,
+  );
+
+/* =====================================================
+   SEND MESSAGE
+   POST /api/chat/send
+   ===================================================== */
+export const sendMessage = (data) => API.post("/chat/send", data);
+
+/* =====================================================
+   STUDENT → GET CHAT CONTEXT (batch + trainer)
+   GET /api/chat/student/context
+   ===================================================== */
+
+export const getStudentContext = () => API.get("/chat/student/context");
+
+// ── Feedback — Student ─────────────────────────────────────────────────────
+
+/**
+ * POST /api/feedback/submit
+ * Frontend sends: { batchId, trainerEmail, moodRating, anonymous,
+ *   trainerClarityRating, trainerDoubtClearingRating,
+ *   trainerEnergyRating, trainerTechnicalDepthRating,
+ *   contentTags, improvementTags, comment }
+ * studentEmail is injected by the backend from JWT.
+ */
+
+/**
+ * ✅ NEW: GET /api/feedback/check/{batchId}
+ * Check if student already submitted feedback for a batch
+ */
+export const checkFeedbackStatus = (batchId) =>
+  API.get(`/feedback/check/${batchId}`);
+
+export const submitFeedback = (payload) =>
+  API.post("/feedback/submit", payload);
+
+/** GET /api/feedback/student/my */
+export const getMyFeedback = () => API.get("/feedback/student/my");
+
+/** GET /api/feedback/student/my/batch/{batchId} */
+export const getMyFeedbackByBatch = (batchId) =>
+  API.get(`/feedback/student/my/batch/${batchId}`);
+
+// ── Feedback — Trainer ─────────────────────────────────────────────────────
+
+/** GET /api/feedback/trainer/my */
+export const getMyTrainerFeedback = () => API.get("/feedback/trainer/my");
+
+/** GET /api/feedback/trainer/my/batch/{batchId} */
+export const getMyTrainerFeedbackByBatch = (batchId) =>
+  API.get(`/feedback/trainer/my/batch/${batchId}`);
+
+/** GET /api/feedback/trainer/my/batch/{batchId}/summary */
+export const getMyTrainerSummary = (batchId) =>
+  API.get(`/feedback/trainer/my/batch/${batchId}/summary`);
+
+// ── Feedback — Admin ───────────────────────────────────────────────────────
+
+/** GET /api/feedback/admin/batch/{batchId} */
+export const getBatchFeedback = (batchId) =>
+  API.get(`/feedback/admin/batch/${batchId}`);
+
+/** GET /api/feedback/admin/batch/{batchId}/summaries */
+export const getBatchSummaries = (batchId) =>
+  API.get(`/feedback/admin/batch/${batchId}/summaries`);
+
+/**
+ * PATCH /api/feedback/admin/{feedbackId}/status
+ * Body: { status: "REVIEWED" | "ARCHIVED" }
+ */
+export const updateFeedbackStatus = (feedbackId, status) =>
+  API.patch(`/feedback/admin/${feedbackId}/status`, { status });
+
+// ── Alert Config — Admin ───────────────────────────────────────────────────
+
+/** POST /api/feedback/alert-config */
+export const createOrUpdateAlertConfig = (dto) =>
+  API.post("/feedback/alert-config", dto);
+
+/** GET /api/feedback/alert-config/{batchId} */
+export const getAlertConfig = (batchId) =>
+  API.get(`/feedback/alert-config/${batchId}`);
+
+/** DELETE /api/feedback/alert-config/{batchId} */
+export const deleteAlertConfig = (batchId) =>
+  API.delete(`/feedback/alert-config/${batchId}`);
+
+// ── Notebook ───────────────────────────────────────────────────────────────
+
+/** GET /api/notebooks/my */
+export const getMyNotebooks = () => API.get("/notebooks/my");
+
+/** GET /api/notebooks/{id} */
+export const getNotebook = (id) => API.get(`/notebooks/${id}`);
+
+/** POST /api/notebooks */
+export const createNotebook = (payload) => API.post("/notebooks", payload);
+
+/** PUT /api/notebooks/{id} */
+export const updateNotebook = (id, payload) =>
+  API.put(`/notebooks/${id}`, payload);
+
+/** DELETE /api/notebooks/{id} */
+export const deleteNotebook = (id) => API.delete(`/notebooks/${id}`);
+
+/** POST /api/notebooks/sections */
+export const addSection = (payload) => API.post("/notebooks/sections", payload);
+
+/** PUT /api/notebooks/sections/{id} */
+export const updateSection = (id, payload) =>
+  API.put(`/notebooks/sections/${id}`, payload);
+
+/** DELETE /api/notebooks/sections/{id} */
+export const deleteSection = (id) => API.delete(`/notebooks/sections/${id}`);
+
+/** POST /api/notebooks/pages */
+export const addPage = (payload) => API.post("/notebooks/pages", payload);
+
+/** PUT /api/notebooks/pages/{id} — saves content + title */
+export const savePage = (id, payload) =>
+  API.put(`/notebooks/pages/${id}`, payload);
+
+/** DELETE /api/notebooks/pages/{id} */
+export const deletePage = (id) => API.delete(`/notebooks/pages/${id}`);
+
+export const addUrlSource = (notebookId, url) =>
+  API.post(`/notebooks/${notebookId}/sources/url`, { url });
+export const addFileSource = (notebookId, fd) =>
+  API.post(`/notebooks/${notebookId}/sources/file`, fd, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+export const deleteSource = (sourceId) =>
+  API.delete(`/notebooks/sources/${sourceId}`);
+
+export const notebookChat = ({ notebookId, message }) =>
+  API.post(`/notebooks/${notebookId}/chat`, { message });
+
+/** GET /api/notebooks/{id}/chat/history — ordered array of { id, role, content, createdAt } */
+export const getChatHistory = (notebookId) =>
+  API.get(`/notebooks/${notebookId}/chat/history`);
+
+/** GET /api/notebooks/usage — { tier, used, limit, period } */
+export const getNotebookUsage = () => API.get("/notebooks/usage");
+// ── Notebook Studio ──────────────────────────────────────────────────────
+// Real, server-generated studio outputs (report, datatable, mindmap,
+// flashcards, quiz, audio, slides, video) persisted as NotebookStudioOutput
+// records. textContent is Markdown for report/datatable, a JSON string for
+// mindmap/flashcards/quiz/slides, and a raw script for audio (not for direct
+// display). downloadUrl is a presigned S3 URL (1hr) for audio/slides/video.
+
+// /** POST /api/notebooks/{id}/studio/{type}  body: { language } */
+// export const generateStudioItem = (notebookId, type, language) =>
+//   API.post(`/notebooks/${notebookId}/studio/${type}`, { language });
+
+/** POST /api/notebooks/{id}/studio/{type}  body: { language, ...extra } */
+export const generateStudioItem = (notebookId, type, language, extra = {}) =>
+  API.post(`/notebooks/${notebookId}/studio/${type}`, { language, ...extra });
+
+/** GET /api/notebooks/{id}/studio/focus-suggestions — array of 3 content-aware
+ *  topic strings, used for both Audio's and Video's focus suggestion chips */
+export const getFocusSuggestions = (notebookId) =>
+  API.get(`/notebooks/${notebookId}/studio/focus-suggestions`);
+
+/** GET /api/notebooks/{id}/studio/report-format-suggestions — array of 4 { title, description } */
+export const getReportFormatSuggestions = (notebookId) =>
+  API.get(`/notebooks/${notebookId}/studio/report-format-suggestions`);
+
+/** GET /api/notebooks/{id}/studio/topic-suggestions?type={type} — array of 3 topic strings */
+export const getTopicSuggestions = (notebookId, type) =>
+  API.get(
+    `/notebooks/${notebookId}/studio/topic-suggestions?type=${encodeURIComponent(type)}`,
+  );
+
+/** GET /api/notebooks/{id}/studio — array of studio outputs, newest first */
+export const getStudioOutputs = (notebookId) =>
+  API.get(`/notebooks/${notebookId}/studio`);
+
+/** DELETE /api/notebooks/studio/{outputId} */
+export const deleteStudioOutput = (outputId) =>
+  API.delete(`/notebooks/studio/${outputId}`);
+
+// ── Notebook Sharing ─────────────────────────────────────────────────────
+// Sends an invite only; there is deliberately no "shared with me" list yet.
+
+/** POST /api/notebooks/{id}/share  body: { email } */
+export const shareNotebook = (notebookId, email) =>
+  API.post(`/notebooks/${notebookId}/share`, { email });
+
+// ── Feedback — Super Admin (batches with NO organization) ─────────────────
+
+/** GET /api/feedback/super-admin/batches — batchIds that belong to no org */
+export const getSuperAdminOrglessBatchIds = () =>
+  API.get("/feedback/super-admin/batches");
+
+/** GET /api/feedback/super-admin/feedback — all feedback across those batches */
+export const getSuperAdminFeedback = () =>
+  API.get("/feedback/super-admin/feedback");
+
+/** GET /api/feedback/super-admin/summaries */
+export const getSuperAdminSummaries = () =>
+  API.get("/feedback/super-admin/summaries");
+
+/** GET /api/feedback/super-admin/batch/{batchId} */
+export const getSuperAdminBatchFeedback = (batchId) =>
+  API.get(`/feedback/super-admin/batch/${batchId}`);
+
+/** GET /api/feedback/super-admin/batch/{batchId}/summaries */
+export const getSuperAdminBatchSummaries = (batchId) =>
+  API.get(`/feedback/super-admin/batch/${batchId}/summaries`);
+
+/** PATCH /api/feedback/super-admin/{feedbackId}/status  Body: { status } */
+export const updateSuperAdminFeedbackStatus = (feedbackId, status) =>
+  API.patch(`/feedback/super-admin/${feedbackId}/status`, { status });
+
+/** POST /api/feedback/super-admin/alert-config */
+export const createOrUpdateSuperAdminAlertConfig = (dto) =>
+  API.post("/feedback/super-admin/alert-config", dto);
+
+/** GET /api/feedback/super-admin/alert-config/{batchId} */
+export const getSuperAdminAlertConfig = (batchId) =>
+  API.get(`/feedback/super-admin/alert-config/${batchId}`);
+
+/** DELETE /api/feedback/super-admin/alert-config/{batchId} */
+export const deleteSuperAdminAlertConfig = (batchId) =>
+  API.delete(`/feedback/super-admin/alert-config/${batchId}`);
+
+// ── Chat Feature Flags ──────────────────────────────────────────
+
+/** GET /api/chat-feature-flags/org/{organizationId} */
+export const getOrgChatFeatureFlags = (organizationId) =>
+  API.get(`/chat-feature-flags/org/${organizationId}`);
+
+/** PUT /api/chat-feature-flags/org/{organizationId} */
+export const updateOrgChatFeatureFlags = (organizationId, dto) =>
+  API.put(`/chat-feature-flags/org/${organizationId}`, dto);
+
+/** GET /api/chat-feature-flags/individual?email=... */
+export const getIndividualChatFeatureFlags = (email) =>
+  API.get(`/chat-feature-flags/individual?email=${encodeURIComponent(email)}`);
+
+/** PUT /api/chat-feature-flags/individual?email=... */
+export const updateIndividualChatFeatureFlags = (email, dto) =>
+  API.put(
+    `/chat-feature-flags/individual?email=${encodeURIComponent(email)}`,
+    dto,
+  );
+
+// ── Meeting Summaries ───────────────────────────────────────────
+
+/** GET /api/meeting-summaries/{meetingId} */
+export const getMeetingSummary = (meetingId) =>
+  API.get(`/meeting-summaries/${meetingId}`);
+
+/** GET /api/meeting-summaries/my */
+export const getMyMeetingSummaries = () => API.get("/meeting-summaries/my");
+
+// ── Admin — per-user-in-org (org admin only) ───────────────────────────────
+// organizationId is derived server-side from the caller's own JWT — never
+// sent from the client — so an admin can only touch their own org's users.
+
+/** GET /api/chat-feature-flags/admin/user/{email} */
+// ── Admin — per-user-in-org (org admin only) ───────────────────────────────
+// organizationId is derived server-side from the caller's own JWT — never
+// sent from the client — so an admin can only touch their own org's users.
+
+/** GET /api/chat-feature-flags/admin/user/{email} */
+export const getAdminUserChatFeatureFlags = (email) =>
+  API.get(`/chat-feature-flags/admin/user/${encodeURIComponent(email)}`);
+
+/** PUT /api/chat-feature-flags/admin/user/{email} */
+export const updateAdminUserChatFeatureFlags = (email, dto) =>
+  API.put(`/chat-feature-flags/admin/user/${encodeURIComponent(email)}`, dto);
