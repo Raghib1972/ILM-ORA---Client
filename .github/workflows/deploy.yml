@@ -1,0 +1,28 @@
+name: Deploy Next.js Frontend to EC2
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Deploy and Build on EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.NEXTJS_EC2_HOST }}
+          username: ${{ secrets.NEXTJS_EC2_USER }}
+          key: ${{ secrets.NEXTJS_EC2_SSH_KEY }}
+          script: |
+            cd /home/ec2-user/ILM-ORA---Client
+            git pull origin main
+            npm install
+            export NODE_OPTIONS="--max-old-space-size=3072"
+            npm run build
+            pm2 restart ilmora-nextjs
