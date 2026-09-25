@@ -19,6 +19,9 @@ jobs:
           host: ${{ secrets.NEXTJS_EC2_HOST }}
           username: ${{ secrets.NEXTJS_EC2_USER }}
           key: ${{ secrets.NEXTJS_EC2_SSH_KEY }}
+          port: 22
+          timeout: 30s
+          command_timeout: 15m
           script: |
             cd /home/ec2-user/ILM-ORA---Client
             git pull origin main
