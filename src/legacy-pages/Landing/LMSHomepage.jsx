@@ -2780,7 +2780,7 @@ function AiCompanionTeaser({ navigate }) {
     return (
     <section
       id="ai-companion"
-      className="relative py-16 sm:py-24 px-6 scroll-mt-20 overflow-hidden bg-[#0B0F19]"
+      className="relative py-16 sm:py-24 px-6 scroll-mt-20 overflow-hidden bg-[#F6EDE6] dark:bg-black"
     >
       <style>{`
         @keyframes aicFloat { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
@@ -2808,24 +2808,24 @@ function AiCompanionTeaser({ navigate }) {
             New · Powered by AI
           </span>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1E293B] dark:text-white mb-4 leading-tight">
             Meet Your <br className="hidden md:block" />
             <span className="text-[#F97316]">AI Companion</span>
           </h2>
 
-          <p className="text-sm sm:text-base text-gray-300 max-w-md mx-auto md:mx-0 mb-6">
+           <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 max-w-md mx-auto md:mx-0 mb-6">
             Chat, write, transcribe meetings and automate workflows — one AI
             sidebar that follows you across every course and session.
           </p>
 
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-8">
             {chips.map((c) => (
-              <span
+                            <span
                 key={c.label}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs sm:text-sm font-semibold text-white"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs sm:text-sm font-semibold text-[#1E293B] dark:text-white bg-white dark:bg-transparent"
                 style={{
-                  background: "rgba(15,23,42,0.85)",
-                  border: "1px solid rgba(255,255,255,0.12)",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+                  border: "1px solid rgba(30,41,59,0.1)",
                 }}
               >
                 <c.icon className="w-3.5 h-3.5 text-[#F97316]" />
