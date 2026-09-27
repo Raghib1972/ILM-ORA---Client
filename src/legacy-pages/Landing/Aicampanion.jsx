@@ -77,7 +77,7 @@ import AiCompanionSidebar from "../../Trainer/ai-companion/AiCompanionSidebar";
 // ─────────────────────────────────────────────────────────────────────────
 // Theme tokens — identical palette to the ILM ORA marketing shell
 // ─────────────────────────────────────────────────────────────────────────
-const T = {
+export const T = {
   light: {
     pageBg: "#ffffff",
     altBg: "#FBF7F2",

@@ -239,10 +239,35 @@ const MODES_BY_TAB = {
   ],
 };
 
+const MODE_CARD_THEME = {
+  light: {
+    text: "#1E293B",
+    textMuted: "#64748B",
+    border: "#EEE6DC",
+    borderHov: "#F97316",
+    cardBg: "#ffffff",
+    cardBgHov: "#FFF7F0",
+    shadowHov: "0 8px 20px -8px rgba(249,115,22,0.35)",
+    iconBg: "#FFF1E4",
+    iconBorder: "#FBE0C4",
+  },
+  dark: {
+    text: "#F1F5F9",
+    textMuted: "#94A3B8",
+    border: "#1E293B",
+    borderHov: "#FB923C",
+    cardBg: "#111827",
+    cardBgHov: "#1A2337",
+    shadowHov: "0 8px 20px -8px rgba(251,146,60,0.35)",
+    iconBg: "rgba(251,146,60,0.12)",
+    iconBorder: "rgba(251,146,60,0.25)",
+  },
+};
+
 function ModeCard({ m, isDark, onSelect }) {
   const [hov, setHov] = useState(false);
   const Icon = m.icon;
-  const t = isDark ? T.dark : T.light;
+  const t = isDark ? MODE_CARD_THEME.dark : MODE_CARD_THEME.light;
   const border = t.border;
 
   return (
