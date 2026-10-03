@@ -2297,9 +2297,14 @@ import {
   Target,
   TrendingUp,
   Trophy,
-  Users,
+    Users,
   Wand2,
   Zap,
+  BarChart3,
+  CalendarClock,
+  FileText,
+  Shield,
+  Video,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "@/lib/routerCompat";
@@ -2307,7 +2312,15 @@ import heroVideo from "../../assets/hero-1.mp4";
 import heroStudent2 from "../../assets/hero-student-2.webp";
 import heroStudent3 from "../../assets/hero-student-3.webp";
 import heroStudent from "../../assets/hero-student.webp";
-import aiCompanionImg from "../../assets/AiCompanion.webp";
+import aiChatImg from "../../assets/AI Companion/AI_Chat.webp";
+import aiWriteImg from "../../assets/AI Companion/Help_Me_Write.webp";
+import aiNotesImg from "../../assets/AI Companion/Live_Notes.webp";
+import aiWorkflowsImg from "../../assets/AI Companion/Workflows.webp";
+import workspacePreviewImg from "../../assets/WorkspacePreview.webp";
+import workspaceDashboardImg from "../../assets/Dashboard.webp";
+import workspaceHostImg from "../../assets/Host Controller.webp";
+import workspaceRecordingsImg from "../../assets/RecordingsNotes.webp";
+import workspaceStartJoinImg from "../../assets/StartJoin.webp";
 import ctaStudent from "../../assets/cta-student.webp";
 import auth from "../../auth";
 import Navbar from "./components/Navbar";
@@ -2748,21 +2761,41 @@ function TopCompaniesCarousel({ logos }) {
     </div>
   );
 }
-// ─────────────────────────────────────────────────────────────────────────────
-// AiCompanionTeaser — "wow" preview card for the AI Companion product.
-// Pure CSS/JS 3D tilt (mouse-move parallax), floating feature chips, and an
-// ambient glow — no extra libraries. Clicking anywhere on the card routes to
-// the full AI Companion product page (Aicampanion.jsx).
+
+
+ // ─────────────────────────────────────────────────────────────────────────────
+// AiCompanionTeaser — preview card for the AI Companion product. Chips and
+// dots switch between the four feature screenshots (auto-rotates every 3.5s,
+// pauses on hover). Clicking the preview or CTA opens /ai-companion.
 // ─────────────────────────────────────────────────────────────────────────────
 function AiCompanionTeaser({ navigate }) {
   const cardRef = useRef(null);
   const [tilt, setTilt] = useState({ rx: 0, ry: 0 });
+  const [activeFeature, setActiveFeature] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  const features = [
+    { icon: MessageSquare, label: "AI Chat", img: aiChatImg },
+    { icon: Wand2, label: "Help Me Write", img: aiWriteImg },
+    { icon: Mic, label: "Live Notes", img: aiNotesImg },
+    { icon: Zap, label: "Workflows", img: aiWorkflowsImg },
+  ];
+  const activeImg = features[activeFeature].img;
+
+  // Auto-rotate every 3.5s; pauses while the user hovers the preview
+  useEffect(() => {
+    if (paused) return;
+    const t = setInterval(() => {
+      setActiveFeature((p) => (p + 1) % features.length);
+    }, 3500);
+    return () => clearInterval(t);
+  }, [activeFeature, paused]);
 
   const handleMouseMove = (e) => {
     const el = cardRef.current;
     if (!el) return;
     const rect = el.getBoundingClientRect();
-    const px = (e.clientX - rect.left) / rect.width - 0.5; // -0.5 .. 0.5
+    const px = (e.clientX - rect.left) / rect.width - 0.5;
     const py = (e.clientY - rect.top) / rect.height - 0.5;
     setTilt({ rx: py * -8, ry: px * 10 });
   };
@@ -2770,20 +2803,14 @@ function AiCompanionTeaser({ navigate }) {
 
   const goToAiCompanion = () => navigate("/ai-companion");
 
-  const chips = [
-    { icon: MessageSquare, label: "AI Chat", top: "8%", left: "-6%" },
-    { icon: Wand2, label: "Help Me Write", top: "62%", left: "-10%" },
-    { icon: Mic, label: "Live Notes", top: "80%", left: "58%" },
-    { icon: Zap, label: "Workflows", top: "4%", left: "68%" },
-  ];
-
-    return (
+  return (
     <section
       id="ai-companion"
-      className="relative py-16 sm:py-24 px-6 scroll-mt-20 overflow-hidden bg-[#F6EDE6] dark:bg-black"
+      className="relative pt-4 pb-8 sm:pt-6 sm:pb-10 px-6 scroll-mt-20 overflow-hidden bg-[#F6EDE6] dark:bg-black"
     >
       <style>{`
         @keyframes aicFloat { 0%,100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+        @keyframes aicFade { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
         .aic-img-float { animation: aicFloat 5s ease-in-out infinite; }
         @media (prefers-reduced-motion: reduce) {
           .aic-img-float { animation: none !important; }
@@ -2800,7 +2827,7 @@ function AiCompanionTeaser({ navigate }) {
         style={{ background: "radial-gradient(circle, rgba(59,130,246,0.3), transparent 70%)" }}
       />
 
-      <div className="max-w-6xl mx-auto relative grid md:grid-cols-2 items-center gap-10 md:gap-8">
+      <div className="max-w-6xl mx-auto relative grid md:grid-cols-2 items-center gap-10 md:gap-12">
         {/* left: copy + chips + CTA */}
         <div className="text-center md:text-left">
           <span className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-widest text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-4 py-1.5 rounded-full mb-5">
@@ -2808,29 +2835,41 @@ function AiCompanionTeaser({ navigate }) {
             New · Powered by AI
           </span>
 
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1E293B] dark:text-white mb-4 leading-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1E293B] dark:text-white mb-4 leading-tight">
             Meet Your <br className="hidden md:block" />
             <span className="text-[#F97316]">AI Companion</span>
           </h2>
 
-           <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 max-w-md mx-auto md:mx-0 mb-6">
+          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 max-w-md mx-auto md:mx-0 mb-6">
             Chat, write, transcribe meetings and automate workflows — one AI
             sidebar that follows you across every course and session.
           </p>
 
           <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-8">
-            {chips.map((c) => (
-                            <span
-                key={c.label}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs sm:text-sm font-semibold text-[#1E293B] dark:text-white bg-white dark:bg-transparent"
-                style={{
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-                  border: "1px solid rgba(30,41,59,0.1)",
-                }}
+            {features.map((f, i) => (
+              <button
+                type="button"
+                key={f.label}
+                onClick={() => setActiveFeature(i)}
+                aria-pressed={activeFeature === i}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs sm:text-sm font-semibold border transition-all duration-300 cursor-pointer ${
+                  activeFeature === i
+                    ? "bg-[#F97316] text-white border-[#F97316] shadow-lg shadow-orange-500/30"
+                    : "bg-white dark:bg-transparent text-[#1E293B] dark:text-white border-[#1E293B]/10 hover:border-[#F97316]/40"
+                }`}
+                style={
+                  activeFeature === i
+                    ? undefined
+                    : { boxShadow: "0 2px 8px rgba(0,0,0,0.06)" }
+                }
               >
-                <c.icon className="w-3.5 h-3.5 text-[#F97316]" />
-                {c.label}
-              </span>
+                <f.icon
+                  className={`w-3.5 h-3.5 ${
+                    activeFeature === i ? "text-white" : "text-[#F97316]"
+                  }`}
+                />
+                {f.label}
+              </button>
             ))}
           </div>
 
@@ -2842,29 +2881,659 @@ function AiCompanionTeaser({ navigate }) {
           </button>
         </div>
 
-        {/* right: big laptop illustration */}
+        {/* right: switching preview image + dots */}
+        <div className="w-full">
+          <div
+            ref={cardRef}
+            onMouseMove={handleMouseMove}
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => {
+              resetTilt();
+              setPaused(false);
+            }}
+            onClick={goToAiCompanion}
+            role="button"
+            tabIndex={0}
+            aria-label="Open AI Companion"
+            onKeyDown={(e) => e.key === "Enter" && goToAiCompanion()}
+            className="aic-img-float relative cursor-pointer select-none"
+            style={{
+              transformStyle: "preserve-3d",
+              transform: `perspective(1000px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)`,
+              transition: "transform 0.15s ease-out",
+            }}
+          >
+              <img
+              key={activeFeature}
+              src={activeImg.src || activeImg}
+              alt={`AI Companion — ${features[activeFeature].label}`}
+              loading="lazy"
+              decoding="async"
+              className="w-full h-auto rounded-2xl shadow-2xl"
+              style={{ animation: "aicFade 0.35s ease both" }}
+            />
+          </div>
+
+          {/* Dot pagination */}
+          <div className="flex items-center justify-center gap-2 mt-5">
+            {features.map((f, i) => (
+              <button
+                type="button"
+                key={f.label}
+                onClick={() => setActiveFeature(i)}
+                aria-label={`Show ${f.label}`}
+                style={{
+                  width: activeFeature === i ? "28px" : "10px",
+                  height: "10px",
+                  borderRadius: "9999px",
+                  background: activeFeature === i ? "#F97316" : "rgba(30,41,59,0.25)",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: 0,
+                  transition: "width 0.35s ease, background 0.35s ease",
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+       
+// ─────────────────────────────────────────────────────────────────────────────
+// CalendarShowcase — "ILM ORA Calendry" tab content (ported from ilmorameet.jsx)
+// ─────────────────────────────────────────────────────────────────────────────
+const CAL_FEATURES = [
+  {
+    key: "video",
+    Icon: Video,
+    label: "Live sessions",
+    badge: "Scheduling",
+    heading: "Book a seat with the world’s best mentors",
+    desc: "Giving you complete control over your calendar, ILM ORA makes it the easiest and most flexible way to find your next live class.",
+    linkText: "Learn more",
+    duration: 7200,
+  },
+  {
+    key: "spark",
+    Icon: Sparkles,
+    label: "AI-matched mentors",
+    badge: "AI matching",
+    heading: "Get matched to the right mentor, instantly",
+    desc: "Texora AI reads your goal and current level, then recommends the class and mentor most likely to move you forward this week.",
+    linkText: "See how matching works",
+    duration: 3200,
+  },
+  {
+    key: "shield",
+    Icon: Shield,
+    label: "Verified credentials",
+    badge: "Credentials",
+    heading: "A certificate employers can actually check",
+    desc: "Every certificate carries a verifiable link, so anyone you share it with can confirm it in seconds.",
+    linkText: "View a sample certificate",
+    duration: 3200,
+  },
+  {
+    key: "chat",
+    Icon: MessageSquare,
+    label: "Live chat support",
+    badge: "Support",
+    heading: "Help is one message away",
+    desc: "Stuck mid-assignment or unsure which track fits? Message a mentor or our support team and get a real answer, fast.",
+    linkText: "Message support",
+    duration: 3200,
+  },
+];
+
+const CAL_DATE = 24;
+const CAL_SLOT = "2:00 PM";
+// October 2026 starts on a Thursday → 4 blank cells before day 1
+const CAL_BLANKS = 4;
+const CAL_TODAY = 3;
+
+function CalAvatar({ initials, from, to, size = "w-10 h-10" }) {
+  return (
+    <span
+      className={`${size} rounded-full flex-shrink-0 flex items-center justify-center text-[12px] font-bold text-[#1E293B]`}
+      style={{ background: `linear-gradient(135deg, ${from}, ${to})` }}
+    >
+      {initials}
+    </span>
+  );
+}
+
+function CalendarShowcase({ onLearnMore }) {
+  const [reduce, setReduce] = useState(false);
+  const [active, setActive] = useState(0);
+  const [pickedDate, setPickedDate] = useState(null);
+  const [pickedSlot, setPickedSlot] = useState(null);
+  const [confirming, setConfirming] = useState(false);
+  const [cursor, setCursor] = useState({ x: 24, y: 24, show: false });
+
+  const visualRef = useRef(null);
+  const dateElRef = useRef(null);
+  const slotElRef = useRef(null);
+  const confirmElRef = useRef(null);
+
+  const current = CAL_FEATURES[active];
+  const isVideoActive = active === 0;
+
+  useEffect(() => {
+    setReduce(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+  }, []);
+
+  // Auto-advance through the 4 panels (each has its own dwell time)
+  useEffect(() => {
+    if (reduce) return;
+    const t = setTimeout(() => {
+      setActive((i) => (i + 1) % CAL_FEATURES.length);
+    }, CAL_FEATURES[active].duration);
+    return () => clearTimeout(t);
+  }, [reduce, active]);
+
+  // Fake-cursor demo — only while the calendar panel is on screen
+  useEffect(() => {
+    if (reduce) {
+      setPickedDate(CAL_DATE);
+      setPickedSlot(CAL_SLOT);
+      return;
+    }
+    if (!isVideoActive) {
+      setPickedDate(null);
+      setPickedSlot(null);
+      setConfirming(false);
+      setCursor((c) => ({ ...c, show: false }));
+      return;
+    }
+
+    let cancelled = false;
+    const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+
+    const moveCursorTo = (el) => {
+      if (!el || !visualRef.current) return;
+      const target = el.getBoundingClientRect();
+      const box = visualRef.current.getBoundingClientRect();
+      setCursor({
+        x: target.left - box.left + target.width / 2,
+        y: target.top - box.top + target.height / 2,
+        show: true,
+      });
+    };
+
+    async function run() {
+      setPickedDate(null);
+      setPickedSlot(null);
+      setConfirming(false);
+      setCursor({ x: 24, y: 24, show: false });
+      await wait(500);
+      if (cancelled) return;
+
+      moveCursorTo(dateElRef.current);
+      await wait(650);
+      if (cancelled) return;
+      setPickedDate(CAL_DATE);
+      await wait(550);
+      if (cancelled) return;
+
+      moveCursorTo(slotElRef.current);
+      await wait(650);
+      if (cancelled) return;
+      setPickedSlot(CAL_SLOT);
+      await wait(550);
+      if (cancelled) return;
+
+      moveCursorTo(confirmElRef.current);
+      await wait(650);
+      if (cancelled) return;
+      setConfirming(true);
+      await wait(900);
+      if (cancelled) return;
+
+      setCursor((c) => ({ ...c, show: false }));
+    }
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [isVideoActive, reduce]);
+
+  return (
+    <div className="max-w-6xl mx-auto relative pt-8">
+      <style>{`
+        @keyframes calFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        @keyframes calIn { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
+        @keyframes calClick { 0% { transform: scale(1); } 35% { transform: scale(.72); } 100% { transform: scale(1); } }
+        .cal-float { animation: calFloat 3.2s ease-in-out infinite; }
+        .cal-in { animation: calIn .5s cubic-bezier(.22,1,.36,1) both; }
+        .cal-cursor { position:absolute; left:0; top:0; pointer-events:none; opacity:0; z-index:5;
+          transition: transform .65s cubic-bezier(.22,1,.36,1), opacity .3s ease;
+          filter: drop-shadow(0 3px 6px rgba(0,0,0,.35)); }
+        .cal-cursor.show { opacity:1; }
+        .cal-cursor.click svg { animation: calClick .5s ease; }
+        @media (prefers-reduced-motion: reduce) { .cal-float, .cal-in { animation: none !important; } }
+      `}</style>
+
+      <div
+        className="relative rounded-[28px] sm:rounded-[36px] px-4 sm:px-10 pt-14 pb-8 sm:pb-10"
+        style={{
+          background:
+            "linear-gradient(150deg,#FFD9B0 0%,#F97316 55%,#C9531B 100%)",
+          boxShadow: "0 40px 80px -30px rgba(208,106,26,.45)",
+        }}
+      >
+        {/* Floating icons */}
         <div
-          ref={cardRef}
-          onMouseMove={handleMouseMove}
-          onMouseLeave={resetTilt}
-          onClick={goToAiCompanion}
-          role="button"
-          tabIndex={0}
-          onKeyDown={(e) => e.key === "Enter" && goToAiCompanion()}
-          className="aic-img-float relative cursor-pointer select-none"
-          style={{
-            transformStyle: "preserve-3d",
-            transform: `perspective(1000px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)`,
-            transition: "transform 0.15s ease-out",
-          }}
+          className="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 flex gap-2 sm:gap-3.5 z-10"
+          role="tablist"
+          aria-label="ILM ORA calendar features"
         >
-          <img
-            src={aiCompanionImg.src || aiCompanionImg}
-            alt="AI Companion — chat, write, and automate from one sidebar"
-            loading="lazy"
-            decoding="async"
-            className="w-full h-auto"
-          />
+          {CAL_FEATURES.map(({ Icon, label }, i) => {
+            const isActive = active === i;
+            return (
+              <button
+                key={label}
+                type="button"
+                role="tab"
+                aria-selected={isActive}
+                title={label}
+                onClick={() => setActive(i)}
+                style={{ animationDelay: `${i * 0.35}s` }}
+                className={`group relative rounded-full flex items-center justify-center border-none cursor-pointer shadow-lg transition-all duration-200 ${
+                  reduce ? "" : "cal-float"
+                } ${
+                  isActive
+                    ? "w-12 h-12 sm:w-16 sm:h-16 bg-[#1a1a2e] text-white ring-4 ring-white/55"
+                    : "w-11 h-11 sm:w-14 sm:h-14 bg-white text-gray-500 hover:text-[#1E293B]"
+                }`}
+              >
+                <Icon className="w-5 h-5" />
+                <span
+                  className={`absolute left-1/2 top-[calc(100%+10px)] -translate-x-1/2 whitespace-nowrap bg-[#1a1a2e] text-white text-[11px] font-semibold px-2.5 py-1 rounded-lg pointer-events-none transition-opacity duration-200 ${
+                    isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+                  }`}
+                >
+                  {label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-5 sm:gap-6 mt-8">
+          {/* left: glass info panel */}
+          <div
+            key={`info-${current.key}`}
+            className="cal-in flex flex-col justify-center rounded-[22px] p-6 sm:p-8 text-white bg-white/15 backdrop-blur-md border border-white/35"
+          >
+            <span className="inline-flex self-start bg-white/25 text-[12px] font-semibold px-3 py-1 rounded-full mb-4">
+              {current.badge}
+            </span>
+            <h3 className="text-xl sm:text-2xl lg:text-[26px] font-bold leading-tight mb-3 text-white">
+              {current.heading}
+            </h3>
+            <p className="text-sm sm:text-base text-white/85 mb-5 max-w-md">
+              {current.desc}
+            </p>
+            <button
+              type="button"
+              onClick={onLearnMore}
+              className="inline-flex items-center gap-1.5 w-fit font-semibold text-white bg-transparent border-0 border-b-2 border-white/60 hover:border-white pb-0.5 cursor-pointer transition-colors"
+            >
+              {current.linkText} <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* right: visual */}
+          <div
+            ref={visualRef}
+            key={`visual-${current.key}`}
+            className="cal-in relative"
+            aria-hidden="true"
+          >
+            {current.key === "video" && (
+              <div className="bg-white rounded-[22px] p-5 shadow-2xl text-[#1E293B]">
+                <div className="flex items-center justify-between font-semibold mb-3">
+                  <span>October 2026</span>
+                  <span className="flex gap-1.5">
+                    <i className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
+                      <ChevronLeft className="w-3.5 h-3.5" />
+                    </i>
+                    <i className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
+                      <ChevronRight className="w-3.5 h-3.5" />
+                    </i>
+                  </span>
+                </div>
+                <div className="grid grid-cols-7 text-center text-[11px] text-gray-500 mb-1.5">
+                  {["S", "M", "T", "W", "T", "F", "S"].map((d, i) => (
+                    <span key={i}>{d}</span>
+                  ))}
+                </div>
+                <div className="grid grid-cols-7 gap-1 mb-4">
+                  {Array.from({ length: CAL_BLANKS }).map((_, i) => (
+                    <span key={`b${i}`} />
+                  ))}
+                  {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => {
+                    const isToday = d === CAL_TODAY;
+                    const isPicked = d === pickedDate;
+                    return (
+                      <span
+                        key={d}
+                        ref={d === CAL_DATE ? dateElRef : null}
+                        className={`aspect-square flex items-center justify-center rounded-lg text-[12px] sm:text-[13px] transition-colors duration-200 ${
+                          isPicked
+                            ? "bg-[#F97316] text-white font-semibold"
+                            : isToday
+                              ? "border-[1.5px] border-[#F97316] font-semibold"
+                              : ""
+                        }`}
+                      >
+                        {d}
+                      </span>
+                    );
+                  })}
+                </div>
+                <div className="flex flex-col gap-2 mb-4">
+                  {["10:00 AM", CAL_SLOT, "4:30 PM"].map((s) => (
+                    <span
+                      key={s}
+                      ref={s === CAL_SLOT ? slotElRef : null}
+                      className={`rounded-[10px] px-3 py-2 text-[13px] font-medium border-[1.5px] transition-colors duration-200 ${
+                        s === pickedSlot
+                          ? "border-[#F97316] bg-orange-50 text-[#d06a1a]"
+                          : "border-gray-200"
+                      }`}
+                    >
+                      {s}
+                    </span>
+                  ))}
+                </div>
+                <div
+                  ref={confirmElRef}
+                  className={`text-center text-white font-semibold py-3 rounded-xl transition-all duration-200 ${
+                    confirming ? "bg-[#0E7A5F] scale-[.97]" : "bg-[#1a1a2e]"
+                  }`}
+                >
+                  {confirming ? "Seat confirmed" : "Confirm seat"}
+                </div>
+              </div>
+            )}
+
+            {current.key === "spark" && (
+              <div className="bg-white rounded-[22px] p-6 shadow-2xl text-[#1E293B] flex flex-col gap-3 h-full justify-center">
+                <span className="inline-flex self-start bg-orange-50 text-[#d06a1a] text-[12px] font-semibold px-2.5 py-1 rounded-full">
+                  Texora AI match
+                </span>
+                <div className="flex items-center gap-3 border-[1.5px] border-gray-200 rounded-xl px-3.5 py-3">
+                  <CalAvatar initials="MR" from="#FFE8A3" to="#FFC7B8" />
+                  <div>
+                    <b className="block text-[15px] leading-snug">Meera Rao</b>
+                    <small className="text-gray-500 text-[12px]">
+                      Product mentor · 98% fit for your goal
+                    </small>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3 border-[1.5px] border-gray-200 rounded-xl px-3.5 py-3">
+                  <CalAvatar initials="AS" from="#9BE7D6" to="#CFE0FF" />
+                  <div>
+                    <b className="block text-[15px] leading-snug">
+                      Writing Specs Engineers Read
+                    </b>
+                    <small className="text-gray-500 text-[12px]">
+                      Recommended next class, Sunday 11:00
+                    </small>
+                  </div>
+                </div>
+                <div className="text-center text-white font-semibold py-3 rounded-xl bg-[#F97316]">
+                  View match
+                </div>
+              </div>
+            )}
+
+            {current.key === "shield" && (
+              <div className="bg-white rounded-[22px] p-6 shadow-2xl text-[#1E293B] flex flex-col items-center justify-center text-center gap-2 h-full">
+                <small className="text-gray-500">Certificate of completion</small>
+                <h4 className="text-xl font-bold">Product Management</h4>
+                <div className="font-semibold text-base">Ananya Sharma</div>
+                <small className="text-gray-500">
+                  completed all sessions and assignments
+                </small>
+                <span className="inline-flex items-center gap-2 mt-2 bg-white rounded-2xl px-3.5 py-2 shadow-md text-[13px] font-semibold text-[#0E7A5F]">
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.6"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M20 6 9 17l-5-5" />
+                  </svg>
+                  Verified credential
+                </span>
+              </div>
+            )}
+
+            {current.key === "chat" && (
+              <div className="bg-white rounded-[22px] p-6 shadow-2xl text-[#1E293B] flex flex-col gap-3 h-full justify-center">
+                <div className="flex items-end gap-2">
+                  <CalAvatar initials="RK" from="#C3B3FF" to="#CFE0FF" size="w-7 h-7" />
+                  <span className="bg-[#EEF3FF] rounded-[14px_14px_14px_4px] px-3 py-2 text-[13px] leading-snug max-w-[82%]">
+                    Which metric should I pick for onboarding?
+                  </span>
+                </div>
+                <div className="flex items-end gap-2">
+                  <CalAvatar initials="MR" from="#FFE8A3" to="#FFC7B8" size="w-7 h-7" />
+                  <span className="bg-[#E6F8F3] rounded-[14px_14px_14px_4px] px-3 py-2 text-[13px] leading-snug max-w-[82%]">
+                    Start with activation rate in week one.
+                  </span>
+                </div>
+                <div className="text-center text-white font-semibold py-3 rounded-xl bg-[#F97316]">
+                  Ask a mentor
+                </div>
+              </div>
+            )}
+
+            {!reduce && isVideoActive && (
+              <div
+                className={`cal-cursor${cursor.show ? " show" : ""}${confirming ? " click" : ""}`}
+                style={{ transform: `translate(${cursor.x}px, ${cursor.y}px)` }}
+              >
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+                  <path
+                    d="M2 1.5 19 9.2l-6.9 1.6L9 19 2 1.5Z"
+                    fill="#1a1a2e"
+                    stroke="#fff"
+                    strokeWidth="1.2"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function WorkspaceTeaser({
+  navigate,
+  to = "/workspace",
+  calendarTo = "/calendar", // apna real Calendar route yahan daalo
+}) {
+  const goToWorkspace = () => navigate(to);
+  const [activeFeature, setActiveFeature] = useState(0);
+
+  const workspaceFeatures = [
+    { icon: CalendarClock, label: "Start & Join", img: workspaceStartJoinImg },
+    { icon: Video, label: "Workshop", img: workspacePreviewImg },
+    { icon: Shield, label: "Host Controls", img: workspaceHostImg },
+    { icon: BarChart3, label: "Dashboard", img: workspaceDashboardImg },
+    { icon: FileText, label: "Recordings & Notes", img: workspaceRecordingsImg },
+  ];
+  const activeImg = workspaceFeatures[activeFeature].img;
+
+  // Top tab bar (image 1 jaisa). "workspace" yahan active tab hai.
+  const [activeTopTab, setActiveTopTab] = useState("workspace");
+  const topTabs = [
+    { key: "workspace", label: "ILM ORA Workspace", icon: Users, onClick: () => setActiveTopTab("workspace") },
+    { key: "calendar", label: "ILM ORA Calendry", icon: CalendarClock, onClick: () => setActiveTopTab("calendar") },
+  ];
+
+  // Auto-rotate every 3.5s; resets whenever user clicks a chip
+  useEffect(() => {
+    const t = setInterval(() => {
+      setActiveFeature((p) => (p + 1) % workspaceFeatures.length);
+    }, 3500);
+    return () => clearInterval(t);
+  }, [activeFeature]);
+
+  return (
+    <section
+      id="workspace-teaser"
+      className="relative pt-0 pb-6 sm:pb-8 px-6 scroll-mt-20 overflow-hidden bg-[#1E293B] dark:bg-gray-900"
+    >
+      <div
+        className="absolute -top-24 -right-24 w-[380px] h-[380px] rounded-full blur-2xl pointer-events-none opacity-40"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(249,115,22,0.35), transparent 70%)",
+        }}
+      />
+
+      {/* ── Top tab bar ── */}
+      <div className="max-w-6xl mx-auto relative">
+                <div className="flex items-center justify-center md:justify-start gap-6 sm:gap-10 border-b border-white/10 mb-5 sm:mb-6">
+          {topTabs.map((tab) => {
+            const isActive = activeTopTab === tab.key;
+            return (
+              <button
+                type="button"
+                key={tab.key}
+                onClick={tab.onClick}
+                aria-current={isActive ? "page" : undefined}
+                className={`relative inline-flex items-center gap-2 px-2 sm:px-4 md:first:pl-0 py-3 text-sm sm:text-base font-semibold whitespace-nowrap transition-colors duration-300 cursor-pointer bg-transparent border-none ${
+                  isActive ? "text-[#F97316]" : "text-white hover:text-[#F97316]"
+                }`}
+              >
+                <tab.icon className="w-4 h-4 sm:w-[18px] sm:h-[18px]" />
+                {tab.label}
+                <span
+                  className={`absolute left-0 right-0 -bottom-px h-[2px] rounded-full bg-[#F97316] transition-opacity duration-300 ${
+                    isActive ? "opacity-100" : "opacity-0"
+                  }`}
+                />
+                            </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {activeTopTab === "calendar" && (
+        <CalendarShowcase onLearnMore={() => navigate(calendarTo)} />
+      )}
+
+      <div
+        className={`max-w-6xl mx-auto relative items-center gap-10 md:gap-12 ${
+          activeTopTab === "calendar" ? "hidden" : "grid md:grid-cols-2"
+        }`}
+      >
+        {/* left: copy + chips + CTA */}
+        <div className="text-center md:text-left">
+          <span className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-widest text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-4 py-1.5 rounded-full mb-5">
+            <Users className="w-3.5 h-3.5" />
+            ILM ORA workspace
+          </span>
+
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
+            Your Complete <br className="hidden md:block" />
+            <span className="text-[#F97316]">Meeting Workspace</span>
+          </h2>
+
+          <p className="text-sm sm:text-base text-gray-300 max-w-md mx-auto md:mx-0 mb-6">
+            Schedule, host and review live sessions — everything before, during
+            and after the meeting, together in one place.
+          </p>
+
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-8">
+            {workspaceFeatures.map((f, i) => (
+              <button
+                type="button"
+                key={f.label}
+                onClick={() => setActiveFeature(i)}
+                aria-pressed={activeFeature === i}
+                className={`inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-xs sm:text-sm font-semibold text-white border transition-all duration-300 cursor-pointer ${
+                  activeFeature === i
+                    ? "bg-[#F97316] border-[#F97316] shadow-lg shadow-orange-500/30"
+                    : "bg-white/10 border-white/15 hover:bg-white/20"
+                }`}
+              >
+                <f.icon
+                  className={`w-3.5 h-3.5 ${
+                    activeFeature === i ? "text-white" : "text-[#F97316]"
+                  }`}
+                />
+                {f.label}
+              </button>
+            ))}
+          </div>
+
+          <button
+            onClick={goToWorkspace}
+            className="inline-flex items-center justify-center gap-2 bg-[#F97316] text-white font-bold px-6 py-3.5 rounded-xl text-sm sm:text-base whitespace-nowrap hover:bg-[#ea580c] transition-all hover:scale-105 shadow-lg"
+          >
+            Explore Workspace <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* right: meeting-window preview image + dots */}
+        <div>
+          <div
+            onClick={goToWorkspace}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === "Enter" && goToWorkspace()}
+            aria-label="Open ILM ORA Meetings workspace"
+            className="cursor-pointer select-none hover:-translate-y-1 transition-transform duration-300"
+          >
+            <style>{`@keyframes wsFade { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }`}</style>
+            <img
+              key={activeFeature}
+              src={activeImg.src || activeImg}
+              alt={`ILM ORA Meetings — ${workspaceFeatures[activeFeature].label}`}
+              loading="lazy"
+              decoding="async"
+              className="w-full h-auto rounded-2xl shadow-2xl"
+              style={{ animation: "wsFade 0.35s ease both" }}
+            />
+          </div>
+
+          {/* Dot pagination */}
+          <div className="flex items-center justify-center gap-2 mt-5">
+            {workspaceFeatures.map((f, i) => (
+              <button
+                type="button"
+                key={f.label}
+                onClick={() => setActiveFeature(i)}
+                aria-label={`Show ${f.label}`}
+                style={{
+                  width: activeFeature === i ? "28px" : "10px",
+                  height: "10px",
+                  borderRadius: "9999px",
+                  background:
+                    activeFeature === i ? "#F97316" : "rgba(255,255,255,0.4)",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: 0,
+                  transition: "width 0.35s ease, background 0.35s ease",
+                }}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>
@@ -3775,7 +4444,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
       />
 
       {/* ── Hero ── */}
-      <section className="relative pt-24 pb-16 px-6 min-h-[70vh] sm:min-h-[75vh] flex items-center overflow-hidden bg-[#1E293B]">
+      <section className="relative pt-24 pb-10 px-6 min-h-[60vh] sm:min-h-[65vh] flex items-center overflow-hidden bg-[#1E293B]">
         {/* Full-bleed background video — loads only after idle, poster keeps a frame visible instantly */}
         <video
           src={videoReady ? heroVideo : undefined}
@@ -3892,19 +4561,19 @@ export default function LMSHomepage({ theme, toggleTheme }) {
       {/* ── Courses ── */}
       <section
         id="courses"
-        className="py-12 sm:py-16 scroll-mt-20 bg-[#F8FAFC] dark:bg-black"
+        className="py-6 sm:py-8 scroll-mt-20 bg-[#F8FAFC] dark:bg-black"
       >
         <div className="max-w-[1440px] mx-auto px-6">
           {/* ── Premium Section Header ── */}
-          <div className="text-center mb-6 sm:mb-8">
-            <span className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-widest text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-4 py-1.5 rounded-full mb-3">
+            <div className="text-center mb-3 sm:mb-4">
+            <span className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-widest text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-4 py-1.5 rounded-full mb-2">
               <Sparkles className="w-3.5 h-3.5" />
               Handpicked for you
             </span>
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3 tracking-tight text-[#1E293B] dark:text-white">
               Featured <span className="text-[#F97316]">Programs</span>
             </h2>
-            <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
               Choose your path and start building skills that matter — taught by
               mentors who've shipped at the world's best companies.
             </p>
@@ -3918,7 +4587,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
             {/* ── Category Tabs: compact carousel, scales to 10/20/50+ categories
                  without ever wrapping to multiple rows. Arrows + drag + wheel
                  + native swipe, active tab always auto-scrolled into view. ── */}
-            <div className="mb-6 sm:mb-8 mx-auto w-fit max-w-full sm:max-w-3xl px-1 sm:px-0">
+              <div className="mb-3 sm:mb-4 mx-auto w-fit max-w-full sm:max-w-3xl px-1 sm:px-0">
               <div className="h-[42px] flex items-center px-1 sm:px-1.5 bg-white dark:bg-gray-900 rounded-full border border-gray-200 dark:border-gray-800 shadow-md shadow-slate-200/50 dark:shadow-none overflow-hidden">
                 <CategoryTabScroller activeKey={activeTab}>
                   <TabsList className="flex w-max items-center justify-center gap-1.5 bg-transparent mx-auto h-full">
@@ -4172,17 +4841,20 @@ export default function LMSHomepage({ theme, toggleTheme }) {
                 />
               </TabsContent>
             ))}
-          </Tabs>
+        </Tabs>
         </div>
       </section>
 
+      {/* ── Workspace / Meetings teaser ── */}
+      <WorkspaceTeaser navigate={navigate} />
+
       {/* ── Stats ── */}
-      <section className="py-16 px-6 bg-white dark:bg-gray-900/50">
+        <section className="py-6 sm:py-8 px-6 bg-white dark:bg-gray-900/50">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
           {stats.map((stat, i) => (
             <div
               key={i}
-              className="bg-[#F6EDE6] dark:bg-gray-900 rounded-2xl p-8 text-center border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all"
+              className="bg-[#F6EDE6] dark:bg-gray-900 rounded-2xl p-4 sm:p-5 text-center border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all"
             >
               <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#F97316] mb-1.5">
                 {stat.value}
@@ -4200,10 +4872,10 @@ export default function LMSHomepage({ theme, toggleTheme }) {
       {/* ── Mentors (testimonials — backend-connected) ── */}
       <section
         id="mentors"
-        className="py-[60px] sm:py-[80px] lg:py-[90px] xl:py-[100px] px-4 sm:px-6 scroll-mt-20 bg-[#FAF6F2] dark:bg-gray-900/30 overflow-x-hidden"
+        className="py-6 sm:py-8 lg:py-10 px-4 sm:px-6 scroll-mt-20 bg-[#FAF6F2] dark:bg-gray-900/30 overflow-x-hidden"
       >
         <div className="max-w-[1200px] mx-auto">
-          <div className="text-center max-w-[900px] lg:max-w-none mx-auto mb-10 sm:mb-10 lg:mb-10">
+          <div className="text-center max-w-[900px] lg:max-w-none mx-auto mb-5 sm:mb-5 lg:mb-5">
             <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-bold mb-3 sm:mb-4 text-[#111827] dark:text-white leading-[1.15] lg:whitespace-nowrap">
               What Our <span className="text-[#F97316]">Learners</span> Have To
               Say
@@ -4218,7 +4890,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8 sm:mb-10 lg:mb-14">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-5 sm:mb-6 lg:mb-6">
             {mentorBenefits.map((item, i) => (
               <div
                 key={i}
@@ -4241,10 +4913,10 @@ export default function LMSHomepage({ theme, toggleTheme }) {
       {/* ── Career Support ── */}
       <section
         id="successstories"
-        className="py-24 px-6 scroll-mt-20 bg-[#F6EDE6] dark:bg-black"
+        className="py-8 px-10 scroll-mt-6 bg-[#F6EDE6] dark:bg-black"
       >
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-14">
+          <div className="text-center mb-6">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 text-[#1E293B] dark:text-white">
               Career Support That{" "}
               <span className="text-[#F97316]">Delivers Results</span>
@@ -4254,7 +4926,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
               mapping
             </p>
           </div>
-          <div className="grid lg:grid-cols-3 gap-8 mb-16">
+          <div className="grid lg:grid-cols-3 gap-5 mb-6">
             {careerSupport.map((item, i) => (
               <div
                 key={i}
@@ -4311,9 +4983,9 @@ export default function LMSHomepage({ theme, toggleTheme }) {
       </section>
 
       {/* ── Features ── */}
-      <section className="py-24 px-6 bg-[#F6EDE6] dark:bg-black">
+        <section className="py-8 sm:py-10 px-6 bg-[#F6EDE6] dark:bg-black">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+                    <div className="text-center mb-6">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 text-[#1E293B] dark:text-white">
               Why Choose
               <span className="ml-2">
@@ -4346,9 +5018,9 @@ export default function LMSHomepage({ theme, toggleTheme }) {
         </div>
       </section>
 
-      <section className="py-24 px-4 sm:px-6 relative overflow-hidden bg-white dark:bg-[#0F172A]">
+        <section className="py-8 sm:py-10 px-4 sm:px-6 relative overflow-hidden bg-white dark:bg-[#0F172A]">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16" style={{ marginBottom: 64 }}>
+            <div className="text-center mb-6" style={{ marginBottom: 28 }}>
             <p className="text-xs uppercase tracking-[0.25em] text-gray-400 dark:text-gray-400 font-bold">
               TRUSTED BY LEADING ORGANIZATIONS
             </p>
