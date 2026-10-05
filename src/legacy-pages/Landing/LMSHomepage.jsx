@@ -2311,6 +2311,11 @@ import { useNavigate } from "@/lib/routerCompat";
 import heroVideo from "../../assets/hero-1.mp4";
 import heroStudent2 from "../../assets/hero-student-2.webp";
 import heroStudent3 from "../../assets/hero-student-3.webp";
+import hero4 from "../../assets/hero-4.webp";
+import hero5 from "../../assets/hero-5.webp";
+import hero6 from "../../assets/hero-6.webp";
+import hero7 from "../../assets/hero-7.webp";
+import hero8 from "../../assets/hero-8.webp";
 import heroStudent from "../../assets/hero-student.webp";
 import aiChatImg from "../../assets/AI Companion/AI_Chat.webp";
 import aiWriteImg from "../../assets/AI Companion/Help_Me_Write.webp";
@@ -2827,25 +2832,25 @@ function AiCompanionTeaser({ navigate }) {
         style={{ background: "radial-gradient(circle, rgba(59,130,246,0.3), transparent 70%)" }}
       />
 
-      <div className="max-w-6xl mx-auto relative grid md:grid-cols-2 items-center gap-10 md:gap-12">
+      <div className="max-w-6xl mx-auto relative grid lg:grid-cols-2 items-center gap-10 lg:gap-12">
         {/* left: copy + chips + CTA */}
-        <div className="text-center md:text-left">
-          <span className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-widest text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-4 py-1.5 rounded-full mb-5">
+        <div className="text-center lg:text-left">
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-4 py-1.5 rounded-full mb-5">
             <Bot className="w-3.5 h-3.5" />
             New · Powered by AI
           </span>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-[#1E293B] dark:text-white mb-4 leading-tight">
-            Meet Your <br className="hidden md:block" />
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-[#1E293B] dark:text-white mb-4 leading-tight">
+            Meet Your <br className="hidden lg:block" />
             <span className="text-[#F97316]">AI Companion</span>
           </h2>
 
-          <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 max-w-md mx-auto md:mx-0 mb-6">
+                    <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-md mx-auto lg:mx-0 mb-6 leading-relaxed">
             Chat, write, transcribe meetings and automate workflows — one AI
             sidebar that follows you across every course and session.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-8">
+          <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 mb-8">
             {features.map((f, i) => (
               <button
                 type="button"
@@ -2875,7 +2880,7 @@ function AiCompanionTeaser({ navigate }) {
 
           <button
             onClick={goToAiCompanion}
-            className="inline-flex items-center justify-center gap-2 bg-[#F97316] text-white font-bold px-6 py-3.5 rounded-xl text-sm sm:text-base whitespace-nowrap hover:bg-[#ea580c] transition-all hover:scale-105 shadow-lg"
+            className="inline-flex items-center justify-center gap-2 bg-[#EA580C] text-white font-semibold px-6 py-3.5 rounded-xl text-sm sm:text-base whitespace-nowrap hover:bg-[#C2410C] transition-all hover:scale-105 shadow-lg"
           >
             Explore AI Companion <ArrowRight className="w-4 h-4" />
           </button>
@@ -3119,7 +3124,7 @@ function CalendarShowcase({ onLearnMore }) {
         className="relative rounded-[28px] sm:rounded-[36px] px-4 sm:px-10 pt-14 pb-8 sm:pb-10"
         style={{
           background:
-            "linear-gradient(150deg,#FFD9B0 0%,#F97316 55%,#C9531B 100%)",
+            "linear-gradient(150deg,#1E293B 0%,#334155 55%,#9A3412 100%)",
           boxShadow: "0 40px 80px -30px rgba(208,106,26,.45)",
         }}
       >
@@ -3438,28 +3443,28 @@ function WorkspaceTeaser({
       )}
 
       <div
-        className={`max-w-6xl mx-auto relative items-center gap-10 md:gap-12 ${
-          activeTopTab === "calendar" ? "hidden" : "grid md:grid-cols-2"
+        className={`max-w-6xl mx-auto relative items-center gap-10 lg:gap-12 ${
+          activeTopTab === "calendar" ? "hidden" : "grid lg:grid-cols-2"
         }`}
       >
         {/* left: copy + chips + CTA */}
-        <div className="text-center md:text-left">
+        <div className="text-center lg:text-left">
           <span className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-widest text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-4 py-1.5 rounded-full mb-5">
             <Users className="w-3.5 h-3.5" />
             ILM ORA workspace
           </span>
 
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white mb-4 leading-tight">
-            Your Complete <br className="hidden md:block" />
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-white mb-4 leading-tight">
+            Your Complete <br className="hidden lg:block" />
             <span className="text-[#F97316]">Meeting Workspace</span>
           </h2>
 
-          <p className="text-sm sm:text-base text-gray-300 max-w-md mx-auto md:mx-0 mb-6">
+            <p className="text-base sm:text-lg text-slate-300 max-w-md mx-auto lg:mx-0 mb-6 leading-relaxed">
             Schedule, host and review live sessions — everything before, during
             and after the meeting, together in one place.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-8">
+          <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 mb-8">
             {workspaceFeatures.map((f, i) => (
               <button
                 type="button"
@@ -3484,7 +3489,7 @@ function WorkspaceTeaser({
 
           <button
             onClick={goToWorkspace}
-            className="inline-flex items-center justify-center gap-2 bg-[#F97316] text-white font-bold px-6 py-3.5 rounded-xl text-sm sm:text-base whitespace-nowrap hover:bg-[#ea580c] transition-all hover:scale-105 shadow-lg"
+            className="inline-flex items-center justify-center gap-2 bg-[#EA580C] text-white font-semibold px-6 py-3.5 rounded-xl text-sm sm:text-base whitespace-nowrap hover:bg-[#C2410C] transition-all hover:scale-105 shadow-lg"
           >
             Explore Workspace <ArrowRight className="w-4 h-4" />
           </button>
@@ -3566,15 +3571,81 @@ export default function LMSHomepage({ theme, toggleTheme }) {
   const [modalLoading, setModalLoading] = useState(false);
   const [showModalPw, setShowModalPw] = useState(false);
 
-  const heroImages = [heroStudent, heroStudent2, heroStudent3];
-  const heroImagePositions = ["center top", "center top", "center top"];
-  const [currentSlide, setCurrentSlide] = useState(-1);
+   const heroImages = [
+    heroStudent,
+    heroStudent2,
+    heroStudent3,
+    hero4,
+    hero5,
+    hero6,
+    hero7,
+    hero8,
+  ];
+    const heroImagePositions = [
+    "center 10%",
+    "center 10%",
+    "center 10%",
+    "center 10%",
+    "center 10%",
+    "center 10%",
+    "center 10%",
+    "center 10%",
+  ];
+// Index = currentSlide + 1  ->  0: video, 1: student, 2: high-five, 3: team, 4-8: hero-4 to hero-8
+const heroTexts = [
+  {
+    line1: "Empower Your",
+    line2: "Learning Journey",
+    desc: "Master in-demand skills through AI-powered learning, live sessions, certifications, and expert-led programs designed for students, professionals, trainers, and organizations.",
+  },
+  {
+    line1: "Your Skills Journey",
+    line2: "Starts Here",
+    desc: "Learn at your own pace with AI-powered courses, live classes, and certifications built for students ready to take the first step.",
+  },
+  {
+    line1: "Celebrate Every",
+    line2: "Career Win",
+    desc: "From your first job to your next promotion, our programs and career support help you reach goals worth celebrating.",
+  },
+  {
+    line1: "Learn Together",
+    line2: "With Expert Mentors",
+    desc: "Join small cohorts, get project reviews from industry mentors, and grow with a community that keeps you accountable.",
+  },
+  {
+    line1: "Build Skills That",
+    line2: "Get You Hired",
+    desc: "Hands-on projects, live mentor feedback, and verified certificates that help you stand out and step confidently into your dream role.",
+  },
+  {
+    line1: "Learn Anytime,",
+    line2: "Anywhere",
+    desc: "Access live classes, recorded sessions, and AI-powered study tools on any device, so learning fits around your schedule.",
+  },
+  {
+    line1: "Grow With a",
+    line2: "Community That Cares",
+    desc: "Connect with peers, share ideas, and stay motivated together with a supportive network of learners and mentors.",
+  },
+  {
+    line1: "Turn Knowledge Into",
+    line2: "Real Results",
+    desc: "Apply what you learn through real-world projects and assessments that prove your skills to top employers.",
+  },
+  {
+    line1: "Your Future Career",
+    line2: "Starts Today",
+    desc: "Take the next step with expert-led programs, career support, and certifications designed to open new doors.",
+  },
+];
+  const [currentSlide, setCurrentSlide] = useState(0);
   // Perf: don't fetch the hero video until the browser is idle, so it never
   // competes with the LCP image/text for bandwidth on first paint.
   const [videoReady, setVideoReady] = useState(false);
   useEffect(() => {
     const idle =
-      window.requestIdleCallback || ((cb) => setTimeout(cb, 1200));
+    window.requestIdleCallback || ((cb) => setTimeout(cb, 0));
     const cancel = window.cancelIdleCallback || clearTimeout;
     const id = idle(() => setVideoReady(true));
     return () => cancel(id);
@@ -4444,12 +4515,11 @@ export default function LMSHomepage({ theme, toggleTheme }) {
       />
 
       {/* ── Hero ── */}
-      <section className="relative pt-24 pb-10 px-6 min-h-[60vh] sm:min-h-[65vh] flex items-center overflow-hidden bg-[#1E293B]">
+              <section className="relative pt-28 pb-24 px-6 h-[92svh] min-h-[600px] flex items-center overflow-hidden bg-[#1E293B]">
         {/* Full-bleed background video — loads only after idle, poster keeps a frame visible instantly */}
-        <video
+          <video
           src={videoReady ? heroVideo : undefined}
-          poster={heroImages[0]?.src}
-          preload={videoReady ? "auto" : "none"}
+          preload="auto"
           autoPlay
           loop
           muted
@@ -4473,7 +4543,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
             fetchpriority={index === 0 ? "high" : "low"}
             className="absolute inset-0 w-full h-full object-cover"
             style={{
-              objectPosition: heroImagePositions[index] || "center top",
+              objectPosition: heroImagePositions[index] || "center 10%",
               opacity: currentSlide === index ? 1 : 0,
               transition: "opacity 0.6s ease",
               zIndex: 0,
@@ -4483,7 +4553,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
         ))}
 
         {/* Dark gradient overlay so text stays readable over any image/video */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/20 z-[1]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/55 to-black/15 z-[1]" />
 
         <div className="max-w-7xl mx-auto relative z-10 w-full">
           <div className="max-w-2xl text-center lg:text-left">
@@ -4493,26 +4563,33 @@ export default function LMSHomepage({ theme, toggleTheme }) {
                 Learn Smarter. Grow Faster. Lead the Future.
               </div>
             </div>
-            <h1 className="mb-4 leading-[1.15]">
-              <SplitText
-                text="Empower Your"
-                className="block text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white"
-                splitType="chars"
-                delay={60}
-                duration={0.6}
-              />
-              <SplitText
-                text="Learning Journey"
-                className="block text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-[#F97316]"
-                splitType="chars"
-                delay={60}
-                duration={0.6}
-              />
+                        <style>{`@keyframes heroTextIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+                        <h1 key={`h-${currentSlide}`} className="mb-5 leading-[1.1]">
+              <div className="block whitespace-nowrap">
+                <SplitText
+                  text={heroTexts[currentSlide + 1].line1}
+                  className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white"
+                  splitType="chars"
+                  delay={60}
+                  duration={0.6}
+                />
+              </div>
+              <div className="block whitespace-nowrap">
+                <SplitText
+                  text={heroTexts[currentSlide + 1].line2}
+                  className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-[#F97316]"
+                  splitType="chars"
+                  delay={60}
+                  duration={0.6}
+                />
+              </div>
             </h1>
-            <p className="text-sm sm:text-base md:text-lg text-gray-200 mb-6 sm:mb-8 max-w-xl leading-relaxed">
-              Master in-demand skills through AI-powered learning, live
-              sessions, certifications, and expert-led programs designed for
-              students, professionals, trainers, and organizations.
+            <p
+              key={`p-${currentSlide}`}
+                            className="text-base sm:text-lg md:text-xl text-gray-100 mb-6 sm:mb-8 max-w-xl leading-relaxed font-normal"
+              style={{ animation: "heroTextIn 0.5s ease both" }}
+            >
+              {heroTexts[currentSlide + 1].desc}
             </p>
           </div>
         </div>
@@ -4566,14 +4643,14 @@ export default function LMSHomepage({ theme, toggleTheme }) {
         <div className="max-w-[1440px] mx-auto px-6">
           {/* ── Premium Section Header ── */}
             <div className="text-center mb-3 sm:mb-4">
-            <span className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-widest text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-4 py-1.5 rounded-full mb-2">
+                        {/* <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-orange-700 dark:text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-4 py-1.5 rounded-full mb-2">
               <Sparkles className="w-3.5 h-3.5" />
               Handpicked for you
-            </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-2 sm:mb-3 tracking-tight text-[#1E293B] dark:text-white">
+            </span> */}
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold mb-2 sm:mb-3 tracking-tight text-[#1E293B] dark:text-white">
               Featured <span className="text-[#F97316]">Programs</span>
             </h2>
-            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
               Choose your path and start building skills that matter — taught by
               mentors who've shipped at the world's best companies.
             </p>
@@ -4696,7 +4773,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
 
                           {/* Top badges */}
                           <div className="absolute top-3 left-3 right-3 flex items-start justify-between gap-2">
-                            <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-bold uppercase tracking-wide bg-white/95 text-[#F97316] px-2.5 py-1 rounded-full shadow-sm">
+                            <span className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide bg-white/95 text-orange-700 px-2.5 py-1 rounded-full shadow-sm">
                               <BadgeIcon className="w-3 h-3 fill-current" />
                               {badgeLabel}
                             </span>
@@ -4727,7 +4804,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
                           {/* Difficulty badge */}
                           <div className="absolute bottom-3 left-3 right-3 max-w-[70%]">
                             <span
-                              className={`inline-block max-w-full truncate align-bottom text-[10px] sm:text-[11px] font-bold px-2.5 py-1 rounded-full shadow-sm ${getLevelColor(course.level)} bg-white/95 dark:bg-white/95`}
+                              className={`inline-block max-w-full truncate align-bottom text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm ${getLevelColor(course.level)} bg-white/95 dark:bg-white/95`}
                             >
                               {course.level}
                             </span>
@@ -4736,7 +4813,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
 
                         {/* ── Body ── */}
                         <div className="flex flex-col flex-1 min-w-0 p-3 sm:p-4 pt-3">
-                          <span className="text-[10px] font-bold uppercase tracking-widest text-[#F97316] mb-1 truncate">
+                          <span className="text-xs font-semibold uppercase tracking-wider text-orange-700 dark:text-[#F97316] mb-1 truncate">
                             {category}
                           </span>
 
@@ -4829,7 +4906,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
                                 state: { course },
                               });
                             }}
-                            className="mt-auto w-full flex-shrink-0 bg-gradient-to-r from-[#F97316] to-[#ea580c] hover:brightness-105 text-white py-2.5 rounded-lg font-semibold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all duration-300 group-hover:scale-[1.02] shadow-sm shadow-orange-500/20"
+                            className="mt-auto w-full flex-shrink-0 bg-gradient-to-r from-[#EA580C] to-[#C2410C] hover:brightness-105 text-white py-2.5 rounded-lg font-semibold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all duration-300 group-hover:scale-[1.02] shadow-sm shadow-orange-500/20"
                           >
                             View Details
                             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
@@ -4849,14 +4926,14 @@ export default function LMSHomepage({ theme, toggleTheme }) {
       <WorkspaceTeaser navigate={navigate} />
 
       {/* ── Stats ── */}
-        <section className="py-6 sm:py-8 px-6 bg-white dark:bg-gray-900/50">
+        {/* <section className="py-6 sm:py-8 px-6 bg-white dark:bg-gray-900/50">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
           {stats.map((stat, i) => (
             <div
               key={i}
               className="bg-[#F6EDE6] dark:bg-gray-900 rounded-2xl p-4 sm:p-5 text-center border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all"
             >
-              <div className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#F97316] mb-1.5">
+              <div className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-[#F97316] mb-1.5">
                 {stat.value}
               </div>
               <p className="text-gray-600 dark:text-gray-300 font-medium">
@@ -4865,7 +4942,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
             </div>
           ))}
         </div>
-      </section>
+      </section> */}
       {/* ── WatchNow ── */}
       <WatchNowSection />
 
@@ -4876,7 +4953,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
       >
         <div className="max-w-[1200px] mx-auto">
           <div className="text-center max-w-[900px] lg:max-w-none mx-auto mb-5 sm:mb-5 lg:mb-5">
-            <h2 className="text-2xl sm:text-3xl md:text-[34px] lg:text-[38px] font-bold mb-3 sm:mb-4 text-[#111827] dark:text-white leading-[1.15] lg:whitespace-nowrap">
+                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-3 text-[#1E293B] dark:text-white leading-tight">
               What Our <span className="text-[#F97316]">Learners</span> Have To
               Say
             </h2>
@@ -4913,15 +4990,15 @@ export default function LMSHomepage({ theme, toggleTheme }) {
       {/* ── Career Support ── */}
       <section
         id="successstories"
-        className="py-8 px-10 scroll-mt-6 bg-[#F6EDE6] dark:bg-black"
+        className="py-8 px-4 sm:px-6 lg:px-10 scroll-mt-20 bg-[#F6EDE6] dark:bg-black"
       >
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-6">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 text-[#1E293B] dark:text-white">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-3 text-[#1E293B] dark:text-white">
               Career Support That{" "}
               <span className="text-[#F97316]">Delivers Results</span>
             </h2>
-            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-3xl mx-auto">
               Get help with interview prep, portfolios, referrals and role
               mapping
             </p>
@@ -4935,10 +5012,10 @@ export default function LMSHomepage({ theme, toggleTheme }) {
                 <div className="w-16 h-16 bg-[#1E293B] dark:bg-[#F97316] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-105 transition-transform shadow-sm">
                   <item.icon className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-[#1E293B] dark:text-white mb-3">
+                <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-[#1E293B] dark:text-white mb-3">
                   {item.title}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                <p className="text-base font-normal text-slate-600 dark:text-slate-300 leading-relaxed">
                   {item.description}
                 </p>
               </div>
@@ -4959,10 +5036,10 @@ export default function LMSHomepage({ theme, toggleTheme }) {
 
               {/* ── Middle: Content ── */}
               <div className="flex-1 flex flex-col justify-center px-6 sm:px-10 py-10 lg:py-8">
-                <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 text-[#1E293B] dark:text-white leading-tight">
+                <h3 className="text-xl sm:text-2xl lg:text-3xl font-semibold tracking-tight mb-2 text-[#1E293B] dark:text-white leading-tight">
                   Ready to Transform Your Career?
                 </h3>
-                <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 max-w-xl">
+                <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-xl">
                   Join 5000+ professionals who've already taken the leap with
                   our project-based programs and expert mentorship.
                 </p>
@@ -4972,7 +5049,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
               <div className="flex items-center justify-center lg:justify-end px-6 sm:px-10 pb-10 lg:pb-0 lg:pr-10">
                 <button
                   onClick={() => scrollToSection("courses")}
-                  className="flex items-center gap-2 bg-[#1E293B] hover:bg-[#334155] text-white font-bold px-6 py-3.5 rounded-xl text-sm sm:text-base shadow-md hover:shadow-lg transition-all hover:scale-105 whitespace-nowrap"
+                  className="flex items-center gap-2 bg-[#1E293B] hover:bg-[#334155] text-white font-semibold px-6 py-3.5 rounded-xl text-sm sm:text-base shadow-md hover:shadow-lg transition-all hover:scale-105 whitespace-nowrap"
                 >
                   Explore Courses <ArrowRight className="w-4 h-4" />
                 </button>
@@ -4986,14 +5063,14 @@ export default function LMSHomepage({ theme, toggleTheme }) {
         <section className="py-8 sm:py-10 px-6 bg-[#F6EDE6] dark:bg-black">
         <div className="max-w-7xl mx-auto">
                     <div className="text-center mb-6">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3 text-[#1E293B] dark:text-white">
+                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-3 text-[#1E293B] dark:text-white">
               Why Choose
               <span className="ml-2">
                 <span className="text-green-600">ILM</span>{" "}
                 <span className="text-[#F97316]">ORA</span>
               </span>
             </h2>
-            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl mx-auto">
               Everything you need to accelerate your career growth
             </p>
           </div>
@@ -5006,10 +5083,10 @@ export default function LMSHomepage({ theme, toggleTheme }) {
                 <div className="w-14 h-14 bg-[#1E293B] dark:bg-[#F97316] rounded-2xl flex items-center justify-center mb-5 group-hover:scale-105 transition-transform shadow-sm">
                   <feature.icon className="w-7 h-7 text-white" />
                 </div>
-                <h3 className="text-xl font-bold text-[#1E293B] dark:text-white mb-2">
+                  <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-[#1E293B] dark:text-white mb-2">
                   {feature.title}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                <p className="text-base font-normal text-slate-600 dark:text-slate-300 leading-relaxed">
                   {feature.description}
                 </p>
               </div>
@@ -5021,15 +5098,15 @@ export default function LMSHomepage({ theme, toggleTheme }) {
         <section className="py-8 sm:py-10 px-4 sm:px-6 relative overflow-hidden bg-white dark:bg-[#0F172A]">
         <div className="max-w-7xl mx-auto">
             <div className="text-center mb-6" style={{ marginBottom: 28 }}>
-            <p className="text-xs uppercase tracking-[0.25em] text-gray-400 dark:text-gray-400 font-bold">
+                        <p className="text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 font-semibold">
               TRUSTED BY LEADING ORGANIZATIONS
             </p>
 
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1E293B] dark:text-white mt-3">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-[#1E293B] dark:text-white mt-3">
               Top Global <span className="text-[#F97316]">Companies</span>
             </h2>
 
-            <p className="mt-4 max-w-[700px] mx-auto text-gray-500 dark:text-gray-300">
+            <p className="mt-3 max-w-2xl mx-auto text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
               We collaborate with leading technology providers and business
               organizations to deliver innovative digital solutions.
             </p>

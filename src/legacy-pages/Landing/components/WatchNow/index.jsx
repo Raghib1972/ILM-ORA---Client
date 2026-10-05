@@ -313,14 +313,14 @@ function StoryCard({ item, isPlaying, onPlay, onEnded }) {
             <button
               type="button"
               onClick={() => setIsQuoteExpanded((prev) => !prev)}
-              className="mt-1.5 text-xs font-bold text-[#F97316] hover:underline bg-transparent border-none p-0 cursor-pointer not-italic"
+              className="mt-1.5 text-xs font-semibold text-orange-700 dark:text-[#F97316] hover:underline bg-transparent border-none p-0 cursor-pointer not-italic"
             >
               {isQuoteExpanded ? "Read Less" : "Read More"}
             </button>
           )}
         </div>
         <div className="pt-3 border-t border-[#ECECEC] dark:border-gray-800">
-          <p className="font-bold text-[#1E293B] dark:text-white text-sm truncate">
+            <p className="font-semibold text-[#1E293B] dark:text-white text-sm truncate">
             {item.personName}
           </p>
           <p className="text-xs text-gray-500 dark:text-gray-400 truncate mt-0.5">
@@ -673,18 +673,18 @@ export default function WatchNowSection({ id = "watch-now" }) {
   return (
     <section
       id={id}
-      className="py-16 sm:py-20 px-6 scroll-mt-20 bg-white dark:bg-gray-900/30"
+      className="py-8 sm:py-10 px-6 scroll-mt-20 bg-white dark:bg-gray-900/30"
     >
       <div className="max-w-7xl mx-auto">
-        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-14">
-          <span className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-widest text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-4 py-1.5 rounded-full mb-3">
+                <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-8">
+          <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-orange-700 dark:text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-4 py-1.5 rounded-full mb-3">
             Watch Now
           </span>
-          <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold text-[#1E293B] dark:text-white whitespace-nowrap">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-3 text-[#1E293B] dark:text-white leading-tight">
             Learn Through,{" "}
             <span className="text-[#F97316]">Expert Sessions</span>
           </h2>
-          <p className="text-sm sm:text-base text-gray-500 dark:text-gray-400 mt-3 leading-relaxed">
+          <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 mt-3 leading-relaxed">
             Explore live sessions, career guidance, interview preparation,
             hands-on projects, and expert-led learning designed to help you
             build real-world skills and grow your career.
