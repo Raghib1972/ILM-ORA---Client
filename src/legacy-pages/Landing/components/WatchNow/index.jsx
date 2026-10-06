@@ -677,9 +677,7 @@ export default function WatchNowSection({ id = "watch-now" }) {
     >
       <div className="max-w-7xl mx-auto">
                 <div className="text-center max-w-2xl mx-auto mb-6 sm:mb-8">
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-orange-700 dark:text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-4 py-1.5 rounded-full mb-3">
-            Watch Now
-          </span>
+          
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-3 text-[#1E293B] dark:text-white leading-tight">
             Learn Through,{" "}
             <span className="text-[#F97316]">Expert Sessions</span>

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -5,29 +6,8 @@ import { useLocation, useNavigate } from "@/lib/routerCompat";
 
 // Same shared shell (AnnouncementBanner, Navbar, Footer) used by StudyAbroad, Careers, About etc.
 import PublicLayout from "../Landing/components/PublicLayout";
-
-/* ---------- DATA (from AWS.xlsx) ---------- */
-const LEVELS = {
-  Foundational: { color: "#16a34a", blurb: "Start here. Learn what the cloud is and what AWS offers. No tech background needed." },
-  Associate: { color: "#ea580c", blurb: "Build and run real things on AWS. The most popular level for jobs." },
-  Professional: { color: "#2563eb", blurb: "Design big, multi-account systems and automate delivery at scale." },
-  Specialty: { color: "#9333ea", blurb: "Go deep in one area: security, networking or machine learning." },
-};
-
-const CERTS = [
-  ["Cloud Practitioner", "CLF-C02", "Foundational", 100, "90 min", "Cloud Practitioner, Student, Fresher", "6 months of AWS cloud basics (recommended)", "No prerequisites, no degree required", ["EC2", "S3", "IAM", "VPC", "RDS", "Lambda", "CloudWatch"], "https://docs.aws.amazon.com/aws-certification/latest/cloud-practitioner-02/cloud-practitioner-02.html"],
-  ["AI Practitioner", "AIF-C01", "Foundational", 100, "90 min", "AI Beginner, AI Professional", "Basic AI and AWS AI services", "No prerequisites", ["Bedrock", "SageMaker", "Rekognition", "Comprehend"], "https://docs.aws.amazon.com/aws-certification/latest/ai-practitioner-01/ai-practitioner-01.html"],
-  ["Solutions Architect – Associate", "SAA-C03", "Associate", 150, "130 min", "Solutions Architect, Cloud Engineer", "About 1 year on AWS (recommended)", "No prerequisites", ["EC2", "VPC", "ELB", "Auto Scaling", "S3", "Route 53", "CloudFormation"], "https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-associate-03/solutions-architect-associate-03.html"],
-  ["Developer – Associate", "DVA-C02", "Associate", 150, "130 min", "Cloud Developer, Backend Developer", "About 1 year of AWS development", "No prerequisites", ["Lambda", "API Gateway", "DynamoDB", "SQS", "SNS"], "https://docs.aws.amazon.com/aws-certification/latest/developer-associate-02/developer-associate-02.html"],
-  ["CloudOps Engineer – Associate", "SOA-C02", "Associate", 150, "130 min", "Cloud Administrator, SysOps Engineer", "About 1 year of AWS administration", "No prerequisites", ["EC2", "CloudWatch", "Systems Manager", "IAM"], "https://docs.aws.amazon.com/aws-certification/latest/sysops-administrator-associate-03/sysops-administrator-associate-03.html"],
-  ["Data Engineer – Associate", "DEA-C01", "Associate", 150, "130 min", "Data Engineer", "Data engineering experience", "No prerequisites", ["Glue", "Redshift", "Athena", "EMR"], "https://docs.aws.amazon.com/aws-certification/latest/data-engineer-associate-01/data-engineer-associate-01.html"],
-  ["Machine Learning Engineer – Associate", "MLA-C01", "Associate", 150, "130 min", "Machine Learning Engineer", "ML fundamentals", "No prerequisites", ["SageMaker", "Bedrock", "S3"], "https://docs.aws.amazon.com/aws-certification/latest/machine-learning-engineer-associate-01/machine-learning-engineer-associate-01.html"],
-  ["Solutions Architect – Professional", "SAP-C02", "Professional", 300, "180 min", "Senior Solutions Architect", "About 2 years of AWS architecture", "No prerequisites", ["Multi-account AWS", "Organizations", "VPC", "Hybrid Cloud"], "https://docs.aws.amazon.com/aws-certification/latest/solutions-architect-professional-02/solutions-architect-professional-02.html"],
-  ["DevOps Engineer – Professional", "DOP-C02", "Professional", 300, "180 min", "DevOps Engineer", "About 2 years of AWS and DevOps", "No prerequisites", ["CodePipeline", "CodeBuild", "ECS", "EKS", "CloudFormation"], "https://docs.aws.amazon.com/aws-certification/latest/devops-engineer-professional-02/devops-engineer-professional-02.html"],
-  ["Security – Specialty", "SCS-C02", "Specialty", 300, "170 min", "Security Engineer", "AWS security experience", "No prerequisites", ["IAM", "KMS", "WAF", "Shield", "GuardDuty", "Macie"], "https://docs.aws.amazon.com/aws-certification/latest/security-specialty-03/security-specialty-03.html"],
-  ["Advanced Networking – Specialty", "ANS-C01", "Specialty", 300, "170 min", "Network Engineer", "Advanced networking experience", "No prerequisites", ["VPC", "Direct Connect", "Transit Gateway", "Route 53"], "https://docs.aws.amazon.com/aws-certification/latest/advanced-networking-specialty-01/advanced-networking-specialty-01.html"],
-  ["Machine Learning – Specialty (Legacy)", "MLS-C01", "Specialty", 300, "180 min", "ML Specialist", "Advanced ML on AWS", "No prerequisites", ["SageMaker", "ML Pipelines", "AI Services"], "https://docs.aws.amazon.com/aws-certification/latest/machine-learning-specialty-01/machine-learning-specialty-01.html"],
-].map(([name, code, level, fee, time, role, exp, elig, tech, url]) => ({ name, code, level, fee, time, role, exp, elig, tech, url }));
+// Data now lives in awsCertData.js (shared with the detail page)
+import { CERTS, LEVELS } from "./awsCertData";
 
 const LEVEL_NAMES = Object.keys(LEVELS);
 const countBy = (l) => CERTS.filter((c) => c.level === l).length;
@@ -104,9 +84,10 @@ function CertCard({ c, i }) {
   const [flip, setFlip] = useState(false);
   const [tilt, setTilt] = useState({ x: 0, y: 0 });
   const [ref, seen] = useReveal();
+  const navigate = useNavigate();
   const col = LEVELS[c.level].color;
-  // makes sure the link always opens in a new tab, even inside the 3D card
-  const open = (url) => (e) => { e.stopPropagation(); e.preventDefault(); window.open(url, "_blank", "noopener,noreferrer"); };
+  // opens OUR OWN detail page: /ilmora-aws-certification/clf-c02
+  const go = () => navigate(`/ilmora-aws-certification/${c.code.toLowerCase()}`);
   const move = (e) => {
     const b = e.currentTarget.getBoundingClientRect();
     setTilt({ x: -((e.clientY - b.top) / b.height - 0.5) * 12, y: ((e.clientX - b.left) / b.width - 0.5) * 14 });
@@ -129,7 +110,10 @@ function CertCard({ c, i }) {
               <div><b>{c.time}</b><span>Exam time</span></div>
               <div><b>3 yrs</b><span>Valid for</span></div>
             </div>
-            <div className="front-actions"><button className="flip-btn" onClick={() => setFlip(true)}>See what it covers</button><a className="guide" href={c.url} target="_blank" rel="noopener noreferrer" onClick={open(c.url)}>Exam guide</a></div>
+            <div className="front-actions">
+              <button className="flip-btn" onClick={() => setFlip(true)}>See what it covers</button>
+              <button className="guide" onClick={go}>Exam guide</button>
+            </div>
           </div>
           <div className="face back">
             <h4>Best for</h4>
@@ -140,7 +124,7 @@ function CertCard({ c, i }) {
             <div className="chips">{c.tech.map((t) => <i key={t}>{t}</i>)}</div>
             <div className="back-actions">
               <button className="flip-btn" onClick={() => setFlip(false)}>Back</button>
-              <a className="guide" href={c.url} target="_blank" rel="noopener noreferrer" onClick={open(c.url)}>Exam guide</a>
+              <button className="guide" onClick={go}>Exam guide</button>
             </div>
           </div>
         </div>
@@ -198,7 +182,7 @@ export default function IlmoraCertification({ theme, toggleTheme, setShowLoginMo
       {/* HERO */}
       <section className="hero cream">
         <div className="hero-copy">
-          
+         
          <h1>Get certified on the cloud <span style={{ color: "#F97316" }}>that runs half the internet.</span></h1>
           <p>
             AWS offers 12 exams across four levels. Learn what each one teaches, who it is for and what it
@@ -358,14 +342,14 @@ const CSS = `
 .ilm .back-actions{margin-top:auto;padding-top:12px}
 .ilm .flip-btn{background:var(--card);border:1px solid var(--line);color:var(--tx);border-radius:10px;padding:10px 14px;font-size:14px;font-weight:500;transition:.2s;min-height:40px}
 .ilm .flip-btn:hover{border-color:var(--c);color:var(--c)}
-.ilm a.guide{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:10px 14px;border-radius:10px;background:var(--c);color:#fff;font-size:14px;font-weight:600;text-decoration:none;cursor:pointer;transition:transform .2s,filter .2s}
-.ilm a.guide:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.ilm .guide{display:inline-flex;align-items:center;justify-content:center;min-height:40px;padding:10px 14px;border:0;border-radius:10px;background:var(--c);color:#fff;font-size:14px;font-weight:600;text-decoration:none;cursor:pointer;transition:transform .2s,filter .2s}
+.ilm .guide:hover{transform:translateY(-2px);filter:brightness(1.08)}
 .ilm .back h4{font-size:12px;color:var(--c);margin:10px 0 3px;font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;font-weight:600}
 .ilm .back h4:first-child{margin-top:0}
 .ilm .back p{margin:0;font-size:14px;color:var(--tx2)}
 .ilm .chips{display:flex;flex-wrap:wrap;gap:6px}
 .ilm .chips i{font-style:normal;font-size:12px;padding:3px 9px;border-radius:8px;background:color-mix(in srgb,var(--c) 14%,var(--card));color:var(--tx2);border:1px solid color-mix(in srgb,var(--c) 25%,var(--card))}
-.ilm .cubes{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;perspective:1000px}
+.ilm .cubes{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;perspective:1000px;margin-top:36px}
 .ilm .cube-scene{height:200px;cursor:pointer;opacity:0;transform:translateY(40px);transition:opacity .7s,transform .7s;transition-delay:calc(var(--i)*.12s)}
 .ilm .cubes.in .cube-scene{opacity:1;transform:none}
 .ilm .cube{position:relative;width:100%;height:100%;transform-style:preserve-3d;transform:translateZ(-100px);transition:transform .8s cubic-bezier(.3,.8,.2,1)}
@@ -402,5 +386,9 @@ const CSS = `
 .ilm .meta b{font-size:14px}}
 @media(prefers-reduced-motion:reduce){.ilm *{animation:none!important;transition-duration:.01ms!important;transition-delay:0s!important}}
 .ilm.dark{--cream:#000000;--white:#0F172A;--card:#111827;--tx:#ffffff;--tx2:#CBD5E1;--mut:#CBD5E1;--line:#1F2937}
+.ilm .hero h1,.ilm .sec h2,.ilm .final h2,.ilm .step-top strong,.ilm .front h3,.ilm .cf h3,.ilm .stats b{font-weight:500}
+.ilm .step-top small,.ilm .step-block,.ilm .tag,.ilm .back h4,.ilm .plate-label,.ilm .meta b,.ilm .pill{font-weight:500}
+.ilm .btn,.ilm .tabs button,.ilm .guide,.ilm .flip-btn{font-weight:500}
+.ilm .stats div > span{font-weight:400}
 .ilm,.ilm *{font-family:inherit!important}
 `;

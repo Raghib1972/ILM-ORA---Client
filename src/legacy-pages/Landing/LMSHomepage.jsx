@@ -2305,6 +2305,9 @@ import {
   FileText,
   Shield,
   Video,
+  Cloud,
+  Globe,
+  Layers,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "@/lib/routerCompat";
@@ -2338,6 +2341,16 @@ import HorizontalCarousel from "./components/HorizontalCarousel";
 import CategoryTabScroller from "./components/CategoryTabScroller";
 import WatchNowSection from "./components/WatchNow";
 import Footer from "./components/Footer";
+
+// Renders children only after mounting in the browser (avoids hydration mismatch)
+function ClientOnly({ children, fallback = null }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  return mounted ? children : fallback;
+}
+
 const GOOGLE_CLIENT_ID =
   "572421778240-akk3kkb4f60ukuv9pcfrpg2ielm09thk.apps.googleusercontent.com";
 
@@ -2529,7 +2542,7 @@ function MentorTestimonialCarousel({ testimonials }) {
                 className="w-full md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] min-w-0 flex-shrink-0"
               >
                 <div
-                  className="relative h-full bg-white dark:bg-gray-900 rounded-[22px] border border-[#ECECEC] dark:border-gray-800 shadow-[0_8px_24px_rgba(17,24,39,0.06)] p-7 flex flex-col transition-all duration-300 ease-out hover:shadow-[0_18px_38px_rgba(17,24,39,0.12)] hover:-translate-y-1.5"
+                  className="relative h-full bg-white dark:bg-gray-900 rounded-[22px] border border-[#ECECEC] dark:border-gray-800 shadow-[0_8px_24px_rgba(17,24,39,0.06)] p-5 flex flex-col transition-all duration-300 ease-out hover:shadow-[0_18px_38px_rgba(17,24,39,0.12)] hover:-translate-y-1.5"
                   style={{ animation: "mentorFadeIn 0.4s ease both" }}
                 >
                   {/* Quote icon — top-left, solid orange */}
@@ -2715,7 +2728,7 @@ function TopCompaniesCarousel({ logos }) {
       `}</style>
 
       <div
-        className="ilmora-marquee-viewport bg-white dark:bg-[#111827] rounded-[18px] sm:rounded-[20px] lg:rounded-[22px] border border-gray-100 dark:border-white/[0.08] h-[120px] sm:h-[130px] lg:h-[140px] flex items-center overflow-hidden shadow-[0_15px_40px_rgba(15,23,42,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.45)]"
+        className="ilmora-marquee-viewport bg-white dark:bg-[#111827] rounded-[18px] sm:rounded-[20px] lg:rounded-[22px] border border-gray-100 dark:border-white/[0.08] h-[88px] sm:h-[96px] lg:h-[104px] flex items-center overflow-hidden shadow-[0_15px_40px_rgba(15,23,42,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.45)]"
         style={{
           paddingLeft: 40,
           paddingRight: 40,
@@ -2835,10 +2848,7 @@ function AiCompanionTeaser({ navigate }) {
       <div className="max-w-6xl mx-auto relative grid lg:grid-cols-2 items-center gap-10 lg:gap-12">
         {/* left: copy + chips + CTA */}
         <div className="text-center lg:text-left">
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-4 py-1.5 rounded-full mb-5">
-            <Bot className="w-3.5 h-3.5" />
-            New · Powered by AI
-          </span>
+          
 
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-[#1E293B] dark:text-white mb-4 leading-tight">
             Meet Your <br className="hidden lg:block" />
@@ -3105,7 +3115,7 @@ function CalendarShowcase({ onLearnMore }) {
   }, [isVideoActive, reduce]);
 
   return (
-    <div className="max-w-6xl mx-auto relative pt-8">
+        <div className="max-w-5xl mx-auto relative pt-6">
       <style>{`
         @keyframes calFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
         @keyframes calIn { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
@@ -3121,7 +3131,7 @@ function CalendarShowcase({ onLearnMore }) {
       `}</style>
 
       <div
-        className="relative rounded-[28px] sm:rounded-[36px] px-4 sm:px-10 pt-14 pb-8 sm:pb-10"
+        className="relative rounded-[22px] px-3 sm:px-6 pt-8 pb-4 sm:pb-5"
         style={{
           background:
             "linear-gradient(150deg,#1E293B 0%,#334155 55%,#9A3412 100%)",
@@ -3149,11 +3159,11 @@ function CalendarShowcase({ onLearnMore }) {
                   reduce ? "" : "cal-float"
                 } ${
                   isActive
-                    ? "w-12 h-12 sm:w-16 sm:h-16 bg-[#1a1a2e] text-white ring-4 ring-white/55"
-                    : "w-11 h-11 sm:w-14 sm:h-14 bg-white text-gray-500 hover:text-[#1E293B]"
+                    ? "w-9 h-9 sm:w-11 sm:h-11 bg-[#1a1a2e] text-white ring-2 ring-white/55"
+                    : "w-8 h-8 sm:w-10 sm:h-10 bg-white text-gray-500 hover:text-[#1E293B]"
                 }`}
               >
-                <Icon className="w-5 h-5" />
+                <Icon className="w-4 h-4" />
                 <span
                   className={`absolute left-1/2 top-[calc(100%+10px)] -translate-x-1/2 whitespace-nowrap bg-[#1a1a2e] text-white text-[11px] font-semibold px-2.5 py-1 rounded-lg pointer-events-none transition-opacity duration-200 ${
                     isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"
@@ -3166,19 +3176,19 @@ function CalendarShowcase({ onLearnMore }) {
           })}
         </div>
 
-        <div className="grid md:grid-cols-2 gap-5 sm:gap-6 mt-8">
+          <div className="grid md:grid-cols-2 gap-3 sm:gap-4 mt-5">
           {/* left: glass info panel */}
           <div
             key={`info-${current.key}`}
-            className="cal-in flex flex-col justify-center rounded-[22px] p-6 sm:p-8 text-white bg-white/15 backdrop-blur-md border border-white/35"
+                        className="cal-in flex flex-col justify-center rounded-[18px] p-4 sm:p-5 text-white bg-white/15 backdrop-blur-md border border-white/35"
           >
             <span className="inline-flex self-start bg-white/25 text-[12px] font-semibold px-3 py-1 rounded-full mb-4">
               {current.badge}
             </span>
-            <h3 className="text-xl sm:text-2xl lg:text-[26px] font-bold leading-tight mb-3 text-white">
+                        <h3 className="text-base sm:text-lg lg:text-xl font-bold leading-tight mb-2 text-white">
               {current.heading}
             </h3>
-            <p className="text-sm sm:text-base text-white/85 mb-5 max-w-md">
+                        <p className="text-xs sm:text-sm text-white/85 mb-3 max-w-md">
               {current.desc}
             </p>
             <button
@@ -3198,8 +3208,8 @@ function CalendarShowcase({ onLearnMore }) {
             aria-hidden="true"
           >
             {current.key === "video" && (
-              <div className="bg-white rounded-[22px] p-5 shadow-2xl text-[#1E293B]">
-                <div className="flex items-center justify-between font-semibold mb-3">
+                            <div className="bg-white rounded-[18px] p-3 shadow-2xl text-[#1E293B] text-sm">
+                <div className="flex items-center justify-between font-semibold mb-2">
                   <span>October 2026</span>
                   <span className="flex gap-1.5">
                     <i className="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
@@ -3215,7 +3225,7 @@ function CalendarShowcase({ onLearnMore }) {
                     <span key={i}>{d}</span>
                   ))}
                 </div>
-                <div className="grid grid-cols-7 gap-1 mb-4">
+                                <div className="grid grid-cols-7 gap-0.5 mb-2">
                   {Array.from({ length: CAL_BLANKS }).map((_, i) => (
                     <span key={`b${i}`} />
                   ))}
@@ -3226,7 +3236,7 @@ function CalendarShowcase({ onLearnMore }) {
                       <span
                         key={d}
                         ref={d === CAL_DATE ? dateElRef : null}
-                        className={`aspect-square flex items-center justify-center rounded-lg text-[12px] sm:text-[13px] transition-colors duration-200 ${
+                        className={`h-6 flex items-center justify-center rounded-md text-[11px] transition-colors duration-200 ${
                           isPicked
                             ? "bg-[#F97316] text-white font-semibold"
                             : isToday
@@ -3239,12 +3249,12 @@ function CalendarShowcase({ onLearnMore }) {
                     );
                   })}
                 </div>
-                <div className="flex flex-col gap-2 mb-4">
+                  <div className="grid grid-cols-3 gap-1.5 mb-2">
                   {["10:00 AM", CAL_SLOT, "4:30 PM"].map((s) => (
                     <span
                       key={s}
                       ref={s === CAL_SLOT ? slotElRef : null}
-                      className={`rounded-[10px] px-3 py-2 text-[13px] font-medium border-[1.5px] transition-colors duration-200 ${
+                                            className={`rounded-lg px-2 py-1 text-[11px] text-center font-medium border-[1.5px] transition-colors duration-200 ${
                         s === pickedSlot
                           ? "border-[#F97316] bg-orange-50 text-[#d06a1a]"
                           : "border-gray-200"
@@ -3256,7 +3266,7 @@ function CalendarShowcase({ onLearnMore }) {
                 </div>
                 <div
                   ref={confirmElRef}
-                  className={`text-center text-white font-semibold py-3 rounded-xl transition-all duration-200 ${
+                                    className={`text-center text-white text-xs font-semibold py-2 rounded-lg transition-all duration-200 ${
                     confirming ? "bg-[#0E7A5F] scale-[.97]" : "bg-[#1a1a2e]"
                   }`}
                 >
@@ -3266,7 +3276,7 @@ function CalendarShowcase({ onLearnMore }) {
             )}
 
             {current.key === "spark" && (
-              <div className="bg-white rounded-[22px] p-6 shadow-2xl text-[#1E293B] flex flex-col gap-3 h-full justify-center">
+              <div className="bg-white rounded-[18px] p-4 shadow-2xl text-[#1E293B] flex flex-col gap-3 h-full justify-center">
                 <span className="inline-flex self-start bg-orange-50 text-[#d06a1a] text-[12px] font-semibold px-2.5 py-1 rounded-full">
                   Texora AI match
                 </span>
@@ -3449,10 +3459,7 @@ function WorkspaceTeaser({
       >
         {/* left: copy + chips + CTA */}
         <div className="text-center lg:text-left">
-          <span className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-widest text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-4 py-1.5 rounded-full mb-5">
-            <Users className="w-3.5 h-3.5" />
-            ILM ORA workspace
-          </span>
+          
 
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-white mb-4 leading-tight">
             Your Complete <br className="hidden lg:block" />
@@ -3544,7 +3551,578 @@ function WorkspaceTeaser({
     </section>
   );
 }
+// ─────────────────────────────────────────────────────────────────────────────
+// ProductHubSection — "ILM ORA Platform" hub: left product list, middle copy +
+// feature chips + CTA, right preview image with dots. Pure UI, no backend.
+// ─────────────────────────────────────────────────────────────────────────────
+function ProductHubSection({ navigate }) {
+  const [activeProduct, setActiveProduct] = useState(0);
+  const [activeFeature, setActiveFeature] = useState(0);
+  const [paused, setPaused] = useState(false);
 
+  const products = [
+    {
+      key: "ai",
+      label: "AI Companion",
+      icon: MessageSquare,
+      badge: "NEW · POWERED BY AI",
+      line1: "Meet Your",
+      line2: "AI Companion",
+      desc: "Chat, write, summarize meetings and automate workflows — one AI assistant that helps you across every course and session.",
+      cta: "Explore AI Companion",
+      to: "/ai-companion",
+      features: [
+        { icon: MessageSquare, label: "AI Chat", img: aiChatImg },
+        { icon: Wand2, label: "Help Me Write", img: aiWriteImg },
+        { icon: Mic, label: "Live Notes", img: aiNotesImg },
+        { icon: Zap, label: "Workflows", img: aiWorkflowsImg },
+      ],
+    },
+    {
+      key: "workspace",
+      label: "ILM ORA Workspace",
+      icon: Users,
+      badge: "LIVE SESSIONS",
+      line1: "Your Complete",
+      line2: "Meeting Workspace",
+      desc: "Schedule, host and review live sessions — everything before, during and after the meeting, together in one place.",
+      cta: "Explore Workspace",
+      to: "/workspace",
+      features: [
+        { icon: CalendarClock, label: "Start & Join", img: workspaceStartJoinImg },
+        { icon: Video, label: "Workshop", img: workspacePreviewImg },
+        { icon: Shield, label: "Host Controls", img: workspaceHostImg },
+        { icon: BarChart3, label: "Dashboard", img: workspaceDashboardImg },
+        { icon: FileText, label: "Recordings & Notes", img: workspaceRecordingsImg },
+      ],
+    },
+    {
+      key: "calendar",
+      label: "ILM ORA Calendry",
+      icon: CalendarClock,
+      badge: "SMART SCHEDULING",
+      line1: "Book Your Seat With",
+      line2: "Top Mentors",
+      desc: "Complete control over your calendar — find, book and manage your next live class in a few clicks.",
+      cta: "Explore Calendar",
+      to: "/ilm-ora-meet",
+      // TODO: apne calendar ke screenshots yahan replace kar dena
+      features: [
+        { icon: CalendarClock, label: "Scheduling", img: workspaceStartJoinImg },
+        { icon: FileText, label: "Recordings & Notes", img: workspaceRecordingsImg },
+      ],
+    },
+  ];
+
+  const product = products[activeProduct];
+  const feature = product.features[activeFeature] || product.features[0];
+
+  const selectProduct = (i) => {
+    setActiveProduct(i);
+    setActiveFeature(0);
+  };
+
+    // Auto-rotate: features pehle, last feature ke baad agla product.
+  // Calendry tab me (jisme apna showcase hai) 12s baad wapas AI Companion.
+  useEffect(() => {
+    if (paused) return;
+    const isCalendar = product.key === "calendar";
+    const delay = isCalendar ? 12000 : 3500;
+    const t = setTimeout(() => {
+      if (isCalendar) {
+        setActiveProduct(0);
+        setActiveFeature(0);
+        return;
+      }
+      if (activeFeature >= product.features.length - 1) {
+        setActiveProduct((p) => (p + 1) % products.length);
+        setActiveFeature(0);
+      } else {
+        setActiveFeature((p) => p + 1);
+      }
+    }, delay);
+    return () => clearTimeout(t);
+  }, [activeProduct, activeFeature, paused]);
+  return (
+    <section
+            id="product-hub"
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+      className="relative py-4 sm:py-6 px-4 sm:px-6 scroll-mt-20 overflow-hidden bg-[#FFF7F2] dark:bg-gray-950"
+    >
+      <style>{`@keyframes hubFade { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }`}</style>
+
+            <div className="text-center mb-4 sm:mb-6">
+        <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-[#1E293B] dark:text-white">
+          Explore the <span className="text-[#F97316]">ILM ORA Platform</span>
+        </h2>
+        <p className="mt-3 max-w-4xl mx-auto text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+          Pick a product, preview its features and open it with one click.
+        </p>
+      </div>
+
+      <div className="max-w-[1400px] mx-auto grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[260px_minmax(0,1fr)_minmax(0,1.35fr)] gap-6 lg:gap-8 items-center">
+                {/* ── Left: product list ── */}
+        <div className="min-w-0">
+          
+          <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {products.map((p, i) => {
+              const isActive = activeProduct === i;
+              return (
+                <button
+                  type="button"
+                  key={p.key}
+                  onClick={() => selectProduct(i)}
+                  aria-pressed={isActive}
+                  className={`flex items-center gap-3 px-3 py-3 rounded-2xl text-left whitespace-nowrap flex-shrink-0 lg:w-full transition-all duration-300 cursor-pointer border-none ${
+                    isActive
+                      ? "bg-orange-100 dark:bg-orange-500/15 text-[#F97316]"
+                      : "bg-transparent text-[#1E293B] dark:text-white hover:bg-orange-50 dark:hover:bg-white/5"
+                  }`}
+                >
+                  <span
+                    className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                      isActive
+                        ? "bg-[#F97316] text-white"
+                        : "bg-gray-100 dark:bg-white/10 text-[#1E293B] dark:text-white"
+                    }`}
+                  >
+                    <p.icon className="w-5 h-5" />
+                  </span>
+                  <span className="font-semibold text-sm sm:text-base flex-1">
+                    {p.label}
+                  </span>
+                  <ChevronRight className="w-4 h-4 opacity-60 hidden lg:block" />
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* ── Middle: copy + chips + CTA ── */}
+          <div key={product.key} className={`min-w-0 text-center lg:text-left ${product.key === "calendar" ? "hidden" : ""}`} style={{ animation: "hubFade 0.35s ease both" }}>
+          
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight text-[#1E293B] dark:text-white leading-tight mb-3">
+            {product.line1} <br className="hidden lg:block" />
+            <span className="text-[#F97316]">{product.line2}</span>
+          </h2>
+          <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-md mx-auto lg:mx-0 mb-6 leading-relaxed">
+            {product.desc}
+          </p>
+
+          <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 mb-6">
+            {product.features.map((f, i) => (
+              <button
+                type="button"
+                key={f.label}
+                onClick={() => setActiveFeature(i)}
+                aria-pressed={activeFeature === i}
+                className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold border transition-all duration-300 cursor-pointer ${
+                  activeFeature === i
+                    ? "bg-[#F97316] text-white border-[#F97316] shadow-lg shadow-orange-500/30"
+                    : "bg-white dark:bg-white/10 text-[#1E293B] dark:text-white border-gray-100 dark:border-white/15 hover:border-[#F97316]/40"
+                }`}
+              >
+                <f.icon className={`w-4 h-4 ${activeFeature === i ? "text-white" : ""}`} />
+                {f.label}
+              </button>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => navigate(product.to)}
+            className="inline-flex items-center justify-center gap-2 bg-[#F97316] text-white font-semibold px-6 py-3.5 rounded-xl text-sm sm:text-base whitespace-nowrap hover:bg-[#EA580C] transition-all hover:scale-105 shadow-lg shadow-orange-500/30"
+          >
+            {product.cta} <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+
+                {/* ── Calendar showcase (sirf Calendry tab me) ── */}
+        {product.key === "calendar" && (
+          <div className="lg:col-span-2 min-w-0">
+            <CalendarShowcase onLearnMore={() => navigate(product.to)} />
+          </div>
+        )}
+
+        {/* ── Right: preview + dots ── */}
+          <div className={`min-w-0 ${product.key === "calendar" ? "hidden" : ""}`}>
+          <div
+            onClick={() => navigate(product.to)}
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
+            role="button"
+            tabIndex={0}
+            aria-label={`Open ${product.label}`}
+            onKeyDown={(e) => e.key === "Enter" && navigate(product.to)}
+            className="cursor-pointer select-none hover:-translate-y-1 transition-transform duration-300"
+          >
+            <img
+              key={`${product.key}-${activeFeature}`}
+              src={feature.img.src || feature.img}
+              alt={`${product.label} — ${feature.label}`}
+              loading="lazy"
+              decoding="async"
+              className="w-full h-auto max-w-[520px] mx-auto rounded-2xl shadow-2xl"
+              style={{ animation: "hubFade 0.35s ease both" }}
+            />
+          </div>
+
+          <div className="flex items-center justify-center gap-2 mt-5">
+            {product.features.map((f, i) => (
+              <button
+                type="button"
+                key={f.label}
+                onClick={() => setActiveFeature(i)}
+                aria-label={`Show ${f.label}`}
+                style={{
+                  width: activeFeature === i ? "28px" : "10px",
+                  height: "10px",
+                  borderRadius: "9999px",
+                  background: activeFeature === i ? "#F97316" : "rgba(100,116,139,0.35)",
+                  border: "none",
+                  cursor: "pointer",
+                  padding: 0,
+                  transition: "width 0.35s ease, background 0.35s ease",
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// CertificationShowcase — AWS / Microsoft / Cloud / Google certification cards
+// 3D tilt + glare + floating medal. Pure UI. Routes niche CERT_ITEMS me change karo.
+// ─────────────────────────────────────────────────────────────────────────────
+const CERT_ITEMS = [
+  {
+    key: "aws",
+    title: "AWS Certification",
+    sub: "Cloud Practitioner to Professional",
+    desc: "Prepare for AWS exams with live labs, mock tests and mentor-led doubt sessions.",
+    Icon: Award,
+    from: "#FB923C",
+    to: "#EA580C",
+    tags: ["Practitioner", "Associate", "Professional"],
+    path: "/ilmora-aws-certification",
+  },
+  {
+    key: "microsoft",
+    title: "Microsoft Certification",
+    sub: "Azure, M365 & Power Platform",
+    desc: "Get job-ready on Azure, Microsoft 365 and Power Platform with hands-on projects.",
+    Icon: Layers,
+    from: "#60A5FA",
+    to: "#2563EB",
+    tags: ["Azure", "M365", "Power Platform"],
+    path: "/ilmora-microsoft-certification",
+  },
+  {
+    key: "cloud",
+    title: "Cloud Certification",
+    sub: "Multi-cloud & vendor-neutral paths",
+    desc: "Learn cloud fundamentals that work across every provider, not just one.",
+    Icon: Cloud,
+    from: "#38BDF8",
+    to: "#6366F1",
+    tags: ["Multi-cloud", "DevOps", "Security"],
+    path: "/certification/cloud",
+  },
+  {
+    key: "google",
+    title: "Google Certification",
+    sub: "Google Cloud & Workspace exams",
+    desc: "Crack Google Cloud and Workspace exams with structured paths and practice papers.",
+    Icon: Globe,
+    from: "#4ADE80",
+        to: "#16A34A",
+    tags: ["Cloud Digital Leader", "Associate", "Professional"],
+    path: "/certification/google",
+  },
+];
+
+const CERT_BACK = {
+  aws: "Every topic ends with a hands-on project on real AWS services.",
+  microsoft: "Practice on live Azure and Microsoft 365 labs, not just slides.",
+  cloud: "Learn concepts that carry across AWS, Azure and Google Cloud.",
+  google: "Timed practice papers that match the real exam length and style.",
+};
+
+function CertCard({ item, index, navigate }) {
+  const [flipped, setFlipped] = useState(false);
+  const toggle = () => setFlipped((f) => !f);
+  const cardRef = useRef(null);
+
+  // Touch devices (no hover): flip once when the card scrolls into view
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!window.matchMedia("(hover: none)").matches) return;
+    const el = cardRef.current;
+    if (!el || !("IntersectionObserver" in window)) return;
+    let t1, t2;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        io.disconnect();
+        t1 = setTimeout(() => setFlipped(true), 500 + index * 300);
+        t2 = setTimeout(() => setFlipped(false), 2600 + index * 300);
+      },
+      { threshold: 0.6 },
+    );
+    io.observe(el);
+    return () => {
+      io.disconnect();
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [index]);
+  const go = (e) => {
+    e.stopPropagation();
+    navigate(item.path);
+  };
+
+  return (
+    <div
+      className="cert-rise"
+      style={{
+        animationDelay: `${index * 0.12}s`,
+        "--c": item.from,
+        "--c2": item.to,
+      }}
+    >
+            <div
+        ref={cardRef}
+        className={`cert-flip ${flipped ? "is-flipped" : ""}`}
+        onClick={toggle}
+        onKeyDown={(e) => e.key === "Enter" && toggle()}
+        tabIndex={0}
+        aria-label={`${item.title} — hover or tap to flip`}
+      >
+        <div className="cert-flip-inner">
+          {/* ── Front ── */}
+          <div className="cert-card cert-face group p-6 flex flex-col select-none">
+            <div className="relative w-16 h-16 mb-5 flex-shrink-0">
+              <div
+                className="absolute inset-0 rounded-2xl rotate-6 opacity-50 blur-md"
+                style={{ background: `linear-gradient(135deg, ${item.from}, ${item.to})` }}
+              />
+              <div
+                className="relative w-full h-full rounded-2xl flex items-center justify-center"
+                style={{
+                  background: `linear-gradient(135deg, ${item.from}, ${item.to})`,
+                  boxShadow:
+                    "0 14px 24px -10px rgba(0,0,0,0.45), inset 0 2px 0 rgba(255,255,255,0.5), inset 0 -4px 8px rgba(0,0,0,0.2)",
+                }}
+              >
+                <item.Icon className="w-8 h-8 text-white drop-shadow-lg" strokeWidth={1.8} />
+              </div>
+            </div>
+
+            <h3 className="text-xl font-semibold tracking-tight text-[#1E293B] dark:text-white mb-1">
+              {item.title}
+            </h3>
+            <p
+              className="text-xs font-semibold uppercase tracking-wider mb-3"
+              style={{ color: item.from }}
+            >
+              {item.sub}
+            </p>
+            <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed mb-4">
+              {item.desc}
+            </p>
+
+            <div className="flex flex-wrap gap-1.5 mb-5">
+              {item.tags.map((t) => (
+                <span key={t} className="cert-tag">
+                  {t}
+                </span>
+              ))}
+            </div>
+
+            <button
+              type="button"
+              onClick={go}
+              className="cert-btn mt-auto self-start border-0 cursor-pointer"
+            >
+              Explore
+              <ArrowRight className="w-4 h-4 transition-transform duration-300 group-hover:translate-x-1.5" />
+            </button>
+          </div>
+
+          {/* ── Back ── */}
+          <div className="cert-face cert-back select-none">
+            <h3 className="text-xl font-semibold tracking-tight mb-3">
+              {item.title}
+            </h3>
+            <p className="text-base leading-relaxed mb-6 text-white/95">
+              {CERT_BACK[item.key] || item.desc}
+            </p>
+            <button
+              type="button"
+              onClick={go}
+              className="cert-btn self-start border-0 cursor-pointer"
+              style={{ background: "#fff", color: item.to }}
+            >
+              Explore
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CertificationShowcase({ navigate }) {
+  return (
+    <section
+      id="certifications"
+          className="relative py-10 sm:py-14 px-4 sm:px-6 scroll-mt-20 overflow-hidden bg-white dark:bg-black"
+    >
+            <style>{`
+        @keyframes certRise { from { opacity: 0; transform: translateY(30px) scale(.97); } to { opacity: 1; transform: none; } }
+        @keyframes certFloat { 0%,100% { transform: translateZ(50px) translateY(0); } 50% { transform: translateZ(50px) translateY(-8px); } }
+        @keyframes certOrb { 0%,100% { transform: translate(0,0); } 50% { transform: translate(20px,-24px); } }
+        .cert-rise { animation: certRise .7s cubic-bezier(.22,1,.36,1) both; }
+        .cert-float { animation: certFloat 4s ease-in-out infinite; }
+
+        .cert-flip { perspective: 1200px; -webkit-perspective: 1200px; height: 100%; cursor: pointer; outline: none; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+        .cert-flip-inner {
+          position: relative;
+          height: 100%;
+          min-height: 410px;
+          transform-style: preserve-3d;
+          -webkit-transform-style: preserve-3d;
+          will-change: transform;
+          transition: transform .7s cubic-bezier(.22,1,.36,1);
+        }
+        .cert-flip.is-flipped .cert-flip-inner { transform: rotateX(180deg); }
+        @media (hover: hover) and (pointer: fine) {
+          .cert-flip:hover .cert-flip-inner { transform: rotateX(180deg); }
+        }
+        .cert-face {
+          position: absolute;
+          inset: 0;
+          border-radius: 16px;
+          backface-visibility: hidden;
+          -webkit-backface-visibility: hidden;
+        }
+        .cert-back {
+          transform: rotateX(180deg);
+          background: linear-gradient(135deg, var(--c), var(--c2));
+          color: #fff;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          padding: 28px;
+          box-shadow: 0 24px 44px -14px color-mix(in srgb, var(--c) 55%, transparent);
+        }
+
+        .cert-card {
+          background: #F6EDE6;
+          border: 1px solid color-mix(in srgb, var(--c) 45%, #E5E7EB);
+          box-shadow: 0 10px 15px -3px rgba(0,0,0,.10), 0 4px 6px -4px rgba(0,0,0,.10);
+          transition: transform .18s ease-out, box-shadow .3s ease, border-color .3s ease;
+        }
+        .cert-card::before {
+          content: "";
+          position: absolute;
+          left: 0; top: 22px; bottom: 22px;
+          width: 4px;
+          border-radius: 0 4px 4px 0;
+          background: var(--c);
+        }
+        .cert-card:hover {
+          box-shadow: 0 24px 44px -14px color-mix(in srgb, var(--c) 45%, transparent), 0 8px 14px -6px rgba(0,0,0,.12);
+          border-color: var(--c);
+        }
+        .dark .cert-card {
+          background: #111827;
+          border-color: color-mix(in srgb, var(--c) 45%, #1F2937);
+          box-shadow: 0 10px 24px -6px rgba(0,0,0,.65), 0 4px 6px -4px rgba(0,0,0,.5);
+        }
+        .dark .cert-card:hover {
+          box-shadow: 0 24px 44px -14px color-mix(in srgb, var(--c) 55%, transparent), 0 8px 14px -6px rgba(0,0,0,.6);
+        }
+
+        .cert-tag {
+          font-size: 11px;
+          font-weight: 500;
+          padding: 3px 10px;
+          border-radius: 8px;
+          color: #334155;
+          background: color-mix(in srgb, var(--c) 14%, #ffffff);
+          border: 1px solid color-mix(in srgb, var(--c) 28%, #ffffff);
+        }
+        .dark .cert-tag {
+          color: #CBD5E1;
+          background: color-mix(in srgb, var(--c) 16%, #111827);
+          border-color: color-mix(in srgb, var(--c) 30%, #111827);
+        }
+
+        .cert-btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          padding: 9px 16px;
+          border-radius: 10px;
+          background: var(--c);
+          color: #fff;
+          font-size: 14px;
+          font-weight: 600;
+          transition: transform .2s, filter .2s;
+        }
+        .cert-card:hover .cert-btn { transform: translateY(-2px); filter: brightness(1.08); }
+
+        .cert-grid { opacity: .04; background-image: linear-gradient(#0F172A 1px, transparent 1px), linear-gradient(90deg, #0F172A 1px, transparent 1px); }
+        .dark .cert-grid { opacity: .07; background-image: linear-gradient(white 1px, transparent 1px), linear-gradient(90deg, white 1px, transparent 1px); }
+
+                @media (prefers-reduced-motion: reduce) {
+          .cert-float { animation: none !important; }
+        }
+      `}</style>
+
+      {/* ambient glow orbs + subtle grid */}
+      <div
+        className="absolute -top-24 -left-24 w-[400px] h-[400px] rounded-full blur-3xl pointer-events-none opacity-25"
+        style={{
+          background: "radial-gradient(circle, rgba(249,115,22,0.4), transparent 70%)",
+          animation: "certOrb 9s ease-in-out infinite",
+        }}
+      />
+      <div
+        className="absolute -bottom-24 -right-24 w-[420px] h-[420px] rounded-full blur-3xl pointer-events-none opacity-15"
+        style={{
+          background: "radial-gradient(circle, rgba(59,130,246,0.4), transparent 70%)",
+          animation: "certOrb 11s ease-in-out infinite reverse",
+        }}
+      />
+      
+
+      <div className="max-w-7xl mx-auto relative">
+        <div className="text-center mb-10">
+           
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-[#1E293B] dark:text-white mt-3">
+            Get Certified. Get <span className="text-[#F97316]">Hired.</span>
+          </h2>
+                        <p className="mt-3 max-w-4xl mx-auto text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+            Pick a certification path, learn with mentors and earn credentials employers recognise.
+          </p>
+        </div>
+
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5 lg:gap-6">
+          {CERT_ITEMS.map((item, i) => (
+            <CertCard key={item.key} item={item} index={i} navigate={navigate} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 // ─────────────────────────────────────────────────────────────────────────────
 export default function LMSHomepage({ theme, toggleTheme }) {
   const [activeTab, setActiveTab] = useState("product");
@@ -4500,22 +5078,33 @@ const heroTexts = [
   const ecosystemProducts = ecosystemRaw.length
     ? ecosystemRaw.map((c, i) => ({
         ...mapCompany(c),
-        color: ECOSYSTEM_COLORS[i % ECOSYSTEM_COLORS.length],
+                color: ECOSYSTEM_COLORS[i % ECOSYSTEM_COLORS.length],
       }))
     : null;
+
+  // TEMP TEST: hydration error isolate karne ke liye
+  const [pageMounted, setPageMounted] = useState(false);
+  useEffect(() => {
+    setPageMounted(true);
+  }, []);
+  if (!pageMounted) {
+    return <div className="min-h-screen bg-[#F6EDE6] dark:bg-black" />;
+  }
 
   return (
     <div className="min-h-screen bg-[#F6EDE6] dark:bg-black text-[#1E293B] dark:text-white">
       {/* ── Announcement Banner & Navbar ── */}
-      <AnnouncementBanner />
-      <Navbar
-        theme={theme}
-        toggleTheme={toggleTheme}
-        setShowLoginModal={setShowLoginModal}
-      />
+            <ClientOnly>
+        <AnnouncementBanner />
+        <Navbar
+          theme={theme}
+          toggleTheme={toggleTheme}
+          setShowLoginModal={setShowLoginModal}
+        />
+      </ClientOnly>
 
       {/* ── Hero ── */}
-              <section className="relative pt-28 pb-24 px-6 h-[92svh] min-h-[600px] flex items-center overflow-hidden bg-[#1E293B]">
+        <section className="relative pt-24 pb-14 px-6 h-[68svh] min-h-[440px] flex items-center overflow-hidden bg-[#1E293B]">
         {/* Full-bleed background video — loads only after idle, poster keeps a frame visible instantly */}
           <video
           src={videoReady ? heroVideo : undefined}
@@ -4558,35 +5147,46 @@ const heroTexts = [
         <div className="max-w-7xl mx-auto relative z-10 w-full">
           <div className="max-w-2xl text-center lg:text-left">
             <div className="mb-4 sm:mb-5 inline-flex">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-[#F97316] text-xs sm:text-sm font-semibold">
-                <Sparkles className="w-3.5 h-3.5" />
-                Learn Smarter. Grow Faster. Lead the Future.
-              </div>
+              
             </div>
                         <style>{`@keyframes heroTextIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-                        <h1 key={`h-${currentSlide}`} className="mb-5 leading-[1.1]">
-              <div className="block whitespace-nowrap">
-                <SplitText
-                  text={heroTexts[currentSlide + 1].line1}
-                  className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-white"
-                  splitType="chars"
-                  delay={60}
-                  duration={0.6}
-                />
-              </div>
-              <div className="block whitespace-nowrap">
-                <SplitText
-                  text={heroTexts[currentSlide + 1].line2}
-                  className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-[#F97316]"
-                  splitType="chars"
-                  delay={60}
-                  duration={0.6}
-                />
-              </div>
-            </h1>
-            <p
+                        <ClientOnly
+              fallback={
+                <h1 className="mb-5 leading-[1.1]">
+                <span suppressHydrationWarning className="block whitespace-nowrap text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white">
+                    {heroTexts[currentSlide + 1].line1}
+                  </span>
+                  <span suppressHydrationWarning className="block whitespace-nowrap text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-[#F97316]">
+                    {heroTexts[currentSlide + 1].line2}
+                  </span>
+                </h1>
+              }
+            >
+              <h1 key={`h-${currentSlide}`} className="mb-5 leading-[1.1]">
+                <div className="block whitespace-nowrap">
+                  <SplitText
+                    text={heroTexts[currentSlide + 1].line1}
+                    className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white"
+                    splitType="chars"
+                    delay={60}
+                    duration={0.6}
+                  />
+                </div>
+                <div className="block whitespace-nowrap">
+                  <SplitText
+                    text={heroTexts[currentSlide + 1].line2}
+                    className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-[#F97316]"
+                    splitType="chars"
+                    delay={60}
+                    duration={0.6}
+                  />
+                </div>
+              </h1>
+            </ClientOnly>
+                        <p
               key={`p-${currentSlide}`}
-                            className="text-base sm:text-lg md:text-xl text-gray-100 mb-6 sm:mb-8 max-w-xl leading-relaxed font-normal"
+              suppressHydrationWarning
+              className="text-base sm:text-lg md:text-xl text-gray-100 mb-6 sm:mb-8 max-w-xl leading-relaxed font-light"
               style={{ animation: "heroTextIn 0.5s ease both" }}
             >
               {heroTexts[currentSlide + 1].desc}
@@ -4630,15 +5230,12 @@ const heroTexts = [
             />
           ))}
         </div>
-      </section>
-
-      {/* ── AI Companion teaser ── */}
-      <AiCompanionTeaser navigate={navigate} />
+            </section>
 
       {/* ── Courses ── */}
       <section
         id="courses"
-        className="py-6 sm:py-8 scroll-mt-20 bg-[#F8FAFC] dark:bg-black"
+        className="py-4 sm:py-5 scroll-mt-20 bg-[#F8FAFC] dark:bg-black"
       >
         <div className="max-w-[1440px] mx-auto px-6">
           {/* ── Premium Section Header ── */}
@@ -4702,12 +5299,13 @@ const heroTexts = [
                   ? featuredPrograms
                   : courses,
             ).map(([category, categoryCourses]) => (
-              <TabsContent key={category} value={category}>
+                <TabsContent key={category} value={category}>
+                <ClientOnly>
                 <HorizontalCarousel
                   items={categoryCourses}
                   ariaLabel={`${category} courses`}
                   getKey={(course) => course.id}
-                  cardMinHeight={300}
+                  cardMinHeight={260}
                   renderItem={(course, idx) => {
                     const pricing = getPricing(course.price);
                     // Real flags from superadmin now take priority — falls
@@ -4752,7 +5350,7 @@ const heroTexts = [
                         className="group relative flex flex-col min-w-0 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-md hover:shadow-xl hover:shadow-slate-300/40 dark:hover:shadow-black/40 hover:-translate-y-1 transition-all duration-300 ease-out overflow-hidden cursor-pointer w-full h-full"
                       >
                         {/* ── Thumbnail / Banner ── */}
-                        <div className="relative h-40 sm:h-44 overflow-hidden bg-gradient-to-br from-[#1E293B] via-[#334155] to-[#F97316] flex-shrink-0">
+                        <div className="relative h-32 sm:h-36 overflow-hidden bg-gradient-to-br from-[#1E293B] via-[#334155] to-[#F97316] flex-shrink-0">
                           {course.thumbnailUrl || course.bannerUrl ? (
                             <img
                               src={course.thumbnailUrl || course.bannerUrl}
@@ -4914,16 +5512,19 @@ const heroTexts = [
                         </div>
                       </div>
                     );
-                  }}
+                                   }}
                 />
+                </ClientOnly>
               </TabsContent>
             ))}
         </Tabs>
         </div>
       </section>
 
-      {/* ── Workspace / Meetings teaser ── */}
-      <WorkspaceTeaser navigate={navigate} />
+            {/* ── ILM ORA Platform hub (AI Companion / Workspace / Calendry) ── */}
+      <ProductHubSection navigate={navigate} />
+
+     
 
       {/* ── Stats ── */}
         {/* <section className="py-6 sm:py-8 px-6 bg-white dark:bg-gray-900/50">
@@ -4944,12 +5545,14 @@ const heroTexts = [
         </div>
       </section> */}
       {/* ── WatchNow ── */}
-      <WatchNowSection />
+            <ClientOnly>
+        <WatchNowSection />
+      </ClientOnly>
 
       {/* ── Mentors (testimonials — backend-connected) ── */}
       <section
         id="mentors"
-        className="py-6 sm:py-8 lg:py-10 px-4 sm:px-6 scroll-mt-20 bg-[#FAF6F2] dark:bg-gray-900/30 overflow-x-hidden"
+        className="py-4 sm:py-5 px-4 sm:px-6 scroll-mt-20 bg-[#FAF6F2] dark:bg-gray-900/30 overflow-x-hidden"
       >
         <div className="max-w-[1200px] mx-auto">
           <div className="text-center max-w-[900px] lg:max-w-none mx-auto mb-5 sm:mb-5 lg:mb-5">
@@ -4971,7 +5574,7 @@ const heroTexts = [
             {mentorBenefits.map((item, i) => (
               <div
                 key={i}
-                className="h-full flex items-center gap-3 bg-[#FAF6F2] dark:bg-gray-900 rounded-2xl p-6 border border-[#ECECEC] dark:border-gray-800 shadow-[0_10px_35px_rgba(0,0,0,0.08)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                className="h-full flex items-center gap-3 bg-[#FAF6F2] dark:bg-gray-900 rounded-2xl p-4 border border-[#ECECEC] dark:border-gray-800 shadow-[0_10px_35px_rgba(0,0,0,0.08)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
               >
                 <div className="w-10 h-10 bg-[#1E293B] dark:bg-[#F97316] rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
                   <item.icon className="w-5 h-5 text-white" />
@@ -4983,14 +5586,17 @@ const heroTexts = [
             ))}
           </div>
 
-          <MentorTestimonialCarousel testimonials={testimonials} />
+                    <MentorTestimonialCarousel testimonials={testimonials} />
         </div>
       </section>
+
+      {/* ── Certifications (AWS / Microsoft / Cloud / Google) ── */}
+      <CertificationShowcase navigate={navigate} />
 
       {/* ── Career Support ── */}
       <section
         id="successstories"
-        className="py-8 px-4 sm:px-6 lg:px-10 scroll-mt-20 bg-[#F6EDE6] dark:bg-black"
+        className="py-5 px-4 sm:px-6 lg:px-10 scroll-mt-20 bg-[#F6EDE6] dark:bg-black"
       >
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-6">
@@ -5007,10 +5613,10 @@ const heroTexts = [
             {careerSupport.map((item, i) => (
               <div
                 key={i}
-                className="group bg-white dark:bg-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-800 shadow-md hover:shadow-xl hover:-translate-y-2 transition-all"
+                className="group bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-200 dark:border-gray-800 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all"
               >
-                <div className="w-16 h-16 bg-[#1E293B] dark:bg-[#F97316] rounded-2xl flex items-center justify-center mb-6 group-hover:scale-105 transition-transform shadow-sm">
-                  <item.icon className="w-8 h-8 text-white" />
+                <div className="w-12 h-12 bg-[#1E293B] dark:bg-[#F97316] rounded-2xl flex items-center justify-center mb-3 group-hover:scale-105 transition-transform shadow-sm">
+                  <item.icon className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-[#1E293B] dark:text-white mb-3">
                   {item.title}
@@ -5026,7 +5632,7 @@ const heroTexts = [
           <div className="bg-[#F6EDE6] dark:bg-gray-900 rounded-3xl relative overflow-hidden border border-[#F97316]/20 shadow-xl">
             <div className="flex flex-col lg:flex-row items-stretch">
               {/* ── Left: full-bleed image, fixed height, cropped to fill ── */}
-              <div className="w-full lg:w-[280px] xl:w-[320px] h-56 sm:h-64 lg:h-auto flex-shrink-0 overflow-hidden">
+              <div className="w-full lg:w-[280px] xl:w-[320px] h-40 sm:h-44 lg:h-auto flex-shrink-0 overflow-hidden">
                 <img
                   src={ctaStudent.src}
                   alt="Student ready to transform their career"
@@ -5035,7 +5641,7 @@ const heroTexts = [
               </div>
 
               {/* ── Middle: Content ── */}
-              <div className="flex-1 flex flex-col justify-center px-6 sm:px-10 py-10 lg:py-8">
+              <div className="flex-1 flex flex-col justify-center px-6 sm:px-10 py-6 lg:py-4">
                 <h3 className="text-xl sm:text-2xl lg:text-3xl font-semibold tracking-tight mb-2 text-[#1E293B] dark:text-white leading-tight">
                   Ready to Transform Your Career?
                 </h3>
@@ -5060,7 +5666,7 @@ const heroTexts = [
       </section>
 
       {/* ── Features ── */}
-        <section className="py-8 sm:py-10 px-6 bg-[#F6EDE6] dark:bg-black">
+        <section className="py-5 sm:py-6 px-6 bg-[#F6EDE6] dark:bg-black">
         <div className="max-w-7xl mx-auto">
                     <div className="text-center mb-6">
                         <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-3 text-[#1E293B] dark:text-white">
@@ -5078,10 +5684,10 @@ const heroTexts = [
             {features.map((feature, i) => (
               <div
                 key={i}
-                className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-800 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all group"
+                className="bg-white dark:bg-gray-900 rounded-2xl p-4 border border-gray-200 dark:border-gray-800 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all group"
               >
-                <div className="w-14 h-14 bg-[#1E293B] dark:bg-[#F97316] rounded-2xl flex items-center justify-center mb-5 group-hover:scale-105 transition-transform shadow-sm">
-                  <feature.icon className="w-7 h-7 text-white" />
+                                <div className="w-11 h-11 bg-[#1E293B] dark:bg-[#F97316] rounded-2xl flex items-center justify-center mb-3 group-hover:scale-105 transition-transform shadow-sm">
+                  <feature.icon className="w-5 h-5 text-white" />
                 </div>
                   <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-[#1E293B] dark:text-white mb-2">
                   {feature.title}
@@ -5095,9 +5701,9 @@ const heroTexts = [
         </div>
       </section>
 
-        <section className="py-8 sm:py-10 px-4 sm:px-6 relative overflow-hidden bg-white dark:bg-[#0F172A]">
+        <section className="py-5 sm:py-6 px-4 sm:px-6 relative overflow-hidden bg-white dark:bg-[#0F172A]">
         <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-6" style={{ marginBottom: 28 }}>
+            <div className="text-center mb-6" style={{ marginBottom: 16 }}>
                         <p className="text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 font-semibold">
               TRUSTED BY LEADING ORGANIZATIONS
             </p>
@@ -5122,7 +5728,9 @@ const heroTexts = [
         </div>
       </section>
       {/* ── Footer ── */}
-      <Footer scrollToSection={scrollToSection} />
+            <ClientOnly>
+        <Footer scrollToSection={scrollToSection} />
+      </ClientOnly>
       {/* ── Login Modal ── */}
       {showLoginModal && (
         <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
@@ -5391,7 +5999,9 @@ const heroTexts = [
           }}
         />
       )}
-      <TexoraFloatingWidget />
+           <ClientOnly>
+        <TexoraFloatingWidget />
+      </ClientOnly>
     </div>
   );
 }

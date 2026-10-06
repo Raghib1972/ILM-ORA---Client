@@ -117,9 +117,9 @@ const CERT_MENU_ITEMS = [
 ];
 const CERT_ROUTES = {
   aws: "/ilmora-aws-certification",
-  microsoft: "/ilmora-Microsoft-certification",
+  microsoft: "/ilmora-microsoft-certification",
   cloud: "/ilmora-cloud-certification",
-  google: "/ilmora-Google-certification",
+  google: "/ilmora-google-certification",
 };
 const CERT_ICON_COLORS = {
   aws: "text-orange-500",
