@@ -198,7 +198,7 @@ export default function IlmoraCertification({ theme, toggleTheme, setShowLoginMo
       {/* HERO */}
       <section className="hero cream">
         <div className="hero-copy">
-          <span className="pill">AWS Certification Programs</span>
+          
          <h1>Get certified on the cloud <span style={{ color: "#F97316" }}>that runs half the internet.</span></h1>
           <p>
             AWS offers 12 exams across four levels. Learn what each one teaches, who it is for and what it
