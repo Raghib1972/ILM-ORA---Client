@@ -3994,8 +3994,8 @@ function MentorTestimonialCarousel({ testimonials }) {
   // UI-only: tracks which cards have "Read More" expanded. Does not touch
   // backend data, carousel/scroll logic, or pagination logic below.
   const [expandedCards, setExpandedCards] = useState({});
-  const toggleExpanded = (i) =>
-    setExpandedCards((prev) => ({ ...prev, [i]: !prev[i] }));
+    const toggleExpanded = (i) =>
+    setExpandedCards((prev) => (prev[i] ? {} : { [i]: true }));
 
   const scrollToIndex = (index) => {
     const el = scrollerRef.current;
@@ -4056,7 +4056,7 @@ function MentorTestimonialCarousel({ testimonials }) {
           ref={scrollerRef}
           onScroll={handleScroll}
           style={{ scrollSnapType: "x mandatory" }}
-          className="mentor-scroll flex items-stretch overflow-x-auto flex-1 min-w-0 gap-6 py-2"
+          className="mentor-scroll flex items-start overflow-x-auto flex-1 min-w-0 gap-6"
         >
           {testimonials.map((t, i) => {
             const isExpanded = !!expandedCards[i];
@@ -4064,10 +4064,14 @@ function MentorTestimonialCarousel({ testimonials }) {
               <div
                 key={i}
                 style={{ scrollSnapAlign: "start" }}
-                className="flex w-full md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] min-w-0 flex-shrink-0"
+                className="w-full md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] min-w-0 flex-shrink-0"
               >
-                <div
-                  className="relative h-full bg-white dark:bg-gray-900 rounded-[22px] border border-[#ECECEC] dark:border-gray-800 shadow-[0_8px_24px_rgba(17,24,39,0.06)] p-5 flex flex-col transition-all duration-300 ease-out hover:shadow-[0_18px_38px_rgba(17,24,39,0.12)] hover:-translate-y-1.5"
+                                <div
+                  className={`relative h-full bg-white dark:bg-gray-900 rounded-[22px] border p-5 flex flex-col transition-all duration-300 ease-out hover:-translate-y-1.5 ${
+                    isExpanded
+                      ? "border-[#F97316] ring-2 ring-[#F97316] shadow-[0_18px_38px_rgba(249,115,22,0.18)]"
+                      : "border-[#ECECEC] dark:border-gray-800 shadow-[0_8px_24px_rgba(17,24,39,0.06)] hover:shadow-[0_18px_38px_rgba(17,24,39,0.12)]"
+                  }`}
                   style={{ animation: "mentorFadeIn 0.4s ease both" }}
                 >
                   {/* Quote icon — top-left, solid orange */}
@@ -4094,13 +4098,18 @@ function MentorTestimonialCarousel({ testimonials }) {
                     {t.text}
                   </p>
 
-                  {t.text && t.text.length > 160 && (
+                                    {t.text && t.text.length > 160 && (
                     <button
                       type="button"
                       onClick={() => toggleExpanded(i)}
-                      className="mt-2 text-[13px] font-bold text-[#F97316] hover:underline bg-transparent border-none p-0 cursor-pointer text-left w-fit"
+                      className="mt-2 inline-flex items-center gap-2 text-[13px] font-bold text-[#F97316] hover:underline bg-transparent border-none p-0 cursor-pointer text-left w-fit"
                     >
                       {isExpanded ? "Read Less" : "Read More"}
+                      <ArrowRight
+                        className={`w-3.5 h-3.5 transition-transform duration-300 ${
+                          isExpanded ? "-rotate-90" : ""
+                        }`}
+                      />
                     </button>
                   )}
 
