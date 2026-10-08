@@ -4056,7 +4056,7 @@ function MentorTestimonialCarousel({ testimonials }) {
           ref={scrollerRef}
           onScroll={handleScroll}
           style={{ scrollSnapType: "x mandatory" }}
-          className="mentor-scroll flex items-start overflow-x-auto flex-1 min-w-0 gap-6"
+          className="mentor-scroll flex items-stretch overflow-x-auto flex-1 min-w-0 gap-6 py-2"
         >
           {testimonials.map((t, i) => {
             const isExpanded = !!expandedCards[i];
@@ -4064,7 +4064,7 @@ function MentorTestimonialCarousel({ testimonials }) {
               <div
                 key={i}
                 style={{ scrollSnapAlign: "start" }}
-                className="w-full md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] min-w-0 flex-shrink-0"
+                className="flex w-full md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] min-w-0 flex-shrink-0"
               >
                 <div
                   className="relative h-full bg-white dark:bg-gray-900 rounded-[22px] border border-[#ECECEC] dark:border-gray-800 shadow-[0_8px_24px_rgba(17,24,39,0.06)] p-5 flex flex-col transition-all duration-300 ease-out hover:shadow-[0_18px_38px_rgba(17,24,39,0.12)] hover:-translate-y-1.5"
