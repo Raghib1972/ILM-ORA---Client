@@ -487,20 +487,7 @@ export default function CourseDetailsPage() {
                     <div className="absolute inset-0 opacity-25 [background-image:radial-gradient(circle_at_25%_25%,white,transparent_35%),radial-gradient(circle_at_80%_70%,white,transparent_30%)]" />
                   </>
                 )}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <button
-                    type="button"
-                    aria-label="Preview course"
-                    className="w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-full bg-white/90 flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform duration-300"
-                    style={{ aspectRatio: "1 / 1" }}
-                  >
-                    <PlayCircle
-                      className="w-8 h-8 sm:w-10 sm:h-10 text-[#F97316]"
-                      fill="currentColor"
-                    />
-                  </button>
-                </div>
-                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
+                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
                   <span className="text-[11px] sm:text-xs font-semibold text-white bg-black/40 backdrop-blur-sm px-2.5 py-1 rounded-full">
                     Course Preview
                   </span>

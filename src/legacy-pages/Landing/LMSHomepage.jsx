@@ -6793,16 +6793,15 @@ const heroTexts = [
               <Tabs
                 value={activeTab}
                 onValueChange={setActiveTab}
-                className="grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)] gap-6 lg:gap-8 items-start w-full"
+                className="grid grid-cols-1 lg:grid-cols-[320px_minmax(0,1fr)] gap-6 lg:gap-8 items-start w-full"
               >
                 {/* ── Left: category panel ── */}
                 <div className="min-w-0 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-4 sm:p-5 lg:sticky lg:top-24">
                   <span className="block text-[11px] font-bold uppercase tracking-[0.18em] text-[#6D28D9] dark:text-violet-400 mb-2">
                     Explore by category
                   </span>
-                  <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-[#1E293B] dark:text-white leading-tight mb-4">
-                    Featured <br className="hidden lg:block" />
-                    Programs
+                  <h2 className="text-2xl sm:text-[26px] font-bold tracking-tight text-[#1E293B] dark:text-white leading-tight mb-4 whitespace-nowrap">
+                    Featured Programs
                   </h2>
 
                   <TabsList className="flex lg:flex-col w-full h-auto items-stretch justify-start gap-1.5 bg-transparent p-0 overflow-x-auto lg:overflow-visible [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
