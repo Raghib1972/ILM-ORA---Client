@@ -74,7 +74,7 @@ function HeroStack({ onPick }) {
           </button>
         ))}
       </div>
-      <p className="stage-hint">Move your mouse. Tap a layer to see its exams.</p>
+     
     </div>
   );
 }

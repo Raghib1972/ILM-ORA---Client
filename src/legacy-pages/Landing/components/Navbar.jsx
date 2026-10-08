@@ -112,7 +112,7 @@ const PRODUCT_ICON_COLORS = {
 const CERT_MENU_ITEMS = [
   { key: "aws", title: "AWS Certification", description: "Cloud Practitioner to Professional", icon: "Award" },
   { key: "microsoft", title: "Microsoft Certification", description: "Azure, M365 & Power Platform", icon: "Layers" },
-  { key: "cloud", title: "Cloud Certification", description: "Multi-cloud & vendor-neutral paths", icon: "Cloud" },
+    { key: "cloud", title: "Cloud Certification", description: "Multi-cloud & vendor-neutral paths", icon: "Cloud", comingSoon: true },
   { key: "google", title: "Google Certification", description: "Google Cloud & Workspace exams", icon: "Globe" },
 ];
 const CERT_ROUTES = {
@@ -387,24 +387,40 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
                 </button>
 
                 <div className="absolute top-full right-0 mt-2 w-80 bg-[#232323] border border-white/[0.08] rounded-xl shadow-xl p-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                  {CERT_MENU_ITEMS.map((item) => {
+                                    {CERT_MENU_ITEMS.map((item) => {
                     const ItemIcon = NAV_ICON_MAP[item.icon];
+                    const isSoon = !!item.comingSoon;
                     return (
                       <button
                         key={item.key}
-                        onClick={() => navigate(CERT_ROUTES[item.key])}
-                        className="w-full text-left p-3 rounded-lg hover:bg-[#F97316]/[0.12]"
+                        type="button"
+                        disabled={isSoon}
+                        aria-disabled={isSoon}
+                        onClick={() => {
+                          if (!isSoon) navigate(CERT_ROUTES[item.key]);
+                        }}
+                        className={`w-full text-left p-3 rounded-lg ${
+                          isSoon
+                            ? "bg-[#F97316]/[0.10] cursor-not-allowed"
+                            : "hover:bg-[#F97316]/[0.12]"
+                        }`}
                       >
                         <div className="flex items-start gap-3">
-                          <ItemIcon className={`w-5 h-5 ${CERT_ICON_COLORS[item.key]} mt-1`} />
-                          <div>
-                            <div className="font-semibold text-sm text-white">
+                          <ItemIcon className={`w-5 h-5 ${CERT_ICON_COLORS[item.key]} mt-1 flex-shrink-0`} />
+                          <div className="flex-1 min-w-0">
+                            <div className={`font-semibold text-sm flex items-center gap-2 ${isSoon ? "text-white/60" : "text-white"}`}>
                               {item.title}
+                              {isSoon && (
+                                <span className="text-[10px] font-semibold text-[#F97316] border border-[#F97316]/50 bg-[#F97316]/10 rounded-full px-2 py-0.5 whitespace-nowrap">
+                                  Coming Soon
+                                </span>
+                              )}
                             </div>
                             <div className="text-xs text-gray-400">
                               {item.description}
                             </div>
                           </div>
+                          {isSoon && <Lock className="w-4 h-4 text-gray-400 mt-1 flex-shrink-0" />}
                         </div>
                       </button>
                     );

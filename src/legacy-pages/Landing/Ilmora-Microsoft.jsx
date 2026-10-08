@@ -135,7 +135,7 @@ function HeroStack({ onPick }) {
           </button>
         ))}
       </div>
-      <p className="stage-hint">Move your mouse. Tap a layer to see its exams.</p>
+     
     </div>
   );
 }
@@ -440,7 +440,8 @@ const CSS = `@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+
 .ilm .step-top strong{font-size:18px}}
 @media(max-width:900px){.ilm .hero{grid-template-columns:1fr;text-align:center}
 .ilm .hero p{margin-left:auto;margin-right:auto}
-.ilm .cta-row{justify-content:center}
+.ilm .cta-row{justify-content:center;position:relative;z-index:2}
+.ilm .stage{margin-top:64px;height:360px}
 .ilm .stairs,.ilm .cubes{grid-template-columns:repeat(2,1fr)}
 .ilm .stairs .step:last-child{grid-column:1/-1}
 .ilm .stats{grid-template-columns:repeat(2,1fr)}

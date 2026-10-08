@@ -18,6 +18,7 @@ import {
   Cloud,
   Globe,
   Layers,
+  Lock,
 } from "lucide-react";
 
 /* ─────────────────────────────────────────────────────────────────
@@ -448,13 +449,18 @@ export default function MobileFullScreenMenu({
               cloud: "#0ea5e9",
               google: "#22c55e",
             };
-            const Icon = certIconMap[item.icon];
+                        const Icon = certIconMap[item.icon];
             const color = certColors[item.key] || "#f97316";
+            const isSoon = !!item.comingSoon;
 
             return (
               <button
                 key={item.key}
+                type="button"
+                disabled={isSoon}
+                aria-disabled={isSoon}
                 onClick={() => {
+                  if (isSoon) return;
                   navigate(certRoutes[item.key]);
                   onClose();
                 }}
@@ -465,8 +471,9 @@ export default function MobileFullScreenMenu({
                   gap: 12,
                   padding: "12px 12px",
                   border: "none",
-                  background: "transparent",
-                  cursor: "pointer",
+                  borderRadius: 10,
+                  background: isSoon ? "rgba(249,115,22,0.10)" : "transparent",
+                  cursor: isSoon ? "not-allowed" : "pointer",
                   textAlign: "left",
                 }}
               >
@@ -484,16 +491,36 @@ export default function MobileFullScreenMenu({
                 >
                   {Icon && <Icon size={18} style={{ color }} />}
                 </div>
-                <div>
+                <div style={{ flex: 1, minWidth: 0 }}>
                   <p
                     style={{
                       fontSize: 14,
                       fontWeight: 600,
-                      color: "#ffffff",
+                      color: isSoon ? "rgba(255,255,255,0.6)" : "#ffffff",
                       margin: 0,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      flexWrap: "wrap",
                     }}
                   >
                     {item.title}
+                    {isSoon && (
+                      <span
+                        style={{
+                          fontSize: 10,
+                          fontWeight: 600,
+                          color: "#F97316",
+                          border: "1px solid rgba(249,115,22,0.5)",
+                          background: "rgba(249,115,22,0.10)",
+                          borderRadius: 999,
+                          padding: "2px 8px",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        Coming Soon
+                      </span>
+                    )}
                   </p>
                   <p
                     style={{
@@ -505,6 +532,9 @@ export default function MobileFullScreenMenu({
                     {item.description}
                   </p>
                 </div>
+                {isSoon && (
+                  <Lock size={16} style={{ color: "#9CA3AF", flexShrink: 0, marginTop: 2 }} />
+                )}
               </button>
             );
           })}
