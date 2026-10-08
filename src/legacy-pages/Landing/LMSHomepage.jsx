@@ -4061,10 +4061,14 @@ function MentorTestimonialCarousel({ testimonials }) {
           {testimonials.map((t, i) => {
             const isExpanded = !!expandedCards[i];
             return (
-              <div
+                            <div
                 key={i}
                 style={{ scrollSnapAlign: "start" }}
-                className="w-full md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] min-w-0 flex-shrink-0"
+                className={`w-full min-w-0 flex-shrink-0 transition-all duration-500 ease-out ${
+                  isExpanded
+                    ? "md:w-[calc(66.666%-12px)] lg:w-[calc(50%-12px)]"
+                    : "md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)]"
+                }`}
               >
                                 <div
                   className={`relative h-full bg-white dark:bg-gray-900 rounded-[22px] border p-5 flex flex-col transition-all duration-300 ease-out hover:-translate-y-1.5 ${
