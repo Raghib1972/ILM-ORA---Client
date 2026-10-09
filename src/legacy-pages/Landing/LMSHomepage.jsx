@@ -4050,13 +4050,12 @@ function MentorTestimonialCarousel({ testimonials }) {
           <ChevronLeft className="w-5 h-5 text-[#1E293B] dark:text-white group-hover:text-white transition-colors" />
         </button>
 
-        {/* Scroller */}
-        {/* Scroller */}
+               {/* Scroller */}
         <div
           ref={scrollerRef}
           onScroll={handleScroll}
-          style={{ scrollSnapType: "x mandatory" }}
-          className="mentor-scroll flex items-start overflow-x-auto flex-1 min-w-0 gap-6"
+          style={{ scrollSnapType: "x mandatory", scrollPaddingLeft: 6 }}
+          className="mentor-scroll flex items-start overflow-x-auto flex-1 min-w-0 gap-6 px-1.5 pt-3 pb-5 -mt-3 -mb-5"
         >
           {testimonials.map((t, i) => {
             const isExpanded = !!expandedCards[i];
