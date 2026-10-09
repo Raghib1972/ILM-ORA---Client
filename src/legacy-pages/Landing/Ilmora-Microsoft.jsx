@@ -721,8 +721,131 @@ function Card({ d, saved, onSave, onOpen, i = 0 }) {
     </Tilt></Reveal>
   );
 }
+/* ---------- Levels hero + "What you get" (added from the Microsoft page) ---------- */
+const HLV = [
+  { n: "Fundamental", c: "#16a34a", k: 4 },
+  { n: "Associate", c: "#ea580c", k: 25 },
+  { n: "Expert", c: "#2563eb", k: 5 },
+  { n: "Specialty", c: "#9333ea", k: 3 },
+  { n: "Applied Skills", c: "#0d9488", k: 11 },
+];
+// plate click -> browse list filter (Specialty / Applied Skills just show everything)
+const HLV_FILTER = { Fundamental: ["Beginner"], Associate: ["Intermediate"], Expert: ["Advanced"] };
+
+function LevelStack({ onPick }) {
+  const [r, setR] = useState({ x: 58, z: -38 });
+  const [hot, setHot] = useState(null);
+  const move = (e) => {
+    const b = e.currentTarget.getBoundingClientRect();
+    const px = (e.clientX - b.left) / b.width - 0.5;
+    const py = (e.clientY - b.top) / b.height - 0.5;
+    setR({ x: 58 - py * 18, z: -38 + px * 30 });
+  };
+  const order = [...HLV].reverse();
+  return (
+    <div className="msb-ls" onPointerMove={move} onPointerLeave={() => setR({ x: 58, z: -38 })}>
+      <div className="msb-lg" />
+      <div className="msb-lstk" style={{ transform: `rotateX(${r.x}deg) rotateZ(${r.z}deg)` }}>
+        {order.map((l, i) => (
+          <button
+            key={l.n}
+            type="button"
+            className={"msb-lp" + (hot === l.n ? " hot" : "")}
+            style={{ "--c": l.c, "--n": order.length - 1 - i, "--d": `${i * 0.35}s` }}
+            onMouseEnter={() => setHot(l.n)}
+            onMouseLeave={() => setHot(null)}
+            onClick={() => onPick(l.n)}
+            aria-label={`Show ${l.n} credentials`}
+          >
+            <span className="msb-lpl">{l.n}</span>
+            <span className="msb-lpc">{l.k} exams</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function LevelsHero({ go, onPick }) {
+  return (
+    <section className="msb-lh">
+      <div className="msb-lh-copy">
+        <h1>Learn the tools every company already runs on.</h1>
+        <p>
+          Microsoft offers {DATA.length} credentials across five levels, from Azure and AI to Power BI,
+          Dynamics 365 and GitHub. See what each one teaches, who it is for and what it costs, then pick
+          the path that fits your job goal. ILM ORA trains you with projects and assessments until you
+          are exam ready.
+        </p>
+        <div className="msb-lcta">
+          <button className="msb-lb" onClick={() => onPick("All")}>Explore all exams</button>
+          <button
+            className="msb-lb g"
+            onClick={() => go("page", { kind: "train", title: "Career paths", desc: "Learning paths and labs to build the skills your job goal needs." })}
+          >
+            Find my path
+          </button>
+        </div>
+      </div>
+      <LevelStack onPick={onPick} />
+    </section>
+  );
+}
+
+function useSeen() {
+  const ref = useRef(null);
+  const [seen, setSeen] = useState(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") { setSeen(true); return; }
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setSeen(true); io.disconnect(); } }, { threshold: 0.2 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return [ref, seen];
+}
+
+function WhyCube({ t, d, i }) {
+  const [on, setOn] = useState(false);
+  return (
+    <div
+      className={"msb-cs" + (on ? " on" : "")}
+      style={{ "--i": i }}
+      role="button"
+      tabIndex={0}
+      onClick={() => setOn(!on)}
+      onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setOn(!on)}
+    >
+      <div className="msb-cb">
+        <div className="msb-cf msb-cf1"><h3>{t}</h3></div>
+        <div className="msb-cf msb-cf2"><p>{d}</p></div>
+      </div>
+    </div>
+  );
+}
+
+function WhySection() {
+  const [ref, seen] = useSeen();
+  return (
+    <section className="msb-why" ref={ref}>
+      <h2 className="msb-h2">What you get with ILM ORA</h2>
+      <div className={"msb-cubes" + (seen ? " in" : "")}>
+        {[
+          ["Learn by building", "Every topic ends with a hands-on project on real Microsoft tools."],
+          ["Practice like the exam", "Timed assessments that match the real exam length and style."],
+          ["Mentor support", "Stuck on Entra ID or Power BI? Ask a mentor who has already passed."],
+          ["Proof for employers", "Finish with projects and scores you can show in interviews."],
+        ].map(([t, d], i) => (
+          <WhyCube key={t} t={t} d={d} i={i} />
+        ))}
+      </div>
+      <p className="msb-chint">Hover or tap a block to turn it.</p>
+    </section>
+  );
+}
 
 function BrowsePage({ go, initialRoute = null }) {
+
   const [route, setRoute] = useState(initialRoute);
   const [f, setF] = useState(blank);
   const [input, setInput] = useState("");
@@ -731,8 +854,14 @@ function BrowsePage({ go, initialRoute = null }) {
   const [saved, setSaved] = useState([]);
   const [open, setOpen] = useState(false);
 
-  const rootRef = useRef(null);
+    const rootRef = useRef(null);
+  const listRef = useRef(null);
   const toTop = () => rootRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  const pickLevel = (l) => {
+    setF({ ...blank, v: HLV_FILTER[l] || [] });
+    setInput("");
+    setTimeout(() => listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 0);
+  };
   const openCard = (id) => { setRoute(id); setTimeout(toTop, 0); };
   const goHome = (e) => { e && e.preventDefault(); setRoute(null); setTimeout(toTop, 0); };
 
@@ -837,8 +966,9 @@ function BrowsePage({ go, initialRoute = null }) {
 
   /* ---------------- BROWSE PAGE ---------------- */
   return (
-    <div id="ms-browse" ref={rootRef}>
+        <div id="ms-browse" ref={rootRef}>
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
+      <LevelsHero go={go} onPick={pickLevel} />
       <section className="msb-hero">
         <div className="msb-hero-in">
           <h1>Browse Credentials</h1>
@@ -847,7 +977,7 @@ function BrowsePage({ go, initialRoute = null }) {
         <Illus kind="keys" />
       </section>
       <div className="msb-statbar">{[[DATA.length, "Credentials"], [DATA.filter((d) => d.ex).length, "Exams"], [DATA.filter((d) => !d.ex).length, "Certifications"], [PRODUCTS.length, "Products"]].map(([n, l]) => <div key={l}><b><Count to={n} /></b><span>{l}</span></div>)}</div>
-      <section className="msb msb-white">
+            <section className="msb msb-white" ref={listRef}>
       <div className="msb-wrap msb-layout">
         <aside>
           <button className="msb-fbtn" onClick={() => setOpen(!open)}>{open ? "Hide filters" : "Show filters"}</button>
@@ -889,10 +1019,11 @@ function BrowsePage({ go, initialRoute = null }) {
                 ))}
               </div>
             </>
-          ) : <div className="msb-empty">No results. Clear a filter or try a different search.</div>}
+                  ) : <div className="msb-empty">No results. Clear a filter or try a different search.</div>}
         </main>
       </div>
       </section>
+      <WhySection />
     </div>
   );
 }
@@ -1395,6 +1526,42 @@ const CSS = `
 .msb-white .msb-pg button{background:var(--cream,#f6ede6);color:var(--tx,#161616)}
 .msb-white .msb-pg .cur{background:var(--or,#0f6cbd);color:#fff}
 .msb-white .msb-fbtn{background:var(--cream,#f6ede6);color:var(--tx,#161616)}
+
+/* ===== Levels hero (3D stack) ===== */
+@keyframes msb-rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes msb-lbob{0%,100%{translate:0 0 0}50%{translate:0 0 12px}}
+.msb-lh,.msb-lh *,.msb-why,.msb-why *{box-sizing:border-box}
+.msb-lh{display:grid;grid-template-columns:1.05fr 1fr;gap:32px;align-items:center;background:var(--cream,#f6ede6);color:var(--tx,#1f1b18);padding:clamp(40px,7vw,80px) var(--pad) clamp(32px,5vw,56px)}
+.msb-lh h1{font-size:clamp(28px,4.4vw,48px);line-height:1.15;font-weight:600;margin:0 0 18px;letter-spacing:-.02em;color:var(--tx,#1f1b18);animation:msb-rise .9s cubic-bezier(.2,.8,.2,1) both}
+.msb-lh p{color:var(--mut,#6a5f57);font-size:clamp(16px,1.6vw,18px);line-height:1.55;max-width:520px;margin:0;animation:msb-rise .9s .15s cubic-bezier(.2,.8,.2,1) both}
+.msb-lcta{display:flex;gap:12px;margin-top:26px;flex-wrap:wrap;animation:msb-rise .9s .3s cubic-bezier(.2,.8,.2,1) both}
+.msb-lb{padding:13px 24px;border-radius:12px;font:inherit;font-weight:600;font-size:15px;border:1px solid transparent;cursor:pointer;background:var(--or,#f97316);color:#fff;box-shadow:0 8px 22px rgba(249,115,22,.35);transition:transform .2s,box-shadow .2s}
+.msb-lb:hover{transform:translateY(-2px)}
+.msb-lb.g{background:var(--card,#fff);color:var(--tx,#1f1b18);border-color:var(--line,#e7d9cd);box-shadow:none}
+.msb-ls{position:relative;height:clamp(300px,50vw,460px);perspective:1100px;display:flex;align-items:center;justify-content:center;touch-action:pan-y}
+.msb-lg{position:absolute;width:min(340px,80%);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(249,115,22,.26),transparent 70%);filter:blur(20px)}
+.msb-lstk{--u:clamp(30px,9vw,62px);position:relative;width:clamp(150px,44vw,230px);aspect-ratio:1;transform-style:preserve-3d;transition:transform .25s ease-out}
+.msb-lp{position:absolute;inset:0;transform-style:preserve-3d;transform:translateZ(calc(var(--n)*var(--u)));border-radius:clamp(14px,3vw,22px);border:2px solid var(--c);background:linear-gradient(135deg,color-mix(in srgb,var(--c) 26%,var(--card,#fff)),var(--card,#fff) 85%);box-shadow:0 10px 30px color-mix(in srgb,var(--c) 28%,transparent);display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-end;padding:clamp(10px,2.4vw,16px);color:var(--tx,#1f1b18);font:inherit;text-align:left;cursor:pointer;animation:msb-lbob 4s ease-in-out infinite;animation-delay:var(--d);transition:filter .2s,box-shadow .2s}
+.msb-lp.hot{filter:saturate(1.3);box-shadow:0 0 44px var(--c)}
+.msb-lpl{font-weight:700;font-size:clamp(13px,3.4vw,17px)}
+.msb-lpc{font-size:12px;color:var(--mut,#6a5f57)}
+
+/* ===== What you get (3D cubes) ===== */
+.msb-why{background:var(--cream,#f6ede6);color:var(--tx,#1f1b18);padding:clamp(56px,8vw,96px) var(--pad)}
+.msb-cubes{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;perspective:1000px;margin-top:36px}
+.msb-cs{height:200px;cursor:pointer;opacity:0;transform:translateY(40px);transition:opacity .7s,transform .7s;transition-delay:calc(var(--i)*.12s)}
+.msb-cubes.in .msb-cs{opacity:1;transform:none}
+.msb-cb{position:relative;width:100%;height:100%;transform-style:preserve-3d;transform:translateZ(-100px);transition:transform .8s cubic-bezier(.3,.8,.2,1)}
+.msb-cs.on .msb-cb,.msb-cs:focus-visible .msb-cb{transform:translateZ(-100px) rotateX(-90deg)}
+@media(hover:hover){.msb-cs:hover .msb-cb{transform:translateZ(-100px) rotateX(-90deg)}}
+.msb-cf{position:absolute;inset:0;border-radius:16px;padding:22px;display:flex;align-items:flex-start;border:1px solid var(--line,#e7d9cd);background:var(--card,#fff);backface-visibility:hidden;-webkit-backface-visibility:hidden;box-shadow:0 12px 26px rgba(120,80,40,.14)}
+.msb-cf h3{margin:0;font-size:clamp(17px,1.8vw,19px);font-weight:600;line-height:1.3;color:var(--tx,#1f1b18)}
+.msb-cf p{margin:0;font-size:14.5px;color:#fff}
+.msb-cf1{transform:rotateX(0) translateZ(100px)}
+.msb-cf2{transform:rotateX(90deg) translateZ(100px);background:linear-gradient(150deg,#f97316,#c2410c);border-color:var(--or,#f97316)}
+.msb-chint{text-align:center;color:var(--mut,#6a5f57);margin:30px auto 0;font-size:14px}
+@media(max-width:900px){.msb-lh{grid-template-columns:1fr;text-align:center}.msb-lh p{margin-left:auto;margin-right:auto}.msb-lcta{justify-content:center;position:relative;z-index:2}.msb-ls{margin-top:64px;height:360px}.msb-cubes{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.msb-cubes{grid-template-columns:1fr}.msb-lb{flex:1 1 100%;text-align:center}}
 `;
 
 const HOST_CSS = `@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
