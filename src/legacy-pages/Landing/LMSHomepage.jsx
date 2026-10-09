@@ -7020,7 +7020,8 @@ const heroTexts = [
       </section>
 
      
-
+      {/* ── ILM ORA Platform hub (AI Companion / Workspace / Calendry) ── */}
+      <ProductHubSection navigate={navigate} />
       {/* ── Stats ── */}
         {/* <section className="py-6 sm:py-8 px-6 bg-white dark:bg-gray-900/50">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
