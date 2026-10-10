@@ -6650,6 +6650,7 @@ const heroTexts = [
     <div className="min-h-screen bg-[#F6EDE6] dark:bg-black text-[#1E293B] dark:text-white">
       {/* ── Announcement Banner & Navbar ── */}
             <ClientOnly>
+                <TexoraFloatingWidget />
         <AnnouncementBanner />
         <Navbar
           theme={theme}
@@ -7494,9 +7495,6 @@ const heroTexts = [
           }}
         />
       )}
-           <ClientOnly>
-        <TexoraFloatingWidget />
-      </ClientOnly>
-    </div>
+            </div>
   );
 }

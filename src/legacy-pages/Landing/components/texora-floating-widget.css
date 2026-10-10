@@ -317,3 +317,170 @@ html.dark .texora-panel__close {
 html.dark .texora-panel__cta {
   background: linear-gradient(135deg, #ff9a3c 0%, #ff6a00 100%);
 }
+/* ============ Top Announcement Banner ============ */
+
+.texora-banner,
+.texora-banner * {
+  box-sizing: border-box;
+}
+
+.texora-banner {
+  position: relative;
+  width: 100%;
+  z-index: 10;
+  background: linear-gradient(90deg, #fdeede 0%, #fdf2e8 50%, #fdf6ef 100%);
+  border-bottom: 1px solid rgba(20, 20, 40, 0.06);
+  animation: texora-banner-in 0.3s ease;
+}
+
+@keyframes texora-banner-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.texora-banner__inner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 10px 64px 10px 28px;
+}
+
+.texora-banner__logo {
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+  flex-shrink: 0;
+}
+
+.texora-banner__divider {
+  width: 1px;
+  height: 40px;
+  background: rgba(20, 20, 40, 0.15);
+  flex-shrink: 0;
+}
+
+.texora-banner__divider--accent {
+  background: rgba(255, 106, 0, 0.55);
+}
+
+.texora-banner__title {
+  font-family: inherit;
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  line-height: 1.3 !important;
+  color: #14141f;
+  margin: 0 !important;
+  white-space: nowrap;
+}
+
+.texora-banner__summary {
+  font-family: inherit;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+  color: #5b5b66;
+  margin: 0 !important;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.texora-banner__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  background: linear-gradient(135deg, #ff9a3c 0%, #ff6a00 100%);
+  box-shadow: 0 6px 14px rgba(255, 106, 0, 0.3);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  white-space: nowrap;
+}
+
+.texora-banner__cta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px rgba(255, 106, 0, 0.4);
+}
+
+.texora-banner__close {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: #1a1a2e;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.texora-banner__close:hover {
+  background: rgba(255, 106, 0, 0.15);
+  color: #ff6a00;
+}
+
+@media (max-width: 1100px) {
+  .texora-banner__summary,
+  .texora-banner__divider--accent {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .texora-banner__inner {
+    gap: 10px;
+    padding: 8px 44px 8px 12px;
+  }
+  .texora-banner__divider {
+    display: none;
+  }
+  .texora-banner__logo {
+    height: 30px;
+  }
+  .texora-banner__title {
+    font-size: 12.5px !important;
+    white-space: normal;
+    flex: 1 1 auto;
+  }
+  .texora-banner__cta {
+    padding: 7px 10px;
+    font-size: 12px;
+    gap: 4px;
+  }
+  .texora-banner__close {
+    right: 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .texora-banner,
+  .texora-banner__cta {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+html.dark .texora-banner {
+  background: #1c1714;
+  border-bottom-color: #374151;
+}
+html.dark .texora-banner__title { color: #ffffff; }
+html.dark .texora-banner__summary { color: #b3b3bd; }
+html.dark .texora-banner__divider { background: #374151; }
+html.dark .texora-banner__divider--accent { background: rgba(255, 106, 0, 0.6); }
+html.dark .texora-banner__close { color: #ffffff; }

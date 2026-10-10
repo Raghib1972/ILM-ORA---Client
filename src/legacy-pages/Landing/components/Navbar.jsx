@@ -264,8 +264,9 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
       )}
 
       {/* ── Nav ── */}
-      <nav
-        className={`fixed top-0 w-full z-50 transition-all duration-300 bg-[#1F1D1F]/95 border-b border-[#F97316]/20 ${
+            <nav
+        style={{ top: "var(--texora-banner-h, 0px)" }}
+        className={`fixed w-full z-50 transition-[background-color,box-shadow] duration-300 bg-[#1F1D1F]/95 border-b border-[#F97316]/20 ${
           scrolled
             ? "backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.18)]"
             : "backdrop-blur-md"
