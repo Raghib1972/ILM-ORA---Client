@@ -33,15 +33,8 @@ export async function generateMetadata({ params }) {
   }
 }
 
-export default async function Page({ params }) {
-  const { slug } = await params;
-  let item = null;
-  let apiFailed = false;
-  try {
-    item = await resolveCourse(slug);
-  } catch {
-    apiFailed = true; // API down, client component khud handle karega
-  }
-  if (!item && !apiFailed && !/^\d+$/.test(slug)) notFound();
+export default async function Page() {
+  // Slug ko browser (client) resolve karega. Nahi mila to
+  // CourseDetailsPage khud home par bhej dega.
   return <CourseDetailsPage />;
 }
