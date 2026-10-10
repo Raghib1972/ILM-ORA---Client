@@ -29,47 +29,91 @@ export function getCourseSlug(course) {
   return slug;
 }
 
-let cache = { t: 0, data: null };
-async function fetchSummaryList() {
-  if (cache.data && Date.now() - cache.t < 5 * 60 * 1000) return cache.data;
+const TTL = 5 * 60 * 1000;
+const memCache = {}; // { [name]: { t, data } }
 
-  // Poori list (All Courses page jaisi) — saare courses isme aate hain.
-  // Agar ye fail ho ya empty aaye, to summary list par fallback.
-  let list = [];
+async function fetchList(path, timeoutMs = 8000) {
+  const ctrl =
+    typeof AbortController !== "undefined" ? new AbortController() : null;
+  const timer = ctrl ? setTimeout(() => ctrl.abort(), timeoutMs) : null;
   try {
-    const res = await fetch(`${API}/course/v1/featurecourse`, {
+    const res = await fetch(`${API}${path}`, {
       next: { revalidate: 300 },
+      signal: ctrl ? ctrl.signal : undefined,
     });
-    if (res.ok) {
-      const data = await res.json();
-      list = Array.isArray(data) ? data : [];
-    }
-  } catch {
-    /* summary par fallback */
-  }
-
-  if (list.length === 0) {
-    const res = await fetch(`${API}/course/v1/featurecourse/summary`, {
-      next: { revalidate: 300 },
-    });
-    if (!res.ok) throw new Error(`summary ${res.status}`);
+    if (!res.ok) return [];
     const data = await res.json();
-    list = Array.isArray(data) ? data : [];
+    return Array.isArray(data) ? data : [];
+  } catch {
+    return [];
+  } finally {
+    if (timer) clearTimeout(timer);
   }
-
-  cache = { t: Date.now(), data: list };
-  return list;
 }
 
-// slug ya numeric id -> summary course object (ya null)
+// memory + sessionStorage cache (browser), taaki har click par dobara download na ho
+async function getCachedList(name, path) {
+  const hit = memCache[name];
+  if (hit && Date.now() - hit.t < TTL) return hit.data;
+
+  if (typeof window !== "undefined") {
+    try {
+      const raw = window.sessionStorage.getItem(`ilm_list_${name}`);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Date.now() - parsed.t < TTL && Array.isArray(parsed.data)) {
+          memCache[name] = parsed;
+          return parsed.data;
+        }
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+
+  const data = await fetchList(path);
+  if (data.length > 0) {
+    memCache[name] = { t: Date.now(), data };
+    if (typeof window !== "undefined") {
+      try {
+        window.sessionStorage.setItem(
+          `ilm_list_${name}`,
+          JSON.stringify(memCache[name]),
+        );
+      } catch {
+        /* ignore */
+      }
+    }
+  }
+  return data;
+}
+
+const getSummaryList = () =>
+  getCachedList("summary", "/course/v1/featurecourse/summary");
+const getFullList = () => getCachedList("full", "/course/v1/featurecourse");
+
+// slug ya numeric id -> course object (ya null)
 export async function resolveCourse(identifier) {
   const key = decodeURIComponent(String(identifier)).toLowerCase();
-  const list = await fetchSummaryList();
-  return (
+  const find = (list) =>
     list.find((c) => getCourseSlug(c) === key) ||
     list.find((c) => String(c.id) === key) ||
-    null
-  );
+    null;
+
+  // 1) halki summary list (fast)
+  const summary = await getSummaryList();
+  let item = find(summary);
+  if (item) return item;
+
+  // 2) summary mein nahi mila -> tabhi poori list
+  const full = await getFullList();
+  item = find(full);
+  if (item) return item;
+
+  if (summary.length === 0 && full.length === 0) {
+    throw new Error("course list unavailable");
+  }
+  return null;
 }
 
 // slug ya id -> real numeric id (API call ke liye)
