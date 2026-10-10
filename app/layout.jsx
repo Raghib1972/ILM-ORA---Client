@@ -115,7 +115,7 @@ export default function RootLayout({ children }) {
         <Script
           src="https://widget.toracx.texora.ai/widget.js"
           data-organization-id="6ac8af9e340454bd184149a6"
-          data-api-key={process.env.NEXT_PUBLIC_TORACX_API_KEY}
+          data-api-key="tcx_218c724563a294fcaf5867824b5fb3bb32ef8e1f711a7e1341f9267aca25fbfe"
           strategy="afterInteractive"
         />
       </body>

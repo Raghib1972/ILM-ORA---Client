@@ -32,13 +32,33 @@ export function getCourseSlug(course) {
 let cache = { t: 0, data: null };
 async function fetchSummaryList() {
   if (cache.data && Date.now() - cache.t < 5 * 60 * 1000) return cache.data;
-  const res = await fetch(`${API}/course/v1/featurecourse/summary`, {
-    next: { revalidate: 300 },
-  });
-  if (!res.ok) throw new Error(`summary ${res.status}`);
-  const data = await res.json();
-  cache = { t: Date.now(), data: Array.isArray(data) ? data : [] };
-  return cache.data;
+
+  // Poori list (All Courses page jaisi) — saare courses isme aate hain.
+  // Agar ye fail ho ya empty aaye, to summary list par fallback.
+  let list = [];
+  try {
+    const res = await fetch(`${API}/course/v1/featurecourse`, {
+      next: { revalidate: 300 },
+    });
+    if (res.ok) {
+      const data = await res.json();
+      list = Array.isArray(data) ? data : [];
+    }
+  } catch {
+    /* summary par fallback */
+  }
+
+  if (list.length === 0) {
+    const res = await fetch(`${API}/course/v1/featurecourse/summary`, {
+      next: { revalidate: 300 },
+    });
+    if (!res.ok) throw new Error(`summary ${res.status}`);
+    const data = await res.json();
+    list = Array.isArray(data) ? data : [];
+  }
+
+  cache = { t: Date.now(), data: list };
+  return list;
 }
 
 // slug ya numeric id -> summary course object (ya null)
