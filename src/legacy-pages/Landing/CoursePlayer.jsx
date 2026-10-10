@@ -32,6 +32,7 @@ import {
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useParams } from "@/lib/routerCompat";
 import { courseService } from "../../services/courseService";
+import { resolveCourseId } from "@/lib/courseSlug";
 
 /* ──────────────────────────────────────────────────────────────────────────
    ILM ORA — Premium Learning Player  (/learn/:courseId)
@@ -102,7 +103,12 @@ export default function CoursePlayer() {
     }
     async function load() {
       try {
-        const { data } = await courseService.getFeaturedProgramById(courseId);
+                const realId = await resolveCourseId(courseId);
+        if (!realId) {
+          navigate("/");
+          return;
+        }
+        const { data } = await courseService.getFeaturedProgramById(realId);
         setCourseData({
           id: data.id,
           title: data.title,

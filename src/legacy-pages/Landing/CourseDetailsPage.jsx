@@ -34,6 +34,7 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate, useParams } from "@/lib/routerCompat";
 import { courseService } from "../../services/courseService";
+import { getCourseSlug, resolveCourseId } from "@/lib/courseSlug";
 export default function CourseDetailsPage() {
   // const navigate = useNavigate();
   // const location = useLocation();
@@ -45,7 +46,8 @@ export default function CourseDetailsPage() {
   // );
   const navigate = useNavigate();
   const location = useLocation();
-  const { id } = useParams();
+  const { id: idParam, slug } = useParams();
+  const id = slug || idParam; // slug (new) ya numeric id (old links)
   // NOTE: location.state?.course now comes from the lightweight summary DTO
   // (homepage / related-courses), so it's missing syllabusWeeks/highlights/
   // learningOutcomes. We still show it instantly for a fast perceived load,
@@ -69,7 +71,8 @@ export default function CourseDetailsPage() {
   const isEnrolled = true;
   const hasProgress = false; // TODO: wire real progress once available
   const startCourseLabel = hasProgress ? "Continue Learning" : "Start Course";
-  const goToProgramPlayer = () => navigate(`/program-player/${courseData.id}`);
+    const goToProgramPlayer = () =>
+    navigate(`/program-player/${getCourseSlug(courseData)}`);
 
   // Ref used to smoothly scroll to the in-page Course Syllabus section
   // instead of navigating to a separate route.
@@ -106,10 +109,16 @@ export default function CourseDetailsPage() {
     // the lightweight summary and lacks syllabus/highlights/learningOutcomes.
     async function load() {
       try {
-        const { data } = await courseService.getFeaturedProgramById(id);
+                const realId = await resolveCourseId(id);
+        if (!realId) {
+          navigate("/");
+          return;
+        }
+        const { data } = await courseService.getFeaturedProgramById(realId);
         setCourseData({
           id: data.id,
           title: data.title,
+          slug: data.slug || "",
           instructor: data.instructorRole || data.instructorName,
           instructorFull: data.instructorName,
           instructorTitle: data.instructorRole || "",
@@ -201,9 +210,10 @@ export default function CourseDetailsPage() {
         const others = (data || [])
           .filter((p) => String(p.id) !== String(courseData.id))
           .slice(0, 3)
-          .map((p) => ({
+                    .map((p) => ({
             id: p.id,
             title: p.title,
+            slug: p.slug || "",
             instructor: p.instructorRole || p.instructorName,
             duration: `${p.durationWeeks} weeks`,
             students: p.studentsEnrolled,
@@ -1130,7 +1140,7 @@ export default function CourseDetailsPage() {
                 <div
                   key={rc.id}
                   onClick={() =>
-                    navigate(`/course-details/${rc.id}`, {
+                                        navigate(`/${getCourseSlug(rc)}`, {
                       state: { course: rc },
                     })
                   }
@@ -1254,7 +1264,7 @@ export default function CourseDetailsPage() {
               </div>
 
               <button
-                onClick={() => navigate(`/learn/${courseData.id}`)}
+                onClick={() => navigate(`/learn/${getCourseSlug(courseData)}`)}
                 className="w-full bg-[#1E293B] hover:bg-[#334155] text-white py-3 sm:py-4 rounded-lg sm:rounded-xl font-bold text-sm sm:text-base shadow-md hover:shadow-lg transition-all"
               >
                 Proceed to Payment
