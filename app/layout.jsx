@@ -1,6 +1,6 @@
 import "./globals.css";
+import Script from "next/script";
 import AppProviders from "@/components/AppProviders";
-
 // SEO baseline reproduced from the existing index.html — nothing invented.
 // Per-page metadata (title/description/OG/canonical overrides) is layered
 // on top of this in Day 3; this is just the site-wide default.
@@ -110,8 +110,14 @@ export default function RootLayout({ children }) {
           }}
         />
       </head>
-      <body>
+            <body>
         <AppProviders>{children}</AppProviders>
+        <Script
+          src="https://widget.toracx.texora.ai/widget.js"
+          data-organization-id="6ac8af9e340454bd184149a6"
+          data-api-key={process.env.NEXT_PUBLIC_TORACX_API_KEY}
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );

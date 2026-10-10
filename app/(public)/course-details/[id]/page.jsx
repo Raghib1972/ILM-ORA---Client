@@ -62,8 +62,8 @@ export default async function Page({ params }) {
   try {
     const item = await resolveCourse(id);
     if (item) target = `/${getCourseSlug(item)}`;
-  } catch {
-    /* API down, neeche purana page hi render hoga */
+    } catch (e) {
+    console.error("slug redirect failed:", e);
   }
   if (target) permanentRedirect(target);
   return <CourseDetailsPage />;

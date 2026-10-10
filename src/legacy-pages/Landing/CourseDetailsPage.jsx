@@ -186,8 +186,19 @@ export default function CourseDetailsPage() {
           enrollmentUrl: data.enrollmentUrl || "",
           liveSessions: data.liveSessions ?? "—",
         });
-        console.log("instructorLinkedIn:", data.instructorLinkedIn);
+                console.log("instructorLinkedIn:", data.instructorLinkedIn);
         console.log("videoUrl:", data.videoUrl);
+
+        // Address bar ko clean slug URL bana do (/course-details/31 -> /sql).
+        // Kisi bhi purane/numeric link se aaye, yahan sab ek URL par aa jayenge.
+        const cleanPath = `/${getCourseSlug({
+          id: data.id,
+          title: data.title,
+          slug: data.slug,
+        })}`;
+        if (window.location.pathname !== cleanPath) {
+          window.history.replaceState(window.history.state, "", cleanPath);
+        }
       } catch (err) {
         console.error("Failed to load course", err);
         navigate("/");
