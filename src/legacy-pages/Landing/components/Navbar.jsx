@@ -231,15 +231,15 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
     navigate("/", { replace: true });
   };
 
-  const navLinks = [
+      const navLinks = [
     {
-      text: "Mentors",
-      href: "#mentors",
+      text: "Workshops",
+      href: "#workshops",
       icon: BookOpen,
       color: "text-orange-500",
-      description: "Learn from Industry Experts",
+      description: "Hands-on Live Workshops",
+      comingSoon: true,
     },
-    
   ];
 
   const navButtons = [];
@@ -364,19 +364,35 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
                 </div>
               </div>
 
-              {/* Direct Nav Links — Mentors, Success Stories */}
+                        {/* Direct Nav Links — Workshop (Coming Soon) */}
               {navLinks.map((link) => (
                 <button
                   key={link.text}
                   type="button"
+                  disabled={!!link.comingSoon}
+                  aria-disabled={!!link.comingSoon}
                   onClick={() => {
-                    document
-                      .querySelector(link.href)
-                      ?.scrollIntoView({ behavior: "smooth" });
+                    if (link.comingSoon) return;
+                    if (link.route) {
+                      navigate(link.route);
+                    } else {
+                      document
+                        .querySelector(link.href)
+                        ?.scrollIntoView({ behavior: "smooth" });
+                    }
                   }}
-                  className="text-white hover:text-[#F97316] font-medium transition-colors duration-300 px-3 xl:px-4 py-2 rounded-lg hover:bg-[#F97316]/10 text-[13px] xl:text-[15px] whitespace-nowrap bg-transparent border-none cursor-pointer"
+                  className={`font-medium transition-colors duration-300 px-3 xl:px-4 py-2 rounded-lg text-[13px] xl:text-[15px] whitespace-nowrap bg-transparent border-none flex items-center gap-2 ${
+                    link.comingSoon
+                      ? "text-white/60 cursor-not-allowed"
+                      : "text-white hover:text-[#F97316] hover:bg-[#F97316]/10 cursor-pointer"
+                  }`}
                 >
-                                  {link.text}
+                  {link.text}
+                  {link.comingSoon && (
+                    <span className="text-[10px] font-semibold text-[#F97316] border border-[#F97316]/50 bg-[#F97316]/10 rounded-full px-2 py-0.5 whitespace-nowrap">
+                      Coming Soon
+                    </span>
+                  )}
                 </button>
               ))}
 

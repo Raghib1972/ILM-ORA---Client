@@ -110,6 +110,7 @@ import {
   ChevronDown,
   Trophy,
   Code2,
+  Cloud,
 } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -124,6 +125,14 @@ const NAV_ICON_MAP = { GraduationCap, Users, BarChart3, FileText, LayoutDashboar
 // HUB_ICON_COLORS mein color add karo
 const HUB_ICON_COLORS = { student: "#16a34a", trainer: "#3b82f6", admin: "#a855f7", whiteboard: "#F97316", studyPlan: "#F97316", aiCompanion: "#a855f7", resume: "#16a34a", codingLab: "#0ea5e9" };
 const PRODUCT_ICON_COLORS = { meet: "#F97316", resume: "#16a34a", workspace: "#F97316" };
+
+// "All Certification" dropdown (same items/routes as Navbar.jsx)
+const NAV_CERT_MENU_ITEMS = [
+  { key: "aws",       title: "AWS Certification",       description: "Cloud Practitioner to Professional", icon: Award,  route: "/ilmora-aws-certification",       color: "#FF9900" },
+  { key: "microsoft", title: "Microsoft Certification", description: "Azure, M365 & Power Platform",       icon: Layers, route: "/ilmora-microsoft-certification", color: "#0078D4" },
+  { key: "cloud",     title: "Cloud Certification",     description: "Multi-cloud & vendor-neutral paths", icon: Cloud,  route: "/ilmora-cloud-certification",     color: "#0ea5e9", comingSoon: true },
+  { key: "google",    title: "Google Certification",    description: "Google Cloud & Workspace exams",     icon: Globe,  route: "/ilmora-google-certification",    color: "#34A853" },
+];
 
 const GOOGLE_CLIENT_ID =
   "572421778240-akk3kkb4f60ukuv9pcfrpg2ielm09thk.apps.googleusercontent.com";
@@ -1479,6 +1488,7 @@ export default function IlmOraDemoPage() {
   const [mobileNavOpen, setMobileNavOpen] = useState(false); // ← responsive mobile nav toggle
   const [mobileFeatureOpen, setMobileFeatureOpen] = useState(true); // ← ILM ORA Feature accordion, full-screen mobile menu
   const [mobileProductOpen, setMobileProductOpen] = useState(true); // ← Product accordion, full-screen mobile menu
+  const [mobileCertOpen, setMobileCertOpen] = useState(true); // ← All Certification accordion, full-screen mobile menu
 
   // Which role was picked in Step 4 (kept for reference / feature lookups)
   const [selectedRole, setSelectedRole] = useState(null);
@@ -1553,8 +1563,12 @@ export default function IlmOraDemoPage() {
   // Product dropdown — ILM ORA Meet, AI Resume Builder and Workspace.
   // Uses the same click-toggle and outside-click behavior as the
   // ILM ORA Feature dropdown. Each item opens its actual production route.
-  const [productMenuOpen, setProductMenuOpen] = useState(false);
+    const [productMenuOpen, setProductMenuOpen] = useState(false);
   const productMenuRef = useRef(null);
+
+  // All Certification dropdown (desktop)
+  const [certMenuOpen, setCertMenuOpen] = useState(false);
+  const certMenuRef = useRef(null);
 
   useEffect(() => {
     const handler = (e) => {
@@ -1562,8 +1576,10 @@ export default function IlmOraDemoPage() {
         setUserMenuOpen(false);
       if (featureMenuRef.current && !featureMenuRef.current.contains(e.target))
         setFeatureMenuOpen(false);
-      if (productMenuRef.current && !productMenuRef.current.contains(e.target))
+            if (productMenuRef.current && !productMenuRef.current.contains(e.target))
         setProductMenuOpen(false);
+      if (certMenuRef.current && !certMenuRef.current.contains(e.target))
+        setCertMenuOpen(false);
     };
     document.addEventListener("click", handler);
     return () => document.removeEventListener("click", handler);
@@ -3047,17 +3063,78 @@ const goToAllCourses = () => {
               </div>
             </div>
 
-            {/* Mentors / Success Stories — same labels as the public
-                Navbar. /ilm-demo has no #mentors/#successstories sections
-                of its own, so (matching PublicLayout's existing fallback
-                convention) these send the visitor to the homepage
-                section, same as every other page without that content. */}
-            <button className="d-nav-link" onClick={() => navigate("/#mentors")}>
-              Mentors
+                        {/* Workshops — Coming Soon (same as public Navbar) */}
+            <button
+              type="button"
+              className="d-nav-link"
+              disabled
+              aria-disabled="true"
+              style={{ opacity: 0.6, cursor: "not-allowed", pointerEvents: "none", gap: 8 }}
+            >
+              Workshops
+              <span style={{ fontSize: 10, fontWeight: 700, color: "#F97316", border: "1px solid rgba(249,115,22,.5)", background: "rgba(249,115,22,.1)", borderRadius: 999, padding: "2px 8px", whiteSpace: "nowrap" }}>
+                Coming Soon
+              </span>
             </button>
-            <button className="d-nav-link" onClick={() => navigate("/#successstories")}>
-              Success Stories
-            </button>
+
+            {/* All Certification — click-toggle dropdown */}
+            <div className="d-nav-dropdown" ref={certMenuRef}>
+              <button
+                type="button"
+                className="d-nav-link"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setCertMenuOpen((o) => !o);
+                }}
+              >
+                All Certification
+                <ChevronDown
+                  size={14}
+                  className={`d-nav-dropdown-chevron ${certMenuOpen ? "open" : ""}`}
+                  style={{ marginLeft: 4 }}
+                />
+              </button>
+              <div
+                className={`d-nav-dropdown-menu ${certMenuOpen ? "open" : ""}`}
+                style={{ left: "auto", right: 0 }}
+              >
+                {NAV_CERT_MENU_ITEMS.map((item) => {
+                  const soon = !!item.comingSoon;
+                  return (
+                    <button
+                      key={item.key}
+                      type="button"
+                      disabled={soon}
+                      className="d-nav-dropdown-item"
+                      style={soon ? { opacity: 0.75, cursor: "not-allowed", background: "rgba(249,115,22,0.10)" } : undefined}
+                      onClick={() => {
+                        if (soon) return;
+                        setCertMenuOpen(false);
+                        navigate(item.route);
+                      }}
+                    >
+                      <item.icon
+                        size={18}
+                        className="d-nav-dropdown-item-icon"
+                        color={item.color}
+                      />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div className="d-nav-dropdown-item-title" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          {item.title}
+                          {soon && (
+                            <span style={{ fontSize: 10, fontWeight: 700, color: "#F97316", border: "1px solid rgba(249,115,22,.5)", background: "rgba(249,115,22,.1)", borderRadius: 999, padding: "2px 8px", whiteSpace: "nowrap" }}>
+                              Coming Soon
+                            </span>
+                          )}
+                        </div>
+                        <div className="d-nav-dropdown-item-desc">{item.description}</div>
+                      </div>
+                      {soon && <Lock size={16} color="#94a3b8" style={{ flexShrink: 0, marginTop: 2 }} />}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
 
          <div className="d-nav-right">
@@ -3289,28 +3366,74 @@ const goToAllCourses = () => {
 
               <div className="d-mobile-menu-divider" />
 
-              {/* Mentors / Success Stories — same /#mentors, /#successstories
-                  convention as the desktop nav links above. */}
+                            {/* Workshops — Coming Soon */}
               <button
+                type="button"
                 className="d-nav-link"
-                onClick={() => {
-                  setMobileNavOpen(false);
-                  navigate("/#mentors");
-                }}
+                disabled
+                aria-disabled="true"
+                style={{ opacity: 0.6, cursor: "not-allowed" }}
               >
                 <Star size={18} color="#a855f7" />
-                Mentors
+                Workshops
+                <span style={{ fontSize: 10, fontWeight: 700, color: "#F97316", border: "1px solid rgba(249,115,22,.5)", background: "rgba(249,115,22,.1)", borderRadius: 999, padding: "2px 8px", whiteSpace: "nowrap" }}>
+                  Coming Soon
+                </span>
               </button>
+
+              <div className="d-mobile-menu-divider" />
+
+              {/* All Certification — collapsible accordion */}
               <button
-                className="d-nav-link"
-                onClick={() => {
-                  setMobileNavOpen(false);
-                  navigate("/#successstories");
-                }}
+                type="button"
+                className="d-mobile-section-header"
+                onClick={() => setMobileCertOpen((o) => !o)}
               >
-                <Trophy size={18} color="#eab308" />
-                Success Stories
+                All Certification
+                <ChevronDown
+                  size={18}
+                  className={`d-mobile-section-chevron ${mobileCertOpen ? "open" : ""}`}
+                />
               </button>
+              {mobileCertOpen && (
+                <div className="d-mobile-section-items">
+                  {NAV_CERT_MENU_ITEMS.map((item) => {
+                    const soon = !!item.comingSoon;
+                    return (
+                      <button
+                        key={item.key}
+                        type="button"
+                        disabled={soon}
+                        className="d-mobile-section-item"
+                        style={soon ? { opacity: 0.75, cursor: "not-allowed" } : undefined}
+                        onClick={() => {
+                          if (soon) return;
+                          setMobileNavOpen(false);
+                          navigate(item.route);
+                        }}
+                      >
+                        <span className="d-mobile-section-item-icon">
+                          <item.icon size={20} color={item.color} />
+                        </span>
+                        <span style={{ flex: 1 }}>
+                          <span className="d-mobile-section-item-title">
+                            {item.title}
+                            {soon && (
+                              <span style={{ marginLeft: 8, fontSize: 10, fontWeight: 700, color: "#F97316", border: "1px solid rgba(249,115,22,.5)", background: "rgba(249,115,22,.1)", borderRadius: 999, padding: "2px 8px", whiteSpace: "nowrap" }}>
+                                Coming Soon
+                              </span>
+                            )}
+                          </span>
+                          <span className="d-mobile-section-item-desc">
+                            {item.description}
+                          </span>
+                        </span>
+                        {soon && <Lock size={16} color="#94a3b8" style={{ flexShrink: 0, marginTop: 2 }} />}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
 
             {/* Footer — user profile + Go to Dashboard + Sign out (logged in),

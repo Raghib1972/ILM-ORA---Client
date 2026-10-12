@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "@/lib/routerCompat";
 import { subscribeNewsletter } from "../../../services/notificationService";
+import { courseService } from "../../../services/courseService";
  
 const NEWSLETTER_KEY = "ilmora_newsletter_subscribers";
  
@@ -528,7 +529,30 @@ function FooterNewsletter() {
 ───────────────────────────────────────────────────────────────── */
 export default function Footer({ scrollToSection }) {
   const navigate = useNavigate();
- 
+  const [categories, setCategories] = useState([]);
+
+  // Programs column: real course categories from the public featured-programs API
+  useEffect(() => {
+    let alive = true;
+    courseService
+      .getAllFeaturedPrograms()
+      .then((res) => {
+        const raw = res?.data;
+        const list = Array.isArray(raw) ? raw : raw?.data || raw?.content || [];
+        const names = [
+          ...new Set(
+            list.map((p) => (p?.category || "").toString().trim()).filter(Boolean),
+          ),
+        ];
+        if (alive) setCategories(names);
+      })
+      .catch(() => {
+        if (alive) setCategories([]);
+      });
+    return () => {
+      alive = false;
+    };
+  }, []);
   return (
       <footer className="bg-[#181818] text-[#D1D5DB] border-t border-white/[0.06] font-['Poppins',_sans-serif]">
         <div className="max-w-[1280px] mx-auto px-5 sm:px-6 md:px-10 py-12 md:py-16">
@@ -644,25 +668,29 @@ export default function Footer({ scrollToSection }) {
                 Programs
                 <span className="absolute left-0 bottom-0 w-6 h-[2px] bg-[#F97316]" />
               </h4>
-              <ul className="flex flex-col gap-3 text-sm text-[#D1D5DB]">
+                            <ul className="flex flex-col gap-3 text-sm text-[#D1D5DB]">
                 {[
-                  {
-                    label: "Product Management",
-                    action: () => scrollToSection("courses", "product"),
-                  },
-                  {
-                    label: "Growth Marketing",
-                    action: () => scrollToSection("courses", "growth"),
-                  },
-                  {
-                    label: "UI / UX Design",
-                    action: () => scrollToSection("courses", "design"),
-                  },
+                  ...categories.slice(0, 5).map((name) => ({
+                    label: name,
+                    action: () =>
+                      navigate(`/all-courses?category=${encodeURIComponent(name)}`),
+                  })),
+                  ...(categories.length > 0
+                    ? [
+                        {
+                          label: "View All",
+                          action: () => navigate("/all-courses"),
+                          highlight: true,
+                        },
+                      ]
+                    : []),
                 ].map((item) => (
                   <li
                     key={item.label}
                     onClick={item.action}
-                    className="hover:text-[#F97316] hover:translate-x-1 cursor-pointer transition-all duration-300 flex items-center gap-1.5 group"
+                    className={`hover:text-[#F97316] hover:translate-x-1 cursor-pointer transition-all duration-300 flex items-center gap-1.5 group ${
+                      item.highlight ? "text-[#F97316]" : ""
+                    }`}
                   >
                     <span className="text-[#F97316] opacity-70 group-hover:opacity-100 transition-opacity shrink-0">
                       &rsaquo;
@@ -680,6 +708,10 @@ export default function Footer({ scrollToSection }) {
               </h4>
               <ul className="flex flex-col gap-3 text-sm text-[#D1D5DB]">
                 {[
+                   {
+                    label: "Mentors",
+                    action: () => navigate("/#mentors"),
+                  },
                   {
                     label: "Success Stories",
                     action: () => scrollToSection("successstories"),
