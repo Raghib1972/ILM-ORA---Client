@@ -38,8 +38,9 @@ export default function MobileFullScreenMenu({
   certRoutes = {},
 }) {
   const [ilmoraFeatureOpen, setIlmoraFeatureOpen] = useState(false);
-  const [productOpen, setProductOpen] = useState(false);
+    const [productOpen, setProductOpen] = useState(false);
   const [certOpen, setCertOpen] = useState(false);
+  const [coursesOpen, setCoursesOpen] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -61,6 +62,20 @@ export default function MobileFullScreenMenu({
     { key: "resume", route: productRoutes.resume, icon: FileText, color: "#16a34a", title: "AI Resume Builder", desc: "Build a job-ready resume with AI" },
     { key: "codingLab", route: "/coding-lab", icon: Code2, color: "#0891b2", title: "Coding Lab", desc: "Practice, Code & Build Real Projects" },
     { key: "studyPlan", route: productRoutes.studyPlan, icon: CalendarCheck, color: "#f97316", title: "Study Plan", desc: "Personalized Study Plans & Progress Tracking" },
+  ];
+
+    // All Courses items — same list/routes as the desktop mega menu.
+  const COURSE_ITEMS = [
+    { key: "all", title: "All Courses", route: "/all-courses" },
+    { key: "school-boards", title: "School Boards", route: "/school-class" },
+    { key: "neet", title: "Competitive Exams – NEET", route: "/competitive/neet" },
+    { key: "jee", title: "Competitive Exams – JEE", route: "/competitive/jee" },
+    { key: "career-tracks", title: "Career Tracks", route: "/platforms" },
+    { key: "fde-academy", title: "FDE Academy", route: "/fde-academy" },
+    { key: "ilm-ora-talk", title: "ILM ORA Talk", route: "/ilmora-talk" },
+    { key: "study-abroad", title: "Study Abroad", route: "/study-abroad" },
+    { key: "ilm-ora-gulf", title: "ILM ORA Gulf", route: "/ilm-ora-gulf" },
+        { key: "ilm-ora-feature", title: "ILM ORA Feature", route: "/student-hub" },
   ];
 
   const AccordionSection = ({ label, isOpen, onToggle, children }) => (
@@ -187,37 +202,45 @@ export default function MobileFullScreenMenu({
           padding: "12px 0 32px",
         }}
       >
-        {/* All Courses — navigates straight to the dedicated page.
-            No popup, no dropdown, no fullscreen category browser. */}
-        <div style={{ padding: "0 4px 8px" }}>
-          <button
-            onClick={() => {
-              navigate("/all-courses");
-              onClose();
-            }}
-            style={{
-              width: "100%",
-              display: "flex",
-              alignItems: "center",
-              padding: "15px 20px",
-              border: "none",
-              background: "transparent",
-              cursor: "pointer",
-              textAlign: "left",
-              fontSize: 15,
-              fontWeight: 600,
-              color: "#ffffff",
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = "rgba(249,115,22,0.12)";
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = "transparent";
-            }}
-          >
-            All Courses
-          </button>
-        </div>
+                {/* ── All Courses Accordion — same items as the desktop mega menu ── */}
+        <AccordionSection
+          label="All Courses"
+          isOpen={coursesOpen}
+          onToggle={() => setCoursesOpen((p) => !p)}
+        >
+          {COURSE_ITEMS.map((item) => (
+            <button
+              key={item.key}
+              type="button"
+              onClick={() => {
+                navigate(item.route);
+                onClose();
+              }}
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                padding: "12px 12px",
+                border: "none",
+                borderRadius: 10,
+                background: "transparent",
+                cursor: "pointer",
+                textAlign: "left",
+                fontSize: 14,
+                fontWeight: 500,
+                color: "#ffffff",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "rgba(249,115,22,0.12)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "transparent";
+              }}
+            >
+              {item.title}
+            </button>
+          ))}
+        </AccordionSection>
 
         {/* Divider */}
         <div
@@ -408,11 +431,9 @@ export default function MobileFullScreenMenu({
             );
           })}
         </AccordionSection>
-
-        {/* Mentors */}
-        <button
+                <button
           onClick={() => {
-            document.querySelector("#mentors")?.scrollIntoView({ behavior: "smooth" });
+            navigate("/Ilmora-workshops");
             onClose();
           }}
           style={{
@@ -430,8 +451,9 @@ export default function MobileFullScreenMenu({
             color: "#ffffff",
           }}
         >
-          Mentors
+          Workshops
         </button>
+       
 
        
 

@@ -5678,7 +5678,51 @@ function CertificationShowcase({ navigate }) {
     </section>
   );
 }
-// ─────────────────────────────────────────────────────────────────────────────
+function HeroRollText({ text, className = "", gradient = "", delay = 0 }) {
+  const [shown, setShown] = useState(text);
+  const [leaving, setLeaving] = useState(null);
+
+  // text changed → old text starts leaving, new text takes its place (same render)
+  if (text !== shown) {
+    setLeaving(shown);
+    setShown(text);
+  }
+
+  useEffect(() => {
+    if (leaving === null) return;
+        const t = setTimeout(() => setLeaving(null), 600 + delay);
+    return () => clearTimeout(t);
+  }, [leaving, delay]);
+
+  const changing = leaving !== null;
+
+  return (
+    <span
+      className={`hero-roll relative block overflow-hidden ${className}`}
+      // room for descenders (g, y, j) so the clip never cuts them
+      style={{ paddingBottom: "0.14em", marginBottom: "-0.14em" }}
+    >
+      {changing && (
+        <span
+          key={`out-${leaving}`}
+          aria-hidden="true"
+          className={`absolute left-0 top-0 inline-block whitespace-nowrap ${gradient}`}
+          style={{ animation: `heroRollOut 0.3s cubic-bezier(.5,0,.75,0) ${delay}ms both` }}
+        >
+          {leaving}
+        </span>
+      )}
+      <span
+        key={`in-${shown}`}
+        className={`inline-block whitespace-nowrap ${gradient}`}
+        style={{ animation: `heroRollIn 0.45s cubic-bezier(.2,.8,.2,1) ${changing ? delay + 250 : 0}ms both` }}
+      >
+        {shown}
+      </span>
+    </span>
+  );
+}
+
 export default function LMSHomepage({ theme, toggleTheme }) {
   const [activeTab, setActiveTab] = useState("product");
   const [featuredPrograms, setFeaturedPrograms] = useState({});
@@ -6639,9 +6683,33 @@ const heroTexts = [
 
   // TEMP TEST: hydration error isolate karne ke liye
   const [pageMounted, setPageMounted] = useState(false);
-  useEffect(() => {
+    useEffect(() => {
     setPageMounted(true);
   }, []);
+
+  // ── Featured Programs: auto-rotate categories (UI only) ──────────────────
+  // Every 4s the active category tab moves to the next one (product → design
+  // → growth → product …). It pauses while the mouse is over the section,
+  // for 12s after the user clicks a tab themselves, while the browser tab is
+  // hidden, and is off for users who prefer reduced motion.
+  const programsPauseRef = useRef(false);
+  const programsResumeAtRef = useRef(0);
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    const source = programsLoading
+      ? courses
+      : featuredPrograms && Object.values(featuredPrograms).some((a) => a.length > 0)
+        ? featuredPrograms
+        : courses;
+    const keys = Object.keys(source);
+    if (keys.length < 2) return;
+    const id = setInterval(() => {
+      if (programsPauseRef.current || document.hidden || Date.now() < programsResumeAtRef.current) return;
+      setActiveTab((cur) => keys[(keys.indexOf(cur) + 1) % keys.length]);
+    }, 4000);
+    return () => clearInterval(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [programsLoading, featuredPrograms]);
   if (!pageMounted) {
     return <div className="min-h-screen bg-[#F6EDE6] dark:bg-black" />;
   }
@@ -6705,7 +6773,12 @@ const heroTexts = [
             <div className="mb-4 sm:mb-5 inline-flex">
               
             </div>
-                        <style>{`@keyframes heroTextIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+              <style>{`
+              @keyframes heroTextIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+                            @keyframes heroRollIn { from { transform: translateY(140%); } to { transform: translateY(0); } }
+              @keyframes heroRollOut { from { transform: translateY(0); visibility: visible; } 99% { visibility: visible; } to { transform: translateY(-140%); visibility: hidden; } }
+              @media (prefers-reduced-motion: reduce) { .hero-roll > span { animation: none !important; } }
+            `}</style>
                         <ClientOnly
               fallback={
                 <h1 className="mb-5 leading-[1.1]">
@@ -6718,25 +6791,17 @@ const heroTexts = [
                 </h1>
               }
             >
-              <h1 key={`h-${currentSlide}`} className="mb-5 leading-[1.1]">
-                <div className="block whitespace-nowrap">
-                  <SplitText
-                    text={heroTexts[currentSlide + 1].line1}
-                    className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white"
-                    splitType="chars"
-                    delay={60}
-                    duration={0.6}
-                  />
-                </div>
-                <div className="block whitespace-nowrap">
-                  <SplitText
-                    text={heroTexts[currentSlide + 1].line2}
-                    className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-[#F97316]"
-                    splitType="chars"
-                    delay={60}
-                    duration={0.6}
-                  />
-                </div>
+                            <h1 className="mb-5 leading-[1.1]">
+                <HeroRollText
+                  text={heroTexts[currentSlide + 1].line1}
+                  className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white"
+                />
+                <HeroRollText
+                  text={heroTexts[currentSlide + 1].line2}
+                  delay={90}
+                  gradient="bg-gradient-to-r from-[#F97316] to-[#FBBF24] bg-clip-text text-transparent"
+                  className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium"
+                />
               </h1>
             </ClientOnly>
                         <p
@@ -6789,8 +6854,10 @@ const heroTexts = [
             </section>
 
             {/* ── Courses ── */}
-      <section
+            <section
         id="courses"
+        onMouseEnter={() => { programsPauseRef.current = true; }}
+        onMouseLeave={() => { programsPauseRef.current = false; }}
         className="py-6 sm:py-8 scroll-mt-20 bg-[#F8FAFC] dark:bg-black"
       >
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
@@ -6805,7 +6872,10 @@ const heroTexts = [
             return (
               <Tabs
                 value={activeTab}
-                onValueChange={setActiveTab}
+                  onValueChange={(v) => {
+                  setActiveTab(v);
+                  programsResumeAtRef.current = Date.now() + 12000; // user picked a tab → pause auto-rotate
+                }}
                 className="grid grid-cols-1 lg:grid-cols-[320px_minmax(0,1fr)] gap-6 lg:gap-8 items-start w-full"
               >
                 {/* ── Left: category panel ── */}
@@ -6838,7 +6908,7 @@ const heroTexts = [
                 {/* ── Right: popular programs grid ── */}
                 <div className="min-w-0">
                   {Object.entries(source).map(([category, categoryCourses]) => (
-                    <TabsContent key={category} value={category} className="mt-0">
+                      <TabsContent key={category} value={category} className="mt-0 animate-in fade-in-0 duration-500">
                       <div className="flex items-center gap-4 mb-4">
                         <h3 className="text-xs sm:text-sm font-bold uppercase tracking-[0.18em] text-[#1E293B] dark:text-white whitespace-nowrap">
                           Popular Programs
