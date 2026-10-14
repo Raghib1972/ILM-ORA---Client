@@ -1337,7 +1337,7 @@
 //       line2: "Top Mentors",
 //       desc: "Complete control over your calendar — find, book and manage your next live class in a few clicks.",
 //       cta: "Explore Calendar",
-//       to: "/ilm-ora-meet",
+//       to: "/calendry",
 //       // TODO: apne calendar ke screenshots yahan replace kar dena
 //       features: [
 //         { icon: CalendarClock, label: "Scheduling", img: workspaceStartJoinImg },
@@ -1540,7 +1540,7 @@
 //     from: "#FB923C",
 //     to: "#EA580C",
 //     tags: ["Practitioner", "Associate", "Professional"],
-//     path: "/ilmora-aws-certification",
+//     path: "/aws",
 //   },
 //   {
 //     key: "microsoft",
@@ -1551,7 +1551,7 @@
 //     from: "#60A5FA",
 //     to: "#2563EB",
 //     tags: ["Azure", "M365", "Power Platform"],
-//     path: "/ilmora-microsoft-certification",
+//     path: "/microsoft",
 //   },
 //   {
 //     key: "cloud",
@@ -5142,7 +5142,7 @@ function ProductHubSection({ navigate }) {
       line2: "Top Mentors",
       desc: "Complete control over your calendar — find, book and manage your next live class in a few clicks.",
       cta: "Explore Calendar",
-      to: "/ilm-ora-meet",
+      to: "/calendry",
       // TODO: apne calendar ke screenshots yahan replace kar dena
       features: [
         { icon: CalendarClock, label: "Scheduling", img: workspaceStartJoinImg },
@@ -5345,7 +5345,7 @@ const CERT_ITEMS = [
     from: "#FB923C",
     to: "#EA580C",
     tags: ["Practitioner", "Associate", "Professional"],
-    path: "/ilmora-aws-certification",
+    path: "/aws",
   },
   {
     key: "microsoft",
@@ -5356,7 +5356,7 @@ const CERT_ITEMS = [
     from: "#60A5FA",
     to: "#2563EB",
     tags: ["Azure", "M365", "Power Platform"],
-    path: "/ilmora-microsoft-certification",
+    path: "/microsoft",
   },
   {
     key: "cloud",

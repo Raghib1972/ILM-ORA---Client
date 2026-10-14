@@ -7,7 +7,7 @@ export async function generateMetadata({ params }) {
   return {
     title: `${String(code || "").toUpperCase()} AWS Certification | ILM ORA`,
     alternates: {
-      canonical: `https://ilmora.texora.ai/ilmora-aws-certification/${String(code || "").toLowerCase()}`,
+      canonical: `https://ilmora.texora.ai/aws/${String(code || "").toLowerCase()}`,
     },
   };
 }

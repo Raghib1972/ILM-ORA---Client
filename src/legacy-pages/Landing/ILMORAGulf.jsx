@@ -14,17 +14,17 @@
 // /* ─── Data ───────────────────────────────────────────────────────────────── */
 
 // const COUNTRIES = [
-//   { name: "Oman",         flagCode: "om", route: "/ilm-ora-gulf/om" },
-//   { name: "UAE",          flagCode: "ae", route: "/ilm-ora-gulf/ae" },
-//   { name: "Malaysia",     flagCode: "my", route: "/ilm-ora-gulf/my" },
-//   { name: "Kuwait",       flagCode: "kw", route: "/ilm-ora-gulf/kw" },
-//   { name: "Qatar",        flagCode: "qa", route: "/ilm-ora-gulf/qa" },
-//   { name: "Saudi Arabia", flagCode: "sa", route: "/ilm-ora-gulf/sa" },
-//   { name: "Bahrain",      flagCode: "bh", route: "/ilm-ora-gulf/bh" },
-//   { name: "Uganda",       flagCode: "ug", route: "/ilm-ora-gulf/ug" },
-//   { name: "Nigeria",      flagCode: "ng", route: "/ilm-ora-gulf/ng" },
-//   { name: "Tanzania",     flagCode: "tz", route: "/ilm-ora-gulf/tz" },
-//   { name: "Singapore",    flagCode: "sg", route: "/ilm-ora-gulf/sg" },
+//   { name: "Oman",         flagCode: "om", route: "/gulf/om" },
+//   { name: "UAE",          flagCode: "ae", route: "/gulf/ae" },
+//   { name: "Malaysia",     flagCode: "my", route: "/gulf/my" },
+//   { name: "Kuwait",       flagCode: "kw", route: "/gulf/kw" },
+//   { name: "Qatar",        flagCode: "qa", route: "/gulf/qa" },
+//   { name: "Saudi Arabia", flagCode: "sa", route: "/gulf/sa" },
+//   { name: "Bahrain",      flagCode: "bh", route: "/gulf/bh" },
+//   { name: "Uganda",       flagCode: "ug", route: "/gulf/ug" },
+//   { name: "Nigeria",      flagCode: "ng", route: "/gulf/ng" },
+//   { name: "Tanzania",     flagCode: "tz", route: "/gulf/tz" },
+//   { name: "Singapore",    flagCode: "sg", route: "/gulf/sg" },
 // ];
 
 // const HIGHLIGHTS = [
@@ -707,17 +707,17 @@ import PublicLayout from "../Landing/components/PublicLayout";
 /* ─── Data ───────────────────────────────────────────────────────────────── */
 
 const COUNTRIES = [
-  { name: "Oman",         flagCode: "om", route: "/ilm-ora-gulf/om" },
-  { name: "UAE",          flagCode: "ae", route: "/ilm-ora-gulf/ae" },
-  { name: "Malaysia",     flagCode: "my", route: "/ilm-ora-gulf/my" },
-  { name: "Kuwait",       flagCode: "kw", route: "/ilm-ora-gulf/kw" },
-  { name: "Qatar",        flagCode: "qa", route: "/ilm-ora-gulf/qa" },
-  { name: "Saudi Arabia", flagCode: "sa", route: "/ilm-ora-gulf/sa" },
-  { name: "Bahrain",      flagCode: "bh", route: "/ilm-ora-gulf/bh" },
-  { name: "Uganda",       flagCode: "ug", route: "/ilm-ora-gulf/ug" },
-  { name: "Nigeria",      flagCode: "ng", route: "/ilm-ora-gulf/ng" },
-  { name: "Tanzania",     flagCode: "tz", route: "/ilm-ora-gulf/tz" },
-  { name: "Singapore",    flagCode: "sg", route: "/ilm-ora-gulf/sg" },
+  { name: "Oman",         flagCode: "om", route: "/gulf/om" },
+  { name: "UAE",          flagCode: "ae", route: "/gulf/ae" },
+  { name: "Malaysia",     flagCode: "my", route: "/gulf/my" },
+  { name: "Kuwait",       flagCode: "kw", route: "/gulf/kw" },
+  { name: "Qatar",        flagCode: "qa", route: "/gulf/qa" },
+  { name: "Saudi Arabia", flagCode: "sa", route: "/gulf/sa" },
+  { name: "Bahrain",      flagCode: "bh", route: "/gulf/bh" },
+  { name: "Uganda",       flagCode: "ug", route: "/gulf/ug" },
+  { name: "Nigeria",      flagCode: "ng", route: "/gulf/ng" },
+  { name: "Tanzania",     flagCode: "tz", route: "/gulf/tz" },
+  { name: "Singapore",    flagCode: "sg", route: "/gulf/sg" },
 ];
 
 const HIGHLIGHTS = [

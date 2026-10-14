@@ -3,7 +3,7 @@ export const dynamic = "force-dynamic"; // localStorage-dependent render — see
 
 export const metadata = {
   title: "ILM ORA Meet | ILM ORA",
-  alternates: { canonical: "https://ilmora.texora.ai/ilm-ora-meet" },
+  alternates: { canonical: "https://ilmora.texora.ai/calendry" },
 };
 
 export default function Page() {

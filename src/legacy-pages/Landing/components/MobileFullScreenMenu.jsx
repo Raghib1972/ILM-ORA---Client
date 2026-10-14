@@ -72,9 +72,9 @@ export default function MobileFullScreenMenu({
     { key: "jee", title: "Competitive Exams – JEE", route: "/competitive/jee" },
     { key: "career-tracks", title: "Career Tracks", route: "/platforms" },
     { key: "fde-academy", title: "FDE Academy", route: "/fde-academy" },
-    { key: "ilm-ora-talk", title: "ILM ORA Talk", route: "/ilmora-talk" },
+    { key: "ilm-ora-talk", title: "ILM ORA Talk", route: "/talk" },
     { key: "study-abroad", title: "Study Abroad", route: "/study-abroad" },
-    { key: "ilm-ora-gulf", title: "ILM ORA Gulf", route: "/ilm-ora-gulf" },
+    { key: "ilm-ora-gulf", title: "ILM ORA Gulf", route: "/gulf" },
         { key: "ilm-ora-feature", title: "ILM ORA Feature", route: "/student-hub" },
   ];
 
@@ -433,7 +433,7 @@ export default function MobileFullScreenMenu({
         </AccordionSection>
                 <button
           onClick={() => {
-            navigate("/Ilmora-workshops");
+            navigate("/workshops");
             onClose();
           }}
           style={{

@@ -88,7 +88,7 @@ const HUB_ROUTES = {
   studyPlan: "/study-plan",
 };
 const PRODUCT_ROUTES = {
-  meet: "/ilm-ora-meet",
+  meet: "/calendry",
   resume: "/resume-builder",
   workspace: "/workspace",
   aiCompanion: "/ai-companion",
@@ -118,11 +118,11 @@ const CERT_MENU_ITEMS = [
   { key: "cisco", title: "Cisco Certification", description: "CCNA, CCNP & CCIE exams and training", icon: "Award" },
 ];
 const CERT_ROUTES = {
-  aws: "/ilmora-aws-certification",
-  microsoft: "/ilmora-microsoft-certification",
+  aws: "/aws",
+  microsoft: "/microsoft",
   cloud: "/ilmora-cloud-certification",
-  google: "/ilmora-google-certification",
-  cisco: "/Ilmora-cisco",
+  google: "/google",
+  cisco: "/cisco",
 };
 const CERT_ICON_COLORS = {
   aws: "text-orange-500",
@@ -141,9 +141,9 @@ const COURSE_CATEGORIES = [
   { key: "jee", title: "Competitive Exams – JEE", route: "/competitive/jee" },
   { key: "career-tracks", title: "Career Tracks", route: "/platforms" },
   { key: "fde-academy", title: "FDE Academy", route: "/fde-academy" },
-  { key: "ilm-ora-talk", title: "ILM ORA Talk", route: "/ilmora-talk" },
+  { key: "ilm-ora-talk", title: "ILM ORA Talk", route: "/talk" },
   { key: "study-abroad", title: "Study Abroad", route: "/study-abroad" },
-  { key: "ilm-ora-gulf", title: "ILM ORA Gulf", route: "/ilm-ora-gulf" },
+  { key: "ilm-ora-gulf", title: "ILM ORA Gulf", route: "/gulf" },
   { key: "ilm-ora-feature", title: "ILM ORA Feature", route: "/student-hub" },
 ];
 
@@ -337,7 +337,7 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
       icon: BookOpen,
       color: "text-orange-500",
       description: "Hands-on Live Workshops",
-      route: "/Ilmora-workshops",
+      route: "/workshops",
     },
   ];
 

@@ -1,9 +1,12 @@
 import PageClient from "./client";
+
 export const dynamic = "force-dynamic";
 
 export const metadata = {
-  title: "Microsoft Certification Courses | ILM ORA",
-  alternates: { canonical: "https://ilmora.texora.ai/ilmora-microsoft-certification" },
+  title: "AWS Certification | ILM ORA",
+  alternates: {
+  canonical: "https://ilmora.texora.ai/aws",
+  },
 };
 
 export default function Page() {

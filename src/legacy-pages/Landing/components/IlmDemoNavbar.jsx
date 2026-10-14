@@ -562,7 +562,7 @@ const NAV_PRODUCT_MENU_ITEMS = [
     title: "ILM ORA Calendry",
     description: "Live classes & video sessions",
     icon: Video,
-    route: "/ilm-ora-meet",
+    route: "/calendry",
     color: "#F97316",
   },
   {
@@ -585,11 +585,11 @@ const NAV_PRODUCT_MENU_ITEMS = [
 
 /* ─── NAV "All Certification" dropdown items ─── */
 const NAV_CERT_MENU_ITEMS = [
-  { key: "aws",       title: "AWS Certification",       description: "Cloud Practitioner to Professional", icon: Award,  route: "/ilmora-aws-certification",       color: "#FF9900" },
-  { key: "microsoft", title: "Microsoft Certification", description: "Azure, M365 & Power Platform",       icon: Layers, route: "/ilmora-Microsoft-certification", color: "#0078D4" },
+  { key: "aws",       title: "AWS Certification",       description: "Cloud Practitioner to Professional", icon: Award,  route: "/aws",       color: "#FF9900" },
+  { key: "microsoft", title: "Microsoft Certification", description: "Azure, M365 & Power Platform",       icon: Layers, route: "/microsoft", color: "#0078D4" },
     { key: "cloud",     title: "Cloud Certification",     description: "Multi-cloud & vendor-neutral paths", icon: Cloud,  route: "/ilmora-cloud-certification",     color: "#0ea5e9", comingSoon: true },
-    { key: "google",    title: "Google Certification",    description: "Google Cloud & Workspace exams",     icon: Globe,  route: "/ilmora-Google-certification",    color: "#34A853" },
-  { key: "cisco",     title: "Cisco Certification",     description: "CCNA, CCNP & CCIE exams and training", icon: Award, route: "/Ilmora-cisco",                  color: "#049FD9" },
+    { key: "google",    title: "Google Certification",    description: "Google Cloud & Workspace exams",     icon: Globe,  route: "/google",    color: "#34A853" },
+  { key: "cisco",     title: "Cisco Certification",     description: "CCNA, CCNP & CCIE exams and training", icon: Award, route: "/cisco",                  color: "#049FD9" },
 ];
 
 function CertMenuItem({ item, onGo }) {

@@ -128,10 +128,10 @@
 
 // // "All Certification" dropdown (same items/routes as Navbar.jsx)
 // const NAV_CERT_MENU_ITEMS = [
-//   { key: "aws",       title: "AWS Certification",       description: "Cloud Practitioner to Professional", icon: Award,  route: "/ilmora-aws-certification",       color: "#FF9900" },
-//   { key: "microsoft", title: "Microsoft Certification", description: "Azure, M365 & Power Platform",       icon: Layers, route: "/ilmora-microsoft-certification", color: "#0078D4" },
+//   { key: "aws",       title: "AWS Certification",       description: "Cloud Practitioner to Professional", icon: Award,  route: "/aws",       color: "#FF9900" },
+//   { key: "microsoft", title: "Microsoft Certification", description: "Azure, M365 & Power Platform",       icon: Layers, route: "/microsoft", color: "#0078D4" },
 //   { key: "cloud",     title: "Cloud Certification",     description: "Multi-cloud & vendor-neutral paths", icon: Cloud,  route: "/ilmora-cloud-certification",     color: "#0ea5e9", comingSoon: true },
-//   { key: "google",    title: "Google Certification",    description: "Google Cloud & Workspace exams",     icon: Globe,  route: "/ilmora-google-certification",    color: "#34A853" },
+//   { key: "google",    title: "Google Certification",    description: "Google Cloud & Workspace exams",     icon: Globe,  route: "/google",    color: "#34A853" },
 // ];
 
 // const GOOGLE_CLIENT_ID =
@@ -2103,7 +2103,7 @@
 // };
 
 // const PRODUCT_ROUTES = {
-//   meet: "/ilm-ora-meet",
+//   meet: "/calendry",
 //   resume: "/resume-builder",
 //   workspace: "/workspace",
 // };
@@ -3067,7 +3067,7 @@
 //             <button
 //               type="button"
 //               className="d-nav-link"
-//               onClick={() => navigate("/Ilmora-workshops")}
+//               onClick={() => navigate("/workshops")}
 //             >
 //               Workshops
 //             </button>
@@ -3367,7 +3367,7 @@
 //                 className="d-nav-link"
 //                 onClick={() => {
 //                   setMobileNavOpen(false);
-//                   navigate("/Ilmora-workshops");
+//                   navigate("/workshops");
 //                 }}
 //               >
 //                 <Star size={18} color="#a855f7" />
@@ -3987,10 +3987,10 @@ const PRODUCT_ICON_COLORS = { meet: "#F97316", resume: "#16a34a", workspace: "#F
 
 // "All Certification" dropdown (same items/routes as Navbar.jsx)
 const NAV_CERT_MENU_ITEMS = [
-  { key: "aws",       title: "AWS Certification",       description: "Cloud Practitioner to Professional", icon: Award,  route: "/ilmora-aws-certification",       color: "#FF9900" },
-  { key: "microsoft", title: "Microsoft Certification", description: "Azure, M365 & Power Platform",       icon: Layers, route: "/ilmora-microsoft-certification", color: "#0078D4" },
+  { key: "aws",       title: "AWS Certification",       description: "Cloud Practitioner to Professional", icon: Award,  route: "/aws",       color: "#FF9900" },
+  { key: "microsoft", title: "Microsoft Certification", description: "Azure, M365 & Power Platform",       icon: Layers, route: "/microsoft", color: "#0078D4" },
   { key: "cloud",     title: "Cloud Certification",     description: "Multi-cloud & vendor-neutral paths", icon: Cloud,  route: "/ilmora-cloud-certification",     color: "#0ea5e9", comingSoon: true },
-  { key: "google",    title: "Google Certification",    description: "Google Cloud & Workspace exams",     icon: Globe,  route: "/ilmora-google-certification",    color: "#34A853" },
+  { key: "google",    title: "Google Certification",    description: "Google Cloud & Workspace exams",     icon: Globe,  route: "/google",    color: "#34A853" },
 ];
 
 const GOOGLE_CLIENT_ID =
@@ -5981,7 +5981,7 @@ const HUB_ROUTES = {
 };
 
 const PRODUCT_ROUTES = {
-  meet: "/ilm-ora-meet",
+  meet: "/calendry",
   resume: "/resume-builder",
   workspace: "/workspace",
 };
@@ -6031,9 +6031,9 @@ const COURSE_CATEGORIES = [
   { key: "jee", title: "Competitive Exams – JEE", route: "/competitive/jee" },
   { key: "career-tracks", title: "Career Tracks", route: "/platforms" },
   { key: "fde-academy", title: "FDE Academy", route: "/fde-academy" },
-  { key: "ilm-ora-talk", title: "ILM ORA Talk", route: "/ilmora-talk" },
+  { key: "ilm-ora-talk", title: "ILM ORA Talk", route: "/talk" },
   { key: "study-abroad", title: "Study Abroad", route: "/study-abroad" },
-  { key: "ilm-ora-gulf", title: "ILM ORA Gulf", route: "/ilm-ora-gulf" },
+  { key: "ilm-ora-gulf", title: "ILM ORA Gulf", route: "/gulf" },
   { key: "ilm-ora-feature", title: "ILM ORA Feature", route: "/student-hub" },
 ];
 const MEGA_MENUS = {
@@ -6997,7 +6997,7 @@ const renderMegaTrigger = (key) => {
             <button
               type="button"
               className="d-nav-link"
-              onClick={() => navigate("/Ilmora-workshops")}
+              onClick={() => navigate("/workshops")}
             >
               Workshops
             </button>
@@ -7283,7 +7283,7 @@ const renderMegaTrigger = (key) => {
                 className="d-nav-link"
                 onClick={() => {
                   setMobileNavOpen(false);
-                  navigate("/Ilmora-workshops");
+                  navigate("/workshops");
                 }}
               >
                 <Star size={18} color="#a855f7" />

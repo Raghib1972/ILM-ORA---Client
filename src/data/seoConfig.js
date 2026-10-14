@@ -28,11 +28,11 @@ const seoConfig = {
     title: "Platforms | ILM ORA",
     description: "Explore ILM ORA's AI-powered learning platforms for students, trainers and organizations.",
   },
-  "/ilm-ora-meet": {
+  "/calendry": {
     title: "ILM ORA Meet | Live AI-Powered Classes",
     description: "Join live, AI-powered classes and sessions on ILM ORA Meet.",
   },
-  "/ilm-ora-talk": {
+  "/talk": {
     title: "ILM ORA Talk | ILM ORA",
     description: "Connect, discuss and learn with the ILM ORA community.",
   },
@@ -40,7 +40,7 @@ const seoConfig = {
     title: "Study Abroad | ILM ORA",
     description: "Explore universities, scholarships and admissions worldwide.",
   },
-  "/ilm-ora-gulf": {
+  "/gulf": {
     title: "ILM ORA Gulf | Career Opportunities in GCC",
     description: "Find jobs and learning opportunities across UAE, Saudi Arabia, Qatar and GCC.",
   },

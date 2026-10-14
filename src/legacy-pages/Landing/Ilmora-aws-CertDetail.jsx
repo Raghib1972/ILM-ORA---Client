@@ -139,8 +139,8 @@ export default function IlmoraCertDetail({ theme, toggleTheme, setShowLoginModal
   useEffect(() => { document.title = cert ? `${cert.name} (${cert.code}) | ILM ORA` : "AWS Certification | ILM ORA"; }, [cert]);
 
   const [planRef, planSeen] = useReveal();
-  const goList = () => navigate("/ilmora-aws-certification");
-  const goCert = (c) => navigate(`/ilmora-aws-certification/${c.code.toLowerCase()}`);
+    const goList = () => navigate("/aws");
+  const goCert = (c) => navigate(`/aws/${c.code.toLowerCase()}`);
 
   if (!cert) {
     return (

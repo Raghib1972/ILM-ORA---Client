@@ -655,7 +655,7 @@ function SectionHead({ pill, title, sub, tp, ts }) {
    now taken from PublicLayout's shared toggle instead of local state.
    Pass these props from your route the same way you already do for
    Careers / Platforms, e.g.:
-     <Route path="/ilmora-talk" element={
+     <Route path="/talk" element={
        <IlmOraTalk theme={theme} toggleTheme={toggleTheme}
                    setShowLoginModal={setShowLoginModal}
                    scrollToSection={scrollToSection} />

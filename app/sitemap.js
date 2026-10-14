@@ -15,9 +15,9 @@ export default function sitemap() {
     { path: "/resume-builder", priority: 0.8 },
 
     { path: "/study-abroad", priority: 0.7 },
-    { path: "/ilm-ora-gulf", priority: 0.7 },
-    { path: "/ilm-ora-meet", priority: 0.7 },
-    { path: "/ilm-ora-talk", priority: 0.6 },
+    { path: "/gulf", priority: 0.7 },
+    { path: "/calendry", priority: 0.7 },
+    { path: "/talk", priority: 0.6 },
     { path: "/platforms", priority: 0.6 },
     { path: "/fde-academy", priority: 0.6 },
     { path: "/workspace", priority: 0.6 },

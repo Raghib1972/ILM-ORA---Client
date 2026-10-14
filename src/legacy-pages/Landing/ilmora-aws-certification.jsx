@@ -87,7 +87,7 @@
 //   const navigate = useNavigate();
 //   const col = LEVELS[c.level].color;
 //   // opens OUR OWN detail page: /ilmora-aws-certification/clf-c02
-//   const go = () => navigate(`/ilmora-aws-certification/${c.code.toLowerCase()}`);
+//   const go = () => navigate(`/aws/${c.code.toLowerCase()}`);
 //   const move = (e) => {
 //     const b = e.currentTarget.getBoundingClientRect();
 //     setTilt({ x: -((e.clientY - b.top) / b.height - 0.5) * 12, y: ((e.clientX - b.left) / b.width - 0.5) * 14 });
