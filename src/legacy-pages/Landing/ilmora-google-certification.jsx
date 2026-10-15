@@ -34,6 +34,32 @@ const FAQ = [
   ["How long is each exam?","Cloud Digital Leader takes 90 minutes. Every other exam in this list takes 120 minutes."],
   ["Which certificate should I take first?","Start at your level. Freshers begin with Cloud Digital Leader, then move to Associate Cloud Engineer, then pick a Professional track that matches your job."],
 ];
+/* ---------- AI-READINESS DATA (all derived from CERTS / FAQ above — nothing added by hand) ---------- */
+const uniq = (arr) => Array.from(new Set(arr));
+const FEES = CERTS.map(c => c.fee);
+const FEE_MIN = Math.min(...FEES);
+const FEE_MAX = Math.max(...FEES);
+const LEVEL_ROWS = LEVELS.slice(1).map(l => {
+  const g = CERTS.filter(c => c.level === l);
+  const fees = uniq(g.map(c => c.fee));
+  return {
+    level: l,
+    count: g.length,
+    fee: fees.length === 1 ? `$${fees[0]}` : `$${Math.min(...fees)}–$${Math.max(...fees)}`,
+    dur: uniq(g.map(c => c.dur)).join(" / "),
+    valid: uniq(g.map(c => c.valid)).join(" / "),
+    elig: uniq(g.map(c => c.elig)).join(" / "),
+  };
+});
+const FAQ_JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQ.map(([q, a]) => ({
+    "@type": "Question",
+    name: q,
+    acceptedAnswer: { "@type": "Answer", text: a },
+  })),
+};
 const COLORS = { b:"#4285F4", r:"#EA4335", y:"#FBBC04", g:"#34A853" };
 const LEVEL_COLOR = { Foundational:COLORS.g, Associate:COLORS.y, Professional:COLORS.b };
 
@@ -173,6 +199,36 @@ export default function IlmoraGoogle({ theme, toggleTheme, setShowLoginModal, sc
         ))}
       </section>
 
+      {/* AT A GLANCE — direct answer + comparison table (data-derived) */}
+      <section id="at-a-glance" className="sec glance">
+        <div className="narrow">
+          <h2>Google Cloud certifications at a glance</h2>
+          <p className="gl-lead">
+            Ilmora prepares you for {CERTS.length} Google Cloud certification exams across three levels: Foundational, Associate and Professional.
+            Exam fees on this page range from ${FEE_MIN} to ${FEE_MAX} and are paid to Google, not to Ilmora.
+          </p>
+          <ul className="gl-points">
+            <li>Foundational and Associate certificates stay valid for 3 years. Professional certificates stay valid for 2 years.</li>
+            <li>Cloud Digital Leader takes 90 minutes. Every other exam listed takes 120 minutes.</li>
+            <li>Start at your level: Cloud Digital Leader, then Associate Cloud Engineer, then a Professional track that matches your job.</li>
+          </ul>
+          <div className="gl-scroll">
+            <table>
+              <caption>Google Cloud certification levels compared</caption>
+              <thead>
+                <tr><th scope="col">Level</th><th scope="col">Exams</th><th scope="col">Exam fee</th><th scope="col">Exam length</th><th scope="col">Valid for</th><th scope="col">Prerequisite</th></tr>
+              </thead>
+              <tbody>
+                {LEVEL_ROWS.map(r => (
+                  <tr key={r.level}><th scope="row">{r.level}</th><td>{r.count}</td><td>{r.fee}</td><td>{r.dur}</td><td>{r.valid}</td><td>{r.elig}</td></tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="gl-src">Source: <a href="https://cloud.google.com/learn/certification" target="_blank" rel="noopener noreferrer">Google Cloud certification</a>. Check Google for the latest fees and exam details before you book.</p>
+        </div>
+      </section>
+
       {/* PATH */}
       <section id="paths" className="sec">
         <Reveal>
@@ -243,6 +299,7 @@ export default function IlmoraGoogle({ theme, toggleTheme, setShowLoginModal, sc
 
       {/* FAQ */}
       <section id="faq" className="sec narrow">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(FAQ_JSON_LD) }} />
         <Reveal><h2>Questions students ask</h2></Reveal>
         {FAQ.map(([q, a], i) => (
           <div key={q} className={`qa ${open === i ? "open" : ""}`}>
@@ -324,6 +381,15 @@ const CSS = `
 .ilm .sub{max-width:560px;opacity:.75;font-size:17px;margin:0 0 40px}
 .ilm .sec.dark,.ilm .sec.soft{background:var(--paper)}
 .ilm .narrow{max-width:820px;margin:0 auto}
+.ilm .glance .gl-lead{font-size:18px;margin:0 0 16px}
+.ilm .glance .gl-points{margin:0 0 28px;padding-left:20px}
+.ilm .glance .gl-points li{margin:0 0 8px}
+.ilm .glance .gl-scroll{overflow-x:auto}
+.ilm .glance table{width:100%;border-collapse:collapse;font-size:15px;min-width:560px}
+.ilm .glance caption{text-align:left;font-weight:600;padding:0 0 10px}
+.ilm .glance th,.ilm .glance td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+.ilm .glance thead th{font-weight:600;border-bottom:2px solid var(--line)}
+.ilm .glance .gl-src{margin:16px 0 0;font-size:14px;opacity:.75}
 .ilm .rv{opacity:0;transform:translateY(28px);transition:opacity .7s,transform .7s cubic-bezier(.2,.8,.2,1)}
 .ilm .rv.in{opacity:1;transform:none}
 .ilm .steps3d{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;align-items:end;perspective:1200px}

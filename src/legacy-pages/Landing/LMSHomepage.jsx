@@ -3866,6 +3866,7 @@ import HorizontalCarousel from "./components/HorizontalCarousel";
 import CategoryTabScroller from "./components/CategoryTabScroller";
 import WatchNowSection from "./components/WatchNow";
 import Footer from "./components/Footer";
+import RelatedLinks, { SITE_LINKS, relatedLinksColors } from "./components/RelatedLinks";
 
 // Renders children only after mounting in the browser (avoids hydration mismatch)
 function ClientOnly({ children, fallback = null }) {
@@ -7293,6 +7294,7 @@ const heroTexts = [
           />
         </div>
       </section>
+           <RelatedLinks colors={relatedLinksColors(theme === "dark")} links={SITE_LINKS} />
       {/* ── Footer ── */}
             <ClientOnly>
         <Footer scrollToSection={scrollToSection} />

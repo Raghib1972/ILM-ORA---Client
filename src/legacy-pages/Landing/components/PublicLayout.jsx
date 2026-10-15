@@ -4,6 +4,7 @@ import { useNavigate } from "@/lib/routerCompat";
 import AnnouncementBanner from "./AnnouncementBanner";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
+import RelatedLinks, { SITE_LINKS, relatedLinksColors } from "./RelatedLinks";
 
 /* ─────────────────────────────────────────────────────────────────
    PublicLayout — shared shell for all public-facing pages
@@ -56,7 +57,9 @@ export default function PublicLayout({
         value simply mirrors that existing convention, keeping spacing
         consistent whether or not a banner is currently active.
       */}
-      <main className="pt-[84px]">{children}</main>
+            <main className="pt-[84px]">{children}</main>
+
+      <RelatedLinks colors={relatedLinksColors(theme === "dark")} links={SITE_LINKS} />
 
       <Footer scrollToSection={handleScrollToSection} />
     </>

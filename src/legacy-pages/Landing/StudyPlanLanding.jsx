@@ -8,7 +8,7 @@ import {
   AlertTriangle, RefreshCw, Users, BarChart2, Award, Sparkles, ArrowRight,
 } from "lucide-react";
 import PublicLayout from "../Landing/components/PublicLayout";
-import RelatedLinks from "../Landing/components/RelatedLinks";
+
 import authService from "../../services/authService";
 import { registerFcmToken } from "../../services/firebaseService";
 /* ════════════════════════════════════════════════════════════════════
@@ -1062,19 +1062,6 @@ export default function StudyPlanLanding({
         </div>
 
         <StatsSection t={t} isDark={isDark} alt={true} />
-        <RelatedLinks
-          colors={{ text: t.text, sub: t.textSub, border: t.divider, bg: t.pageBg, accent: PRIMARY }}
-          links={[
-            { href: "/all-courses", label: "All Courses", desc: "Browse live expert-led classes" },
-            { href: "/coding-lab", label: "Coding Lab", desc: "Practice coding online" },
-            { href: "/student-hub", label: "Student Hub", desc: "Classes, progress and certificates" },
-            { href: "/ai-companion", label: "AI Companion", desc: "Your smart study assistant" },
-            { href: "/resume-builder", label: "Resume Builder", desc: "Create a resume online" },
-            { href: "/pricing", label: "Pricing", desc: "Plans and course fees" },
-            { href: "/faq", label: "FAQ", desc: "Answers to common questions" },
-            { href: "/contact", label: "Contact", desc: "Talk to the ILM ORA team" },
-          ]}
-        />
         <FinalCTA onExplore={openLogin} onStart={openLogin} />
 
         <DotRail

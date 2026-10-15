@@ -16,7 +16,8 @@ export const metadata = {
     title: "ILM ORA – Learn. Grow. Lead.",
     description:
       "Master Product, Design, Growth & Marketing with live sessions from industry experts — powered by Texora AI.",
-    url: "https://ilmora.texora.ai/",
+       url: "https://ilmora.texora.ai/",
+    siteName: "ILM ORA",
     type: "website",
     images: [
       {
@@ -104,8 +105,20 @@ export default function RootLayout({ children }) {
               sameAs: [
                 "https://www.linkedin.com/company/texora-ai",
                 "https://twitter.com/texoraai",
-                "https://www.instagram.com/texora_ai",
+                                "https://www.instagram.com/texora_ai",
               ],
+            }),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "ILM ORA",
+              url: "https://ilmora.texora.ai/",
+              publisher: { "@type": "Organization", name: "Texora AI", url: "https://texora.ai" },
             }),
           }}
         />

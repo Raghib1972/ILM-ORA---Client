@@ -163,6 +163,21 @@ export default function IlmoraCertDetail({ theme, toggleTheme, setShowLoginModal
   const prev = CERTS[(idx - 1 + CERTS.length) % CERTS.length];
   const next = CERTS[(idx + 1) % CERTS.length];
 
+  // AI-readiness: every answer below is built from this exam's own data (awsCertData.js) — nothing added by hand.
+  const faqs = [
+    [`How much does the ${cert.name} exam cost?`, `The ${cert.code} exam fee listed on this page is $${cert.fee}.`],
+    [`How long is the ${cert.code} exam?`, `The exam time is ${cert.time}.`],
+    [`Who is the ${cert.name} exam for?`, `It is aimed at: ${cert.role}.`],
+    ["What do I need before I start?", `${cert.exp}. ${cert.elig}.`],
+    [`How long is ${cert.name} valid for?`, "The certification is valid for 3 years."],
+    [`What level is ${cert.name}?`, `It is a ${cert.level} level exam. ${LEVELS[cert.level].blurb}`],
+  ];
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map(([q, a]) => ({ "@type": "Question", name: q, acceptedAnswer: { "@type": "Answer", text: a } })),
+  };
+
   return (
     <PublicLayout theme={theme} toggleTheme={toggleTheme} setShowLoginModal={setShowLoginModal} scrollToSection={scrollToSection}>
       <style dangerouslySetInnerHTML={{ __html: CSS }} />
@@ -171,7 +186,7 @@ export default function IlmoraCertDetail({ theme, toggleTheme, setShowLoginModal
         {/* HERO */}
         <section className="hero cream">
           <div className="hero-copy">
-            <button className="back" onClick={goList}>&larr; All AWS exams</button>
+            <a className="back" href="/aws" onClick={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return; e.preventDefault(); goList(); }}>&larr; All AWS exams</a>
             <span className="pill">{cert.level} level</span>
             <h1>{cert.name}</h1>
             <p>{FIT[cert.level]}</p>
@@ -187,6 +202,14 @@ export default function IlmoraCertDetail({ theme, toggleTheme, setShowLoginModal
             </div>
           </div>
           <Orbit cert={cert} />
+        </section>
+
+        {/* AT A GLANCE (direct answer, built from exam data) */}
+        <section className="sec white">
+          <h2>{cert.name} at a glance</h2>
+          <p className="sub">
+            {cert.name} ({cert.code}) is an AWS {cert.level} level certification exam. The exam takes {cert.time}, the fee listed here is ${cert.fee}, and the certification is valid for 3 years.
+          </p>
         </section>
 
         {/* WHO + BEFORE */}
@@ -244,11 +267,22 @@ export default function IlmoraCertDetail({ theme, toggleTheme, setShowLoginModal
           </section>
         )}
 
+        {/* FAQ */}
+        <section className="sec cream faq">
+          <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+          <h2>Questions about {cert.name}</h2>
+          <div className="faq-list">
+            {faqs.map(([q, a]) => (
+              <details key={q}><summary>{q}</summary><p>{a}</p></details>
+            ))}
+          </div>
+        </section>
+
         {/* PREV / NEXT */}
         <section className="sec white">
           <div className="pn">
-            <button onClick={() => goCert(prev)}><small>Previous exam</small><strong>{prev.name}</strong></button>
-            <button onClick={() => goCert(next)}><small>Next exam</small><strong>{next.name}</strong></button>
+            <a href={`/aws/${prev.code.toLowerCase()}`} onClick={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return; e.preventDefault(); goCert(prev); }}><small>Previous exam</small><strong>{prev.name}</strong></a>
+            <a href={`/aws/${next.code.toLowerCase()}`} onClick={(e) => { if (e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return; e.preventDefault(); goCert(next); }}><small>Next exam</small><strong>{next.name}</strong></a>
           </div>
         </section>
 
@@ -348,6 +382,15 @@ const CSS = `
 .ild .pn small{display:block;color:var(--mut);font-size:13px}
 .ild .pn strong{font-size:18px}
 .ild .pn button:last-child{text-align:right}
+.ild .pn a{all:unset;cursor:pointer;display:block;padding:20px;border:1px solid var(--line);border-radius:14px;background:var(--cream);color:var(--tx);transition:transform .3s,border-color .3s}
+.ild .pn a:hover{transform:translateY(-4px);border-color:var(--c)}
+.ild .pn a:focus-visible{outline:2px solid var(--or);outline-offset:3px}
+.ild .pn a:last-child{text-align:right}
+.ild a.back{display:inline-block;text-decoration:none;cursor:pointer}
+.ild .faq-list{max-width:820px}
+.ild .faq details{border-bottom:1px solid var(--line);padding:14px 0}
+.ild .faq summary{cursor:pointer;font-weight:600;font-size:17px}
+.ild .faq details p{color:var(--mut);margin:10px 0 0}
 .ild .final{text-align:center;padding-top:clamp(56px,8vw,90px);padding-bottom:clamp(56px,8vw,90px)}
 .ild .final h2{font-size:clamp(24px,3.6vw,36px)}
 .ild .final p{color:var(--mut);margin:12px 0 28px;font-size:clamp(16px,1.6vw,18px)}

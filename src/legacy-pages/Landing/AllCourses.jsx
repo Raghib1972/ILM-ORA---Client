@@ -7,6 +7,7 @@ import { useNavigate } from "@/lib/routerCompat";
  import { getCourseSlug } from "@/lib/courseSlug";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
+import RelatedLinks, { SITE_LINKS, relatedLinksColors } from "./components/RelatedLinks";
 import AllCoursesSidebar from "../../components/AllCourses/AllCoursesSidebar";
 import CourseSection from "../../components/AllCourses/CourseSection";
 import CourseCard from "../../components/AllCourses/CourseCard";
@@ -531,6 +532,7 @@ export default function AllCourses({ theme, toggleTheme, setShowLoginModal, embe
         </div>
       )}
  
+          <RelatedLinks colors={relatedLinksColors(isDark)} links={SITE_LINKS} />
       <Footer scrollToSection={handleFooterScroll} />
     </div>
   );
