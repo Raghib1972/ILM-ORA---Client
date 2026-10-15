@@ -15,7 +15,7 @@ import { submitContactForm } from "../../services/notificationService";
 // AnnouncementBanner → Navbar → ... → Footer shell as Careers — so there
 // is only ONE navbar and ONE footer across the whole site.
 import PublicLayout from "../Landing/components/PublicLayout";
-import RelatedLinks from "../Landing/components/RelatedLinks";
+
 
 /* ═══════════════════════════════════════════════════
    ILM ORA  ·  CONTACT PAGE
@@ -836,18 +836,7 @@ const ContactUs = ({ theme, toggleTheme, setShowLoginModal, scrollToSection }) =
           </div>
         </section>
 
-        {/* ══ CTA BANNER (identical treatment to Careers' CTA) ══ */}
-        <RelatedLinks
-          colors={{ text: C.heading, sub: C.muted, border: C.border, bg: C.bg, accent: C.orange }}
-          links={[
-            { href: "/faq", label: "FAQ", desc: "Answers to common questions" },
-            { href: "/help-center", label: "Help Center", desc: "Guides and support articles" },
-            { href: "/pricing", label: "Pricing", desc: "Plans and course fees" },
-            { href: "/about", label: "About ILM ORA", desc: "Who we are and what we teach" },
-            { href: "/all-courses", label: "All Courses", desc: "Browse live expert-led classes" },
-            { href: "/careers", label: "Careers", desc: "Join the Texora AI team" },
-          ]}
-        />
+       
         <div className="cta-banner">
           <div style={{ position: "relative", zIndex: 1, maxWidth: 600, margin: "0 auto" }}>
             <div
