@@ -3991,6 +3991,7 @@ const NAV_CERT_MENU_ITEMS = [
   { key: "microsoft", title: "Microsoft Certification", description: "Azure, M365 & Power Platform",       icon: Layers, route: "/microsoft", color: "#0078D4" },
   // { key: "cloud",     title: "Cloud Certification",     description: "Multi-cloud & vendor-neutral paths", icon: Cloud,  route: "/ilmora-cloud-certification",     color: "#0ea5e9", comingSoon: true },
   { key: "google",    title: "Google Certification",    description: "Google Cloud & Workspace exams",     icon: Globe,  route: "/google",    color: "#34A853" },
+  { key: "cisco",     title: "Cisco Certification",     description: "CCNA, CCNP & CCIE exams and training", icon: Award,  route: "/cisco",     color: "#0284c7" },
 ];
 
 const GOOGLE_CLIENT_ID =
