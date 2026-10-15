@@ -1,6 +1,7 @@
 export const metadata = {
-  title: "Class 9 Subjects | ILM ORA",
-  alternates: { canonical: "https://ilmora.texora.ai/school-class/9" },
+  title: "Class 9 Subjects - Online Classes and Lessons | ILM ORA",
+  description: "Class 9 online subjects on ILM ORA, including Math and AI, with structured lessons and easy navigation.",
+  alternates: { canonical: "https://ilmora.texora.ai/board/9" },
 };
 
 export const dynamic = "force-dynamic"; // localStorage-dependent render — see Day 2 report

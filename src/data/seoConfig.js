@@ -8,23 +8,23 @@ const seoConfig = {
     title: "Online Courses | ILM ORA",
     description: "Browse AI, Programming, Business, Career and Professional Development courses.",
   },
-  "/school-class": {
+  "/board": {
     title: "School Classes | ILM ORA",
     description: "AI-powered school learning for students, organized by class and subject.",
   },
-  "/school-class/9": {
+  "/board/9": {
     title: "Class 9 Subjects | ILM ORA",
     description: "Explore all Class 9 subjects available on ILM ORA.",
   },
-  "/school-class/9/math": {
+  "/board/9/math": {
     title: "Class 9 Math Course | ILM ORA",
     description: "Master Class 9 Mathematics with AI-guided lessons on ILM ORA.",
   },
-  "/school-class/9/ai": {
+  "/board/9/ai": {
     title: "Class 9 AI Course | ILM ORA",
     description: "Learn Artificial Intelligence basics for Class 9 students with interactive lessons, projects and quizzes on ILM ORA.",
   },
-  "/platforms": {
+  "/career": {
     title: "Platforms | ILM ORA",
     description: "Explore ILM ORA's AI-powered learning platforms for students, trainers and organizations.",
   },

@@ -8,6 +8,7 @@ import {
   AlertTriangle, RefreshCw, Users, BarChart2, Award, Sparkles, ArrowRight,
 } from "lucide-react";
 import PublicLayout from "../Landing/components/PublicLayout";
+import RelatedLinks from "../Landing/components/RelatedLinks";
 import authService from "../../services/authService";
 import { registerFcmToken } from "../../services/firebaseService";
 /* ════════════════════════════════════════════════════════════════════
@@ -72,7 +73,6 @@ const T = {
    GLOBAL CSS
    ════════════════════════════════════════════════════════════════════ */
 const CSS = `
-@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 .spl * { box-sizing: border-box; }
 .spl { font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -233,7 +233,7 @@ function PlanCard({ t, isDark, icon, title, desc, color, problems, done, due, pc
         <div style={{ position: "relative" }}><ArcProgress pct={pct} size={62} color="rgba(255,255,255,0.95)" track="rgba(255,255,255,0.28)" /></div>
       </div>
       <div style={{ padding: "16px 18px 12px" }}>
-        <div style={{ fontSize: 15, fontWeight: 800, color: t.text, marginBottom: 5 }}>{title}</div>
+        <h3 style={{ margin: 0, fontSize: 15, fontWeight: 800, color: t.text, marginBottom: 5 }}>{title}</h3>
         <div style={{ fontSize: 12.5, color: t.textSub, lineHeight: 1.55, marginBottom: 12 }}>{desc}</div>
         <div style={{ display: "flex", gap: 6, flexWrap: "wrap", marginBottom: 12 }}>
           <Chip icon={<Target size={10} />} label={`${problems} problems`} color={t.textSub} bg={t.pillBg} border={t.pillBorder} />
@@ -297,7 +297,7 @@ function Slide02({ t, isDark, anchorRef, alt }) {
                 <div className="spl-sec-header" onClick={() => setOpen(isOpen ? -1 : i)} style={{ cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", padding: "15px 18px", borderLeft: `3px solid ${isOpen ? PRIMARY : "transparent"}`, transition: "background .15s ease" }}>
                   <div>
                     <div style={{ fontSize: 10, fontWeight: 800, color: PRIMARY, textTransform: "uppercase", letterSpacing: "0.1em", marginBottom: 2 }}>Section {i + 1}</div>
-                    <div style={{ fontSize: 14.5, fontWeight: 700, color: t.text }}>{s.title}</div>
+                    <h3 style={{ margin: 0, fontSize: 14.5, fontWeight: 700, color: t.text }}>{s.title}</h3>
                     <div style={{ fontSize: 12, color: t.textMuted, marginTop: 2 }}>{s.desc}</div>
                   </div>
                   <div style={{ display: "flex", alignItems: "center", gap: 12, flexShrink: 0 }}>
@@ -815,6 +815,30 @@ function StatsSection({ t, isDark, alt }) {
 /* ════════════════════════════════════════════════════════════════════
    HERO
    ════════════════════════════════════════════════════════════════════ */
+function StudyPlanSummary({ t }) {
+  const items = [
+    "Structured sections, each with its own description and progress",
+    "Curated problems with color-coded difficulty and visible marks",
+    "In-browser code editor supporting Java, Python, JavaScript and Bash",
+    "Run against sample input, then Submit for a full test-suite verdict: Accepted, Partial or Error",
+    "Mark Done saves progress, and section and overall completion update live",
+    "Deadlines and batch shown on every plan card",
+  ];
+  return (
+    <section style={{ padding: "56px 0", borderBottom: "1px solid " + t.divider, background: t.pageBg }}>
+      <div className="spl-container">
+        <h2 className="spl-h2" style={{ fontSize: 28, fontWeight: 800, color: t.text, margin: "0 0 12px", letterSpacing: "-0.02em" }}>What are ILM ORA Study Plans?</h2>
+        <p style={{ fontSize: 15.5, color: t.textSub, lineHeight: 1.75, maxWidth: 760, margin: "0 0 18px" }}>
+          ILM ORA Study Plans are structured learning plans assigned by trainers to a batch. Each plan groups curated coding problems into ordered sections with a due date, and students solve them in an in-browser compiler with instant judging and live progress tracking.
+        </p>
+        <ul style={{ margin: 0, paddingLeft: 20, color: t.textSub, fontSize: 15, lineHeight: 1.8, maxWidth: 760 }}>
+          {items.map((i) => <li key={i}>{i}</li>)}
+        </ul>
+      </div>
+    </section>
+  );
+}
+
 function Hero({ t, isDark, onExplore, onStart }) {
   return (
     <section style={{ padding: "72px 0 88px", position: "relative", overflow: "hidden" }}>
@@ -829,7 +853,7 @@ function Hero({ t, isDark, onExplore, onStart }) {
               Turn learning goals into a <span style={{ color: PRIMARY }}>clear path forward.</span>
             </h1>
             <p style={{ fontSize: 16, color: t.textSub, lineHeight: 1.75, maxWidth: 480, marginBottom: 30 }}>
-              Study Plans bring structured sections, curated problems, deadlines, coding practice, judging, and progress tracking into one focused learning experience.
+              ILM ORA Study Plans are structured learning plans that bring sections, curated problems, deadlines, coding practice, judging and progress tracking into one focused learning experience.
             </p>
             <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
               <button className="spl-btn" onClick={onExplore} style={{ background: `linear-gradient(135deg, ${PRIMARY}, ${PRIMARY}cc)`, color: "#fff", borderRadius: 11, padding: "13px 24px", fontSize: 14, boxShadow: `0 8px 22px ${PRIMARY}45` }}>
@@ -1019,6 +1043,7 @@ export default function StudyPlanLanding({
       <style>{CSS}</style>
             <div className="spl" data-theme={isDark ? "dark" : "light"} style={{ background: t.pageBg, color: t.text, minHeight: "100vh" }}>
         <Hero t={t} isDark={isDark} onExplore={openLogin} onStart={openLogin} />
+        <StudyPlanSummary t={t} />
 
         <div className="spl-slides-rail">
           <Slide01 t={t} isDark={isDark} anchorRef={(el) => (refs.current[0] = el)} alt={false} />
@@ -1037,6 +1062,19 @@ export default function StudyPlanLanding({
         </div>
 
         <StatsSection t={t} isDark={isDark} alt={true} />
+        <RelatedLinks
+          colors={{ text: t.text, sub: t.textSub, border: t.divider, bg: t.pageBg, accent: PRIMARY }}
+          links={[
+            { href: "/all-courses", label: "All Courses", desc: "Browse live expert-led classes" },
+            { href: "/coding-lab", label: "Coding Lab", desc: "Practice coding online" },
+            { href: "/student-hub", label: "Student Hub", desc: "Classes, progress and certificates" },
+            { href: "/ai-companion", label: "AI Companion", desc: "Your smart study assistant" },
+            { href: "/resume-builder", label: "Resume Builder", desc: "Create a resume online" },
+            { href: "/pricing", label: "Pricing", desc: "Plans and course fees" },
+            { href: "/faq", label: "FAQ", desc: "Answers to common questions" },
+            { href: "/contact", label: "Contact", desc: "Talk to the ILM ORA team" },
+          ]}
+        />
         <FinalCTA onExplore={openLogin} onStart={openLogin} />
 
         <DotRail

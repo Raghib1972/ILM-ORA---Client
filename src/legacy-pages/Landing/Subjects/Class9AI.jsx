@@ -419,9 +419,9 @@ export default function Class9AI() {
       <div className="ai9-breadcrumb">
         <span onClick={() => navigate("/")}>Home</span>
         <ChevronRight size={13} />
-        <span onClick={() => navigate("/school-class")}>School Programs</span>
+        <span onClick={() => navigate("/board")}>School Programs</span>
         <ChevronRight size={13} />
-        <span onClick={() => navigate("/school-class/9")}>Class 9th</span>
+        <span onClick={() => navigate("/board/9")}>Class 9th</span>
         <ChevronRight size={13} />
         <span className="active">Artificial Intelligence</span>
       </div>
@@ -429,7 +429,7 @@ export default function Class9AI() {
       {/* SUBJECT HERO BANNER */}
       <div className="ai9-hero">
         <div>
-          <button className="ai9-back-btn" onClick={() => navigate("/school-class/9")}>
+          <button className="ai9-back-btn" onClick={() => navigate("/board/9")}>
             <ArrowLeft size={14} /> Back to Subjects
           </button>
           <div className="ai9-hero-subject">Class 9th · Artificial Intelligence</div>

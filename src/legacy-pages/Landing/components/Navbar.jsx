@@ -109,7 +109,7 @@ const PRODUCT_ICON_COLORS = {
   workspace: "text-orange-500",
 };
 
-// "All Certification" dropdown
+// "Skills" dropdown
 const CERT_MENU_ITEMS = [
   { key: "aws", title: "AWS Certification", description: "Cloud Practitioner to Professional", icon: "Award" },
   { key: "microsoft", title: "Microsoft Certification", description: "Azure, M365 & Power Platform", icon: "Layers" },
@@ -136,10 +136,10 @@ const CERT_ICON_COLORS = {
 // sidebar on /all-courses).
 const COURSE_CATEGORIES = [
   { key: "all", title: "All Courses", route: "/all-courses" },
-  { key: "school-boards", title: "School Boards", route: "/school-class" },
+  { key: "school-boards", title: "School Boards", route: "/board" },
   { key: "neet", title: "Competitive Exams – NEET", route: "/competitive/neet" },
   { key: "jee", title: "Competitive Exams – JEE", route: "/competitive/jee" },
-  { key: "career-tracks", title: "Career Tracks", route: "/platforms" },
+  { key: "career-tracks", title: "Career Tracks", route: "/career" },
   { key: "fde-academy", title: "FDE Academy", route: "/fde-academy" },
   { key: "ilm-ora-talk", title: "ILM ORA Talk", route: "/talk" },
   { key: "study-abroad", title: "Study Abroad", route: "/study-abroad" },
@@ -171,13 +171,20 @@ const MEGA_MENUS = {
     cardTitle: "Product",
     items: PRODUCT_MENU_ITEMS.map((i) => ({ key: i.key, title: i.title, route: PRODUCT_ROUTES[i.key] })),
   },
-  cert: {
-    label: "All Certification",
-    eyebrow: "All courses in",
-    cardTitle: "Certification",
-    cardRoute: "/all-courses",
-    items: CERT_MENU_ITEMS.map((i) => ({ key: i.key, title: i.title, route: CERT_ROUTES[i.key], comingSoon: !!i.comingSoon })),
-  },
+  
+cert: {
+  label: "Skills",
+  eyebrow: "Explore skills",
+  cardTitle: "Skills",
+  cardRoute: "/all-courses",
+  items: CERT_MENU_ITEMS.map((i) => ({
+    key: i.key,
+    title: i.title,
+    route: CERT_ROUTES[i.key],
+    comingSoon: !!i.comingSoon,
+  })),
+},
+
 };
 
 /* ─────────────────────────────────────────────────────────────────
@@ -435,7 +442,7 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
                 </button>
               ))}
 
-              {/* All Certification — Maven-style mega menu trigger */}
+              {/* Skills — Maven-style mega menu trigger */}
               {renderMegaTrigger("cert")}
             </div>
 

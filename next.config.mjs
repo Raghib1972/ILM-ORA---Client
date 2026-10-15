@@ -3,6 +3,8 @@ const nextConfig = {
   // Migration foundation only — no redirects/rewrites introduced.
   // Existing route URLs are preserved exactly via the app/ folder structure.
   reactStrictMode: true,
+  poweredByHeader: false,
+  images: { formats: ["image/avif", "image/webp"] },
 
     async redirects() {
     return [
@@ -18,6 +20,8 @@ const nextConfig = {
       { source: "/ilm-ora-gulf/:path*", destination: "/gulf/:path*", permanent: true },
       { source: "/ilm-ora-talk", destination: "/talk", permanent: true },
       { source: "/ilmora-talk", destination: "/talk", permanent: true },
+      { source: "/platforms", destination: "/career", permanent: true },
+      { source: "/school-class/:path*", destination: "/board/:path*", permanent: true },
     ];
   },
 

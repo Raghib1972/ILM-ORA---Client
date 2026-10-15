@@ -55,7 +55,7 @@ export default function RootLayout({ children }) {
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link
-          href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+          href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Sora:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
           rel="stylesheet"
         />
         {/*
@@ -116,7 +116,7 @@ export default function RootLayout({ children }) {
           src="https://widget.toracx.texora.ai/widget.js"
           data-organization-id="6ac8af9e340454bd184149a6"
           data-api-key="tcx_218c724563a294fcaf5867824b5fb3bb32ef8e1f711a7e1341f9267aca25fbfe"
-          strategy="afterInteractive"
+          strategy="lazyOnload"
         />
       </body>
     </html>

@@ -15,6 +15,7 @@ import { submitContactForm } from "../../services/notificationService";
 // AnnouncementBanner → Navbar → ... → Footer shell as Careers — so there
 // is only ONE navbar and ONE footer across the whole site.
 import PublicLayout from "../Landing/components/PublicLayout";
+import RelatedLinks from "../Landing/components/RelatedLinks";
 
 /* ═══════════════════════════════════════════════════
    ILM ORA  ·  CONTACT PAGE
@@ -83,7 +84,6 @@ const DARK = {
    off PublicLayout's navbar and footer (same fix as Careers).
 ───────────────────────────────────────────────────────────── */
 const getCSS = (C) => `
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Sora:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap');
 
 .con-page, .con-page *, .con-page *::before, .con-page *::after{box-sizing:border-box;}
 .con-page h1, .con-page h2, .con-page h3, .con-page h4,
@@ -294,28 +294,7 @@ const getCSS = (C) => `
 }
 `;
 
-const FAQS = [
-  {
-    q: "How do I enroll in a course?",
-    a: "Create your ILM ORA account, browse the course catalog, and click Enroll. You'll get instant access after payment is confirmed.",
-  },
-  {
-    q: "Will I receive a certificate after completion?",
-    a: "Yes — a verified digital certificate is issued automatically once you complete all course requirements and assessments.",
-  },
-  {
-    q: "I forgot my password. What should I do?",
-    a: "Click 'Forgot Password' on the login screen and enter your registered email. A secure reset link will be sent immediately.",
-  },
-  {
-    q: "What is the refund policy?",
-    a: "We offer a full refund within 7 days of purchase if you are not satisfied — no questions asked, no hassle.",
-  },
-  {
-    q: "Can I access courses on mobile?",
-    a: "Absolutely. ILM ORA is fully responsive and works seamlessly on all devices including mobile and tablet.",
-  },
-];
+import { CONTACT_FAQS as FAQS } from "@/data/contactFaqs";
 
 const TOPICS = [
   "About a course",
@@ -510,8 +489,7 @@ const ContactUs = ({ theme, toggleTheme, setShowLoginModal, scrollToSection }) =
               lineHeight: 1.8, maxWidth: 520, marginBottom: 36,
               fontFamily: "'Sora',sans-serif",
             }}>
-              Have a question about courses, billing, or need technical help?
-              Our team is ready to assist you every step of the way.
+              ILM ORA is a live learning platform by Texora AI. Contact the ILM ORA support team for help with courses, billing, accounts or technical issues. We reply within 24 hours.
             </p>
 
             {/* CTAs */}
@@ -810,7 +788,7 @@ const ContactUs = ({ theme, toggleTheme, setShowLoginModal, scrollToSection }) =
                 <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                   {FAQS.map((faq, i) => (
                     <div key={i} className={`faq-item${openFaq === i ? " open" : ""}`}>
-                      <button className="faq-btn" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
+                      <h3 style={{ margin: 0, fontSize: "inherit", fontWeight: "inherit" }}><button type="button" aria-expanded={openFaq === i} className="faq-btn" onClick={() => setOpenFaq(openFaq === i ? null : i)}>
                         <span style={{
                           fontFamily: "'Plus Jakarta Sans',sans-serif",
                           fontWeight: 700, fontSize: 13.5, color: C.heading,
@@ -825,10 +803,8 @@ const ContactUs = ({ theme, toggleTheme, setShowLoginModal, scrollToSection }) =
                             transition: "transform 0.2s",
                           }}
                         />
-                      </button>
-                      {openFaq === i && (
-                        <div className="faq-answer">{faq.a}</div>
-                      )}
+                      </button></h3>
+                      <div className="faq-answer" hidden={openFaq !== i}>{faq.a}</div>
                     </div>
                   ))}
                 </div>
@@ -861,6 +837,17 @@ const ContactUs = ({ theme, toggleTheme, setShowLoginModal, scrollToSection }) =
         </section>
 
         {/* ══ CTA BANNER (identical treatment to Careers' CTA) ══ */}
+        <RelatedLinks
+          colors={{ text: C.heading, sub: C.muted, border: C.border, bg: C.bg, accent: C.orange }}
+          links={[
+            { href: "/faq", label: "FAQ", desc: "Answers to common questions" },
+            { href: "/help-center", label: "Help Center", desc: "Guides and support articles" },
+            { href: "/pricing", label: "Pricing", desc: "Plans and course fees" },
+            { href: "/about", label: "About ILM ORA", desc: "Who we are and what we teach" },
+            { href: "/all-courses", label: "All Courses", desc: "Browse live expert-led classes" },
+            { href: "/careers", label: "Careers", desc: "Join the Texora AI team" },
+          ]}
+        />
         <div className="cta-banner">
           <div style={{ position: "relative", zIndex: 1, maxWidth: 600, margin: "0 auto" }}>
             <div

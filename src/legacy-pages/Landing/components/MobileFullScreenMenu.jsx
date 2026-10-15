@@ -67,10 +67,10 @@ export default function MobileFullScreenMenu({
     // All Courses items — same list/routes as the desktop mega menu.
   const COURSE_ITEMS = [
     { key: "all", title: "All Courses", route: "/all-courses" },
-    { key: "school-boards", title: "School Boards", route: "/school-class" },
+    { key: "school-boards", title: "School Boards", route: "/board" },
     { key: "neet", title: "Competitive Exams – NEET", route: "/competitive/neet" },
     { key: "jee", title: "Competitive Exams – JEE", route: "/competitive/jee" },
-    { key: "career-tracks", title: "Career Tracks", route: "/platforms" },
+    { key: "career-tracks", title: "Career Tracks", route: "/career" },
     { key: "fde-academy", title: "FDE Academy", route: "/fde-academy" },
     { key: "ilm-ora-talk", title: "ILM ORA Talk", route: "/talk" },
     { key: "study-abroad", title: "Study Abroad", route: "/study-abroad" },
@@ -457,9 +457,9 @@ export default function MobileFullScreenMenu({
 
        
 
-        {/* ── All Certification Accordion ── */}
+        {/* ── Skills Accordion ── */}
         <AccordionSection
-          label="All Certification"
+          label="Skills"
           isOpen={certOpen}
           onToggle={() => setCertOpen((p) => !p)}
         >

@@ -33,8 +33,16 @@ export async function generateMetadata({ params }) {
   }
 }
 
-export default async function Page() {
-  // Slug ko browser (client) resolve karega. Nahi mila to
-  // CourseDetailsPage khud home par bhej dega.
+export default async function Page({ params }) {
+  const { slug } = await params;
+  let item = null;
+  let failed = false;
+  try {
+    item = await resolveCourse(slug);
+  } catch {
+    failed = true; // API down: page ko normal render hone do
+  }
+  // Slug sach mein nahi mila -> asli 404
+  if (!failed && !item) notFound();
   return <CourseDetailsPage />;
 }

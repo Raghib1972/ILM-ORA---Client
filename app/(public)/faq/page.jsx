@@ -3,7 +3,8 @@ import { FAQ_DATA } from "@/data/faqData";
 export const dynamic = "force-dynamic"; // localStorage-dependent render — see Day 2/3 report
 
 export const metadata = {
-  title: "FAQ | ILM ORA",
+  title: "FAQ - Common Questions About ILM ORA Learning",
+  description: "Find answers to common questions about ILM ORA courses, live classes, accounts, pricing and support.",
   alternates: { canonical: "https://ilmora.texora.ai/faq" },
 };
 

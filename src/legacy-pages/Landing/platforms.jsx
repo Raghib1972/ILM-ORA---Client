@@ -1241,7 +1241,7 @@ function ToastContainer({ toasts }) {
 //  alignment) as the Careers page and every other public page.
 //  Pass these props from your route the same way you already do
 //  for Careers, e.g.:
-//    <Route path="/platforms" element={
+//    <Route path="/career" element={
 //      <Platforms theme={theme} toggleTheme={toggleTheme}
 //                 setShowLoginModal={setShowLoginModal}
 //                 scrollToSection={scrollToSection} />

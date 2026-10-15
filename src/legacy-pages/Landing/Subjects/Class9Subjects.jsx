@@ -23,7 +23,7 @@ const subjects = [
     videos: 75,
     color: "#7c3aed",
     bg: "#f3e8ff",
-    route: "/school-class/9/ai",
+    route: "/board/9/ai",
   },
   {
     Icon: Calculator,
@@ -33,7 +33,7 @@ const subjects = [
     videos: 120,
     color: "#f47b20",
     bg: "#fff4ec",
-    route: "/school-class/9/math",
+    route: "/board/9/math",
   },
   {
     Icon: FlaskConical,
@@ -43,7 +43,7 @@ const subjects = [
     videos: 145,
     color: "#16a34a",
     bg: "#f0fdf4",
-    route: "/school-class/9/science",
+    route: "/board/9/science",
   },
   {
     Icon: BookOpen,
@@ -53,7 +53,7 @@ const subjects = [
     videos: 96,
     color: "#2563eb",
     bg: "#eff6ff",
-    route: "/school-class/9/english",
+    route: "/board/9/english",
   },
   {
     Icon: Globe,
@@ -63,7 +63,7 @@ const subjects = [
     videos: 110,
     color: "#7c3aed",
     bg: "#f5f3ff",
-    route: "/school-class/9/social-studies",
+    route: "/board/9/social-studies",
   },
   {
     Icon: BookMarked,
@@ -73,7 +73,7 @@ const subjects = [
     videos: 80,
     color: "#dc2626",
     bg: "#fef2f2",
-    route: "/school-class/9/urdu",
+    route: "/board/9/urdu",
   },
   {
     Icon: Languages,
@@ -83,7 +83,7 @@ const subjects = [
     videos: 75,
     color: "#d97706",
     bg: "#fffbeb",
-    route: "/school-class/9/hindi",
+    route: "/board/9/hindi",
   },
   {
     Icon: BookMarked,
@@ -93,7 +93,7 @@ const subjects = [
     videos: 60,
     color: "#0891b2",
     bg: "#ecfeff",
-    route: "/school-class/9/sanskrit",
+    route: "/board/9/sanskrit",
   },
 ];
 
@@ -275,7 +275,7 @@ export default function Class9Subjects() {
       <div className="s9-breadcrumb">
         <span onClick={() => navigate("/")}>Home</span>
         <ChevronRight size={13} />
-        <span onClick={() => navigate("/school-class")}>School Programs</span>
+        <span onClick={() => navigate("/board")}>School Programs</span>
         <ChevronRight size={13} />
         <span className="active">Class 9th</span>
       </div>
@@ -283,7 +283,7 @@ export default function Class9Subjects() {
       {/* HEADER */}
       <div className="s9-header">
         <div className="s9-header-left">
-          <button className="s9-back-btn" onClick={() => navigate("/school-class")}>
+          <button className="s9-back-btn" onClick={() => navigate("/board")}>
             <ArrowLeft size={15} /> Back to Classes
           </button>
           <div className="s9-class-badge">

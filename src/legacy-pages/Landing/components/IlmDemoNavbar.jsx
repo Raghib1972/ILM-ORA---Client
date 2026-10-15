@@ -583,7 +583,7 @@ const NAV_PRODUCT_MENU_ITEMS = [
 }
 ];
 
-/* ─── NAV "All Certification" dropdown items ─── */
+/* ─── NAV "Skills" dropdown items ─── */
 const NAV_CERT_MENU_ITEMS = [
   { key: "aws",       title: "AWS Certification",       description: "Cloud Practitioner to Professional", icon: Award,  route: "/aws",       color: "#FF9900" },
   { key: "microsoft", title: "Microsoft Certification", description: "Azure, M365 & Power Platform",       icon: Layers, route: "/microsoft", color: "#0078D4" },

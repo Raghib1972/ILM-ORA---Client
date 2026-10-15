@@ -1,0 +1,38 @@
+# ILM ORA
+
+> ILM ORA is a live learning platform by Texora AI, offering expert-led classes in Product, Design, Growth and Marketing, plus certification prep, school classes and learning tools.
+
+## Learn
+- [All Courses](https://ilmora.texora.ai/all-courses): Browse every live and recorded course
+- [Workshops](https://ilmora.texora.ai/workshops): Live and on-demand workshops
+- [AWS Certification](https://ilmora.texora.ai/aws): AWS exam preparation
+- [Google Certification](https://ilmora.texora.ai/google): Google certification courses
+- [Microsoft Certification](https://ilmora.texora.ai/microsoft): Microsoft certification courses
+- [Cisco Certifications](https://ilmora.texora.ai/cisco): Cisco exams and training
+- [School Classes](https://ilmora.texora.ai/board): Online school classes by subject
+- [Coding Lab](https://ilmora.texora.ai/coding-lab): Practice coding online
+- [Study Abroad](https://ilmora.texora.ai/study-abroad): Study abroad guidance
+- [FDE Academy](https://ilmora.texora.ai/fde-academy): Career-focused training
+
+## Tools
+- [AI Companion](https://ilmora.texora.ai/ai-companion): AI study assistant
+- [Study Plan](https://ilmora.texora.ai/study-plan): Personalised study roadmap
+- [Workspace](https://ilmora.texora.ai/workspace): Collaborative meeting workspace
+- [Whiteboard](https://ilmora.texora.ai/whiteboard): Online whiteboard
+- [ILM ORA Meet](https://ilmora.texora.ai/calendry): Meetings and scheduling
+- [Resume Builder](https://ilmora.texora.ai/resume-builder): Build a resume online
+
+## For Teams
+- [Student Hub](https://ilmora.texora.ai/student-hub): For learners
+- [Trainer Hub](https://ilmora.texora.ai/trainer-hub): For trainers
+- [Manager Hub](https://ilmora.texora.ai/manager-hub): For managers
+
+## Company
+- [About](https://ilmora.texora.ai/about): About ILM ORA
+- [Pricing](https://ilmora.texora.ai/pricing): Plans and pricing
+- [FAQ](https://ilmora.texora.ai/faq): Common questions
+- [Help Center](https://ilmora.texora.ai/help-center): Support guides
+- [Contact](https://ilmora.texora.ai/contact): Contact the team
+- [Careers](https://ilmora.texora.ai/careers): Open roles
+- [Privacy Policy](https://ilmora.texora.ai/privacy-policy)
+- [Terms of Service](https://ilmora.texora.ai/terms-of-service)

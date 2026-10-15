@@ -6026,10 +6026,10 @@ const setMega = (key) => {
 // All Courses dropdown — every item opens its own page.
 const COURSE_CATEGORIES = [
   { key: "all", title: "All Courses", route: "/all-courses" },
-  { key: "school-boards", title: "School Boards", route: "/school-class" },
+  { key: "school-boards", title: "School Boards", route: "/board" },
   { key: "neet", title: "Competitive Exams – NEET", route: "/competitive/neet" },
   { key: "jee", title: "Competitive Exams – JEE", route: "/competitive/jee" },
-  { key: "career-tracks", title: "Career Tracks", route: "/platforms" },
+  { key: "career-tracks", title: "Career Tracks", route: "/career" },
   { key: "fde-academy", title: "FDE Academy", route: "/fde-academy" },
   { key: "ilm-ora-talk", title: "ILM ORA Talk", route: "/talk" },
   { key: "study-abroad", title: "Study Abroad", route: "/study-abroad" },
@@ -6065,20 +6065,25 @@ const MEGA_MENUS = {
     ref: productMenuRef,
     items: PRODUCT_MENU_ITEMS.map((i) => ({ key: i.key, title: i.title, go: () => goToProductSection(i.key) })),
   },
+  
   cert: {
-    label: "All Certification",
-    eyebrow: "All courses in",
-    cardTitle: "Certification",
+    label: "Skills",
+    eyebrow: "Explore skills",
+    cardTitle: "Skills",
     cardRoute: "/all-courses",
     ref: certMenuRef,
     items: NAV_CERT_MENU_ITEMS.map((i) => ({
       key: i.key,
       title: i.title,
       comingSoon: !!i.comingSoon,
-      go: () => { setMega(null); navigate(i.route); },
+      go: () => {
+        setMega(null);
+        navigate(i.route);
+      },
     })),
   },
 };
+
 const renderMegaTrigger = (key) => {
   const m = MEGA_MENUS[key];
   const isOpen = openMega === key;
@@ -7002,8 +7007,10 @@ const renderMegaTrigger = (key) => {
               Workshops
             </button>
 
-            {/* All Certification — Maven-style mega menu trigger */}
-            {renderMegaTrigger("cert")}
+            
+{/* Skills — Maven-style mega menu trigger */}
+{renderMegaTrigger("cert")}
+
           </div>
 
           {/* ── MEGA MENU PANEL (Maven-style): full-width, directly under the nav ── */}
@@ -7292,18 +7299,20 @@ const renderMegaTrigger = (key) => {
 
               <div className="d-mobile-menu-divider" />
 
-              {/* All Certification — collapsible accordion */}
-              <button
-                type="button"
-                className="d-mobile-section-header"
-                onClick={() => setMobileCertOpen((o) => !o)}
-              >
-                All Certification
-                <ChevronDown
-                  size={18}
-                  className={`d-mobile-section-chevron ${mobileCertOpen ? "open" : ""}`}
-                />
-              </button>
+              
+{/* Skills — collapsible accordion */}
+<button
+  type="button"
+  className="d-mobile-section-header"
+  onClick={() => setMobileCertOpen((o) => !o)}
+>
+  Skills
+  <ChevronDown
+    size={18}
+    className={`d-mobile-section-chevron ${mobileCertOpen ? "open" : ""}`}
+  />
+</button>
+
               {mobileCertOpen && (
                 <div className="d-mobile-section-items">
                   {NAV_CERT_MENU_ITEMS.map((item) => {

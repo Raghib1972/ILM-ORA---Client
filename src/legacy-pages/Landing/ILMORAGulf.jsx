@@ -154,7 +154,7 @@
 //   const NAV = [
 //     { label: "Mentors",         path: "/mentors" },
 //     { label: "Success Stories", path: "/success-stories" },
-//     { label: "School Programs", path: "/school-class" },
+//     { label: "School Programs", path: "/board" },
 //   ];
 
 //   const navBg = isDark
