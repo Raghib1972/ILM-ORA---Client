@@ -4,7 +4,21 @@ const nextConfig = {
   // Existing route URLs are preserved exactly via the app/ folder structure.
   reactStrictMode: true,
   poweredByHeader: false,
-  images: { formats: ["image/avif", "image/webp"] },
+   images: { formats: ["image/avif", "image/webp"] },
+
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=31536000",
+          },
+        ],
+      },
+    ];
+  },
 
     async redirects() {
     return [
