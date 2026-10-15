@@ -113,7 +113,7 @@ const PRODUCT_ICON_COLORS = {
 const CERT_MENU_ITEMS = [
   { key: "aws", title: "AWS Certification", description: "Cloud Practitioner to Professional", icon: "Award" },
   { key: "microsoft", title: "Microsoft Certification", description: "Azure, M365 & Power Platform", icon: "Layers" },
-    { key: "cloud", title: "Cloud Certification", description: "Multi-cloud & vendor-neutral paths", icon: "Cloud", comingSoon: true },
+    // { key: "cloud", title: "Cloud Certification", description: "Multi-cloud & vendor-neutral paths", icon: "Cloud", comingSoon: true },
   { key: "google", title: "Google Certification", description: "Google Cloud & Workspace exams", icon: "Globe" },
   { key: "cisco", title: "Cisco Certification", description: "CCNA, CCNP & CCIE exams and training", icon: "Award" },
 ];
