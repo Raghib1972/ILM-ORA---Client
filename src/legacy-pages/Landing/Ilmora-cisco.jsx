@@ -633,7 +633,7 @@
 //   <style dangerouslySetInnerHTML={{__html:HOST_CSS}}/>
 //     <div style={{marginTop:-16}}><div className={"ilm"+(theme==="dark"?" dark":"")}><CiscoApp openLogin={()=>openLogin(true)} siteUser={siteUser}/></div></div>
 //  </PublicLayout>;
-// }
+// } old 
 
 
 
@@ -1511,25 +1511,116 @@ function Plan({ k, done, toggle }) {
   );
 }
 
-function Cert({ k }) {
+function Cert({ k, done = [], toggle = () => {} }) {
   const c = CK[k];
   if (!c) return <NotFound />;
-  const d = D[c.xi], ex = exOf(k), pi = PATHS.find((p) => p[1].includes(k));
-  const facts = d ? [["Exam fee (USD)", fee(d[0])], ["Duration", d[1]], ["Validity", d[2]], ["Eligibility", d[3]], ["Recommended experience", d[4]], ["Best for (career)", d[5]], ["Skills / technologies", d[6]]] : [];
+  const d = D[c.xi], ex = exOf(k), w = WEEKS[c.lvl];
+  const pi = PATHS.find((p) => p[1].includes(k));
+  const next = pi && pi[1][pi[1].indexOf(k) + 1];
+
+  const lens = [Math.max(1, Math.round(w * 0.3)), Math.max(1, Math.round(w * 0.4)), Math.max(1, Math.round(w * 0.2))];
+  lens.push(Math.max(1, w - lens[0] - lens[1] - lens[2]));
+  const names = [
+    ["Foundation", "Read the exam blueprint. Learn the core concepts."],
+    ["Hands-on lab", "Build and break configurations. Keep lab notes."],
+    ["Practice tests", "Full-length timed tests. Fix every weak topic."],
+    ["Exam week", "Light revision, rest well, check ID and booking."],
+  ];
+  let from = 1;
+  const rows = names.map((n, i) => {
+    const a = from; from += lens[i];
+    return { label: lens[i] > 1 ? `Week ${a}–${from - 1}` : `Week ${a}`, title: n[0], text: n[1] };
+  });
+  const tasks = [
+    ...ex.map((e) => "Study: " + (e.code ? e.code + " – " : "") + e.name),
+    d ? "Skills lab: " + d[6] : "Hands-on skills lab",
+    "Full-length practice test",
+    "Final revision",
+  ];
+  const pc = Math.round((tasks.filter((_, i) => done.includes(i)).length / tasks.length) * 100);
+  const facts = [
+    ["Time needed", `About ${w} weeks (${HRS[c.lvl]}+ hours)`],
+    ...(d ? [["Exam fee (USD)", fee(d[0])], ["Exam duration", d[1]], ["Validity", d[2]], ["Eligibility", d[3]]] : []),
+  ];
+  const skills = d ? d[6].split(", ") : [c.track];
+
   return (
     <>
-      <Band c={L[c.lvl]} crumb={<><a href="#/">Home</a> / <a href="#/skills">Skill Development</a> / {short(c.name)}</>} tg={c.lvl + " · " + c.track} h={c.name} />
+      <Band c={L[c.lvl]} crumb={<><a href="#/">Home</a> / {short(c.name)}</>} tg={c.lvl + " · " + c.track} h={c.name} />
       <div className="wrap">
-        <div className="btns" style={{ marginBottom: 28 }}><a className="btn primary" href={`#/plan/${k}`}>Get my study plan</a></div>
-        {d ? (
-          <div className="facts">{facts.map((f, i) => <Reveal className="fact" i={i} key={f[0]}><span>{f[0]}</span><b>{f[1]}</b></Reveal>)}</div>
-        ) : (
-          <div className="note">Fee, duration and eligibility for this certification are not in the data sheet yet.</div>
-        )}
-        <h3 style={{ marginTop: 0 }}>Required exams (Exam Preparation)</h3>
+
+        <h3 style={{ marginTop: 0 }}>1. Overview</h3>
+        <div className="facts">{facts.map((f, i) => <Reveal className="fact" i={i} key={f[0]}><span>{f[0]}</span><b>{f[1]}</b></Reveal>)}</div>
+        {d ? null : <div className="note">Fee, duration and eligibility for this certification are not in the data sheet yet.</div>}
+
+        <h3>2. Skill Development: what to learn</h3>
+        <div className="plan">
+          <Tilt className="box">
+            <h4>Skills / technologies</h4>
+            <ul>{skills.map((s) => <li key={s}>{s}</li>)}</ul>
+          </Tilt>
+          <Tilt className="box" i={1}>
+            <h4>Who this is for</h4>
+            <ul>
+              <li>Level: {c.lvl} · Track: {c.track}</li>
+              {d ? <li>Recommended experience: {d[4]}</li> : null}
+              {d ? <li>Eligibility: {d[3]}</li> : null}
+            </ul>
+          </Tilt>
+        </div>
+
+        <h3>3. Exam Preparation: exams to pass</h3>
         <div className="grid">{ex.map((e, i) => <ExCard key={e.id + i} e={e} i={i} />)}</div>
-        <h3>Where it fits (Learning Path)</h3>
+        <div className="plan" style={{ marginTop: 16 }}>
+          <Tilt className="box">
+            <h4>How to practice</h4>
+            <ul>{PRACTICE[c.lvl].map((t) => <li key={t}>{t}</li>)}</ul>
+          </Tilt>
+          <Tilt className="box" i={1}>
+            <h4>How to prepare for the exam</h4>
+            <ul>
+              <li>Finish all topics before you buy the voucher.</li>
+              <li>Score 85% or more on practice tests twice in a row.</li>
+              <li>Book the exam, then do light revision only.</li>
+              {d ? <li>Exam length: {d[1]}. Practice with the same time limit.</li> : null}
+            </ul>
+          </Tilt>
+        </div>
+
+        <h3>4. Learning Path: where it fits</h3>
         {pi ? <StepRow ks={pi[1]} /> : <p className="lead">This credential is a standalone specialty and is not part of a level-by-level path.</p>}
+
+        <h3>5. Study plan: week by week</h3>
+        {rows.map((r, i) => (
+          <Reveal className="week" key={r.title} i={i}>
+            <b>{r.label}</b>
+            <div><b style={{ minWidth: 0 }}>{r.title}</b><div className="s">{r.text}</div></div>
+          </Reveal>
+        ))}
+
+        <h3>6. Career Growth</h3>
+        {d ? (
+          <div className="facts">
+            <Reveal className="fact"><span>Job role</span><b>{d[5]}</b></Reveal>
+            <Reveal className="fact" i={1}><span>Experience employers expect</span><b>{d[4]}</b></Reveal>
+            {next ? <Reveal className="fact" i={2}><span>Next step on this path</span><b><a href={`#/cert/${next}`} style={{ textDecoration: "underline" }}>{short(CK[next].name)}</a></b></Reveal> : null}
+          </div>
+        ) : (
+          <p className="lead">Role and experience details are not in the data sheet yet.</p>
+        )}
+
+        <h3>7. My checklist</h3>
+        <div className="prog" role="progressbar" aria-valuenow={pc} aria-valuemin={0} aria-valuemax={100}><i style={{ width: pc + "%" }} /></div>
+        <p className="s" style={{ marginBottom: 12 }}>{pc}% complete. Saved in this browser.</p>
+        {tasks.map((t, i) => {
+          const on = done.includes(i);
+          return (
+            <label key={i} className={"chk" + (on ? " on" : "")}>
+              <input type="checkbox" checked={on} onChange={(e) => toggle(k, i, e.target.checked)} />
+              <span>{t}</span>
+            </label>
+          );
+        })}
       </div>
     </>
   );
@@ -1551,14 +1642,277 @@ function Track({ s }) {
   );
 }
 
-/* ===================================================================== */
-/* ROOT                                                                   */
-/* ===================================================================== */
+/* =====================================================================
+   PASTE THIS WHOLE FILE in place of the old `function CiscoApp(...)`.
+   No navbar tabs. One road journey page. CSS is included at the bottom.
+   ===================================================================== */
+
+const ROUTE_TO_STOP = {
+  why: "why", how: "how",
+  skills: "understand", path: "understand", exam: "understand", career: "understand",
+  mentor: "you", you: "you", explore: "explore",
+};
+
+const WHY_CERT = [
+  ["Proof of skill", "A vendor-issued credential is trusted more than a self-claim."],
+  ["Better job chances", "Recruiters and partners ask first: do you have a certification?"],
+  ["Clear skill map", "Every certificate lists the exact technologies you must know."],
+  ["Career growth", "Entry to Expert levels show your next step."],
+];
+const WHY_USE = [
+  ["Official OEM credential", "Issued by the OEM (Cisco, like AWS, GCP, Azure) after a proctored exam."],
+  ["Role based", "Student, trainer, engineer or manager: get the path for your role."],
+  ["Guided preparation", "Theory, practical, mock test, assessment, then the exam."],
+  ["For partners and projects", "Partner companies need certified people to win projects."],
+];
+const PROCESS = ["Theory", "Practical", "Mock test", "Assessment", "Exam", "Result: certified"];
+const LEVEL_LINES = {
+  Entry: "First job: support technician roles. No experience needed.",
+  Associate: "Engineer and analyst roles. About 1 year of experience helps.",
+  Professional: "Senior engineer roles. 3 to 5 years of experience.",
+  Expert: "Architect roles. 5+ years and a hands-on lab exam.",
+};
+
+const ROLES = ["Student", "Working professional", "Trainer", "Manager"];
+const INTERESTS = [
+  ["Networking", ["ccst2", "ccna", "ccnpent", "ccieei"]],
+  ["Security", ["ccst3", "ccna", "ccnpsec", "cciesec"]],
+  ["Cybersecurity operations", ["ccst3", "ccnacyb", "ccnpcyb"]],
+  ["Automation", ["ccna", "ccnaauto", "ccnpauto", "cciauto"]],
+  ["Data center", ["ccna", "ccnpdc", "ccied"]],
+  ["Collaboration", ["ccna", "ccnpcol", "cciecol"]],
+  ["Service provider", ["ccna", "ccnpsp", "cciesp"]],
+  ["Wireless", ["ccna", "ccnpwl", "cciewl"]],
+  ["IT support", ["ccst1", "ccst2", "ccna"]],
+];
+const EXPS = [["Beginner (no experience)", 0], ["1 to 3 years", 1], ["3+ years", 2]];
+const RANK = { Entry: 0, Associate: 1, Professional: 2, Expert: 3, Specialist: 2 };
+
+function Stop({ id, n, title, lead, c, children }) {
+  return (
+    <section id={id} className="stop" style={{ "--c": c }}>
+      <span className="pin">{n}</span>
+      <div className="sbody">
+        <Reveal as="h2">{title}</Reveal>
+        {lead ? <p className="lead">{lead}</p> : null}
+        {children}
+      </div>
+    </section>
+  );
+}
+
+function Choice({ label, opts, val, set }) {
+  return (
+    <div className="q">
+      <h4>{label}</h4>
+      <div className="filters">
+        {opts.map((o) => (
+          <button key={o} className={"pill" + (val === o ? " on" : "")} onClick={() => set(o)}>{o}</button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+/* personalised, classified learning path */
+function MyPath({ role, interest, exp }) {
+  const base = INTERESTS.find((i) => i[0] === interest)[1];
+  const min = EXPS.find((e) => e[0] === exp)[1];
+  let ks = base.filter((k) => RANK[CK[k].lvl] >= min);
+  if (!ks.length) ks = base.slice(-1);
+  const cs = ks.map((k) => CK[k]);
+  const weeks = cs.reduce((s, c) => s + WEEKS[c.lvl], 0);
+  const hrs = cs.reduce((s, c) => s + HRS[c.lvl], 0);
+  const exams = [...new Set(cs.flatMap((c) => exOf(c.k)))];
+  let from = 1;
+  const plan = cs.map((c) => {
+    const a = from; from += WEEKS[c.lvl];
+    return { c, label: `Week ${a}–${from - 1}` };
+  });
+  return (
+    <div id="result-box">
+      <div className="note">
+        <b>{role}</b> · {interest} · {exp}. Your path has {cs.length} certification{cs.length > 1 ? "s" : ""}: about {weeks} weeks ({hrs}+ hours) in total.
+      </div>
+
+      <h3 style={{ marginTop: 0 }}>1. Skill Development: what to learn</h3>
+      <div className="grid">
+        {cs.map((c, i) => {
+          const d = D[c.xi];
+          return (
+            <Tilt as="a" key={c.k} i={i} href={`#/cert/${c.k}`} className="card" style={{ "--c": L[c.lvl] }}>
+              <Tag t={c.lvl} c={L[c.lvl]} />
+              <h3>{short(c.name)}</h3>
+              <div className="s">{d ? d[6] : c.track}</div>
+            </Tilt>
+          );
+        })}
+      </div>
+
+      <h3>2. Learning Path: your order</h3>
+      <StepRow ks={ks} />
+
+      <h3>3. Exam Preparation: exams to pass</h3>
+      <div className="grid">{exams.map((e, i) => <ExCard key={e.id + i} e={e} i={i} />)}</div>
+
+      <h3>4. Study plan: week by week</h3>
+      {plan.map((p, i) => (
+        <Reveal className="week" key={p.c.k} i={i}>
+          <b>{p.label}</b>
+          <div>
+            <b style={{ minWidth: 0 }}>{short(p.c.name)}</b>
+            <div className="s">About {WEEKS[p.c.lvl]} weeks. <a href={`#/plan/${p.c.k}`} style={{ textDecoration: "underline" }}>Open detailed study plan</a></div>
+          </div>
+        </Reveal>
+      ))}
+
+      <h3>5. Career Growth: roles you reach</h3>
+      <div className="grid">
+        {cs.filter((c) => D[c.xi]).map((c, i) => {
+          const d = D[c.xi];
+          return (
+            <Tilt key={c.k} i={i} className="card" style={{ "--c": L[c.lvl] }}>
+              <Tag t={c.lvl} c={L[c.lvl]} />
+              <h3>{d[5]}</h3>
+              <div className="s">{short(c.name)}</div>
+              <div className="meta"><span>Experience<b>{d[4]}</b></span><span>Exam fee<b>{fee(d[0])}</b></span></div>
+            </Tilt>
+          );
+        })}
+      </div>
+      <div className="btns" style={{ marginTop: 24 }}>
+        <a className="btn primary" href={`#/plan/${ks[0]}`}>Start with {short(CK[ks[0]].name)}</a>
+      </div>
+    </div>
+  );
+}
+
+function Journey({ detail }) {
+  const [role, setRole] = useState("");
+  const [interest, setInterest] = useState("");
+  const [exp, setExp] = useState("");
+  const [shown, setShown] = useState(false);
+  const ready = role && interest && exp;
+  const cols = Object.values(L);
+  const go = () => {
+    setShown(true);
+    setTimeout(() => document.getElementById("result")?.scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+  };
+  return (
+    <>
+            <section className="hero">
+        <div className="deco" aria-hidden="true"><i className="orb o1" /><i className="orb o2" /></div>
+        <div className="in hero-grid">
+          <div className="copy">
+            <span className="eyebrow">Cisco certification mentor</span>
+            <h1 className="big">Your mentor for <span className="grad">Cisco certification.</span></h1>
+            <p>
+              Understand why certification matters, answer three questions and get your full learning path: skills, exams, study plan and career roles.
+            </p>
+
+            <div className="btns">
+              <a className="btn primary" href="#/mentor">Get my learning path</a>
+              <a className="btn ghost" href="#/why">Why certification?</a>
+            </div>
+
+            <div className="hrow">
+              <span className="hlabel">Built for</span>
+              <div className="chips">{ROLES.map((r) => <span key={r}>{r}</span>)}</div>
+            </div>
+
+            <ol className="how">
+              <li><b>1</b><span>Understand</span></li>
+              <li><b>2</b><span>Tell us about you</span></li>
+              <li><b>3</b><span>Get your path</span></li>
+            </ol>
+
+            <div className="stats">
+              <div><b><CountUp to={CERTS.length} />+</b><span>Certifications</span></div>
+              <div><b><CountUp to={EX.length} />+</b><span>Career exams</span></div>
+              <div><b><CountUp to={TRACKS.length} /></b><span>Tracks</span></div>
+              <div><b><CountUp to={LV.length} /></b><span>Levels</span></div>
+            </div>
+          </div>
+          <Ring />
+        </div>
+      </section>
+
+      <div className="road">
+        <Stop id="why" n={1} c="#f26b21" title="Why this certificate?"
+          lead="A certification proves your skills. Here is why it matters for students, trainers, engineers and managers.">
+          <div className="grid">{WHY_CERT.map((w, i) => (
+            <Tilt key={w[0]} i={i} className="card" style={{ "--c": cols[i % 5] }}><h3>{w[0]}</h3><div className="s">{w[1]}</div></Tilt>
+          ))}</div>
+        </Stop>
+
+        <Stop id="how" n={2} c="#1fa463" title="Why use certified guidance?"
+          lead="Certification is not just an exam. It is a guided process from learning to result.">
+          <div className="grid">{WHY_USE.map((w, i) => (
+            <Tilt key={w[0]} i={i} className="card" style={{ "--c": cols[(i + 2) % 5] }}><h3>{w[0]}</h3><div className="s">{w[1]}</div></Tilt>
+          ))}</div>
+          <h3>How certification works</h3>
+          <div className="proc">{PROCESS.map((p) => <span key={p}>{p}</span>)}</div>
+        </Stop>
+
+        <Stop id="understand" n={3} c="#2563eb" title="Understand the journey"
+          lead="Four areas make the full journey. Read them once, then tell us about yourself in the next step.">
+          <div className="cats">{PILLARS.map((p, i) => (
+            <Tilt key={p.id} i={i} className="cat" style={{ "--c": p.c }}>
+              <span className="num">{i + 1}</span>
+              <h3>{p.label}</h3>
+              <p>{p.line}</p>
+              <ul>{p.pts.map((t) => <li key={t}>{t}</li>)}</ul>
+            </Tilt>
+          ))}</div>
+          <h3>Growth ladder: Entry to Expert</h3>
+          <div className="cats">{["Entry", "Associate", "Professional", "Expert"].map((l, i) => (
+            <Tilt key={l} i={i} className="cat" style={{ "--c": L[l] }}>
+              <h3>{l}</h3>
+              <p>{LEVEL_LINES[l]}</p>
+              <div className="s">{CERTS.filter((c) => c.lvl === l).length} certifications</div>
+            </Tilt>
+          ))}</div>
+        </Stop>
+
+        <Stop id="you" n={4} c="#8b3fd9" title="Tell us about you"
+          lead="Answer three questions. We build your full learning path from your answers.">
+          <Choice label="1. Who are you?" opts={ROLES} val={role} set={setRole} />
+          <Choice label="2. Which area do you want to grow in?" opts={INTERESTS.map((i) => i[0])} val={interest} set={setInterest} />
+          <Choice label="3. How much experience do you have?" opts={EXPS.map((e) => e[0])} val={exp} set={setExp} />
+          <button className="btn primary" disabled={!ready} onClick={go} style={ready ? undefined : { opacity: 0.5, cursor: "not-allowed" }}>Show my learning path</button>
+        </Stop>
+
+               <Stop id="result" n={5} c="#0e8f9c" title="Your full learning path"
+          lead="Skills, order, exams, study plan and career roles, all classified for you.">
+          {shown && ready ? <MyPath role={role} interest={interest} exp={exp} /> : (
+            <div className="note">Answer the three questions above and press “Show my learning path”.</div>
+          )}
+        </Stop>
+
+        {detail}
+
+        <Stop id="explore" n={6} c="#f26b21" title="Explore all courses"
+          lead="Want to look beyond your path? Every track has its own certifications and exams.">
+          <div className="grid">{TRACKS.map((t, i) => (
+            <Tilt as="a" key={t} i={i} className="card" style={{ "--c": "#2563eb" }} href={`#/track/${slug(t)}`}>
+              <h3>{t}</h3>
+              <div className="s">{CERTS.filter((c) => c.track === t).length} certifications · {EX.filter((e) => e.t === t).length} exams</div>
+            </Tilt>
+          ))}</div>
+        </Stop>
+      </div>
+    </>
+  );
+}
+
 function CiscoApp({ theme }) {
   const hash = useHash();
   const rootRef = useRef(null);
-  const navRef = useRef(null);
+  const savedY = useRef(0);
   const [doneMap, setDoneMap] = useState({});
+  const [stack, setStack] = useState([]);
+  const top = stack[stack.length - 1];
+  const topKey = top ? top.t + ":" + top.id : "";
 
   useEffect(() => { setDoneMap(store.get(PLAN_KEY, {})); }, []);
   const toggle = (k, i, on) =>
@@ -1572,23 +1926,37 @@ function CiscoApp({ theme }) {
 
   const [p0, qs = ""] = hash.split("?");
   const [p = "", a] = p0.split("/").filter(Boolean);
-  const sec = SECTION[p] || p;
-  const level = new URLSearchParams(qs).get("level");
+  const isDetail = p === "cert" || p === "plan" || p === "track";
 
-  /* title + scroll to top on route change */
+  /* a direct link like #/cert/ccst2 opens inline; the URL is cleaned without a route change */
   useEffect(() => {
-    document.title = (TITLES[p] || "Cisco") + " | ILM ORA";
-    window.scrollTo(0, 0);
-  }, [p0, qs, p]);
+    if (isDetail) {
+      setStack([{ t: p, id: a }]);
+      try { window.history.replaceState(null, "", window.location.pathname + window.location.search); } catch {}
+    }
+  }, [p, a, isDetail]);
 
-  /* keep the active tab centred in the scrolling nav (phones / small tablets) */
   useEffect(() => {
-    const nav = navRef.current;
-    const el = nav && nav.querySelector(".on");
-    if (el) nav.scrollTo({ left: el.offsetLeft - nav.clientWidth / 2 + el.clientWidth / 2, behavior: "smooth" });
-  }, [sec]);
+    document.title = "Cisco Mentorship | ILM ORA";
+    if (isDetail) return;
+    const el = ROUTE_TO_STOP[p] && document.getElementById(ROUTE_TO_STOP[p]);
+    if (el) requestAnimationFrame(() => el.scrollIntoView({ behavior: prefersReduced() ? "auto" : "smooth", block: "start" }));
+    else window.scrollTo(0, 0);
+  }, [p0, qs, p, isDetail]);
 
-  /* scroll value drives the 3D parallax of floating cubes */
+  /* open: scroll to the inline details. close: return to where the user was */
+  const wasOpen = useRef(false);
+  useEffect(() => {
+    const beh = prefersReduced() ? "auto" : "smooth";
+    if (topKey) {
+      wasOpen.current = true;
+      requestAnimationFrame(() => document.getElementById("detail")?.scrollIntoView({ behavior: beh, block: "start" }));
+    } else if (wasOpen.current) {
+      wasOpen.current = false;
+      window.scrollTo({ top: savedY.current, behavior: beh });
+    }
+  }, [topKey]);
+
   useEffect(() => {
     if (prefersReduced()) return;
     let raf = 0;
@@ -1601,36 +1969,81 @@ function CiscoApp({ theme }) {
     return () => { cancelAnimationFrame(raf); window.removeEventListener("scroll", on); };
   }, []);
 
-  let page;
-  if (p === "cert") page = <Cert k={a} />;
-  else if (p === "plan") page = <Plan k={a} done={doneMap[a] || []} toggle={toggle} />;
-  else if (p === "track") page = <Track s={a} />;
-  else if (p === "") page = <Home />;
-  else if (p === "skills") page = <Skills level={level} />;
-  else if (p === "path") page = <Path />;
-  else if (p === "exam") page = <Exam />;
-  else if (p === "career") page = <Career />;
-  else if (p === "mentor") page = <Mentor />;
-  else page = <NotFound />;
+  /* cert / plan / track links open inline on this same page */
+  const onClickCapture = (e) => {
+    const link = e.target.closest && e.target.closest("a[href^='#/']");
+    if (!link) return;
+    const [t, id] = link.getAttribute("href").slice(2).split("?")[0].split("/");
+    if (t === "cert" || t === "plan" || t === "track") {
+      e.preventDefault();
+      if (!stack.length) savedY.current = window.scrollY;
+      setStack((s) => {
+        const last = s[s.length - 1];
+        return last && last.t === t && last.id === id ? s : [...s, { t, id }];
+      });
+    } else if (stack.length) {
+      setStack([]);
+    }
+  };
+
+  const detail = top ? (
+    <Stop id="detail" n="i" c="#2563eb" title="Full details">
+      <div className="mbar">
+        {stack.length > 1
+          ? <button className="btn ghost" onClick={() => setStack((s) => s.slice(0, -1))}>← Back</button>
+          : <span />}
+        <button className="btn primary" onClick={() => setStack([])}>Close ✕</button>
+      </div>
+      <div key={topKey}>
+        {(top.t === "cert" || top.t === "plan") && <Cert k={top.id} done={doneMap[top.id] || []} toggle={toggle} />}
+        {top.t === "track" && <Track s={top.id} />}
+      </div>
+    </Stop>
+  ) : null;
 
   return (
-        <div className={"ilm" + (theme === "dark" ? " dark" : "")} ref={rootRef}>
-      <style dangerouslySetInnerHTML={{ __html: CSS }} />
-      <header className="top">
-        <div className="in">
-          
-          <nav className="tabs" ref={navRef} aria-label="Sections">
-            {NAV.map((n) => (
-              <a key={n[0]} href={"#/" + n[0]} className={sec === n[0] ? "on" : ""} aria-current={sec === n[0] ? "page" : undefined}>{n[1]}</a>
-            ))}
-          </nav>
-        </div>
-      </header>
-      <main key={p0} className="page" tabIndex={-1}>{page}</main>
+    <div className={"ilm" + (theme === "dark" ? " dark" : "")} ref={rootRef} onClickCapture={onClickCapture}>
+      <style dangerouslySetInnerHTML={{ __html: CSS + CSS2 + CSS3 }} />
+      <main key="journey" className="page" tabIndex={-1}><Journey detail={detail} /></main>
       <footer>Practice and mentoring guide on ILM ORA. Official Cisco credentials are issued by Cisco after a proctored exam. Fees are from the data sheet and can change.</footer>
     </div>
   );
 }
+
+const CSS3 = `
+.ilm .stop .wrap{padding-left:0;padding-right:0}
+.ilm .stop .band{border-radius:18px}
+.ilm .stop .band .in{padding-left:clamp(16px,3vw,26px);padding-right:clamp(16px,3vw,26px)}
+.ilm .mbar{display:flex;justify-content:space-between;gap:10px;margin-bottom:14px}
+.ilm .eyebrow{display:inline-block;font-size:.74rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--or);background:color-mix(in srgb,var(--or) 14%,var(--card));padding:5px 12px;border-radius:99px;margin-bottom:12px}
+.ilm .hrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin-top:22px}
+.ilm .hlabel{font-size:.78rem;font-weight:700;color:var(--mut)}
+.ilm .chips{display:flex;flex-wrap:wrap;gap:6px}
+.ilm .chips span{font-size:.78rem;font-weight:700;padding:5px 12px;border-radius:99px;border:1.5px solid var(--line);background:var(--card)}
+.ilm .how{list-style:none;display:flex;flex-wrap:wrap;gap:8px 18px;margin:16px 0 0;padding:0}
+.ilm .how li{display:flex;align-items:center;gap:8px;font-size:.84rem;font-weight:700}
+.ilm .how b{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--or);color:#fff;font-size:.74rem}
+.ilm .how li:not(:last-child)::after{content:"→";color:var(--mut);margin-left:10px}
+.ilm .btns{display:flex;flex-wrap:wrap;align-items:center;gap:16px 14px;padding-bottom:6px}
+`;
+const CSS2 = `
+.ilm .road{position:relative;max-width:var(--w);margin:0 auto;padding:8px max(clamp(16px,4vw,28px),env(safe-area-inset-right)) 8px max(clamp(16px,4vw,28px),env(safe-area-inset-left))}
+.ilm .stop{position:relative;padding:clamp(18px,3vw,30px) 0 clamp(18px,3vw,30px) clamp(50px,7vw,66px);scroll-margin-top:90px}
+.ilm .stop::before{content:"";position:absolute;left:18px;top:0;bottom:0;width:4px;border-radius:4px;background:linear-gradient(var(--c),color-mix(in srgb,var(--c) 30%,var(--line)))}
+.ilm .stop:first-child::before{top:44px}
+.ilm .stop:last-child::before{bottom:auto;height:56px}
+.ilm .pin{position:absolute;left:0;top:clamp(18px,3vw,30px);width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--c);color:#fff;font-weight:800;box-shadow:0 0 0 6px var(--card),0 8px 16px -6px var(--c);z-index:1}
+.ilm .proc{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 4px}
+.ilm .proc span{padding:8px 14px;border-radius:99px;background:var(--cream);font-weight:700;font-size:.85rem}
+.ilm .proc span:not(:last-child)::after{content:" →";color:var(--mut)}
+.ilm .q h4{margin:14px 0 8px}
+.ilm .q .filters{margin-bottom:6px}
+@media(max-width:600px){
+  .ilm .stop{padding-left:48px}
+  .ilm .pin{width:34px;height:34px;font-size:.85rem}
+  .ilm .stop::before{left:15px}
+}
+`;
 /** PublicLayout leaves a small gap under the fixed Navbar. Increase this number if a gap shows, decrease it if the strip hides under the Navbar. */
 const NAV_GAP_FIX = 16;
 
@@ -1909,3 +2322,41 @@ const CSS = `
   .ilm .fl{translate:none}
 }
 `;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
