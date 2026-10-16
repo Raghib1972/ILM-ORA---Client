@@ -3991,7 +3991,18 @@ const NAV_CERT_MENU_ITEMS = [
   { key: "microsoft", title: "Microsoft Certification", description: "Azure, M365 & Power Platform",       icon: Layers, route: "/microsoft", color: "#0078D4" },
   // { key: "cloud",     title: "Cloud Certification",     description: "Multi-cloud & vendor-neutral paths", icon: Cloud,  route: "/ilmora-cloud-certification",     color: "#0ea5e9", comingSoon: true },
   { key: "google",    title: "Google Certification",    description: "Google Cloud & Workspace exams",     icon: Globe,  route: "/google",    color: "#34A853" },
-  { key: "cisco",     title: "Cisco Certification",     description: "CCNA, CCNP & CCIE exams and training", icon: Award,  route: "/cisco",     color: "#0284c7" },
+    { key: "cisco",     title: "Cisco Certification",     description: "CCNA, CCNP & CCIE exams and training", icon: Award,  route: "/cisco",     color: "#0284c7" },
+];
+
+// "Career Tracks" dropdown — replaces the old "Skills" tab
+const CAREER_TRACK_ITEMS = [
+  { key: "all-career", title: "All Career Tracks", route: "/career" },
+  { key: "software-web", title: "Software & Web Development", route: "/career?category=software-web" },
+  { key: "data-ai", title: "Data Science & AI", route: "/career?category=data-ai" },
+  { key: "cloud-devops", title: "Cloud & DevOps", route: "/career?category=cloud-devops" },
+  { key: "cybersecurity", title: "Cybersecurity", route: "/career?category=cybersecurity" },
+  { key: "ui-ux-design", title: "UI/UX & Design", route: "/career?category=ui-ux-design" },
+  { key: "business-management", title: "Business & Management", route: "/career?category=business-management" },
 ];
 
 const GOOGLE_CLIENT_ID =
@@ -6017,12 +6028,12 @@ const goToAllCourses = () => {
 // ── Maven-style mega menu ──────────────────────────────────────────────
 // Reuses the 3 existing open-states (feature / product / cert) so nothing
 // else in the file changes. Only ONE panel is ever open at a time.
-const openMega = coursesMenuOpen ? "courses" : featureMenuOpen ? "feature" : productMenuOpen ? "product" : certMenuOpen ? "cert" : null;
+const openMega = coursesMenuOpen ? "courses" : featureMenuOpen ? "feature" : productMenuOpen ? "product" : certMenuOpen ? "career" : null;
 const setMega = (key) => {
   setCoursesMenuOpen(key === "courses");
   setFeatureMenuOpen(key === "feature");
   setProductMenuOpen(key === "product");
-  setCertMenuOpen(key === "cert");
+    setCertMenuOpen(key === "career"); // reuses the old Skills open-state
 };
 // All Courses dropdown — every item opens its own page.
 const COURSE_CATEGORIES = [
@@ -6030,7 +6041,7 @@ const COURSE_CATEGORIES = [
   { key: "school-boards", title: "School Boards", route: "/board" },
   { key: "neet", title: "Competitive Exams – NEET", route: "/competitive/neet" },
   { key: "jee", title: "Competitive Exams – JEE", route: "/competitive/jee" },
-  { key: "career-tracks", title: "Career Tracks", route: "/career" },
+    // { key: "career-tracks", title: "Career Tracks", route: "/career" }, // moved to its own top-level tab
   { key: "fde-academy", title: "FDE Academy", route: "/fde-academy" },
   { key: "ilm-ora-talk", title: "ILM ORA Talk", route: "/talk" },
   { key: "study-abroad", title: "Study Abroad", route: "/study-abroad" },
@@ -6067,6 +6078,8 @@ const MEGA_MENUS = {
     items: PRODUCT_MENU_ITEMS.map((i) => ({ key: i.key, title: i.title, go: () => goToProductSection(i.key) })),
   },
   
+    // Skills tab — commented out for now
+  /*
   cert: {
     label: "Skills",
     eyebrow: "Explore skills",
@@ -6081,6 +6094,19 @@ const MEGA_MENUS = {
         setMega(null);
         navigate(i.route);
       },
+    })),
+  },
+  */
+  career: {
+    label: "Career Tracks",
+    eyebrow: "Explore",
+    cardTitle: "Career Tracks",
+    cardRoute: "/career",
+    ref: certMenuRef,
+    items: CAREER_TRACK_ITEMS.map((i) => ({
+      key: i.key,
+      title: i.title,
+      go: () => { setMega(null); navigate(i.route); },
     })),
   },
 };
@@ -7009,8 +7035,11 @@ const renderMegaTrigger = (key) => {
             </button>
 
             
-{/* Skills — Maven-style mega menu trigger */}
-{renderMegaTrigger("cert")}
+{/* Skills — commented out for now */}
+{/* {renderMegaTrigger("cert")} */}
+
+{/* Career Tracks — replaces Skills */}
+{renderMegaTrigger("career")}
 
           </div>
 
@@ -7301,7 +7330,40 @@ const renderMegaTrigger = (key) => {
               <div className="d-mobile-menu-divider" />
 
               
-{/* Skills — collapsible accordion */}
+{/* Career Tracks — collapsible accordion (replaces Skills) */}
+<button
+  type="button"
+  className="d-mobile-section-header"
+  onClick={() => setMobileCertOpen((o) => !o)}
+>
+  Career Tracks
+  <ChevronDown
+    size={18}
+    className={`d-mobile-section-chevron ${mobileCertOpen ? "open" : ""}`}
+  />
+</button>
+
+{mobileCertOpen && (
+  <div className="d-mobile-section-items">
+    {CAREER_TRACK_ITEMS.map((item) => (
+      <button
+        key={item.key}
+        type="button"
+        className="d-mobile-section-item"
+        onClick={() => {
+          setMobileNavOpen(false);
+          navigate(item.route);
+        }}
+      >
+        <span style={{ flex: 1 }}>
+          <span className="d-mobile-section-item-title">{item.title}</span>
+        </span>
+      </button>
+    ))}
+  </div>
+)}
+
+{/* Skills — collapsible accordion — commented out for now
 <button
   type="button"
   className="d-mobile-section-header"
@@ -7353,6 +7415,7 @@ const renderMegaTrigger = (key) => {
                   })}
                 </div>
               )}
+*/}
             </div>
 
             {/* Footer — user profile + Go to Dashboard + Sign out (logged in),

@@ -9,7 +9,7 @@ import {
   MessageSquare, Brain, Zap, Target, GraduationCap, Layers,
   TrendingUp, Cpu, Handshake, Search, Bookmark, BookMarked,
   X, ChevronRight, Layout,
-  Settings, Code2, Activity, Bell,
+  Settings, Code2, Activity,
 } from "lucide-react";
 
 import heroVideo from "../../assets/collge_student.mp4";
@@ -18,8 +18,6 @@ import discussionVideo from "../../assets/Discussion_collge.mp4";
 // ✅ Shared shell used by every other public page (Careers, About,
 // Pricing, Contact, FAQ, etc). It renders the ONE global
 // AnnouncementBanner → Navbar → ... → Footer for the whole site.
-// Adjust this relative path if Platforms.jsx lives somewhere other
-// than the same folder as Careers.jsx.
 import PublicLayout from "../Landing/components/PublicLayout";
 
 // ═══════════════════════════════════════════════
@@ -246,15 +244,49 @@ function findProgramById(programId) {
   return null;
 }
 
+// ── ROLES ──
+const ROLES = [
+  { id: "engineering", label: "Engineering",         Icon: Code2 },
+  { id: "product",     label: "Product Manager",     Icon: Target },
+  { id: "data",        label: "Data & Analytics",    Icon: BarChart2 },
+  { id: "cloud",       label: "Cloud & DevOps",      Icon: Cloud },
+  { id: "ai",          label: "AI & Automation",     Icon: Bot },
+  { id: "cx",          label: "Customer Experience", Icon: Headphones },
+];
+
+// program id -> role ids (ek program ke multiple roles ho sakte hain)
+const PROGRAM_ROLES = {
+  "ui-dev":           ["engineering"],
+  "backend-dev":      ["engineering"],
+  "database":         ["engineering", "data"],
+  "api-soap":         ["engineering"],
+  "graphql":          ["engineering"],
+  "rest-api":         ["engineering"],
+  "gen-ai":           ["ai", "product"],
+  "cloud":            ["cloud"],
+  "cloud-platform":   ["cloud"],
+  "devops":           ["cloud", "engineering"],
+  "sre":              ["cloud", "engineering"],
+  "data-engineering": ["data", "engineering"],
+  "data-engineer":    ["data", "engineering"],
+  "data-analyst":     ["data", "product"],
+  "data-scientist":   ["data", "ai"],
+  "cx-ai":            ["cx", "ai", "product"],
+  "chatbot":          ["cx", "ai"],
+  "ai-bot":           ["ai", "cx"],
+  "tora-cx":          ["cx", "product"],
+};
+
+function getProgramRoles(programId) {
+  return (PROGRAM_ROLES[programId] || [])
+    .map((rid) => ROLES.find((r) => r.id === rid))
+    .filter(Boolean);
+}
+
 // ═══════════════════════════════════════════════
 //  STYLES
-//  ✅ ALIGNMENT FIX: everything is scoped under `.ilm-plat` instead
-//  of bare `*` / `html` / `body` / `a` / `ul` / `button` selectors
-//  and an unscoped `:root`. Those global rules used to leak outside
-//  this component (stripping margin/padding off, and overriding
-//  CSS variables used by) PublicLayout's shared navbar and footer —
-//  that's what caused the "cut"/misaligned look on other pages.
-//  This mirrors the same fix already applied on the Careers page.
+//  Everything is scoped under `.ilm-plat` so nothing leaks into
+//  PublicLayout's shared navbar / footer.
 // ═══════════════════════════════════════════════
 const cssText = `
 .ilm-plat {
@@ -288,7 +320,7 @@ const cssText = `
 }
 .ilm-plat, .ilm-plat *, .ilm-plat *::before, .ilm-plat *::after { box-sizing: border-box; }
 .ilm-plat a { text-decoration: none; color: inherit; }
-.ilm-plat ul { list-style: none; }
+.ilm-plat ul { list-style: none; margin: 0; padding: 0; }
 .ilm-plat button { font-family: inherit; cursor: pointer; }
 .ilm-plat ::-webkit-scrollbar { width: 6px; height: 6px; }
 .ilm-plat ::-webkit-scrollbar-track { background: var(--bg); }
@@ -433,86 +465,101 @@ const cssText = `
   color: var(--muted); max-width: 540px; margin: 0 auto; font-size: .95rem;
 }
 
-/* BANNER WITH TABS */
-.ilmora-tabs-banner {
-  background: linear-gradient(135deg, var(--orange) 0%, #fb923c 55%, #f59e0b 100%);
-  border-radius: var(--radius); padding: 18px 22px 0;
-  margin-bottom: 20px; overflow: hidden; position: relative;
-  box-shadow: 0 6px 28px rgba(249,115,22,.30);
+/* ══════════════════════════════════════════════
+   LAYOUT: LEFT SIDEBAR + CONTENT
+══════════════════════════════════════════════ */
+.ilmora-layout {
+  display: grid; grid-template-columns: 270px minmax(0, 1fr);
+  gap: 28px; align-items: start;
 }
-.ilmora-tabs-banner::before {
-  content: ''; position: absolute; top: -40px; right: -40px;
-  width: 160px; height: 160px; border-radius: 50%;
-  background: rgba(255,255,255,.07); pointer-events: none;
+
+/* SIDEBAR (docs-style left nav) */
+.ilmora-sidebar {
+  position: sticky; top: 90px;
+  max-height: calc(100vh - 110px); overflow-y: auto;
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: var(--radius); padding: 14px 10px 16px;
 }
-.ilmora-tabs-banner::after {
-  content: ''; position: absolute; bottom: 10px; left: 38%;
-  width: 100px; height: 100px; border-radius: 50%;
-  background: rgba(255,255,255,.05); pointer-events: none;
-}
-.ilmora-tabs-banner-top {
+.ilmora-sb-head {
   display: flex; align-items: center; justify-content: space-between;
-  gap: 12px; margin-bottom: 16px; position: relative; z-index: 1;
+  gap: 8px; padding: 4px 10px 10px;
 }
-.ilmora-tabs-banner-left { display: flex; align-items: center; gap: 11px; }
-.ilmora-tabs-banner-icon {
-  width: 36px; height: 36px; border-radius: 9px;
-  background: rgba(255,255,255,.2); border: 1.5px solid rgba(255,255,255,.3);
-  display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; color: #fff;
+.ilmora-sb-label {
+  font-size: .78rem; font-weight: 700; color: var(--dark);
 }
-.ilmora-tabs-banner-text { display: flex; flex-direction: column; gap: 1px; }
-.ilmora-tabs-banner-title { font-size: .875rem; font-weight: 700; color: #fff; white-space: nowrap; }
-.ilmora-tabs-banner-sub { font-size: .72rem; color: rgba(255,255,255,.78); white-space: nowrap; }
-.ilmora-tabs-banner-right { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-.ilmora-tabs-banner-pill {
+.ilmora-sb-pill {
   display: inline-flex; align-items: center; gap: 5px;
-  background: rgba(255,255,255,.22); border: 1.5px solid rgba(255,255,255,.38);
-  color: #fff; font-size: .7rem; font-weight: 700; padding: 5px 13px;
-  border-radius: 999px; letter-spacing: .04em; text-transform: uppercase;
-  white-space: nowrap; cursor: default; transition: background var(--transition);
+  background: var(--orange-lt); border: 1px solid var(--orange-md);
+  color: var(--orange); font-size: .62rem; font-weight: 700;
+  padding: 2px 8px; border-radius: 999px; letter-spacing: .03em;
 }
-.ilmora-tabs-banner-pulse {
-  width: 7px; height: 7px; border-radius: 50%; background: #fff;
-  animation: livePulse 1.4s ease-in-out infinite; flex-shrink: 0;
+.ilmora-sb-pill .pdot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--orange);
+  animation: livePulse 1.4s ease-in-out infinite;
 }
-.ilmora-banner-tabs {
-  display: flex; align-items: flex-end; gap: 2px;
-  overflow-x: auto; -webkit-overflow-scrolling: touch;
-  scrollbar-width: none; position: relative; z-index: 1;
-}
-.ilmora-banner-tabs::-webkit-scrollbar { display: none; }
-.ilmora-banner-tab {
-  display: flex; align-items: center; gap: 8px;
-  padding: 11px 20px 12px; border: none;
-  background: rgba(255,255,255,.12); color: rgba(255,255,255,.82);
-  font-size: .875rem; font-weight: 600; cursor: pointer;
-  white-space: nowrap; flex-shrink: 0;
-  border-radius: 10px 10px 0 0;
+.ilmora-sb-nav { display: flex; flex-direction: column; gap: 2px; }
+.ilmora-sb-item {
+  width: 100%; display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px; border: none; border-radius: 8px;
+  background: transparent; color: var(--mid);
+  font-size: .86rem; font-weight: 500; text-align: left;
   transition: background var(--transition), color var(--transition);
-  margin-right: 2px;
 }
-.ilmora-banner-tab:hover { background: rgba(255,255,255,.22); color: #fff; }
-.ilmora-banner-tab.active { background: var(--surface); color: var(--orange); font-weight: 700; }
-.ilm-plat[data-theme="dark"] .ilmora-banner-tab.active { background: var(--surface); color: var(--orange); }
-.ilmora-banner-tab-icon { display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-.ilmora-banner-tab-count {
+.ilmora-sb-item:hover { background: var(--surface2); color: var(--dark); }
+.ilmora-sb-item.active {
+  background: var(--surface2); color: var(--dark); font-weight: 700;
+}
+.ilmora-sb-item-icon {
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; color: var(--muted);
+}
+.ilmora-sb-item.active .ilmora-sb-item-icon { color: var(--orange); }
+.ilmora-sb-item-name { flex: 1; line-height: 1.3; }
+.ilmora-sb-count {
+  font-size: .68rem; font-weight: 700; color: var(--muted);
+  background: var(--bg); border: 1px solid var(--border);
+  min-width: 20px; height: 20px; padding: 0 6px; border-radius: 999px;
   display: inline-flex; align-items: center; justify-content: center;
-  min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px;
-  font-size: .68rem; font-weight: 800;
-  background: rgba(255,255,255,.25); color: #fff;
-  border: 1px solid rgba(255,255,255,.3);
+}
+.ilmora-sb-item.active .ilmora-sb-count {
+  background: var(--orange); border-color: var(--orange); color: #fff;
+}
+.ilmora-sb-chev {
+  flex-shrink: 0; color: var(--muted);
+  transition: transform var(--transition);
+}
+.ilmora-sb-item.active .ilmora-sb-chev { transform: rotate(90deg); color: var(--orange); }
+.ilmora-sb-sub {
+  margin: 2px 0 8px 19px; padding-left: 10px;
+  border-left: 1.5px solid var(--border);
+  display: flex; flex-direction: column; gap: 1px;
+  animation: ilmoraCardIn .25s ease both;
+}
+.ilmora-sb-subitem {
+  width: 100%; display: block; text-align: left;
+  padding: 7px 10px; border: none; border-radius: 6px;
+  background: transparent; color: var(--muted);
+  font-size: .8rem; font-weight: 500;
   transition: background var(--transition), color var(--transition);
 }
-.ilmora-banner-tab.active .ilmora-banner-tab-count {
-  background: var(--orange); color: #fff; border-color: var(--orange);
+.ilmora-sb-subitem:hover { background: var(--surface2); color: var(--orange); }
+
+@media(max-width: 960px) {
+  .ilmora-layout { grid-template-columns: 1fr; gap: 18px; }
+  .ilmora-sidebar {
+    position: static; max-height: none; overflow: visible; padding: 10px;
+  }
+  .ilmora-sb-head { padding: 2px 6px 8px; }
+  .ilmora-sb-nav {
+    flex-direction: row; overflow-x: auto; gap: 6px;
+    scrollbar-width: none; -webkit-overflow-scrolling: touch;
+  }
+  .ilmora-sb-nav::-webkit-scrollbar { display: none; }
+  .ilmora-sb-item { width: auto; white-space: nowrap; flex-shrink: 0; border: 1.5px solid var(--border); }
+  .ilmora-sb-item.active { border-color: var(--orange-md); }
+  .ilmora-sb-chev { display: none; }
+  .ilmora-sb-sub { display: none; }
 }
-@media(max-width: 700px) {
-  .ilmora-tabs-banner { padding: 14px 16px 0; }
-  .ilmora-banner-tab { padding: 9px 14px 10px; font-size: .8rem; }
-  .ilmora-tabs-banner-sub { display: none; }
-}
-@media(max-width: 480px) { .ilmora-tabs-banner-right { display: none; } }
 
 /* PLATFORM SECTION */
 .ilmora-platforms-section { padding: 80px 0; }
@@ -573,7 +620,7 @@ const cssText = `
 
 /* PROGRAM CARDS */
 .ilmora-programs-grid {
-  display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 16px; transition: opacity var(--transition);
 }
 .ilmora-programs-grid.fading { opacity: 0; transform: translateY(8px); }
@@ -630,6 +677,34 @@ const cssText = `
 }
 .ilmora-btn-save:hover { border-color: var(--orange-md); color: var(--orange); background: var(--orange-lt); }
 .ilmora-btn-save.saved { background: var(--orange-lt); color: var(--orange); border-color: var(--orange); }
+
+/* ROLE FILTER + TAGS */
+.ilmora-role-bar {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.ilmora-role-bar-label {
+  font-size: .75rem; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .05em; margin-right: 4px;
+}
+.ilmora-role-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 7px 14px; border-radius: 999px;
+  font-size: .8rem; font-weight: 600;
+  background: var(--surface); color: var(--muted);
+  border: 1.5px solid var(--border); transition: all var(--transition);
+}
+.ilmora-role-chip:hover { border-color: var(--orange-md); color: var(--dark); }
+.ilmora-role-chip.active {
+  background: var(--orange-lt); color: var(--orange); border-color: var(--orange);
+}
+.ilmora-prog-card-roles { display: flex; gap: 6px; flex-wrap: wrap; }
+.ilmora-role-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: .68rem; font-weight: 600; padding: 2px 8px;
+  border-radius: 6px; background: var(--surface2);
+  color: var(--mid); border: 1px solid var(--border);
+}
 
 /* EMPTY STATE */
 .ilmora-empty-state { grid-column: 1/-1; text-align: center; padding: 56px 20px; }
@@ -851,7 +926,6 @@ const cssText = `
   .ilmora-modal-header,
   .ilmora-modal-body,
   .ilmora-modal-footer { padding-left: 20px; padding-right: 20px; }
-  .ilmora-banner-tab { padding: 9px 12px 10px; font-size: .8rem; }
 }
 `;
 
@@ -939,46 +1013,52 @@ function Hero({ onExplore }) {
 }
 
 // ═══════════════════════════════════════════════
-//  BANNER WITH TABS
+//  LEFT SIDEBAR (docs-style) — replaces the old top banner tabs
+//  Platforms list; the active platform expands to show its programs.
 // ═══════════════════════════════════════════════
-function BannerWithTabs({ platforms, activePlatformId, onSelect }) {
+function PlatformSidebar({ platforms, activePlatformId, onSelect, onOpenProgram }) {
   return (
-    <div className="ilmora-tabs-banner" role="navigation" aria-label="Platform selector">
-      <div className="ilmora-tabs-banner-top">
-        <div className="ilmora-tabs-banner-left">
-          <div className="ilmora-tabs-banner-icon">
-            <Bell size={15} />
-          </div>
-          <div className="ilmora-tabs-banner-text">
-            <span className="ilmora-tabs-banner-title">Choose Your Platform</span>
-            <span className="ilmora-tabs-banner-sub">Select a track to explore programs</span>
-          </div>
-        </div>
-        <div className="ilmora-tabs-banner-right">
-          <span className="ilmora-tabs-banner-pill">
-            <span className="ilmora-tabs-banner-pulse" /> Enrolling Now
-          </span>
-        </div>
+    <aside className="ilmora-sidebar" aria-label="Platform selector">
+      <div className="ilmora-sb-head">
+        <span className="ilmora-sb-label">Choose Your Platform</span>
+        <span className="ilmora-sb-pill"><span className="pdot" /> Enrolling</span>
       </div>
-      <div className="ilmora-banner-tabs" role="tablist">
+      <nav className="ilmora-sb-nav" role="tablist">
         {platforms.map((platform) => {
-          const TabIcon = platform.Icon;
+          const SbIcon = platform.Icon;
+          const isActive = platform.id === activePlatformId;
           return (
-            <button
-              key={platform.id}
-              role="tab"
-              aria-selected={platform.id === activePlatformId}
-              className={`ilmora-banner-tab ${platform.id === activePlatformId ? "active" : ""}`}
-              onClick={() => onSelect(platform.id)}
-            >
-              <span className="ilmora-banner-tab-icon"><TabIcon size={15} /></span>
-              <span>{platform.name}</span>
-              <span className="ilmora-banner-tab-count">{platform.programs.length}</span>
-            </button>
+            <div key={platform.id}>
+              <button
+                role="tab"
+                aria-selected={isActive}
+                className={`ilmora-sb-item ${isActive ? "active" : ""}`}
+                onClick={() => onSelect(platform.id)}
+              >
+                <span className="ilmora-sb-item-icon"><SbIcon size={16} /></span>
+                <span className="ilmora-sb-item-name">{platform.name}</span>
+                <span className="ilmora-sb-count">{platform.programs.length}</span>
+                <ChevronRight size={14} className="ilmora-sb-chev" />
+              </button>
+              {isActive && (
+                <ul className="ilmora-sb-sub">
+                  {platform.programs.map((p) => (
+                    <li key={p.id}>
+                      <button
+                        className="ilmora-sb-subitem"
+                        onClick={() => onOpenProgram(p.id)}
+                      >
+                        {p.name}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           );
         })}
-      </div>
-    </div>
+      </nav>
+    </aside>
   );
 }
 
@@ -1033,6 +1113,16 @@ function ProgramCard({ prog, savedInterests, onSyllabus, onSave }) {
             <GraduationCap size={10} /> Beginner
           </span>
         )}
+      </div>
+      <div className="ilmora-prog-card-roles">
+        {getProgramRoles(prog.id).map((r) => {
+          const RIcon = r.Icon;
+          return (
+            <span key={r.id} className="ilmora-role-tag">
+              <RIcon size={10} /> {r.label}
+            </span>
+          );
+        })}
       </div>
       <div className="ilmora-prog-card-actions">
         <button
@@ -1121,6 +1211,14 @@ function SyllabusModal({ prog, platform, savedInterests, onClose, onSave }) {
             <div className="ilmora-modal-info-block">
               <div className="ilmora-modal-info-label"><Users size={11} /> Who Is This For</div>
               <div className="ilmora-modal-info-value">{prog.whoIsFor}</div>
+            </div>
+          </div>
+          <div className="ilmora-modal-tools">
+            <div className="ilmora-modal-section-title"><Briefcase size={15} /> Suitable Roles</div>
+            <div className="ilmora-tools-list">
+              {getProgramRoles(prog.id).map((r) => (
+                <span key={r.id} className="ilmora-tool-tag">{r.label}</span>
+              ))}
             </div>
           </div>
           <div className="ilmora-modal-tools">
@@ -1235,27 +1333,15 @@ function ToastContainer({ toasts }) {
 
 // ═══════════════════════════════════════════════
 //  MAIN EXPORT
-//  ✅ Custom Navbar/Footer removed. This page is now rendered
-//  INSIDE PublicLayout, so it gets the exact same
-//  AnnouncementBanner → Navbar → ... → Footer shell (and identical
-//  alignment) as the Careers page and every other public page.
-//  Pass these props from your route the same way you already do
-//  for Careers, e.g.:
-//    <Route path="/career" element={
-//      <Platforms theme={theme} toggleTheme={toggleTheme}
-//                 setShowLoginModal={setShowLoginModal}
-//                 scrollToSection={scrollToSection} />
-//    } />
 // ═══════════════════════════════════════════════
 export default function Platforms({ theme, toggleTheme, setShowLoginModal, scrollToSection }) {
   useInjectStyles();
 
-  // Dark mode now follows the shared site-wide theme instead of a
-  // page-local toggle (that toggle lived in the removed navbar).
   const darkMode = theme === "dark";
 
   const [activePlatformId, setActivePlatformId] = useState("dev");
   const [activeFilter, setActiveFilter]       = useState("all");
+  const [activeRole, setActiveRole]           = useState("all");
   const [searchQuery, setSearchQuery]         = useState("");
   const [modalProgram, setModalProgram]       = useState(null);
   const [modalPlatform, setModalPlatform]     = useState(null);
@@ -1277,6 +1363,10 @@ export default function Platforms({ theme, toggleTheme, setShowLoginModal, scrol
       programs = programs.filter((p) => p.popular);
     else if (activeFilter === "beginner")
       programs = programs.filter((p) => p.beginnerFriendly);
+    if (activeRole !== "all")
+      programs = programs.filter((p) =>
+        getProgramRoles(p.id).some((r) => r.id === activeRole)
+      );
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase();
       programs = programs.filter(
@@ -1298,6 +1388,7 @@ export default function Platforms({ theme, toggleTheme, setShowLoginModal, scrol
     setTimeout(() => {
       setActivePlatformId(id);
       setActiveFilter("all");
+      setActiveRole("all");
       setSearchQuery("");
       setFading(false);
       showToast(`${platformData.find((p) => p.id === id).name} selected`);
@@ -1307,6 +1398,11 @@ export default function Platforms({ theme, toggleTheme, setShowLoginModal, scrol
   const handleSetFilter = (f) => {
     setFading(true);
     setTimeout(() => { setActiveFilter(f); setFading(false); }, 160);
+  };
+
+  const handleSetRole = (r) => {
+    setFading(true);
+    setTimeout(() => { setActiveRole(r); setFading(false); }, 160);
   };
 
   const handleSaveInterest = (progId, progName) => {
@@ -1355,70 +1451,99 @@ export default function Platforms({ theme, toggleTheme, setShowLoginModal, scrol
               <p>Select a platform to explore its programs and structured learning paths.</p>
             </div>
 
-            <BannerWithTabs
-              platforms={platformData}
-              activePlatformId={activePlatformId}
-              onSelect={handleSetPlatform}
-            />
+            <div className="ilmora-layout">
+              <PlatformSidebar
+                platforms={platformData}
+                activePlatformId={activePlatformId}
+                onSelect={handleSetPlatform}
+                onOpenProgram={openModal}
+              />
 
-            <div className="ilmora-programs-panel">
-              <div className="ilmora-panel-top">
-                <div className="ilmora-panel-title-row">
-                  <div className="ilmora-panel-icon-name">
-                    <div className="ilmora-panel-icon">
-                      <ActivePlatformIcon size={22} />
+              <div className="ilmora-programs-panel">
+                <div className="ilmora-panel-top">
+                  <div className="ilmora-panel-title-row">
+                    <div className="ilmora-panel-icon-name">
+                      <div className="ilmora-panel-icon">
+                        <ActivePlatformIcon size={22} />
+                      </div>
+                      <div className="ilmora-panel-title">{activePlatform.name}</div>
                     </div>
-                    <div className="ilmora-panel-title">{activePlatform.name}</div>
+                    <div className="ilmora-panel-badge">
+                      {activePlatform.programs.length} Programs
+                    </div>
                   </div>
-                  <div className="ilmora-panel-badge">
-                    {activePlatform.programs.length} Programs
+                  <div className="ilmora-panel-desc">{activePlatform.description}</div>
+                  <div className="ilmora-panel-controls">
+                    <div className="ilmora-panel-search-wrap">
+                      <span className="ilmora-search-icon"><Search size={15} /></span>
+                      <input
+                        className="ilmora-panel-search"
+                        type="text"
+                        placeholder="Search programs, tools, topics…"
+                        autoComplete="off"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                      />
+                    </div>
+                    <div className="ilmora-filter-btns">
+                      {["all", "popular", "beginner"].map((f) => (
+                        <button
+                          key={f}
+                          className={`ilmora-filter-btn ${activeFilter === f ? "active" : ""}`}
+                          onClick={() => handleSetFilter(f)}
+                        >
+                          {f === "all" ? "All" : f === "popular" ? "Popular" : "Beginner Friendly"}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
-                <div className="ilmora-panel-desc">{activePlatform.description}</div>
-                <div className="ilmora-panel-controls">
-                  <div className="ilmora-panel-search-wrap">
-                    <span className="ilmora-search-icon"><Search size={15} /></span>
-                    <input
-                      className="ilmora-panel-search"
-                      type="text"
-                      placeholder="Search programs, tools, topics…"
-                      autoComplete="off"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                  </div>
-                  <div className="ilmora-filter-btns">
-                    {["all", "popular", "beginner"].map((f) => (
-                      <button
-                        key={f}
-                        className={`ilmora-filter-btn ${activeFilter === f ? "active" : ""}`}
-                        onClick={() => handleSetFilter(f)}
-                      >
-                        {f === "all" ? "All" : f === "popular" ? "Popular" : "Beginner Friendly"}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
 
-              <div className={`ilmora-programs-grid ${fading ? "fading" : ""}`}>
-                {filteredPrograms.length === 0 ? (
-                  <div className="ilmora-empty-state">
-                    <div className="empty-icon"><Search size={48} /></div>
-                    <h3>No programs found</h3>
-                    <p>Try another keyword.</p>
-                  </div>
-                ) : (
-                  filteredPrograms.map((prog) => (
-                    <ProgramCard
-                      key={prog.id}
-                      prog={prog}
-                      savedInterests={savedInterests}
-                      onSyllabus={openModal}
-                      onSave={handleSaveInterest}
-                    />
-                  ))
-                )}
+                <div className="ilmora-role-bar">
+                  <span className="ilmora-role-bar-label">Role:</span>
+                  <button
+                    className={`ilmora-role-chip ${activeRole === "all" ? "active" : ""}`}
+                    onClick={() => handleSetRole("all")}
+                  >
+                    All Roles
+                  </button>
+                  {ROLES.filter((r) =>
+                    activePlatform.programs.some((p) =>
+                      getProgramRoles(p.id).some((pr) => pr.id === r.id)
+                    )
+                  ).map((r) => {
+                    const RIcon = r.Icon;
+                    return (
+                      <button
+                        key={r.id}
+                        className={`ilmora-role-chip ${activeRole === r.id ? "active" : ""}`}
+                        onClick={() => handleSetRole(r.id)}
+                      >
+                        <RIcon size={13} /> {r.label}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                <div className={`ilmora-programs-grid ${fading ? "fading" : ""}`}>
+                  {filteredPrograms.length === 0 ? (
+                    <div className="ilmora-empty-state">
+                      <div className="empty-icon"><Search size={48} /></div>
+                      <h3>No programs found</h3>
+                      <p>Try another keyword.</p>
+                    </div>
+                  ) : (
+                    filteredPrograms.map((prog) => (
+                      <ProgramCard
+                        key={prog.id}
+                        prog={prog}
+                        savedInterests={savedInterests}
+                        onSyllabus={openModal}
+                        onSave={handleSaveInterest}
+                      />
+                    ))
+                  )}
+                </div>
               </div>
             </div>
           </div>

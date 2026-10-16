@@ -35,11 +35,13 @@ export default function MobileFullScreenMenu({
   productMenuItems,
   productRoutes,
   certMenuItems = [],
-  certRoutes = {},
+    certRoutes = {},
+  careerItems = [],
 }) {
   const [ilmoraFeatureOpen, setIlmoraFeatureOpen] = useState(false);
     const [productOpen, setProductOpen] = useState(false);
-  const [certOpen, setCertOpen] = useState(false);
+    const [certOpen, setCertOpen] = useState(false);
+  const [careerOpen, setCareerOpen] = useState(false);
   const [coursesOpen, setCoursesOpen] = useState(false);
 
   useEffect(() => {
@@ -70,7 +72,7 @@ export default function MobileFullScreenMenu({
     { key: "school-boards", title: "School Boards", route: "/board" },
     { key: "neet", title: "Competitive Exams – NEET", route: "/competitive/neet" },
     { key: "jee", title: "Competitive Exams – JEE", route: "/competitive/jee" },
-    { key: "career-tracks", title: "Career Tracks", route: "/career" },
+        // { key: "career-tracks", title: "Career Tracks", route: "/career" }, // moved to its own accordion
     { key: "fde-academy", title: "FDE Academy", route: "/fde-academy" },
     { key: "ilm-ora-talk", title: "ILM ORA Talk", route: "/talk" },
     { key: "study-abroad", title: "Study Abroad", route: "/study-abroad" },
@@ -457,7 +459,41 @@ export default function MobileFullScreenMenu({
 
        
 
-        {/* ── Skills Accordion ── */}
+                {/* ── Career Tracks Accordion (replaces Skills) ── */}
+        <AccordionSection
+          label="Career Tracks"
+          isOpen={careerOpen}
+          onToggle={() => setCareerOpen((p) => !p)}
+        >
+          {careerItems.map((item) => (
+            <button
+              key={item.key}
+              type="button"
+              onClick={() => {
+                navigate(item.route);
+                onClose();
+              }}
+              style={{
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                padding: "12px 12px",
+                border: "none",
+                borderRadius: 10,
+                background: "transparent",
+                cursor: "pointer",
+                textAlign: "left",
+                fontSize: 14,
+                fontWeight: 600,
+                color: "#ffffff",
+              }}
+            >
+              {item.title}
+            </button>
+          ))}
+        </AccordionSection>
+
+        {/* ── Skills Accordion — commented out for now
         <AccordionSection
           label="Skills"
           isOpen={certOpen}
@@ -560,7 +596,8 @@ export default function MobileFullScreenMenu({
               </button>
             );
           })}
-        </AccordionSection>
+                </AccordionSection>
+        */}
         {/* Divider */}
         <div
           style={{

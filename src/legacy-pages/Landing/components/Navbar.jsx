@@ -132,6 +132,19 @@ const CERT_ICON_COLORS = {
   cisco: "text-sky-600",
 };
 
+// "Career Tracks" dropdown — replaces the old "Skills" tab (Skills is commented out for now).
+// Career Tracks was removed from the "All Courses" dropdown and now lives here, classified by category.
+// Edit titles/routes below to match your real /career page filters.
+const CAREER_TRACK_ITEMS = [
+  { key: "all-career", title: "All Career Tracks", route: "/career" },
+  { key: "software-web", title: "Software & Web Development", route: "/career?category=software-web" },
+  { key: "data-ai", title: "Data Science & AI", route: "/career?category=data-ai" },
+  { key: "cloud-devops", title: "Cloud & DevOps", route: "/career?category=cloud-devops" },
+  { key: "cybersecurity", title: "Cybersecurity", route: "/career?category=cybersecurity" },
+  { key: "ui-ux-design", title: "UI/UX & Design", route: "/career?category=ui-ux-design" },
+  { key: "business-management", title: "Business & Management", route: "/career?category=business-management" },
+];
+
 // All Courses dropdown — every item opens its own page (same pages as the
 // sidebar on /all-courses).
 const COURSE_CATEGORIES = [
@@ -139,7 +152,7 @@ const COURSE_CATEGORIES = [
   { key: "school-boards", title: "School Boards", route: "/board" },
   { key: "neet", title: "Competitive Exams – NEET", route: "/competitive/neet" },
   { key: "jee", title: "Competitive Exams – JEE", route: "/competitive/jee" },
-  { key: "career-tracks", title: "Career Tracks", route: "/career" },
+  // { key: "career-tracks", title: "Career Tracks", route: "/career" },
   { key: "fde-academy", title: "FDE Academy", route: "/fde-academy" },
   { key: "ilm-ora-talk", title: "ILM ORA Talk", route: "/talk" },
   { key: "study-abroad", title: "Study Abroad", route: "/study-abroad" },
@@ -172,6 +185,8 @@ const MEGA_MENUS = {
     items: PRODUCT_MENU_ITEMS.map((i) => ({ key: i.key, title: i.title, route: PRODUCT_ROUTES[i.key] })),
   },
   
+// Skills tab — commented out for now
+/*
 cert: {
   label: "Skills",
   eyebrow: "Explore skills",
@@ -183,6 +198,15 @@ cert: {
     route: CERT_ROUTES[i.key],
     comingSoon: !!i.comingSoon,
   })),
+},
+*/
+
+career: {
+  label: "Career Tracks",
+  eyebrow: "Explore",
+  cardTitle: "Career Tracks",
+  cardRoute: "/career",
+  items: CAREER_TRACK_ITEMS.map((i) => ({ key: i.key, title: i.title, route: i.route })),
 },
 
 };
@@ -365,7 +389,9 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
           productMenuItems={PRODUCT_MENU_ITEMS}
           productRoutes={PRODUCT_ROUTES}
           certMenuItems={CERT_MENU_ITEMS}
-          certRoutes={CERT_ROUTES}
+          // certRoutes={CERT_ROUTES}
+                    certRoutes={CERT_ROUTES}
+          careerItems={CAREER_TRACK_ITEMS}
         />
       )}
 
@@ -442,8 +468,11 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
                 </button>
               ))}
 
-              {/* Skills — Maven-style mega menu trigger */}
-              {renderMegaTrigger("cert")}
+                            {/* Skills — commented out for now */}
+              {/* {renderMegaTrigger("cert")} */}
+
+              {/* Career Tracks — replaces Skills */}
+              {renderMegaTrigger("career")}
             </div>
 
             {/* Right side */}
