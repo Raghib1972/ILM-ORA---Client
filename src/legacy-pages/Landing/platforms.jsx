@@ -1349,7 +1349,7 @@ export default function Platforms({ theme, toggleTheme, setShowLoginModal, scrol
   const [modalPlatform, setModalPlatform]     = useState(null);
   const [savedInterests, setSavedInterests]   = useState(new Set());
     const [fading, setFading]                   = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const { toasts, showToast }                 = useToasts();
   const platformsSectionRef                   = useRef(null);
 
