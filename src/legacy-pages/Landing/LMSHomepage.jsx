@@ -7220,11 +7220,14 @@ const heroTexts = [
                 >
                   Explore Courses <ArrowRight className="w-4 h-4" />
                 </button>
+                
               </div>
             </div>
           </div>
         </div>
       </section>
+      
+      <RelatedLinks colors={relatedLinksColors(theme === "dark")} links={SITE_LINKS} />
 
       {/* ── Features ── */}
         <section className="py-5 sm:py-6 px-6 bg-[#F6EDE6] dark:bg-black">
@@ -7288,47 +7291,8 @@ const heroTexts = [
           />
         </div>
       </section>
-             {/* ── About ILM ORA (SEO text, server-rendered) ── */}
-      <section className="py-8 sm:py-10 px-4 sm:px-6 bg-[#F6EDE6] dark:bg-black">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight text-[#1E293B] dark:text-white mb-4">
-            About <span className="text-[#F97316]">ILM ORA</span>
-          </h2>
-          <div className="space-y-4 text-base text-slate-600 dark:text-slate-300 leading-relaxed">
-            <p>
-              ILM ORA is an AI-powered learning management platform by Texora AI. It brings live
-              mentor-led classes, recorded sessions, hands-on projects, and verified certificates
-              together in one place, so students, working professionals, trainers, and organizations
-              can build job-ready skills without juggling multiple tools.
-            </p>
-            <p>
-              Choose from programs in full stack development, data and analytics, cloud computing,
-              AI, design, and more. Every program includes real projects, regular mentor feedback,
-              and career support such as portfolio reviews, mock interviews, and referrals, so you
-              finish with proof of your skills and not just a certificate.
-            </p>
-            <p>
-              Prepare for{" "}
-              <a href="/aws" className="text-[#F97316] hover:underline">AWS certification</a>,{" "}
-              <a href="/microsoft" className="text-[#F97316] hover:underline">Microsoft certification</a>,
-              and Google Cloud exams with live labs, mock tests, and doubt-clearing sessions led by
-              industry mentors. Use the{" "}
-              <a href="/ai-companion" className="text-[#F97316] hover:underline">AI Companion</a> to
-              chat, write, take live notes, and automate workflows across every course, and use the{" "}
-              <a href="/workspace" className="text-[#F97316] hover:underline">ILM ORA Workspace</a> to
-              schedule, host, and review live sessions with recordings and notes available afterward.
-            </p>
-            <p>
-              Whether you are taking your first step into tech, preparing for your next promotion, or
-              training a whole team, ILM ORA gives you structured learning paths, expert mentors, and
-              a supportive community that keeps you moving forward. Browse{" "}
-              <a href="/all-courses" className="text-[#F97316] hover:underline">all courses</a> and
-              start learning today.
-            </p>
-          </div>
-        </div>
-      </section>
-      <RelatedLinks colors={relatedLinksColors(theme === "dark")} links={SITE_LINKS} />
+            
+      
       {/* ── Footer ── */}
             <ClientOnly>
         <Footer scrollToSection={scrollToSection} />
