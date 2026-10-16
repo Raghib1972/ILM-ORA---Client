@@ -529,6 +529,7 @@ const cssText = `
   transition: transform var(--transition);
 }
 .ilmora-sb-item.active .ilmora-sb-chev { transform: rotate(90deg); color: var(--orange); }
+.ilmora-sb-item.active.collapsed .ilmora-sb-chev { transform: rotate(0deg); }
 .ilmora-sb-sub {
   margin: 2px 0 8px 19px; padding-left: 10px;
   border-left: 1.5px solid var(--border);
@@ -1016,7 +1017,7 @@ function Hero({ onExplore }) {
 //  LEFT SIDEBAR (docs-style) — replaces the old top banner tabs
 //  Platforms list; the active platform expands to show its programs.
 // ═══════════════════════════════════════════════
-function PlatformSidebar({ platforms, activePlatformId, onSelect, onOpenProgram }) {
+function PlatformSidebar({ platforms, activePlatformId, onSelect, onOpenProgram, collapsed = false }) {
   return (
     <aside className="ilmora-sidebar" aria-label="Platform selector">
       <div className="ilmora-sb-head">
@@ -1029,10 +1030,11 @@ function PlatformSidebar({ platforms, activePlatformId, onSelect, onOpenProgram 
           const isActive = platform.id === activePlatformId;
           return (
             <div key={platform.id}>
-              <button
+                            <button
                 role="tab"
                 aria-selected={isActive}
-                className={`ilmora-sb-item ${isActive ? "active" : ""}`}
+                aria-expanded={isActive && !collapsed}
+                className={`ilmora-sb-item ${isActive ? "active" : ""} ${isActive && collapsed ? "collapsed" : ""}`}
                 onClick={() => onSelect(platform.id)}
               >
                 <span className="ilmora-sb-item-icon"><SbIcon size={16} /></span>
@@ -1040,7 +1042,7 @@ function PlatformSidebar({ platforms, activePlatformId, onSelect, onOpenProgram 
                 <span className="ilmora-sb-count">{platform.programs.length}</span>
                 <ChevronRight size={14} className="ilmora-sb-chev" />
               </button>
-              {isActive && (
+                            {isActive && !collapsed && (
                 <ul className="ilmora-sb-sub">
                   {platform.programs.map((p) => (
                     <li key={p.id}>
@@ -1346,7 +1348,8 @@ export default function Platforms({ theme, toggleTheme, setShowLoginModal, scrol
   const [modalProgram, setModalProgram]       = useState(null);
   const [modalPlatform, setModalPlatform]     = useState(null);
   const [savedInterests, setSavedInterests]   = useState(new Set());
-  const [fading, setFading]                   = useState(false);
+    const [fading, setFading]                   = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { toasts, showToast }                 = useToasts();
   const platformsSectionRef                   = useRef(null);
 
@@ -1382,8 +1385,12 @@ export default function Platforms({ theme, toggleTheme, setShowLoginModal, scrol
     return programs;
   })();
 
-  const handleSetPlatform = (id) => {
-    if (id === activePlatformId) return;
+    const handleSetPlatform = (id) => {
+    if (id === activePlatformId) {
+      setSidebarCollapsed((prev) => !prev);
+      return;
+    }
+    setSidebarCollapsed(false);
     setFading(true);
     setTimeout(() => {
       setActivePlatformId(id);
@@ -1452,11 +1459,12 @@ export default function Platforms({ theme, toggleTheme, setShowLoginModal, scrol
             </div>
 
             <div className="ilmora-layout">
-              <PlatformSidebar
+                           <PlatformSidebar
                 platforms={platformData}
                 activePlatformId={activePlatformId}
                 onSelect={handleSetPlatform}
                 onOpenProgram={openModal}
+                collapsed={sidebarCollapsed}
               />
 
               <div className="ilmora-programs-panel">
