@@ -18,32 +18,30 @@ import SharedWithMe from "./workspace/SharedWithMe";
 import Reminders from "./workspace/Reminders";
 import Contacts from "./workspace/Contacts";
 import Availability from "./workspace/Availability";
+import BookingPages from "./workspace/BookingPages";
 import Integrations from "./workspace/Integrations";
 import WorkspaceSettings from "./workspace/WorkspaceSettings";
 
-export default function WorkspaceApp({ theme } = {}) {
+export default function WorkspaceApp() {
   const [tab, setTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // ── Theme detection (same concept as Dashboard.jsx) ──────────────────────
-  // The actual Light/Dark theme toggle lives in the host app (App.jsx /
-  // IlmOraDemoPage), which already computes the correct `theme` value and
-  // now passes it straight down as a prop (same convention IlmDemoSidebar
-  // already follows). An explicitly-passed `theme` prop always wins — it's
-  // the single source of truth and avoids re-deriving it here on a
-  // different render/effect timeline. The DOM read + MutationObserver below
-  // now only run as a fallback for whenever Workspace is ever mounted
-  // without that prop, matching useAutoDarkMode.js's documented pattern.
-  const [detectedDark, setDetectedDark] = useState(
+  // The actual Light/Dark theme toggle lives in the host app (App.jsx),
+  // which flips `document.documentElement`'s "dark" class / "data-theme"
+  // attribute. Exactly like Dashboard.jsx, the Workspace does not own or
+  // receive that toggle — it just reads the current theme off <html> on
+  // mount, then watches for future changes with a MutationObserver so it
+  // re-renders whenever someone clicks the Light Theme / Dark Theme option.
+  const [isDark, setIsDark] = useState(
     () =>
       typeof document !== "undefined" &&
       (document.documentElement.classList.contains("dark") ||
         document.documentElement.getAttribute("data-theme") === "dark"),
   );
   useEffect(() => {
-    if (theme !== undefined) return;
     const obs = new MutationObserver(() => {
-      setDetectedDark(
+      setIsDark(
         document.documentElement.classList.contains("dark") ||
           document.documentElement.getAttribute("data-theme") === "dark",
       );
@@ -53,8 +51,7 @@ export default function WorkspaceApp({ theme } = {}) {
       attributeFilter: ["class", "data-theme"],
     });
     return () => obs.disconnect();
-  }, [theme]);
-  const isDark = theme !== undefined ? theme === "dark" : detectedDark;
+  }, []);
 
   // Close the mobile drawer automatically whenever a destination is picked,
   // and lock background scroll while it's open (small/touch screens only —
@@ -99,10 +96,10 @@ export default function WorkspaceApp({ theme } = {}) {
         return <Overview onNavigate={handleNavigate} />;
       case "events":
         return <Events />;
+      case "booking-pages":
+        return <BookingPages />;
       case "instant-meeting":
         return <InstantMeeting />;
-      case "task-orbit":
-        return <TaskOrbit />;
       case "summaries":
         return <Summaries />;
       case "calendar":

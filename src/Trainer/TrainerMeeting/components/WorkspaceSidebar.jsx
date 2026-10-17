@@ -10,6 +10,7 @@ import {
   Mail,
   Clock,
   Share2,
+  Link2,
   Bell,
   Contact,
   CalendarCheck2,
@@ -26,6 +27,7 @@ export const WORKSPACE_TABS = [
     items: [
       { id: "overview", label: "Overview", icon: LayoutGrid },
       { id: "events", label: "Events", icon: CalendarDays },
+      { id: "booking-pages", label: "Booking Pages", icon: Link2, badge: "New" },
       { id: "instant-meeting", label: "Instant Meeting", icon: Video },
       { id: "calendar", label: "Calendar", icon: CalendarIcon },
       { id: "calendar-sync", label: "Calendar Sync", icon: RefreshCw },
@@ -95,6 +97,21 @@ export default function WorkspaceSidebar({ active, onSelect, isOpen = false, onC
             >
               <item.icon size={15} />
               {!collapsed && <span>{item.label}</span>}
+              {!collapsed && item.badge && (
+                <span
+                  style={{
+                    marginLeft: "auto",
+                    fontSize: 10,
+                    fontWeight: 700,
+                    padding: "2px 7px",
+                    borderRadius: 999,
+                    background: "var(--brand, #7c3aed)",
+                    color: "#fff",
+                  }}
+                >
+                  {item.badge}
+                </span>
+              )}
             </button>
           ))}
         </div>
