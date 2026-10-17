@@ -327,17 +327,20 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
     if (r === "STUDENT") return "student";
     return "";
   };
-  const DASHBOARD_ROUTE_BY_ROLE = {
-    student: "/student/dashboard",
-    trainer: "/trainer/dashboard",
-    admin: "/admin/dashboard",
-  };
-  const goToDashboard = () => {
-    const role =
-      normalizeAppRole(user?.role) ||
-      normalizeAppRole(localStorage.getItem("role")) ||
-      "student";
-    navigate(DASHBOARD_ROUTE_BY_ROLE[role] || "/ilm-demo");
+  // const DASHBOARD_ROUTE_BY_ROLE = {
+  //   student: "/student/dashboard",
+  //   trainer: "/trainer/dashboard",
+  //   admin: "/admin/dashboard",
+  // };
+  // const goToDashboard = () => {
+  //   const role =
+  //     normalizeAppRole(user?.role) ||
+  //     normalizeAppRole(localStorage.getItem("role")) ||
+  //     "student";
+  //   navigate(DASHBOARD_ROUTE_BY_ROLE[role] || "/ilm-demo");
+  // };
+    const goToDashboard = () => {
+    navigate("/login");
   };
   // Same roleChangeUsed flag IlmOraDemoPage.jsx's hasUsedRoleChange()
   // already reads from lms_user — same source, read here too. Kept for
