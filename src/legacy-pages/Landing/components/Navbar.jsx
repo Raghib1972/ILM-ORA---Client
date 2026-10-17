@@ -137,12 +137,9 @@ const CERT_ICON_COLORS = {
 // Edit titles/routes below to match your real /career page filters.
 const CAREER_TRACK_ITEMS = [
   { key: "all-career", title: "All Career Tracks", route: "/career" },
-  { key: "software-web", title: "Software & Web Development", route: "/career?category=software-web" },
-  { key: "data-ai", title: "Data Science & AI", route: "/career?category=data-ai" },
-  { key: "cloud-devops", title: "Cloud & DevOps", route: "/career?category=cloud-devops" },
-  { key: "cybersecurity", title: "Cybersecurity", route: "/career?category=cybersecurity" },
-  { key: "ui-ux-design", title: "UI/UX & Design", route: "/career?category=ui-ux-design" },
-  { key: "business-management", title: "Business & Management", route: "/career?category=business-management" },
+  { key: "development-engineering", title: "Development Engineering Platform", route: "/career?platform=dev" },
+  { key: "ai-agent-ai", title: "AI – Agent AI", route: "/career?platform=ai" },
+  { key: "contact-center", title: "Contact Center Platform", route: "/career?platform=cx" },
 ];
 
 // All Courses dropdown — every item opens its own page (same pages as the
@@ -327,18 +324,7 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
     if (r === "STUDENT") return "student";
     return "";
   };
-  // const DASHBOARD_ROUTE_BY_ROLE = {
-  //   student: "/student/dashboard",
-  //   trainer: "/trainer/dashboard",
-  //   admin: "/admin/dashboard",
-  // };
-  // const goToDashboard = () => {
-  //   const role =
-  //     normalizeAppRole(user?.role) ||
-  //     normalizeAppRole(localStorage.getItem("role")) ||
-  //     "student";
-  //   navigate(DASHBOARD_ROUTE_BY_ROLE[role] || "/ilm-demo");
-  // };
+ 
     const goToDashboard = () => {
     navigate("/login");
   };
