@@ -3919,6 +3919,11 @@ import workspaceDashboardImg from "../../assets/Dashboard.webp";
 import workspaceHostImg from "../../assets/Host Controller.webp";
 import workspaceRecordingsImg from "../../assets/RecordingsNotes.webp";
 import workspaceStartJoinImg from "../../assets/StartJoin.webp";
+import wbDrawingImg from "../../assets/white board/Drawing Tools Dashboard Illustration.webp";
+import wbDiagramsImg from "../../assets/white board/Diagrams & Mind Maps Dashboard.webp";
+import wbTemplatesImg from "../../assets/white board/Templates Gallery Dashboard UI.webp";
+import wbCollabImg from "../../assets/white board/Pastel Live Collaboration Whiteboard.webp";
+import wbPresentImg from "../../assets/white board/present-mode.webp";
 import ctaStudent from "../../assets/cta-student.webp";
 import auth from "../../auth";
 import Navbar from "./components/Navbar";
@@ -5220,18 +5225,17 @@ function ProductHubSection({ navigate }) {
       label: "ILM ORA Whiteboard",
       icon: PenTool,
       badge: "VISUAL COLLABORATION",
-      line1: "Think, Draw & Teach On Your",
+           line1: "Think, Draw & Teach",
       line2: "Smart Whiteboard",
-      desc: "Sketch ideas, build flowcharts, UML and mind maps, and collaborate live on one infinite canvas — then present it like slides.",
+      desc: "Sketch ideas, build flowcharts and mind maps, and collaborate live on one canvas.",
       cta: "Explore Whiteboard",
       to: "/whiteboard", // agar landing page ka route alag hai to yahan badal dena
-      // TODO: whiteboard ke real screenshots yahan replace kar dena
       features: [
-        { icon: PenTool, label: "Drawing Tools", img: workspacePreviewImg },
-        { icon: Lightbulb, label: "Diagrams & Mind Maps", img: workspaceDashboardImg },
-        { icon: FileText, label: "Templates", img: workspaceRecordingsImg },
-        { icon: Users, label: "Live Collaboration", img: workspaceHostImg },
-        { icon: Video, label: "Present Mode", img: workspaceStartJoinImg },
+        { icon: PenTool, label: "Drawing Tools", img: wbDrawingImg },
+        { icon: Lightbulb, label: "Diagrams & Mind Maps", img: wbDiagramsImg },
+        { icon: FileText, label: "Templates", img: wbTemplatesImg },
+        { icon: Users, label: "Live Collaboration", img: wbCollabImg },
+        { icon: Video, label: "Present Mode", img: wbPresentImg },
       ],
     },
   ];
