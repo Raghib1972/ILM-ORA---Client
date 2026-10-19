@@ -5248,14 +5248,32 @@ function ProductHubSection({ navigate }) {
     setActiveFeature(0);
   };
 
-    // Auto-rotate: features pehle, last feature ke baad agla product.
+     // Section sirf tab rotate hoga jab screen par dikh raha ho
+  const hubRef = useRef(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = hubRef.current;
+    if (!el || !("IntersectionObserver" in window)) {
+      setInView(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      { threshold: 0.35 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  // Auto-rotate: features pehle, last feature ke baad agla product.
   // Calendry tab me (jisme apna showcase hai) 12s baad wapas AI Companion.
   useEffect(() => {
-    if (paused) return;
+    if (paused || !inView) return;
     const isCalendar = product.key === "calendar";
     const delay = isCalendar ? 12000 : 3500;
     const t = setTimeout(() => {
-            if (isCalendar) {
+      if (document.hidden) return;
+      if (isCalendar) {
         setActiveProduct((p) => (p + 1) % products.length);
         setActiveFeature(0);
         return;
@@ -5268,10 +5286,11 @@ function ProductHubSection({ navigate }) {
       }
     }, delay);
     return () => clearTimeout(t);
-  }, [activeProduct, activeFeature, paused]);
+  }, [activeProduct, activeFeature, paused, inView]);
   return (
-    <section
-            id="product-hub"
+        <section
+      ref={hubRef}
+      id="product-hub"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
       className="relative py-4 sm:py-6 px-4 sm:px-6 scroll-mt-20 overflow-hidden bg-[#FFF7F2] dark:bg-gray-950"
@@ -5287,7 +5306,7 @@ function ProductHubSection({ navigate }) {
         </p>
       </div>
 
-      <div className="max-w-[1400px] mx-auto grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[260px_minmax(0,1fr)_minmax(0,1.35fr)] gap-6 lg:gap-8 items-center">
+            <div className="max-w-[1400px] mx-auto grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[260px_minmax(0,1fr)_minmax(0,1.35fr)] gap-6 lg:gap-8 items-center lg:min-h-[560px]">
                 {/* ── Left: product list ── */}
         <div className="min-w-0">
           
