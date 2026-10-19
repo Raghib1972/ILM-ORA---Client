@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 
 // One shared list of crawlable internal links (real, existing public pages).
 export const SITE_LINKS = [
@@ -29,17 +32,15 @@ export const relatedLinksColors = (isDark) =>
       }
     : {};
 
-// Static CSS (no interpolation) so this stays a plain server component.
-// Colours come in through CSS variables set on <nav>.
 const CSS = `
-.rl-marq{overflow:hidden;padding:14px 0 26px;
-}
+.rl-marq{overflow:hidden;padding:14px 0 48px;margin-bottom:-22px;}
 .rl-track{list-style:none;margin:0;padding:0;display:flex;width:max-content;
   animation:rl-scroll 60s linear infinite;will-change:transform;}
 .rl-track li{flex:none;width:260px;margin-right:20px;}
 .rl-marq:hover .rl-track,.rl-marq:focus-within .rl-track{animation-play-state:paused;}
 @keyframes rl-scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
-.rl-card{display:block;height:116px;perspective:900px;text-decoration:none;outline:none;}
+.rl-card{display:block;height:116px;perspective:900px;text-decoration:none;outline:none;
+  -webkit-tap-highlight-color:transparent;}
 .rl-flip{position:relative;display:block;width:100%;height:100%;transform-style:preserve-3d;
   transition:transform .65s cubic-bezier(.2,.8,.2,1);}
 .rl-f,.rl-b{position:absolute;inset:0;border-radius:14px;padding:18px 20px;
@@ -50,24 +51,39 @@ const CSS = `
 .rl-f small{display:none;font-size:16px;color:var(--rl-sub);margin-top:2px;}
 .rl-b{transform:rotateX(180deg);color:#fff;display:flex;flex-direction:column;
   justify-content:space-between;background:linear-gradient(135deg,var(--rl-accent),#b8390b);
-  box-shadow:0 14px 28px -10px var(--rl-accent);}
+  box-shadow:0 10px 22px -12px rgba(249,115,22,.5);}
 .rl-b span{font-size:17px;line-height:1.5;font-weight:500;}
 .rl-b em{font-style:normal;font-weight:600;font-size:14px;opacity:.85;}
 
-@media (hover:hover){
+@media (hover:hover) and (pointer:fine){
   .rl-card:hover .rl-flip,.rl-card:focus-visible .rl-flip{transform:rotateX(180deg);}
 }
 .rl-card:focus-visible .rl-f,.rl-card:focus-visible .rl-b{outline:2px solid var(--rl-accent);outline-offset:2px;}
 
-/* touch screens: no hover, so show title + description on the front, no flip */
-@media (hover:none){
+/* touch screens: no hover. Card in the centre of the screen (.rl-on) or being pressed turns orange. */
+@media (hover:none), (pointer:coarse){
   .rl-card{height:100%;perspective:none;}
   .rl-track li{display:flex;}
   .rl-track li .rl-card{width:100%;}
   .rl-flip{height:auto;transform-style:flat;}
-  .rl-f{position:static;}
-  .rl-f small{display:block;}
+  .rl-f{position:static;
+    transition:background .35s ease,border-color .35s ease,box-shadow .35s ease;}
+  .rl-f small{display:block;transition:color .35s ease;}
+  .rl-f b{transition:color .35s ease;}
   .rl-b{display:none;}
+
+  .rl-card.rl-on .rl-f,
+  .rl-card:active .rl-f{
+    background:linear-gradient(135deg,var(--rl-accent),#b8390b);
+    border-color:transparent;
+    box-shadow:0 10px 22px -12px rgba(249,115,22,.5);
+  }
+  .rl-card.rl-on .rl-f b,
+  .rl-card.rl-on .rl-f small,
+  .rl-card:active .rl-f b,
+  .rl-card:active .rl-f small{color:#fff;}
+
+  .rl-marq:active .rl-track{animation-play-state:paused;}
 }
 @media (prefers-reduced-motion:reduce){
   .rl-flip{transition:none;}
@@ -77,7 +93,6 @@ const CSS = `
 }
 `;
 
-// Server-rendered, crawlable <a href> links (real internal links for SEO).
 export default function RelatedLinks({
   title = "Explore more on ILM ORA",
   accentWord = "ILM ORA",
@@ -85,6 +100,24 @@ export default function RelatedLinks({
   links = [],
   colors = {},
 }) {
+  const marqRef = useRef(null);
+
+  // Touch devices: highlight the card that is passing through the screen centre.
+  useEffect(() => {
+    const root = marqRef.current;
+    if (!root || typeof window === "undefined") return;
+    const touch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
+    if (!touch || !("IntersectionObserver" in window)) return;
+
+    const io = new IntersectionObserver(
+      (entries) =>
+        entries.forEach((e) => e.target.classList.toggle("rl-on", e.isIntersecting)),
+      { rootMargin: "0px -49% 0px -49%", threshold: 0 },
+    );
+    root.querySelectorAll(".rl-card").forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, [links]);
+
   const c = {
     text: "#1E293B",
     sub: "#4B5563",
@@ -103,9 +136,26 @@ export default function RelatedLinks({
     "--rl-front": c.surface,
     "--rl-accent": c.accent,
   };
+
+  const card = (l, extra = {}) => (
+    <Link href={l.href} className="rl-card" {...extra}>
+      <span className="rl-flip">
+        <span className="rl-f">
+          <b>{l.label}</b>
+          <small>{l.desc}</small>
+        </span>
+        <span className="rl-b">
+          <span>{l.desc}</span>
+          <em>Open →</em>
+        </span>
+      </span>
+    </Link>
+  );
+
   return (
     <nav
       aria-label={title}
+      onTouchStart={() => {}} /* lets :active work on iOS Safari */
       style={{ ...vars, padding: "64px 0", background: c.bg, borderTop: "1px solid " + c.border }}
     >
       <style>{CSS}</style>
@@ -121,42 +171,18 @@ export default function RelatedLinks({
           </p>
         )}
       </div>
-      <div className="rl-marq">
-          <ul className="rl-track">
-            {links.map((l) => (
-              <li key={l.href}>
-              <Link href={l.href} className="rl-card">
-                <span className="rl-flip">
-                  <span className="rl-f">
-                    <b>{l.label}</b>
-                    <small>{l.desc}</small>
-                  </span>
-                  <span className="rl-b">
-                    <span>{l.desc}</span>
-                    <em>Open →</em>
-                  </span>
-                </span>
-              </Link>
-              </li>
-            ))}
-            {/* duplicate set = seamless loop; hidden from screen readers / keyboard */}
-            {links.map((l) => (
-              <li key={"dup-" + l.href} className="rl-dup" aria-hidden="true">
-              <Link href={l.href} className="rl-card" tabIndex={-1}>
-                <span className="rl-flip">
-                  <span className="rl-f">
-                    <b>{l.label}</b>
-                    <small>{l.desc}</small>
-                  </span>
-                  <span className="rl-b">
-                    <span>{l.desc}</span>
-                    <em>Open →</em>
-                  </span>
-                </span>
-              </Link>
-              </li>
-            ))}
-          </ul>
+      <div className="rl-marq" ref={marqRef}>
+        <ul className="rl-track">
+          {links.map((l) => (
+            <li key={l.href}>{card(l)}</li>
+          ))}
+          {/* duplicate set = seamless loop; hidden from screen readers / keyboard */}
+          {links.map((l) => (
+            <li key={"dup-" + l.href} className="rl-dup" aria-hidden="true">
+              {card(l, { tabIndex: -1 })}
+            </li>
+          ))}
+        </ul>
       </div>
     </nav>
   );
