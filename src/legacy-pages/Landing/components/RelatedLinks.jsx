@@ -10,10 +10,7 @@ export const SITE_LINKS = [
   { href: "/student-hub", label: "Student Hub", desc: "Learn, track and grow" },
   { href: "/trainer-hub", label: "Trainer Hub", desc: "Teach and manage classes" },
   { href: "/manager-hub", label: "Manager Hub", desc: "Manage teams and learning" },
-  { href: "/aws", label: "AWS Certification", desc: "Courses and exam prep" },
-  { href: "/google", label: "Google Certification", desc: "Courses and exam prep" },
-  { href: "/microsoft", label: "Microsoft Certification", desc: "Courses and exam prep" },
-  { href: "/cisco", label: "Cisco Certification", desc: "Exams and training" },
+  
   { href: "/study-plan", label: "Study Plan", desc: "Personalised learning roadmap" },
   { href: "/pricing", label: "Pricing", desc: "Plans and course fees" },
   { href: "/faq", label: "FAQ", desc: "Answers to common questions" },
@@ -61,16 +58,69 @@ const CSS = `
 .rl-card:focus-visible .rl-f,.rl-card:focus-visible .rl-b{outline:2px solid var(--rl-accent);outline-offset:2px;}
 
 /* touch screens: no hover. Card in the centre of the screen (.rl-on) or being pressed turns orange. */
+
 @media (hover:none), (pointer:coarse){
-  .rl-card{height:100%;perspective:none;}
-  .rl-track li{display:flex;}
-  .rl-track li .rl-card{width:100%;}
-  .rl-flip{height:auto;transform-style:flat;}
-  .rl-f{position:static;
-    transition:background .35s ease,border-color .35s ease,box-shadow .35s ease;}
-  .rl-f small{display:block;transition:color .35s ease;}
-  .rl-f b{transition:color .35s ease;}
-  .rl-b{display:none;}
+  .rl-marq{
+    width:100%;
+    overflow:hidden;
+  }
+
+  .rl-track{
+    display:flex;
+    width:max-content;
+    align-items:stretch;
+    animation:rl-scroll 35s linear infinite;
+    will-change:transform;
+  }
+
+  .rl-track li{
+    display:block;
+    flex:0 0 260px;
+    width:260px;
+    margin-right:20px;
+  }
+
+  .rl-track li .rl-card{
+    display:block;
+    width:100%;
+    height:116px;
+    box-sizing:border-box;
+    perspective:none;
+  }
+
+  .rl-flip{
+    display:block;
+    width:100%;
+    height:100%;
+    transform-style:flat;
+  }
+
+  .rl-f{
+    position:static;
+    display:block;
+    box-sizing:border-box;
+    width:100%;
+    height:100%;
+    padding:18px 16px;
+    overflow-wrap:break-word;
+    transition:background .35s ease,border-color .35s ease,box-shadow .35s ease;
+  }
+
+  .rl-f b{
+    font-size:18px;
+    transition:color .35s ease;
+  }
+
+  .rl-f small{
+    display:block;
+    font-size:14px;
+    line-height:1.4;
+    transition:color .35s ease;
+  }
+
+  .rl-b{
+    display:none;
+  }
 
   .rl-card.rl-on .rl-f,
   .rl-card:active .rl-f{
@@ -78,13 +128,19 @@ const CSS = `
     border-color:transparent;
     box-shadow:0 10px 22px -12px rgba(249,115,22,.5);
   }
+
   .rl-card.rl-on .rl-f b,
   .rl-card.rl-on .rl-f small,
   .rl-card:active .rl-f b,
-  .rl-card:active .rl-f small{color:#fff;}
+  .rl-card:active .rl-f small{
+    color:#fff;
+  }
 
-  .rl-marq:active .rl-track{animation-play-state:paused;}
+  .rl-marq:active .rl-track{
+    animation-play-state:paused;
+  }
 }
+
 @media (prefers-reduced-motion:reduce){
   .rl-flip{transition:none;}
   .rl-marq{overflow-x:auto;}
@@ -112,7 +168,13 @@ export default function RelatedLinks({
     const io = new IntersectionObserver(
       (entries) =>
         entries.forEach((e) => e.target.classList.toggle("rl-on", e.isIntersecting)),
-      { rootMargin: "0px -49% 0px -49%", threshold: 0 },
+      
+{
+  root: null,
+  rootMargin: "0px -35% 0px -35%",
+  threshold: 0,
+}
+
     );
     root.querySelectorAll(".rl-card").forEach((el) => io.observe(el));
     return () => io.disconnect();
