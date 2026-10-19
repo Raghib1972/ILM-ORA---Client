@@ -70,6 +70,58 @@ const authService = {
       });
   },
 
+  // ✅ CHECK GITHUB USER (before complete-profile)
+  checkGithubUser({ code }) {
+    return api
+      .post("/auth/check-github", { code })
+      .then((res) => res.data)
+      .catch((err) => {
+        console.error("❌ checkGithubUser error:", err);
+        throw err;
+      });
+  },
+
+  // ✅ GITHUB LOGIN (after complete-profile with onboarding answers)
+  githubLogin({ code, role, onboardingAnswers }) {
+    return api
+      .post("/auth/github", {
+        code,
+        role,
+        onboardingAnswers: onboardingAnswers || {},
+      })
+      .then((res) => res.data)
+      .catch((err) => {
+        console.error("❌ githubLogin error:", err);
+        throw err;
+      });
+  },
+
+  // ✅ CHECK LINKEDIN USER (before complete-profile)
+  checkLinkedinUser({ code }) {
+    return api
+      .post("/auth/check-linkedin", { code })
+      .then((res) => res.data)
+      .catch((err) => {
+        console.error("❌ checkLinkedinUser error:", err);
+        throw err;
+      });
+  },
+
+  // ✅ LINKEDIN LOGIN (after complete-profile with onboarding answers)
+  linkedinLogin({ code, role, onboardingAnswers }) {
+    return api
+      .post("/auth/linkedin", {
+        code,
+        role,
+        onboardingAnswers: onboardingAnswers || {},
+      })
+      .then((res) => res.data)
+      .catch((err) => {
+        console.error("❌ linkedinLogin error:", err);
+        throw err;
+      });
+  },
+
   // ✅ GOOGLE LOGIN (after complete-profile with onboarding answers)
   // Input: { idToken, role, onboardingAnswers }
   // Returns: { token, email, role, name, profileCompleted, newUser }

@@ -5664,6 +5664,15 @@ function mapBackendUser(user) {
     org: firstAnswer,
     type: firstAnswer,
     isGoogleUser: user.googleUser || false,
+    isGithubUser: user.githubUser || false,
+    isLinkedinUser: user.linkedinUser || false,
+    joinedVia: user.googleUser
+      ? "Google"
+      : user.githubUser
+        ? "GitHub"
+        : user.linkedinUser
+          ? "LinkedIn"
+          : "Email",
     organizationId: user.organizationId || null,
   };
 }
@@ -8740,6 +8749,7 @@ export default function OnboardingManagement() {
                       "#",
                       "Name",
                       "Role",
+                      "Joined Via",
                       "Status",
                       "Progress",
                       "Onboarding Interest",
@@ -8771,7 +8781,7 @@ export default function OnboardingManagement() {
                   {paged.length === 0 && (
                     <tr>
                       <td
-                        colSpan={10}
+                        colSpan={11}
                         style={{
                           padding: "30px",
                           textAlign: "center",
@@ -8870,6 +8880,34 @@ export default function OnboardingManagement() {
                           >
                             {React.createElement(cfg.Icon, { size: 9 })}{" "}
                             {user.role}
+                          </span>
+                        </td>
+                        <td style={{ padding: "9px 11px" }}>
+                          <span
+                            style={{
+                              fontSize: 10,
+                              fontWeight: 700,
+                              padding: "2px 8px",
+                              borderRadius: 20,
+                              background:
+                                user.joinedVia === "Google"
+                                  ? "#eff6ff"
+                                  : user.joinedVia === "GitHub"
+                                    ? "#f3f4f6"
+                                    : user.joinedVia === "LinkedIn"
+                                      ? "#eff6ff"
+                                      : "#fef3c7",
+                              color:
+                                user.joinedVia === "Google"
+                                  ? "#1d4ed8"
+                                  : user.joinedVia === "GitHub"
+                                    ? "#1f2937"
+                                    : user.joinedVia === "LinkedIn"
+                                      ? "#0a66c2"
+                                      : "#92400e",
+                            }}
+                          >
+                            {user.joinedVia}
                           </span>
                         </td>
                         <td style={{ padding: "9px 11px" }}>

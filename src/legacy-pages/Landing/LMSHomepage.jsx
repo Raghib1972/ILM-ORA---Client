@@ -40,6 +40,10 @@
 //   Cloud,
 //   Globe,
 //   Layers,
+//   Code2,
+//   Smartphone,
+//   Settings,
+//   PenTool,
 // } from "lucide-react";
 // import { useEffect, useRef, useState } from "react";
 // import { useNavigate } from "@/lib/routerCompat";
@@ -73,6 +77,7 @@
 // import CategoryTabScroller from "./components/CategoryTabScroller";
 // import WatchNowSection from "./components/WatchNow";
 // import Footer from "./components/Footer";
+// import RelatedLinks, { SITE_LINKS, relatedLinksColors } from "./components/RelatedLinks";
 
 // // Renders children only after mounting in the browser (avoids hydration mismatch)
 // function ClientOnly({ children, fallback = null }) {
@@ -201,8 +206,8 @@
 //   // UI-only: tracks which cards have "Read More" expanded. Does not touch
 //   // backend data, carousel/scroll logic, or pagination logic below.
 //   const [expandedCards, setExpandedCards] = useState({});
-//   const toggleExpanded = (i) =>
-//     setExpandedCards((prev) => ({ ...prev, [i]: !prev[i] }));
+//     const toggleExpanded = (i) =>
+//     setExpandedCards((prev) => (prev[i] ? {} : { [i]: true }));
 
 //   const scrollToIndex = (index) => {
 //     const el = scrollerRef.current;
@@ -257,24 +262,31 @@
 //           <ChevronLeft className="w-5 h-5 text-[#1E293B] dark:text-white group-hover:text-white transition-colors" />
 //         </button>
 
-//         {/* Scroller */}
-//         {/* Scroller */}
+//                {/* Scroller */}
 //         <div
 //           ref={scrollerRef}
 //           onScroll={handleScroll}
-//           style={{ scrollSnapType: "x mandatory" }}
-//           className="mentor-scroll flex items-start overflow-x-auto flex-1 min-w-0 gap-6"
+//           style={{ scrollSnapType: "x mandatory", scrollPaddingLeft: 6 }}
+//           className="mentor-scroll flex items-start overflow-x-auto flex-1 min-w-0 gap-6 px-1.5 pt-3 pb-5 -mt-3 -mb-5"
 //         >
 //           {testimonials.map((t, i) => {
 //             const isExpanded = !!expandedCards[i];
 //             return (
-//               <div
+//                             <div
 //                 key={i}
 //                 style={{ scrollSnapAlign: "start" }}
-//                 className="w-full md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)] min-w-0 flex-shrink-0"
+//                 className={`w-full min-w-0 flex-shrink-0 transition-all duration-500 ease-out ${
+//                   isExpanded
+//                     ? "md:w-[calc(66.666%-12px)] lg:w-[calc(50%-12px)]"
+//                     : "md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)]"
+//                 }`}
 //               >
-//                 <div
-//                   className="relative h-full bg-white dark:bg-gray-900 rounded-[22px] border border-[#ECECEC] dark:border-gray-800 shadow-[0_8px_24px_rgba(17,24,39,0.06)] p-5 flex flex-col transition-all duration-300 ease-out hover:shadow-[0_18px_38px_rgba(17,24,39,0.12)] hover:-translate-y-1.5"
+//                                 <div
+//                   className={`relative h-full bg-white dark:bg-gray-900 rounded-[22px] border p-5 flex flex-col transition-all duration-300 ease-out hover:-translate-y-1.5 ${
+//                     isExpanded
+//                       ? "border-[#F97316] ring-2 ring-[#F97316] shadow-[0_18px_38px_rgba(249,115,22,0.18)]"
+//                       : "border-[#ECECEC] dark:border-gray-800 shadow-[0_8px_24px_rgba(17,24,39,0.06)] hover:shadow-[0_18px_38px_rgba(17,24,39,0.12)]"
+//                   }`}
 //                   style={{ animation: "mentorFadeIn 0.4s ease both" }}
 //                 >
 //                   {/* Quote icon — top-left, solid orange */}
@@ -301,13 +313,18 @@
 //                     {t.text}
 //                   </p>
 
-//                   {t.text && t.text.length > 160 && (
+//                                     {t.text && t.text.length > 160 && (
 //                     <button
 //                       type="button"
 //                       onClick={() => toggleExpanded(i)}
-//                       className="mt-2 text-[13px] font-bold text-[#F97316] hover:underline bg-transparent border-none p-0 cursor-pointer text-left w-fit"
+//                       className="mt-2 inline-flex items-center gap-2 text-[13px] font-bold text-[#F97316] hover:underline bg-transparent border-none p-0 cursor-pointer text-left w-fit"
 //                     >
 //                       {isExpanded ? "Read Less" : "Read More"}
+//                       <ArrowRight
+//                         className={`w-3.5 h-3.5 transition-transform duration-300 ${
+//                           isExpanded ? "-rotate-90" : ""
+//                         }`}
+//                       />
 //                     </button>
 //                   )}
 
@@ -1338,10 +1355,29 @@
 //       desc: "Complete control over your calendar — find, book and manage your next live class in a few clicks.",
 //       cta: "Explore Calendar",
 //       to: "/calendry",
-//       // TODO: apne calendar ke screenshots yahan replace kar dena
+//             // TODO: apne calendar ke screenshots yahan replace kar dena
 //       features: [
 //         { icon: CalendarClock, label: "Scheduling", img: workspaceStartJoinImg },
 //         { icon: FileText, label: "Recordings & Notes", img: workspaceRecordingsImg },
+//       ],
+//     },
+//     {
+//       key: "whiteboard",
+//       label: "ILM ORA Whiteboard",
+//       icon: PenTool,
+//       badge: "VISUAL COLLABORATION",
+//       line1: "Think, Draw & Teach On Your",
+//       line2: "Smart Whiteboard",
+//       desc: "Sketch ideas, build flowcharts, UML and mind maps, and collaborate live on one infinite canvas — then present it like slides.",
+//       cta: "Explore Whiteboard",
+//       to: "/whiteboard", // agar landing page ka route alag hai to yahan badal dena
+//       // TODO: whiteboard ke real screenshots yahan replace kar dena
+//       features: [
+//         { icon: PenTool, label: "Drawing Tools", img: workspacePreviewImg },
+//         { icon: Lightbulb, label: "Diagrams & Mind Maps", img: workspaceDashboardImg },
+//         { icon: FileText, label: "Templates", img: workspaceRecordingsImg },
+//         { icon: Users, label: "Live Collaboration", img: workspaceHostImg },
+//         { icon: Video, label: "Present Mode", img: workspaceStartJoinImg },
 //       ],
 //     },
 //   ];
@@ -1361,8 +1397,8 @@
 //     const isCalendar = product.key === "calendar";
 //     const delay = isCalendar ? 12000 : 3500;
 //     const t = setTimeout(() => {
-//       if (isCalendar) {
-//         setActiveProduct(0);
+//             if (isCalendar) {
+//         setActiveProduct((p) => (p + 1) % products.length);
 //         setActiveFeature(0);
 //         return;
 //       }
@@ -1713,7 +1749,20 @@
 //     </div>
 //   );
 // }
-
+// // Category name → sidebar icon (presentational only)
+// const getCategoryIcon = (name = "") => {
+//   const n = name.toLowerCase();
+//   if (/full\s?stack|web/.test(n)) return Layers;
+//   if (/data|analytic/.test(n)) return BarChart3;
+//   if (/\bai\b|machine|\bml\b/.test(n)) return Bot;
+//   if (/cloud/.test(n)) return Cloud;
+//   if (/mobile|android|ios/.test(n)) return Smartphone;
+//   if (/devops|tool/.test(n)) return Settings;
+//   if (/security|cyber/.test(n)) return Shield;
+//   if (/design|ux|ui/.test(n)) return PenTool;
+//   if (/program|code|develop/.test(n)) return Code2;
+//   return BookOpen;
+// };
 // function CertificationShowcase({ navigate }) {
 //   return (
 //     <section
@@ -1860,7 +1909,51 @@
 //     </section>
 //   );
 // }
-// // ─────────────────────────────────────────────────────────────────────────────
+// function HeroRollText({ text, className = "", gradient = "", delay = 0 }) {
+//   const [shown, setShown] = useState(text);
+//   const [leaving, setLeaving] = useState(null);
+
+//   // text changed → old text starts leaving, new text takes its place (same render)
+//   if (text !== shown) {
+//     setLeaving(shown);
+//     setShown(text);
+//   }
+
+//   useEffect(() => {
+//     if (leaving === null) return;
+//         const t = setTimeout(() => setLeaving(null), 600 + delay);
+//     return () => clearTimeout(t);
+//   }, [leaving, delay]);
+
+//   const changing = leaving !== null;
+
+//   return (
+//     <span
+//       className={`hero-roll relative block overflow-hidden ${className}`}
+//       // room for descenders (g, y, j) so the clip never cuts them
+//       style={{ paddingBottom: "0.14em", marginBottom: "-0.14em" }}
+//     >
+//       {changing && (
+//         <span
+//           key={`out-${leaving}`}
+//           aria-hidden="true"
+//           className={`absolute left-0 top-0 inline-block whitespace-nowrap ${gradient}`}
+//           style={{ animation: `heroRollOut 0.3s cubic-bezier(.5,0,.75,0) ${delay}ms both` }}
+//         >
+//           {leaving}
+//         </span>
+//       )}
+//       <span
+//         key={`in-${shown}`}
+//         className={`inline-block whitespace-nowrap ${gradient}`}
+//         style={{ animation: `heroRollIn 0.45s cubic-bezier(.2,.8,.2,1) ${changing ? delay + 250 : 0}ms both` }}
+//       >
+//         {shown}
+//       </span>
+//     </span>
+//   );
+// }
+
 // export default function LMSHomepage({ theme, toggleTheme }) {
 //   const [activeTab, setActiveTab] = useState("product");
 //   const [featuredPrograms, setFeaturedPrograms] = useState({});
@@ -2819,19 +2912,38 @@
 //       }))
 //     : null;
 
-//   // TEMP TEST: hydration error isolate karne ke liye
-//   const [pageMounted, setPageMounted] = useState(false);
+ 
+
+//   // ── Featured Programs: auto-rotate categories (UI only) ──────────────────
+//   // Every 4s the active category tab moves to the next one (product → design
+//   // → growth → product …). It pauses while the mouse is over the section,
+//   // for 12s after the user clicks a tab themselves, while the browser tab is
+//   // hidden, and is off for users who prefer reduced motion.
+//   const programsPauseRef = useRef(false);
+//   const programsResumeAtRef = useRef(0);
 //   useEffect(() => {
-//     setPageMounted(true);
-//   }, []);
-//   if (!pageMounted) {
-//     return <div className="min-h-screen bg-[#F6EDE6] dark:bg-black" />;
-//   }
+//     if (typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+//     const source = programsLoading
+//       ? courses
+//       : featuredPrograms && Object.values(featuredPrograms).some((a) => a.length > 0)
+//         ? featuredPrograms
+//         : courses;
+//     const keys = Object.keys(source);
+//     if (keys.length < 2) return;
+//     const id = setInterval(() => {
+//       if (programsPauseRef.current || document.hidden || Date.now() < programsResumeAtRef.current) return;
+//       setActiveTab((cur) => keys[(keys.indexOf(cur) + 1) % keys.length]);
+//     }, 4000);
+//     return () => clearInterval(id);
+//     // eslint-disable-next-line react-hooks/exhaustive-deps
+//   }, [programsLoading, featuredPrograms]);
+ 
 
 //   return (
 //     <div className="min-h-screen bg-[#F6EDE6] dark:bg-black text-[#1E293B] dark:text-white">
 //       {/* ── Announcement Banner & Navbar ── */}
 //             <ClientOnly>
+//                 <TexoraFloatingWidget />
 //         <AnnouncementBanner />
 //         <Navbar
 //           theme={theme}
@@ -2886,7 +2998,12 @@
 //             <div className="mb-4 sm:mb-5 inline-flex">
               
 //             </div>
-//                         <style>{`@keyframes heroTextIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+//               <style>{`
+//               @keyframes heroTextIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+//                             @keyframes heroRollIn { from { transform: translateY(140%); } to { transform: translateY(0); } }
+//               @keyframes heroRollOut { from { transform: translateY(0); visibility: visible; } 99% { visibility: visible; } to { transform: translateY(-140%); visibility: hidden; } }
+//               @media (prefers-reduced-motion: reduce) { .hero-roll > span { animation: none !important; } }
+//             `}</style>
 //                         <ClientOnly
 //               fallback={
 //                 <h1 className="mb-5 leading-[1.1]">
@@ -2899,25 +3016,17 @@
 //                 </h1>
 //               }
 //             >
-//               <h1 key={`h-${currentSlide}`} className="mb-5 leading-[1.1]">
-//                 <div className="block whitespace-nowrap">
-//                   <SplitText
-//                     text={heroTexts[currentSlide + 1].line1}
-//                     className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white"
-//                     splitType="chars"
-//                     delay={60}
-//                     duration={0.6}
-//                   />
-//                 </div>
-//                 <div className="block whitespace-nowrap">
-//                   <SplitText
-//                     text={heroTexts[currentSlide + 1].line2}
-//                     className="block text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-[#F97316]"
-//                     splitType="chars"
-//                     delay={60}
-//                     duration={0.6}
-//                   />
-//                 </div>
+//                             <h1 className="mb-5 leading-[1.1]">
+//                 <HeroRollText
+//                   text={heroTexts[currentSlide + 1].line1}
+//                   className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white"
+//                 />
+//                 <HeroRollText
+//                   text={heroTexts[currentSlide + 1].line2}
+//                   delay={90}
+//                   gradient="bg-gradient-to-r from-[#F97316] to-[#FBBF24] bg-clip-text text-transparent"
+//                   className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium"
+//                 />
 //               </h1>
 //             </ClientOnly>
 //                         <p
@@ -2969,300 +3078,245 @@
 //         </div>
 //             </section>
 
-//       {/* ── Courses ── */}
-//       <section
+//             {/* ── Courses ── */}
+//             <section
 //         id="courses"
-//         className="py-4 sm:py-5 scroll-mt-20 bg-[#F8FAFC] dark:bg-black"
+//         onMouseEnter={() => { programsPauseRef.current = true; }}
+//         onMouseLeave={() => { programsPauseRef.current = false; }}
+//         className="py-6 sm:py-8 scroll-mt-20 bg-[#F8FAFC] dark:bg-black"
 //       >
-//         <div className="max-w-[1440px] mx-auto px-6">
-//           {/* ── Premium Section Header ── */}
-//             <div className="text-center mb-3 sm:mb-4">
-//                         {/* <span className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-orange-700 dark:text-[#F97316] bg-[#F97316]/10 border border-[#F97316]/20 px-4 py-1.5 rounded-full mb-2">
-//               <Sparkles className="w-3.5 h-3.5" />
-//               Handpicked for you
-//             </span> */}
-//             <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold mb-2 sm:mb-3 tracking-tight text-[#1E293B] dark:text-white">
-//               Featured <span className="text-[#F97316]">Programs</span>
-//             </h2>
-//             <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
-//               Choose your path and start building skills that matter — taught by
-//               mentors who've shipped at the world's best companies.
-//             </p>
-//           </div>
+//         <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
+//           {(() => {
+//             const source = programsLoading
+//               ? courses
+//               : featuredPrograms &&
+//                   Object.values(featuredPrograms).some((a) => a.length > 0)
+//                 ? featuredPrograms
+//                 : courses;
 
-//           <Tabs
-//             value={activeTab}
-//             onValueChange={setActiveTab}
-//             className="w-full"
-//           >
-//             {/* ── Category Tabs: compact carousel, scales to 10/20/50+ categories
-//                  without ever wrapping to multiple rows. Arrows + drag + wheel
-//                  + native swipe, active tab always auto-scrolled into view. ── */}
-//               <div className="mb-3 sm:mb-4 mx-auto w-fit max-w-full sm:max-w-3xl px-1 sm:px-0">
-//               <div className="h-[42px] flex items-center px-1 sm:px-1.5 bg-white dark:bg-gray-900 rounded-full border border-gray-200 dark:border-gray-800 shadow-md shadow-slate-200/50 dark:shadow-none overflow-hidden">
-//                 <CategoryTabScroller activeKey={activeTab}>
-//                   <TabsList className="flex w-max items-center justify-center gap-1.5 bg-transparent mx-auto h-full">
-//                     {Object.keys(
-//                       programsLoading
-//                         ? courses
-//                         : featuredPrograms &&
-//                             Object.values(featuredPrograms).some(
-//                               (a) => a.length > 0,
-//                             )
-//                           ? featuredPrograms
-//                           : courses,
-//                     ).map((tab) => (
-//                       <TabsTrigger
-//                         key={tab}
-//                         value={tab}
-//                         className="rounded-full capitalize font-semibold text-xs sm:text-sm whitespace-nowrap px-3.5 sm:px-5 h-[34px] flex-shrink-0 flex items-center text-[#1E293B] dark:text-gray-300 transition-all duration-300 ease-out data-[state=active]:bg-[#F97316] data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-orange-500/30"
-//                       >
-//                         {tab}
-//                       </TabsTrigger>
-//                     ))}
+//             return (
+//               <Tabs
+//                 value={activeTab}
+//                   onValueChange={(v) => {
+//                   setActiveTab(v);
+//                   programsResumeAtRef.current = Date.now() + 12000; // user picked a tab → pause auto-rotate
+//                 }}
+//                 className="grid grid-cols-1 lg:grid-cols-[320px_minmax(0,1fr)] gap-6 lg:gap-8 items-start w-full"
+//               >
+//                 {/* ── Left: category panel ── */}
+//                 <div className="min-w-0 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-4 sm:p-5 lg:sticky lg:top-24">
+//                   <span className="block text-[11px] font-bold uppercase tracking-[0.18em] text-[#6D28D9] dark:text-violet-400 mb-2">
+//                     Explore by category
+//                   </span>
+//                   <h2 className="text-2xl sm:text-[26px] font-bold tracking-tight text-[#1E293B] dark:text-white leading-tight mb-4 whitespace-nowrap">
+//                     Featured Programs
+//                   </h2>
+
+//                   <TabsList className="flex lg:flex-col w-full h-auto items-stretch justify-start gap-1.5 bg-transparent p-0 overflow-x-auto lg:overflow-visible [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+//                     {Object.keys(source).map((tab) => {
+//                       const CatIcon = getCategoryIcon(tab);
+//                       return (
+//                         <TabsTrigger
+//                           key={tab}
+//                           value={tab}
+//                           className="flex items-center justify-start gap-3 rounded-xl px-3.5 py-3 text-sm font-medium whitespace-nowrap flex-shrink-0 lg:w-full text-[#1E293B] dark:text-gray-300 bg-transparent hover:bg-orange-50 dark:hover:bg-white/5 transition-all duration-300 data-[state=active]:bg-[#F97316] data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-orange-500/30"
+//                         >
+//                           <CatIcon className="w-5 h-5 flex-shrink-0" />
+//                           <span className="flex-1 text-left">{tab}</span>
+//                           <ChevronRight className="w-4 h-4 opacity-60 hidden lg:block flex-shrink-0" />
+//                         </TabsTrigger>
+//                       );
+//                     })}
 //                   </TabsList>
-//                 </CategoryTabScroller>
-//               </div>
-//             </div>
+//                 </div>
 
-//             {/* Real featured programs from the backend (with hardcoded
-//                `courses` as the fallback while loading or if the API
-//                returns nothing). */}
-//             {Object.entries(
-//               programsLoading
-//                 ? courses
-//                 : featuredPrograms &&
-//                     Object.values(featuredPrograms).some((a) => a.length > 0)
-//                   ? featuredPrograms
-//                   : courses,
-//             ).map(([category, categoryCourses]) => (
-//                 <TabsContent key={category} value={category}>
-//                 <ClientOnly>
-//                 <HorizontalCarousel
-//                   items={categoryCourses}
-//                   ariaLabel={`${category} courses`}
-//                   getKey={(course) => course.id}
-//                   cardMinHeight={260}
-//                   renderItem={(course, idx) => {
-//                     const pricing = getPricing(course.price);
-//                     // Real flags from superadmin now take priority — falls
-//                     // back to the old rating guess only when a program has
-//                     // none of the badge toggles set, so nothing regresses.
-//                     const badgeLabel = course.isBestseller
-//                       ? "Bestseller"
-//                       : course.isTrending
-//                         ? "Trending"
-//                         : course.isFeatured
-//                           ? "Featured"
-//                           : course.isPopular
-//                             ? "Popular"
-//                             : course.isRecommended
-//                               ? "Recommended"
-//                               : course.rating >= 4.8
-//                                 ? "Bestseller"
-//                                 : "Featured";
-//                     const lessons =
-//                       course.totalLessons || course.modules?.length || 0;
-//                     const isWishlisted = wishlist.has(course.id);
-//                     const isDescExpanded = expandedDescriptions.has(course.id);
-//                     // Presentational-only: pick the badge icon that matches
-//                     // the same `badgeLabel` computed above — no new business
-//                     // logic, just an icon lookup for the existing label.
-//                     const BadgeIcon =
-//                       {
-//                         Bestseller: Flame,
-//                         Featured: Star,
-//                         Trending: TrendingUp,
-//                         Popular: Zap,
-//                         Recommended: Award,
-//                       }[badgeLabel] || Sparkles;
+//                 {/* ── Right: popular programs grid ── */}
+//                 <div className="min-w-0">
+//                   {Object.entries(source).map(([category, categoryCourses]) => (
+//                       <TabsContent key={category} value={category} className="mt-0 animate-in fade-in-0 duration-500">
+//                       <div className="flex items-center gap-4 mb-4">
+//                         <h3 className="text-xs sm:text-sm font-bold uppercase tracking-[0.18em] text-[#1E293B] dark:text-white whitespace-nowrap">
+//                           Popular Programs
+//                         </h3>
+//                         <div className="flex-1 h-px bg-[#1E293B]/80 dark:bg-white/30" />
+//                         <button
+//                           type="button"
+//                           onClick={() => navigate("/all-courses")}
+//                           className="inline-flex items-center gap-1 text-sm font-semibold text-[#F97316] hover:underline bg-transparent border-none p-0 cursor-pointer whitespace-nowrap"
+//                         >
+//                           View All <ArrowRight className="w-4 h-4" />
+//                         </button>
+//                       </div>
 
-//                     return (
-//                       <div
-//                         onClick={() =>
-//                           navigate(`/course-details/${course.id}`, {
-//                             state: { course },
-//                           })
-//                         }
-//                         className="group relative flex flex-col min-w-0 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-md hover:shadow-xl hover:shadow-slate-300/40 dark:hover:shadow-black/40 hover:-translate-y-1 transition-all duration-300 ease-out overflow-hidden cursor-pointer w-full h-full"
-//                       >
-//                         {/* ── Thumbnail / Banner ── */}
-//                         <div className="relative h-32 sm:h-36 overflow-hidden bg-gradient-to-br from-[#1E293B] via-[#334155] to-[#F97316] flex-shrink-0">
-//                           {course.thumbnailUrl || course.bannerUrl ? (
-//                             <img
-//                               src={course.thumbnailUrl || course.bannerUrl}
-//                               alt={course.title}
-//                               className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-110"
-//                             />
-//                           ) : (
-//                             <>
-//                               <div className="absolute inset-0 opacity-20 [background-image:radial-gradient(circle_at_20%_20%,white,transparent_35%),radial-gradient(circle_at_80%_60%,white,transparent_30%)]" />
-//                               <div className="absolute inset-0 flex items-center justify-center transition-transform duration-500 ease-out group-hover:scale-110">
-//                                 <GraduationCap
-//                                   className="w-16 h-16 sm:w-20 sm:h-20 text-white/25"
-//                                   strokeWidth={1.25}
-//                                 />
-//                               </div>
-//                             </>
-//                           )}
-
-//                           {/* Top badges */}
-//                           <div className="absolute top-3 left-3 right-3 flex items-start justify-between gap-2">
-//                             <span className="inline-flex items-center gap-1 text-xs font-semibold uppercase tracking-wide bg-white/95 text-orange-700 px-2.5 py-1 rounded-full shadow-sm">
-//                               <BadgeIcon className="w-3 h-3 fill-current" />
-//                               {badgeLabel}
-//                             </span>
-
-//                             <button
-//                               type="button"
-//                               aria-label={
-//                                 isWishlisted
-//                                   ? "Remove from wishlist"
-//                                   : "Add to wishlist"
-//                               }
-//                               onClick={(e) => {
-//                                 e.stopPropagation();
-//                                 toggleWishlist(course.id);
-//                               }}
-//                               className="flex items-center justify-center w-8 h-8 rounded-full bg-white/95 shadow-sm hover:scale-110 active:scale-95 transition-transform duration-200"
-//                             >
-//                               <Heart
-//                                 className={`w-4 h-4 transition-colors ${
-//                                   isWishlisted
-//                                     ? "fill-[#F97316] text-[#F97316]"
-//                                     : "text-[#1E293B]"
-//                                 }`}
-//                               />
-//                             </button>
-//                           </div>
-
-//                           {/* Difficulty badge */}
-//                           <div className="absolute bottom-3 left-3 right-3 max-w-[70%]">
-//                             <span
-//                               className={`inline-block max-w-full truncate align-bottom text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm ${getLevelColor(course.level)} bg-white/95 dark:bg-white/95`}
-//                             >
-//                               {course.level}
-//                             </span>
-//                           </div>
-//                         </div>
-
-//                         {/* ── Body ── */}
-//                         <div className="flex flex-col flex-1 min-w-0 p-3 sm:p-4 pt-3">
-//                           <span className="text-xs font-semibold uppercase tracking-wider text-orange-700 dark:text-[#F97316] mb-1 truncate">
-//                             {category}
-//                           </span>
-
-//                           <h3 className="text-sm sm:text-base font-bold text-[#1E293B] dark:text-white mb-1.5 leading-snug line-clamp-2 min-h-[2.5em] group-hover:text-[#F97316] transition-colors">
-//                             {course.title}
-//                           </h3>
-
-//                           <p
-//                             className={`text-xs text-gray-600 dark:text-gray-300 leading-relaxed ${
-//                               isDescExpanded ? "" : "line-clamp-2 min-h-[2.2em]"
-//                             }`}
-//                           >
-//                             {course.description}
-//                           </p>
-
-//                           <button
-//                             type="button"
-//                             onClick={(e) => {
-//                               e.stopPropagation();
-//                               toggleDescription(course.id);
-//                             }}
-//                             className="inline-flex items-center gap-1 text-xs font-semibold text-[#F97316] hover:underline bg-transparent border-none p-0 mt-0.5 mb-2 self-start cursor-pointer"
-//                           >
-//                             {isDescExpanded ? "Show Less" : "Read More"}
-//                             <ArrowRight className="w-3 h-3" />
-//                           </button>
-
-//                           {/* Skill chips */}
-//                           <div className="flex flex-wrap gap-1 mb-2 overflow-hidden max-h-[24px]">
-//                             <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-[#F97316]/10 text-[#F97316] border border-[#F97316]/15 whitespace-nowrap flex-shrink-0 truncate max-w-[120px]">
-//                               {category}
-//                             </span>
-//                             <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-[#1E293B]/5 text-[#1E293B] dark:bg-white/10 dark:text-gray-200 border border-[#1E293B]/10 dark:border-white/10 whitespace-nowrap flex-shrink-0">
-//                               {course.level}
-//                             </span>
-//                             {course.liveSessions !== undefined &&
-//                               course.liveSessions !== "—" && (
-//                                 <span className="text-[10px] font-medium px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-100 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800 whitespace-nowrap flex-shrink-0">
-//                                   {course.liveSessions} Live
-//                                 </span>
-//                               )}
-//                           </div>
-
-//                           {/* Stats */}
-//                           <div className="grid grid-cols-4 gap-1 text-center mb-2 pb-2 border-b border-gray-100 dark:border-gray-800">
-//                             <div className="flex flex-col items-center gap-0.5 min-w-0">
-//                               <PlayCircle className="w-3.5 h-3.5 text-[#F97316] flex-shrink-0" />
-//                               <span className="text-[10px] sm:text-xs font-semibold text-gray-700 dark:text-gray-300 truncate w-full">
-//                                 {lessons ?? "—"}
-//                               </span>
-//                               <span className="text-[9px] text-gray-400 dark:text-gray-500 truncate w-full">
-//                                 Lessons
-//                               </span>
-//                             </div>
-//                             <div className="flex flex-col items-center gap-0.5 min-w-0">
-//                               <Users className="w-3.5 h-3.5 text-[#F97316] flex-shrink-0" />
-//                               <span className="text-[10px] sm:text-xs font-semibold text-gray-700 dark:text-gray-300 truncate w-full">
-//                                 {course.students ?? "—"}
-//                               </span>
-//                               <span className="text-[9px] text-gray-400 dark:text-gray-500 truncate w-full">
-//                                 Learners
-//                               </span>
-//                             </div>
-//                             <div className="flex flex-col items-center gap-0.5 min-w-0">
-//                               <Clock className="w-3.5 h-3.5 text-[#F97316] flex-shrink-0" />
-//                               <span className="text-[10px] sm:text-xs font-semibold text-gray-700 dark:text-gray-300 truncate w-full">
-//                                 {course.duration ?? "—"}
-//                               </span>
-//                               <span className="text-[9px] text-gray-400 dark:text-gray-500 truncate w-full">
-//                                 Duration
-//                               </span>
-//                             </div>
-//                             <div className="flex flex-col items-center gap-0.5 min-w-0">
-//                               <Star className="w-3.5 h-3.5 text-[#F97316] flex-shrink-0" />
-//                               <span className="text-[10px] sm:text-xs font-semibold text-gray-700 dark:text-gray-300 truncate w-full">
-//                                 {course.rating ?? "—"}
-//                               </span>
-//                               <span className="text-[9px] text-gray-400 dark:text-gray-500 truncate w-full">
-//                                 Rating
-//                               </span>
-//                             </div>
-//                           </div>
-
-//                           {/* CTA */}
-//                           <button
-//                             type="button"
-//                             onClick={(e) => {
-//                               e.stopPropagation();
+//                       <ClientOnly>
+//                         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 min-[1360px]:grid-cols-4 gap-4">
+//                           {categoryCourses.slice(0, 8).map((course) => {
+//                             const badgeLabel = course.isBestseller
+//                               ? "Bestseller"
+//                               : course.isTrending
+//                                 ? "Trending"
+//                                 : course.isFeatured
+//                                   ? "Featured"
+//                                   : course.isPopular
+//                                     ? "Popular"
+//                                     : course.isRecommended
+//                                       ? "Recommended"
+//                                       : course.rating >= 4.8
+//                                         ? "Bestseller"
+//                                         : "Featured";
+//                             const lessons =
+//                               course.totalLessons || course.modules?.length || 0;
+//                             const isWishlisted = wishlist.has(course.id);
+//                             const BadgeIcon =
+//                               {
+//                                 Bestseller: Flame,
+//                                 Featured: Star,
+//                                 Trending: TrendingUp,
+//                                 Popular: Zap,
+//                                 Recommended: Award,
+//                               }[badgeLabel] || Sparkles;
+//                             const goDetails = () =>
 //                               navigate(`/course-details/${course.id}`, {
 //                                 state: { course },
 //                               });
-//                             }}
-//                             className="mt-auto w-full flex-shrink-0 bg-gradient-to-r from-[#EA580C] to-[#C2410C] hover:brightness-105 text-white py-2.5 rounded-lg font-semibold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all duration-300 group-hover:scale-[1.02] shadow-sm shadow-orange-500/20"
-//                           >
-//                             View Details
-//                             <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-//                           </button>
+
+//                             return (
+//                               <div
+//                                 key={course.id}
+//                                 onClick={goDetails}
+//                                 className="group relative flex flex-col min-w-0 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl hover:shadow-slate-300/40 dark:hover:shadow-black/40 hover:-translate-y-1 transition-all duration-300 ease-out overflow-hidden cursor-pointer"
+//                               >
+//                                 {/* Thumbnail */}
+//                                 <div className="relative h-28 sm:h-32 overflow-hidden bg-gradient-to-br from-[#1E293B] via-[#334155] to-[#F97316] flex-shrink-0">
+//                                   {course.thumbnailUrl || course.bannerUrl ? (
+//                                     <img
+//                                       src={course.thumbnailUrl || course.bannerUrl}
+//                                       alt={course.title}
+//                                       className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+//                                     />
+//                                   ) : (
+//                                     <div className="absolute inset-0 flex items-center justify-center">
+//                                       <GraduationCap
+//                                         className="w-14 h-14 text-white/25"
+//                                         strokeWidth={1.25}
+//                                       />
+//                                     </div>
+//                                   )}
+
+//                                   <div className="absolute top-2.5 left-2.5 right-2.5 flex items-start justify-between gap-2">
+//                                     <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wide bg-white/95 text-orange-600 px-2.5 py-1 rounded-full shadow-sm">
+//                                       <BadgeIcon className="w-3 h-3 fill-current" />
+//                                       {badgeLabel}
+//                                     </span>
+//                                     <button
+//                                       type="button"
+//                                       aria-label={
+//                                         isWishlisted
+//                                           ? "Remove from wishlist"
+//                                           : "Add to wishlist"
+//                                       }
+//                                       onClick={(e) => {
+//                                         e.stopPropagation();
+//                                         toggleWishlist(course.id);
+//                                       }}
+//                                       className="flex items-center justify-center w-8 h-8 rounded-full bg-white/95 shadow-sm hover:scale-110 active:scale-95 transition-transform duration-200"
+//                                     >
+//                                       <Heart
+//                                         className={`w-4 h-4 transition-colors ${
+//                                           isWishlisted
+//                                             ? "fill-[#F97316] text-[#F97316]"
+//                                             : "text-[#1E293B]"
+//                                         }`}
+//                                       />
+//                                     </button>
+//                                   </div>
+
+//                                   <div className="absolute bottom-2.5 left-2.5 max-w-[70%]">
+//                                     <span
+//                                       className={`inline-block max-w-full truncate align-bottom text-xs font-semibold px-2.5 py-1 rounded-full shadow-sm ${getLevelColor(course.level)} bg-white/95 dark:bg-white/95`}
+//                                     >
+//                                       {course.level}
+//                                     </span>
+//                                   </div>
+//                                 </div>
+
+//                                 {/* Body */}
+//                                 <div className="flex flex-col flex-1 min-w-0 p-3.5 pt-3">
+//                                   <span className="text-[11px] font-bold uppercase tracking-wider text-[#EA580C] mb-1 truncate">
+//                                     {category}
+//                                   </span>
+//                                   <h3 className="text-base font-bold text-[#1E293B] dark:text-white leading-snug line-clamp-2 min-h-[2.5em] mb-3 group-hover:text-[#F97316] transition-colors">
+//                                     {course.title}
+//                                   </h3>
+
+//                                   <div className="grid grid-cols-4 gap-1 text-center mb-3">
+//                                     <div className="flex flex-col items-center gap-0.5 min-w-0">
+//                                       <PlayCircle className="w-4 h-4 text-[#F97316] flex-shrink-0" />
+//                                       <span className="text-xs font-semibold text-[#1E293B] dark:text-gray-200 truncate w-full">
+//                                         {lessons ?? "—"}
+//                                       </span>
+//                                       <span className="text-[10px] text-gray-500 dark:text-gray-400 truncate w-full">
+//                                         Lessons
+//                                       </span>
+//                                     </div>
+//                                     <div className="flex flex-col items-center gap-0.5 min-w-0">
+//                                       <Users className="w-4 h-4 text-[#F97316] flex-shrink-0" />
+//                                       <span className="text-xs font-semibold text-[#1E293B] dark:text-gray-200 truncate w-full">
+//                                         {course.students ?? "—"}
+//                                       </span>
+//                                       <span className="text-[10px] text-gray-500 dark:text-gray-400 truncate w-full">
+//                                         Learners
+//                                       </span>
+//                                     </div>
+//                                     <div className="flex flex-col items-center gap-0.5 min-w-0">
+//                                       <Clock className="w-4 h-4 text-[#F97316] flex-shrink-0" />
+//                                       <span className="text-xs font-semibold text-[#1E293B] dark:text-gray-200 truncate w-full">
+//                                         {course.duration ?? "—"}
+//                                       </span>
+//                                       <span className="text-[10px] text-gray-500 dark:text-gray-400 truncate w-full">
+//                                         Duration
+//                                       </span>
+//                                     </div>
+//                                     <div className="flex flex-col items-center gap-0.5 min-w-0">
+//                                       <Star className="w-4 h-4 text-[#F97316] flex-shrink-0" />
+//                                       <span className="text-xs font-semibold text-[#1E293B] dark:text-gray-200 truncate w-full">
+//                                         {course.rating ?? "—"}
+//                                       </span>
+//                                       <span className="text-[10px] text-gray-500 dark:text-gray-400 truncate w-full">
+//                                         Rating
+//                                       </span>
+//                                     </div>
+//                                   </div>
+
+//                                   <button
+//                                     type="button"
+//                                     onClick={(e) => {
+//                                       e.stopPropagation();
+//                                       goDetails();
+//                                     }}
+//                                     className="mt-auto inline-flex items-center justify-center gap-1.5 text-sm font-semibold text-[#2563EB] hover:text-[#1D4ED8] bg-transparent border-none py-1.5 cursor-pointer"
+//                                   >
+//                                     View Details
+//                                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+//                                   </button>
+//                                 </div>
+//                               </div>
+//                             );
+//                           })}
 //                         </div>
-//                       </div>
-//                     );
-//                                    }}
-//                 />
-//                 </ClientOnly>
-//               </TabsContent>
-//             ))}
-//         </Tabs>
+//                       </ClientOnly>
+//                     </TabsContent>
+//                   ))}
+//                 </div>
+//               </Tabs>
+//             );
+//           })()}
 //         </div>
 //       </section>
 
-//             {/* ── ILM ORA Platform hub (AI Companion / Workspace / Calendry) ── */}
-//       <ProductHubSection navigate={navigate} />
-
      
-
+//       {/* ── ILM ORA Platform hub (AI Companion / Workspace / Calendry) ── */}
+//       <ProductHubSection navigate={navigate} />
 //       {/* ── Stats ── */}
 //         {/* <section className="py-6 sm:py-8 px-6 bg-white dark:bg-gray-900/50">
 //         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -3396,11 +3450,14 @@
 //                 >
 //                   Explore Courses <ArrowRight className="w-4 h-4" />
 //                 </button>
+                
 //               </div>
 //             </div>
 //           </div>
 //         </div>
 //       </section>
+      
+//       <RelatedLinks colors={relatedLinksColors(theme === "dark")} links={SITE_LINKS} />
 
 //       {/* ── Features ── */}
 //         <section className="py-5 sm:py-6 px-6 bg-[#F6EDE6] dark:bg-black">
@@ -3464,6 +3521,8 @@
 //           />
 //         </div>
 //       </section>
+            
+      
 //       {/* ── Footer ── */}
 //             <ClientOnly>
 //         <Footer scrollToSection={scrollToSection} />
@@ -3736,12 +3795,13 @@
 //           }}
 //         />
 //       )}
-//            <ClientOnly>
-//         <TexoraFloatingWidget />
-//       </ClientOnly>
-//     </div>
+//             </div>
 //   );
 // }
+
+
+
+
 
 
 
@@ -3795,6 +3855,11 @@ import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import SignupModal from "./SignupModal";
 import ForgotPasswordModal from "./ForgotPasswordModal";
+// ADDED FROM REACT: GitHub / LinkedIn login buttons in the login modal
+import {
+  getGithubAuthUrl,
+  getLinkedinAuthUrl,
+} from "../../services/oauthConfig";
 import SplitText from "../../components/SplitText";
 import {
   ArrowRight,
@@ -5144,10 +5209,29 @@ function ProductHubSection({ navigate }) {
       desc: "Complete control over your calendar — find, book and manage your next live class in a few clicks.",
       cta: "Explore Calendar",
       to: "/calendry",
-      // TODO: apne calendar ke screenshots yahan replace kar dena
+            // TODO: apne calendar ke screenshots yahan replace kar dena
       features: [
         { icon: CalendarClock, label: "Scheduling", img: workspaceStartJoinImg },
         { icon: FileText, label: "Recordings & Notes", img: workspaceRecordingsImg },
+      ],
+    },
+    {
+      key: "whiteboard",
+      label: "ILM ORA Whiteboard",
+      icon: PenTool,
+      badge: "VISUAL COLLABORATION",
+      line1: "Think, Draw & Teach On Your",
+      line2: "Smart Whiteboard",
+      desc: "Sketch ideas, build flowcharts, UML and mind maps, and collaborate live on one infinite canvas — then present it like slides.",
+      cta: "Explore Whiteboard",
+      to: "/whiteboard", // agar landing page ka route alag hai to yahan badal dena
+      // TODO: whiteboard ke real screenshots yahan replace kar dena
+      features: [
+        { icon: PenTool, label: "Drawing Tools", img: workspacePreviewImg },
+        { icon: Lightbulb, label: "Diagrams & Mind Maps", img: workspaceDashboardImg },
+        { icon: FileText, label: "Templates", img: workspaceRecordingsImg },
+        { icon: Users, label: "Live Collaboration", img: workspaceHostImg },
+        { icon: Video, label: "Present Mode", img: workspaceStartJoinImg },
       ],
     },
   ];
@@ -5167,8 +5251,8 @@ function ProductHubSection({ navigate }) {
     const isCalendar = product.key === "calendar";
     const delay = isCalendar ? 12000 : 3500;
     const t = setTimeout(() => {
-      if (isCalendar) {
-        setActiveProduct(0);
+            if (isCalendar) {
+        setActiveProduct((p) => (p + 1) % products.length);
         setActiveFeature(0);
         return;
       }
@@ -7354,6 +7438,45 @@ const heroTexts = [
                   auto_select={false}
                   cancel_on_tap_outside={true}
                 />
+              </div>
+
+              {/* ADDED FROM REACT: GitHub / LinkedIn login buttons */}
+              <div className="flex flex-col gap-2.5 mb-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    window.location.href = getGithubAuthUrl();
+                  }}
+                  className="w-full py-2.5 rounded-lg border border-gray-300 bg-white flex items-center justify-center gap-2.5 text-sm font-medium text-[#1a0e06] hover:bg-gray-50 transition"
+                >
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
+                    <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.084-.729.084-.729 1.205.084 1.838 1.237 1.838 1.237 1.07 1.834 2.807 1.304 3.492.997.108-.775.418-1.305.762-1.605-2.665-.303-5.467-1.334-5.467-5.93 0-1.31.468-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
+                  </svg>
+                  Continue with GitHub
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    window.location.href = getLinkedinAuthUrl();
+                  }}
+                  className="w-full py-2.5 rounded-lg border border-gray-300 bg-white flex items-center justify-center gap-2.5 text-sm font-medium text-[#1a0e06] hover:bg-gray-50 transition"
+                >
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 24 24"
+                    fill="#0A66C2"
+                  >
+                    <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45z" />
+                  </svg>
+                  Continue with LinkedIn
+                </button>
               </div>
 
               <div className="flex items-center gap-2 mb-3">

@@ -477,6 +477,10 @@ const videoService = {
     if (meta.title) formData.append("title", meta.title);
     if (meta.description) formData.append("description", meta.description);
     if (meta.thumbnail) formData.append("thumbnail", meta.thumbnail);
+    // ✅ CHANGED — meta now also accepts courseSlug, sent as a form field so
+    // the video (and its thumbnail) land in featured-courses/{slug}/videos/
+    // and /thumbnails/ on S3 instead of a flat folder.
+    if (meta.courseSlug) formData.append("courseSlug", meta.courseSlug);
     return axios.post(`${API_GATEWAY}/video/v1/featured/session`, formData, {
       headers: { ...getAuthHeaders(), "Content-Type": "multipart/form-data" },
       onUploadProgress: onProgress
@@ -506,6 +510,9 @@ const videoService = {
    * @param {{title?: string, description?: string, thumbnail?: File, newVideo?: File}} updates
    * @param {Function} onProgress optional (0-100)
    */
+  // ✅ CHANGED — updates now also accepts courseSlug, needed when
+  // replacing the video/thumbnail so the new file still lands in the
+  // correct per-course S3 folder.
   updateFeaturedSessionVideo(videoRecordId, updates = {}, onProgress) {
     const formData = new FormData();
     if (updates.title !== undefined) formData.append("title", updates.title);
@@ -513,6 +520,7 @@ const videoService = {
       formData.append("description", updates.description);
     if (updates.thumbnail) formData.append("thumbnail", updates.thumbnail);
     if (updates.newVideo) formData.append("newVideo", updates.newVideo);
+    if (updates.courseSlug) formData.append("courseSlug", updates.courseSlug);
     return axios.patch(
       `${API_GATEWAY}/video/v1/featured/session/${videoRecordId}`,
       formData,

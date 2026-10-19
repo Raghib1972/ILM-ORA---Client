@@ -1,15 +1,15 @@
-"use client";
+﻿"use client";
 
 import React, { useEffect, useState } from "react";
 import { Plus, Copy, ExternalLink, Pencil, Trash2, Link2 } from "lucide-react";
-import PageHead from "@/components/PageHead";
-import { useToast } from "@/components/Toast";
-import WorkspaceModal from "@/components/modals/WorkspaceModal";
+import PageHead from "../../components/PageHead";
+import { useToast } from "../../components/Toast";
+import WorkspaceModal from "../../components/modals/WorkspaceModal";
 import {
   Field,
   Row,
   SegmentedToggle,
-} from "@/components/modals/FormControls";
+} from "../../components/modals/FormControls";
 import {
   getMyBookingPages,
   getMyBookings,
@@ -282,8 +282,8 @@ export default function BookingPages() {
                 <div className="list-row-main">
                   <div className="title">{p.title}</div>
                   <div className="meta">
-                    {p.durationMinutes} min ·{" "}
-                    {p.mode === "ONLINE" ? "Online" : "In person"} ·{" "}
+                    {p.durationMinutes} min Â·{" "}
+                    {p.mode === "ONLINE" ? "Online" : "In person"} Â·{" "}
                     {p.publicUrl}
                   </div>
                 </div>

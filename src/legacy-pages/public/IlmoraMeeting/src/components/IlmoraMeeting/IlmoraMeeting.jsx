@@ -30,6 +30,10 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "@/lib/routerCompat";
+// ADDED FROM REACT: useSearchParams (role / name query params for Texora interviewers).
+// Imported from next/navigation directly because routerCompat.js was not in the zip
+// and I can't confirm it exports useSearchParams.
+import { useSearchParams } from "next/navigation";
 import {
   AlertTriangle,
   Loader2,
@@ -59,6 +63,10 @@ import { LOBBY_POLL_MS } from "./constants";
 export default function IlmoraMeeting() {
   const { joinCode } = useParams();
   const navigate = useNavigate();
+  // ADDED FROM REACT: read ?role= and ?name= (Texora interviewer links)
+  const searchParams = useSearchParams();
+  const urlRole = searchParams?.get("role");
+  const urlName = searchParams?.get("name");
 
   // phase: 'loading' | 'error' | 'prejoin' | 'lobby' | 'denied' | 'ended' | 'in-meeting'
   const [phase, setPhase] = useState("loading");
@@ -108,7 +116,13 @@ export default function IlmoraMeeting() {
         // Use the real name Texora already sent in `context` on create,
         // no name prompt needed. Falls back to "Guest" only if Texora
         // never sent a name.
-        const displayName = info.candidateName || "Guest";
+        // ADDED FROM REACT: interviewer role/name from URL, plus interviewers list
+        const isInterviewer = urlRole === "interviewer";
+        const displayName = isInterviewer
+          ? urlName || "Interviewer"
+          : info.candidateName || "Guest";
+        const role = isInterviewer ? "interviewer" : "candidate";
+        const interviewers = info.interviewers || [];
 
         // Texora meetings have no lobby/host — everyone is auto-admitted
         // directly. Skip prejoin/lobby phases entirely.
@@ -116,13 +130,15 @@ export default function IlmoraMeeting() {
           joinCode,
           identity,
           displayName,
-          null,
+          role, // ADDED FROM REACT: was null
         );
         setMeetingInfo({
           id: info.meetingId,
           title: info.topic,
           meetingStatus: info.status,
           isHost: false,
+          candidateName: displayName, // ADDED FROM REACT
+          interviewers: interviewers, // ADDED FROM REACT
         });
         setConnectPayload({ ...tokenRes.data, isHost: false });
         setPhase("in-meeting");
