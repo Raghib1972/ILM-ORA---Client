@@ -2,7 +2,7 @@
 // priorities, nothing added or removed. Using Next's sitemap.js convention
 // instead of a static file so future page additions can extend this list
 // in one place; content is unchanged for this foundation step.
-import { CERTS as AWS_CERTS } from "@/legacy-pages/Landing/awsCertData";
+
 
 export default function sitemap() {
   const base = "https://ilmora.texora.ai";
@@ -51,13 +51,7 @@ export default function sitemap() {
     { path: "/terms-of-service", priority: 0.3 },
   ];
 
-  // One URL per AWS exam page (/aws/<code>), taken from the same data the pages use.
-  const awsExamEntries = AWS_CERTS.map((c) => ({
-    path: `/aws/${c.code.toLowerCase()}`,
-    priority: 0.6,
-  }));
-
-  return [...entries, ...awsExamEntries].map((e) => ({
+   return entries.map((e) => ({
     url: `${base}${e.path}`,
     priority: e.priority,
   }));

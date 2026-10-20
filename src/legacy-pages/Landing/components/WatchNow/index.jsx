@@ -1,3 +1,4 @@
+
 "use client";
 
 import {
@@ -8,7 +9,8 @@ import {
   useRef,
   useState,
 } from "react";
-import { Play, Quote, ChevronLeft, ChevronRight } from "lucide-react";
+import { Play, Quote, ChevronLeft, ChevronRight, ArrowRight } from "lucide-react";
+import { useNavigate } from "@/lib/routerCompat";
 import videoService from "../../../../services/videoService";
 
 /* ============================================================
@@ -378,8 +380,11 @@ function DotPagination({ count, activeIndex, onDotClick }) {
    Carousel track — infinite loop, autoplay, drag/swipe, keyboard,
    arrows on both sides + dot pagination underneath (Image 1).
    ============================================================ */
+
 function WatchNowCarousel({ stories }) {
   const { visibleCount, isMobile } = useVisibleCount();
+  const navigate = useNavigate();
+
   // Single active-player key instead of a per-item map: only one card
   // (identified by its unique trackItems `key`) can ever be "playing"
   // at once. Setting this to null unmounts whichever player is
@@ -550,8 +555,10 @@ function WatchNowCarousel({ stories }) {
   // report as "playing" — only the exact card instance the user
   // clicked becomes active, and starting it implicitly stops
   // whatever else was playing since `playing` holds a single value.
-  const handlePlay = (key) => {
-    setPlaying(key);
+  // Card click opens the full /watch-now page with this video pre-opened
+  const handleOpen = (item) => {
+    setPlaying(null);
+    navigate(`/watch-now?video=${item.id}`);
   };
 
   const resetPlaying = () => setPlaying(null);
@@ -607,7 +614,7 @@ function WatchNowCarousel({ stories }) {
               <StoryCard
                 item={item}
                 isPlaying={playing === key}
-                onPlay={() => handlePlay(key)}
+                onPlay={() => handleOpen(item)}
                 onEnded={resetPlaying}
               />
             </div>
@@ -643,6 +650,19 @@ function WatchNowCarousel({ stories }) {
         onDotClick={goTo}
       />
     </div>
+  );
+}
+
+function ViewAllButton() {
+  const navigate = useNavigate();
+  return (
+    <button
+      type="button"
+      onClick={() => navigate("/watch-now")}
+      className="inline-flex items-center justify-center gap-2 bg-[#F97316] text-white font-semibold px-6 py-3 rounded-xl text-sm sm:text-base hover:bg-[#EA580C] transition-all hover:scale-105 shadow-lg shadow-orange-500/30 border-none cursor-pointer"
+    >
+      View all videos <ArrowRight className="w-4 h-4" />
+    </button>
   );
 }
 
@@ -698,8 +718,15 @@ export default function WatchNowSection({ id = "watch-now" }) {
             No stories published yet — check back soon.
           </p>
         ) : (
-          <WatchNowCarousel stories={stories} />
+                  <WatchNowCarousel stories={stories} />
         )}
+
+        {!loading && stories.length > 0 && (
+          <div className="flex justify-center mt-8">
+            <ViewAllButton />
+          </div>
+        )}
+       
       </div>
     </section>
   );

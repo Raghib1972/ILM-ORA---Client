@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -30,17 +31,17 @@ export const relatedLinksColors = (isDark) =>
     : {};
 
 const CSS = `
-.rl-marq{overflow:hidden;padding:14px 0 48px;margin-bottom:-22px;}
+.rl-marq{overflow:hidden;padding:6px 0 10px;}
 .rl-track{list-style:none;margin:0;padding:0;display:flex;width:max-content;
   animation:rl-scroll 60s linear infinite;will-change:transform;}
 .rl-track li{flex:none;width:260px;margin-right:20px;}
 .rl-marq:hover .rl-track,.rl-marq:focus-within .rl-track{animation-play-state:paused;}
 @keyframes rl-scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
-.rl-card{display:block;height:116px;perspective:900px;text-decoration:none;outline:none;
+.rl-card{display:block;height:88px;perspective:900px;text-decoration:none;outline:none;
   -webkit-tap-highlight-color:transparent;}
 .rl-flip{position:relative;display:block;width:100%;height:100%;transform-style:preserve-3d;
   transition:transform .65s cubic-bezier(.2,.8,.2,1);}
-.rl-f,.rl-b{position:absolute;inset:0;border-radius:14px;padding:18px 20px;
+.rl-f,.rl-b{position:absolute;inset:0;border-radius:14px;padding:14px 18px;
   backface-visibility:hidden;-webkit-backface-visibility:hidden;}
 .rl-f{background:var(--rl-front);border:1.5px solid var(--rl-border);
   box-shadow:0 2px 10px rgba(26,35,64,.05);}
@@ -49,7 +50,7 @@ const CSS = `
 .rl-b{transform:rotateX(180deg);color:#fff;display:flex;flex-direction:column;
   justify-content:space-between;background:linear-gradient(135deg,var(--rl-accent),#b8390b);
   box-shadow:0 10px 22px -12px rgba(249,115,22,.5);}
-.rl-b span{font-size:17px;line-height:1.5;font-weight:500;}
+.rl-b span{font-size:15px;line-height:1.35;font-weight:500;}
 .rl-b em{font-style:normal;font-weight:600;font-size:14px;opacity:.85;}
 
 @media (hover:hover) and (pointer:fine){
@@ -83,7 +84,7 @@ const CSS = `
   .rl-track li .rl-card{
     display:block;
     width:100%;
-    height:116px;
+    height:100px;
     box-sizing:border-box;
     perspective:none;
   }
@@ -101,7 +102,7 @@ const CSS = `
     box-sizing:border-box;
     width:100%;
     height:100%;
-    padding:18px 16px;
+    padding:14px 16px;
     overflow-wrap:break-word;
     transition:background .35s ease,border-color .35s ease,box-shadow .35s ease;
   }
@@ -166,16 +167,18 @@ export default function RelatedLinks({
     if (!touch || !("IntersectionObserver" in window)) return;
 
     const io = new IntersectionObserver(
-      (entries) =>
-        entries.forEach((e) => e.target.classList.toggle("rl-on", e.isIntersecting)),
-      
-{
-  root: null,
-  rootMargin: "0px -35% 0px -35%",
-  threshold: 0,
-}
-
+      (entries) => {
+        entries.forEach((e) =>
+          e.target.classList.toggle("rl-on", e.isIntersecting)
+        );
+      },
+      {
+        root: null,
+        rootMargin: "0px -35% 0px -35%",
+        threshold: 0,
+      }
     );
+
     root.querySelectorAll(".rl-card").forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, [links]);
@@ -183,8 +186,8 @@ export default function RelatedLinks({
   const c = {
     text: "#1E293B",
     sub: "#4B5563",
-    border: "#EFE0CB",
-    bg: "#FFFFFF",
+    border: "#E2E8F0",
+    bg: "transparent",
     surface: "#FFFFFF",
     accent: "#F97316",
     ...colors,
@@ -218,17 +221,17 @@ export default function RelatedLinks({
     <nav
       aria-label={title}
       onTouchStart={() => {}} /* lets :active work on iOS Safari */
-      style={{ ...vars, padding: "64px 0", background: c.bg, borderTop: "1px solid " + c.border }}
+      style={{ ...vars, padding: "16px 0", background: c.bg, borderTop: "none" }}
     >
       <style>{CSS}</style>
       <div style={{ maxWidth: 1100, margin: "0 auto", padding: "0 24px" }}>
-        <h2 style={{ fontSize: "clamp(28px, 3.4vw, 38px)", fontWeight: 600, lineHeight: 1.2, letterSpacing: "-0.02em", color: c.text, margin: "0 0 14px", textAlign: "center" }}>
+        <h2 style={{ fontSize: "clamp(28px, 3.4vw, 38px)", fontWeight: 600, lineHeight: 1.2, letterSpacing: "-0.02em", color: c.text, margin: "0 0 6px", textAlign: "center" }}>
           {head[0]}
           {head[1] && <span style={{ color: c.accent }}>{head[1]}</span>}
           {head[2]}
         </h2>
         {subtitle && (
-          <p style={{ fontSize: 17, lineHeight: 1.7, color: c.sub, maxWidth: 640, margin: "0 auto 28px", textAlign: "center" }}>
+          <p style={{ fontSize: 17, lineHeight: 1.5, color: c.sub, maxWidth: 640, margin: "0 auto 12px", textAlign: "center" }}>
             {subtitle}
           </p>
         )}

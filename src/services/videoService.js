@@ -363,8 +363,21 @@ const videoService = {
   /**
    * Get published WatchNow entries only, ordered by sortOrder (public).
    */
-  getWatchNowPublished() {
+    getWatchNowPublished() {
     return axios.get(`${API_GATEWAY}/v1/watch-now/published`);
+  },
+
+  /**
+   * Public counters for the /watch-now page. Each returns { views, likes }.
+   */
+  incrementWatchNowView(id) {
+    return axios.post(`${API_GATEWAY}/v1/watch-now/${id}/view`);
+  },
+  likeWatchNow(id) {
+    return axios.post(`${API_GATEWAY}/v1/watch-now/${id}/like`);
+  },
+  unlikeWatchNow(id) {
+    return axios.post(`${API_GATEWAY}/v1/watch-now/${id}/unlike`);
   },
 
   /**

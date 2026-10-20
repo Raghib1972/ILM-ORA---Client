@@ -34,7 +34,7 @@ import {
   Target,
   TrendingUp,
   Trophy,
-    Users,
+  Users,
   Wand2,
   Zap,
   BarChart3,
@@ -216,7 +216,7 @@ function MentorTestimonialCarousel({ testimonials }) {
   // UI-only: tracks which cards have "Read More" expanded. Does not touch
   // backend data, carousel/scroll logic, or pagination logic below.
   const [expandedCards, setExpandedCards] = useState({});
-    const toggleExpanded = (i) =>
+  const toggleExpanded = (i) =>
     setExpandedCards((prev) => (prev[i] ? {} : { [i]: true }));
 
   const scrollToIndex = (index) => {
@@ -272,7 +272,7 @@ function MentorTestimonialCarousel({ testimonials }) {
           <ChevronLeft className="w-5 h-5 text-[#1E293B] dark:text-white group-hover:text-white transition-colors" />
         </button>
 
-               {/* Scroller */}
+        {/* Scroller */}
         <div
           ref={scrollerRef}
           onScroll={handleScroll}
@@ -282,7 +282,7 @@ function MentorTestimonialCarousel({ testimonials }) {
           {testimonials.map((t, i) => {
             const isExpanded = !!expandedCards[i];
             return (
-                            <div
+              <div
                 key={i}
                 style={{ scrollSnapAlign: "start" }}
                 className={`w-full min-w-0 flex-shrink-0 transition-all duration-500 ease-out ${
@@ -291,7 +291,7 @@ function MentorTestimonialCarousel({ testimonials }) {
                     : "sm:w-[calc(50%-12px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-18px)]"
                 }`}
               >
-                                <div
+                <div
                   className={`relative h-full bg-white dark:bg-gray-900 rounded-[22px] border p-5 flex flex-col transition-all duration-300 ease-out hover:-translate-y-1.5 ${
                     isExpanded
                       ? "border-[#F97316] ring-2 ring-[#F97316] shadow-[0_18px_38px_rgba(249,115,22,0.18)]"
@@ -301,7 +301,7 @@ function MentorTestimonialCarousel({ testimonials }) {
                 >
                   {/* Quote icon — top-left, solid orange */}
                   <Quote
-                    className="w-9 h-9 text-[#F97316] mb-3 flex-shrink-0"
+                    className="w-7 h-7 text-[#F97316] mb-2 flex-shrink-0"
                     fill="currentColor"
                     strokeWidth={0}
                   />
@@ -323,7 +323,7 @@ function MentorTestimonialCarousel({ testimonials }) {
                     {t.text}
                   </p>
 
-                                    {t.text && t.text.length > 160 && (
+                  {t.text && t.text.length > 160 && (
                     <button
                       type="button"
                       onClick={() => toggleExpanded(i)}
@@ -339,7 +339,7 @@ function MentorTestimonialCarousel({ testimonials }) {
                   )}
 
                   {/* LinkedIn + date row */}
-                  <div className="flex items-center gap-2 mt-4 pt-4 border-t border-[#F1F1F1] dark:border-gray-800 text-xs text-gray-400">
+                  <div className="flex items-center gap-2 mt-3 pt-3 border-t border-[#F1F1F1] dark:border-gray-800 text-xs text-gray-400">
                     <span className="inline-flex items-center gap-1 text-[#0A66C2] font-semibold">
                       <svg
                         viewBox="0 0 24 24"
@@ -359,7 +359,7 @@ function MentorTestimonialCarousel({ testimonials }) {
                   </div>
 
                   {/* Bottom profile row */}
-                  <div className="flex items-center gap-3 mt-4">
+                  <div className="flex items-center gap-3 mt-3">
                     <MentorAvatar
                       name={t.name}
                       image={t.image}
@@ -418,7 +418,7 @@ function MentorTestimonialCarousel({ testimonials }) {
       </div>
 
       {/* Dot pagination */}
-      <div className="flex items-center justify-center gap-2 mt-5 sm:mt-6">
+      <div className="flex items-center justify-center gap-2 mt-3 sm:mt-4">
         {testimonials.map((_, i) => (
           <button
             key={i}
@@ -487,7 +487,7 @@ function TopCompaniesCarousel({ logos }) {
       `}</style>
 
       <div
-        className="ilmora-marquee-viewport bg-white dark:bg-[#111827] rounded-[18px] sm:rounded-[20px] lg:rounded-[22px] border border-gray-100 dark:border-white/[0.08] h-[88px] sm:h-[96px] lg:h-[104px] flex items-center overflow-hidden shadow-[0_15px_40px_rgba(15,23,42,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.45)]"
+        className="ilmora-marquee-viewport bg-white dark:bg-[#111827] rounded-[18px] sm:rounded-[20px] lg:rounded-[22px] border border-gray-100 dark:border-white/[0.08] h-[72px] sm:h-[80px] lg:h-[88px] flex items-center overflow-hidden shadow-[0_15px_40px_rgba(15,23,42,0.08)] dark:shadow-[0_20px_50px_rgba(0,0,0,0.45)]"
         style={{
           paddingLeft: 40,
           paddingRight: 40,
@@ -520,7 +520,7 @@ function TopCompaniesCarousel({ logos }) {
                       src={logo.src}
                       alt={logo.name}
                       loading="lazy"
-                      className="max-h-[45px] sm:max-h-[48px] max-w-full object-contain"
+                      className="max-h-[36px] sm:max-h-[40px] max-w-full object-contain"
                       onError={() =>
                         setBrokenSrcs((prev) => new Set(prev).add(logo.src))
                       }
@@ -539,8 +539,7 @@ function TopCompaniesCarousel({ logos }) {
   );
 }
 
-
- // ─────────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
 // AiCompanionTeaser — preview card for the AI Companion product. Chips and
 // dots switch between the four feature screenshots (auto-rotates every 3.5s,
 // pauses on hover). Clicking the preview or CTA opens /ai-companion.
@@ -607,14 +606,12 @@ function AiCompanionTeaser({ navigate }) {
       <div className="max-w-6xl mx-auto relative grid lg:grid-cols-2 items-center gap-10 lg:gap-12">
         {/* left: copy + chips + CTA */}
         <div className="text-center lg:text-left">
-          
-
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-[#1E293B] dark:text-white mb-4 leading-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-[#1E293B] dark:text-white mb-4 leading-tight">
             Meet Your <br className="hidden lg:block" />
             <span className="text-[#F97316]">AI Companion</span>
           </h2>
 
-                    <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-md mx-auto lg:mx-0 mb-6 leading-relaxed">
+          <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-md mx-auto lg:mx-0 mb-6 leading-relaxed">
             Chat, write, transcribe meetings and automate workflows — one AI
             sidebar that follows you across every course and session.
           </p>
@@ -677,7 +674,7 @@ function AiCompanionTeaser({ navigate }) {
               transition: "transform 0.15s ease-out",
             }}
           >
-              <img
+            <img
               key={activeFeature}
               src={activeImg.src || activeImg}
               alt={`AI Companion — ${features[activeFeature].label}`}
@@ -714,7 +711,7 @@ function AiCompanionTeaser({ navigate }) {
     </section>
   );
 }
-       
+
 // ─────────────────────────────────────────────────────────────────────────────
 // CalendarShowcase — "ILM ORA Calendry" tab content (ported from ilmorameet.jsx)
 // ─────────────────────────────────────────────────────────────────────────────
@@ -874,7 +871,7 @@ function CalendarShowcase({ onLearnMore }) {
   }, [isVideoActive, reduce]);
 
   return (
-        <div className="max-w-5xl mx-auto relative pt-6">
+    <div className="max-w-5xl mx-auto relative pt-6">
       <style>{`
         @keyframes calFloat { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
         @keyframes calIn { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
@@ -935,19 +932,19 @@ function CalendarShowcase({ onLearnMore }) {
           })}
         </div>
 
-          <div className="grid md:grid-cols-2 gap-3 sm:gap-4 mt-5">
+        <div className="grid md:grid-cols-2 gap-3 sm:gap-4 mt-5">
           {/* left: glass info panel */}
           <div
             key={`info-${current.key}`}
-                        className="cal-in flex flex-col justify-center rounded-[18px] p-4 sm:p-5 text-white bg-white/15 backdrop-blur-md border border-white/35"
+            className="cal-in flex flex-col justify-center rounded-[18px] p-4 sm:p-5 text-white bg-white/15 backdrop-blur-md border border-white/35"
           >
             <span className="inline-flex self-start bg-white/25 text-[12px] font-semibold px-3 py-1 rounded-full mb-4">
               {current.badge}
             </span>
-                        <h3 className="text-base sm:text-lg lg:text-xl font-bold leading-tight mb-2 text-white">
+            <h3 className="text-base sm:text-lg lg:text-xl font-bold leading-tight mb-2 text-white">
               {current.heading}
             </h3>
-                        <p className="text-xs sm:text-sm text-white/85 mb-3 max-w-md">
+            <p className="text-xs sm:text-sm text-white/85 mb-3 max-w-md">
               {current.desc}
             </p>
             <button
@@ -967,7 +964,7 @@ function CalendarShowcase({ onLearnMore }) {
             aria-hidden="true"
           >
             {current.key === "video" && (
-                            <div className="bg-white rounded-[18px] p-3 shadow-2xl text-[#1E293B] text-sm">
+              <div className="bg-white rounded-[18px] p-3 shadow-2xl text-[#1E293B] text-sm">
                 <div className="flex items-center justify-between font-semibold mb-2">
                   <span>October 2026</span>
                   <span className="flex gap-1.5">
@@ -984,7 +981,7 @@ function CalendarShowcase({ onLearnMore }) {
                     <span key={i}>{d}</span>
                   ))}
                 </div>
-                                <div className="grid grid-cols-7 gap-0.5 mb-2">
+                <div className="grid grid-cols-7 gap-0.5 mb-2">
                   {Array.from({ length: CAL_BLANKS }).map((_, i) => (
                     <span key={`b${i}`} />
                   ))}
@@ -1008,12 +1005,12 @@ function CalendarShowcase({ onLearnMore }) {
                     );
                   })}
                 </div>
-                  <div className="grid grid-cols-3 gap-1.5 mb-2">
+                <div className="grid grid-cols-3 gap-1.5 mb-2">
                   {["10:00 AM", CAL_SLOT, "4:30 PM"].map((s) => (
                     <span
                       key={s}
                       ref={s === CAL_SLOT ? slotElRef : null}
-                                            className={`rounded-lg px-2 py-1 text-[11px] text-center font-medium border-[1.5px] transition-colors duration-200 ${
+                      className={`rounded-lg px-2 py-1 text-[11px] text-center font-medium border-[1.5px] transition-colors duration-200 ${
                         s === pickedSlot
                           ? "border-[#F97316] bg-orange-50 text-[#d06a1a]"
                           : "border-gray-200"
@@ -1025,7 +1022,7 @@ function CalendarShowcase({ onLearnMore }) {
                 </div>
                 <div
                   ref={confirmElRef}
-                                    className={`text-center text-white text-xs font-semibold py-2 rounded-lg transition-all duration-200 ${
+                  className={`text-center text-white text-xs font-semibold py-2 rounded-lg transition-all duration-200 ${
                     confirming ? "bg-[#0E7A5F] scale-[.97]" : "bg-[#1a1a2e]"
                   }`}
                 >
@@ -1181,7 +1178,7 @@ function WorkspaceTeaser({
 
       {/* ── Top tab bar ── */}
       <div className="max-w-6xl mx-auto relative">
-                <div className="flex items-center justify-center md:justify-start gap-6 sm:gap-10 border-b border-white/10 mb-5 sm:mb-6">
+        <div className="flex items-center justify-center md:justify-start gap-6 sm:gap-10 border-b border-white/10 mb-5 sm:mb-6">
           {topTabs.map((tab) => {
             const isActive = activeTopTab === tab.key;
             return (
@@ -1201,7 +1198,7 @@ function WorkspaceTeaser({
                     isActive ? "opacity-100" : "opacity-0"
                   }`}
                 />
-                            </button>
+              </button>
             );
           })}
         </div>
@@ -1218,14 +1215,12 @@ function WorkspaceTeaser({
       >
         {/* left: copy + chips + CTA */}
         <div className="text-center lg:text-left">
-          
-
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-white mb-4 leading-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-white mb-4 leading-tight">
             Your Complete <br className="hidden lg:block" />
             <span className="text-[#F97316]">Meeting Workspace</span>
           </h2>
 
-            <p className="text-base sm:text-lg text-slate-300 max-w-md mx-auto lg:mx-0 mb-6 leading-relaxed">
+          <p className="text-base sm:text-lg text-slate-300 max-w-md mx-auto lg:mx-0 mb-6 leading-relaxed">
             Schedule, host and review live sessions — everything before, during
             and after the meeting, together in one place.
           </p>
@@ -1365,7 +1360,7 @@ function ProductHubSection({ navigate }) {
       desc: "Complete control over your calendar — find, book and manage your next live class in a few clicks.",
       cta: "Explore Calendar",
       to: "/calendry",
-            // TODO: apne calendar ke screenshots yahan replace kar dena
+      // TODO: apne calendar ke screenshots yahan replace kar dena
       features: [
         { icon: CalendarClock, label: "Scheduling", img: workspaceStartJoinImg },
         { icon: FileText, label: "Recordings & Notes", img: workspaceRecordingsImg },
@@ -1376,7 +1371,7 @@ function ProductHubSection({ navigate }) {
       label: "ILM ORA Whiteboard",
       icon: PenTool,
       badge: "VISUAL COLLABORATION",
-           line1: "Think, Draw & Teach",
+      line1: "Think, Draw & Teach",
       line2: "Smart Whiteboard",
       desc: "Sketch ideas, build flowcharts and mind maps, and collaborate live on one canvas.",
       cta: "Explore Whiteboard",
@@ -1399,7 +1394,7 @@ function ProductHubSection({ navigate }) {
     setActiveFeature(0);
   };
 
-     // Section sirf tab rotate hoga jab screen par dikh raha ho
+  // Section sirf tab rotate hoga jab screen par dikh raha ho
   const hubRef = useRef(null);
   const [inView, setInView] = useState(false);
   useEffect(() => {
@@ -1439,28 +1434,27 @@ function ProductHubSection({ navigate }) {
     return () => clearTimeout(t);
   }, [activeProduct, activeFeature, paused, inView]);
   return (
-        <section
+    <section
       ref={hubRef}
       id="product-hub"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
-      className="relative py-4 sm:py-6 px-4 sm:px-6 scroll-mt-20 overflow-hidden bg-[#FFF7F2] dark:bg-gray-950"
+      className="relative py-4 sm:py-5 px-4 sm:px-6 scroll-mt-20 overflow-hidden bg-[#F8FAFC] dark:bg-black"
     >
       <style>{`@keyframes hubFade { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }`}</style>
 
-            <div className="text-center mb-4 sm:mb-6">
+      <div className="text-center mb-3 sm:mb-4">
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-[#1E293B] dark:text-white">
           Explore the <span className="text-[#F97316]">ILM ORA Platform</span>
         </h2>
-        <p className="mt-3 max-w-4xl mx-auto text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+        <p className="mt-1.5 max-w-4xl mx-auto text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
           Pick a product, preview its features and open it with one click.
         </p>
       </div>
 
-          <div className="max-w-[1400px] mx-auto grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[220px_minmax(0,1fr)_minmax(0,1.2fr)] xl:grid-cols-[260px_minmax(0,1fr)_minmax(0,1.35fr)] gap-5 lg:gap-6 xl:gap-8 items-center lg:min-h-[480px] xl:min-h-[560px]">
-                {/* ── Left: product list ── */}
+      <div className="max-w-[1400px] mx-auto grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[220px_minmax(0,1fr)_minmax(0,1.2fr)] xl:grid-cols-[260px_minmax(0,1fr)_minmax(0,1.35fr)] gap-5 lg:gap-6 xl:gap-8 items-center">
+        {/* ── Left: product list ── */}
         <div className="min-w-0">
-          
           <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {products.map((p, i) => {
               const isActive = activeProduct === i;
@@ -1495,7 +1489,6 @@ function ProductHubSection({ navigate }) {
           </div>
         </div>
 
-        
         {/* ── Middle: copy + chips + CTA ── */}
         <div
           key={product.key}
@@ -1513,7 +1506,7 @@ function ProductHubSection({ navigate }) {
             {product.desc}
           </p>
 
-          <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 mb-6">
+          <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 mb-4">
             {product.features.map((f, i) => (
               <button
                 type="button"
@@ -1541,7 +1534,7 @@ function ProductHubSection({ navigate }) {
           </button>
         </div>
 
-                {/* ── Calendar showcase (sirf Calendry tab me) ── */}
+        {/* ── Calendar showcase (sirf Calendry tab me) ── */}
         {product.key === "calendar" && (
           <div className="lg:col-span-2 min-w-0">
             <CalendarShowcase onLearnMore={() => navigate(product.to)} />
@@ -1549,7 +1542,7 @@ function ProductHubSection({ navigate }) {
         )}
 
         {/* ── Right: preview + dots ── */}
-          <div className={`min-w-0 ${product.key === "calendar" ? "hidden" : ""}`}>
+        <div className={`min-w-0 ${product.key === "calendar" ? "hidden" : ""}`}>
           <div
             onClick={() => navigate(product.to)}
             onMouseEnter={() => setPaused(true)}
@@ -1624,7 +1617,7 @@ function HeroRollText({ text, className = "", gradient = "", delay = 0 }) {
 
   useEffect(() => {
     if (leaving === null) return;
-        const t = setTimeout(() => setLeaving(null), 600 + delay);
+    const t = setTimeout(() => setLeaving(null), 600 + delay);
     return () => clearTimeout(t);
   }, [leaving, delay]);
 
@@ -1634,7 +1627,7 @@ function HeroRollText({ text, className = "", gradient = "", delay = 0 }) {
     <span
       className={`hero-roll relative block overflow-hidden ${className}`}
       // room for descenders (g, y, j) so the clip never cuts them
-            style={{ paddingBottom: "0.22em", marginBottom: "-0.22em" }}
+      style={{ paddingBottom: "0.22em", marginBottom: "-0.22em" }}
     >
       {changing && (
         <span
@@ -1681,8 +1674,9 @@ export default function LMSHomepage({ theme, toggleTheme }) {
   const [modalPassword, setModalPassword] = useState("");
   const [modalLoading, setModalLoading] = useState(false);
   const [showModalPw, setShowModalPw] = useState(false);
+  const [journey, setJourney] = useState("learner");
 
-   const heroImages = [
+  const heroImages = [
     heroStudent,
     heroStudent2,
     heroStudent3,
@@ -1692,7 +1686,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
     hero7,
     hero8,
   ];
-    const heroImagePositions = [
+  const heroImagePositions = [
     "center 10%",
     "center 10%",
     "center 10%",
@@ -1702,62 +1696,163 @@ export default function LMSHomepage({ theme, toggleTheme }) {
     "center 10%",
     "center 10%",
   ];
-// Index = currentSlide + 1  ->  0: video, 1: student, 2: high-five, 3: team, 4-8: hero-4 to hero-8
-const heroTexts = [
-  {
-    line1: "Empower Your",
-    line2: "Learning Journey",
-    desc: "Master in-demand skills through AI-powered learning, live sessions, certifications, and expert-led programs designed for students, professionals, trainers, and organizations.",
-  },
-  {
-    line1: "Your Skills Journey",
-    line2: "Starts Here",
-    desc: "Learn at your own pace with AI-powered courses, live classes, and certifications built for students ready to take the first step.",
-  },
-  {
-    line1: "Celebrate Every",
-    line2: "Career Win",
-    desc: "From your first job to your next promotion, our programs and career support help you reach goals worth celebrating.",
-  },
-  {
-    line1: "Learn Together",
-    line2: "With Expert Mentors",
-    desc: "Join small cohorts, get project reviews from industry mentors, and grow with a community that keeps you accountable.",
-  },
-  {
-    line1: "Build Skills That",
-    line2: "Get You Hired",
-    desc: "Hands-on projects, live mentor feedback, and verified certificates that help you stand out and step confidently into your dream role.",
-  },
-  {
-    line1: "Learn Anytime,",
-    line2: "Anywhere",
-    desc: "Access live classes, recorded sessions, and AI-powered study tools on any device, so learning fits around your schedule.",
-  },
-  {
-    line1: "Grow With a",
-    line2: "Community That Cares",
-    desc: "Connect with peers, share ideas, and stay motivated together with a supportive network of learners and mentors.",
-  },
-  {
-    line1: "Turn Knowledge Into",
-    line2: "Real Results",
-    desc: "Apply what you learn through real-world projects and assessments that prove your skills to top employers.",
-  },
-  {
-    line1: "Your Future Career",
-    line2: "Starts Today",
-    desc: "Take the next step with expert-led programs, career support, and certifications designed to open new doors.",
-  },
-];
+  // Index = currentSlide + 1  ->  0: video, 1: student, 2: high-five, 3: team, 4-8: hero-4 to hero-8
+  const heroTexts = [
+    {
+      line1: "Empower Your",
+      line2: "Learning Journey",
+      desc: "Master in-demand skills through AI-powered learning, live sessions, certifications, and expert-led programs designed for students, professionals, trainers, and organizations.",
+    },
+    {
+      line1: "Your Skills Journey",
+      line2: "Starts Here",
+      desc: "Learn at your own pace with AI-powered courses, live classes, and certifications built for students ready to take the first step.",
+    },
+    {
+      line1: "Celebrate Every",
+      line2: "Career Win",
+      desc: "From your first job to your next promotion, our programs and career support help you reach goals worth celebrating.",
+    },
+    {
+      line1: "Learn Together",
+      line2: "With Expert Mentors",
+      desc: "Join small cohorts, get project reviews from industry mentors, and grow with a community that keeps you accountable.",
+    },
+    {
+      line1: "Build Skills That",
+      line2: "Get You Hired",
+      desc: "Hands-on projects, live mentor feedback, and verified certificates that help you stand out and step confidently into your dream role.",
+    },
+    {
+      line1: "Learn Anytime,",
+      line2: "Anywhere",
+      desc: "Access live classes, recorded sessions, and AI-powered study tools on any device, so learning fits around your schedule.",
+    },
+    {
+      line1: "Grow With a",
+      line2: "Community That Cares",
+      desc: "Connect with peers, share ideas, and stay motivated together with a supportive network of learners and mentors.",
+    },
+    {
+      line1: "Turn Knowledge Into",
+      line2: "Real Results",
+      desc: "Apply what you learn through real-world projects and assessments that prove your skills to top employers.",
+    },
+    {
+      line1: "Your Future Career",
+      line2: "Starts Today",
+      desc: "Take the next step with expert-led programs, career support, and certifications designed to open new doors.",
+    },
+  ];
+
+  // Slide-wise CTA buttons. Index = currentSlide + 1 (same order as heroTexts).
+  // route   -> navigate(route)  (alag page)
+  // section -> scroll to section (jab tak uska alag page nahi bana)
+  // action  -> "signup" / "login" modal
+  // Jis button ka page ban jaye, uske `section` ki jagah `route: "/your-page"` likh do.
+  const heroCtas = [
+    // 0: Empower Your Learning Journey
+    [
+      { label: "Explore Programs", route: "/all-courses" },
+      { label: "For Trainers & Teams", section: "product-hub" },
+    ],
+    // 1: Your Skills Journey Starts Here
+    [
+      { label: "Start Learning Free", action: "signup" },
+      { label: "Browse Courses", route: "/all-courses" },
+    ],
+    // 2: Celebrate Every Career Win
+    [
+      { label: "Get Career Support", section: "successstories" }, // TODO: career page route
+      { label: "Meet Our Mentors", section: "mentors" }, // TODO: mentors page route
+    ],
+    // 3: Learn Together With Expert Mentors
+    [
+      { label: "Meet Your Mentors", section: "mentors" }, // TODO: mentors page route
+      { label: "Join a Cohort", route: "/all-courses" },
+    ],
+    // 4: Build Skills That Get You Hired
+    [
+      { label: "View Job-Ready Programs", route: "/all-courses" },
+      { label: "Career Support", section: "successstories" }, // TODO: career page route
+    ],
+    // 5: Learn Anytime, Anywhere
+    [
+      { label: "Try AI Companion", route: "/ai-companion" },
+      { label: "Host Live Classes", section: "product-hub" },
+    ],
+    // 6: Grow With a Community That Cares
+    [
+      { label: "Join the Community", action: "signup" },
+      { label: "Hear From Learners", section: "mentors" }, // TODO: mentors page route
+    ],
+    // 7: Turn Knowledge Into Real Results
+    [
+      { label: "See Success Stories", section: "successstories" }, // TODO: stories page route
+      { label: "Explore Programs", route: "/all-courses" },
+    ],
+    // 8: Your Future Career Starts Today
+    [
+      { label: "Get Started", action: "signup" },
+      { label: "Browse All Courses", route: "/all-courses" },
+    ],
+  ];
+  // Featured Programs journey classification.
+  // route -> navigate(route) | section -> scroll to section
+  const journeyPanels = {
+    learner: {
+      label: "Learner",
+      Icon: GraduationCap,
+      title: "Learn job-ready skills from industry mentors",
+      desc: "Pick a category, compare programs and start learning with live sessions, projects and verified certificates.",
+      benefits: [
+        { Icon: Target, text: "Project-based learning" },
+        { Icon: Users, text: "Live mentor sessions" },
+        { Icon: Award, text: "Verified certificates" },
+      ],
+            ctas: [
+        { label: "See Student Dashboard", route: "/student-hub" },
+      ],
+    },
+    trainer: {
+      label: "Trainer",
+      Icon: Video,
+      title: "Run live classes and manage every batch in one place",
+      desc: "Host sessions, control the room, share recordings and notes, and keep your batches organised.",
+      benefits: [
+        { Icon: Video, text: "Host live classes" },
+        { Icon: Shield, text: "Host controls & dashboard" },
+        { Icon: FileText, text: "Recordings & notes" },
+      ],
+            ctas: [
+        { label: "See Trainer Dashboard", route: "/trainer-hub" },
+      ],
+    },
+    org: {
+      label: "Organization",
+      Icon: Users,
+      title: "Manage your team's learning and live sessions in one place",
+      desc: "Organise batches, host live sessions and keep recordings and notes together in one admin dashboard for your whole team.",
+      benefits: [
+        { Icon: BarChart3, text: "Central admin dashboard" },
+        { Icon: Shield, text: "Host controls" },
+        { Icon: FileText, text: "Recordings & notes" },
+      ],
+      ctas: [
+        { label: "See Admin Dashboard", route: "/manager-hub" },
+       
+        // TODO: demo/contact page ban jaye to yaha "Request Demo" route daal dena
+      ],
+    },
+  };
   const [currentSlide, setCurrentSlide] = useState(0);
   // Perf: don't fetch the hero video until the browser is idle, so it never
   // competes with the LCP image/text for bandwidth on first paint.
-    const [videoReady, setVideoReady] = useState(false);
+  const [videoReady, setVideoReady] = useState(false);
   const videoRef = useRef(null);
   useEffect(() => {
     const idle =
-    window.requestIdleCallback || ((cb) => setTimeout(cb, 0));
+      window.requestIdleCallback || ((cb) => setTimeout(cb, 0));
     const cancel = window.cancelIdleCallback || clearTimeout;
     const id = idle(() => setVideoReady(true));
     return () => cancel(id);
@@ -2623,11 +2718,9 @@ const heroTexts = [
   const ecosystemProducts = ecosystemRaw.length
     ? ecosystemRaw.map((c, i) => ({
         ...mapCompany(c),
-                color: ECOSYSTEM_COLORS[i % ECOSYSTEM_COLORS.length],
+        color: ECOSYSTEM_COLORS[i % ECOSYSTEM_COLORS.length],
       }))
     : null;
-
- 
 
   // ── Featured Programs: auto-rotate categories (UI only) ──────────────────
   // Every 4s the active category tab moves to the next one (product → design
@@ -2636,6 +2729,23 @@ const heroTexts = [
   // hidden, and is off for users who prefer reduced motion.
   const programsPauseRef = useRef(false);
   const programsResumeAtRef = useRef(0);
+  const coursesRef = useRef(null);
+  const coursesInViewRef = useRef(false);
+  useEffect(() => {
+    const el = coursesRef.current;
+    if (!el || !("IntersectionObserver" in window)) {
+      coursesInViewRef.current = true;
+      return;
+    }
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        coursesInViewRef.current = entry.isIntersecting;
+      },
+      { threshold: 0.3 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   useEffect(() => {
     if (typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
     const source = programsLoading
@@ -2646,19 +2756,18 @@ const heroTexts = [
     const keys = Object.keys(source);
     if (keys.length < 2) return;
     const id = setInterval(() => {
-      if (programsPauseRef.current || document.hidden || Date.now() < programsResumeAtRef.current) return;
+      if (!coursesInViewRef.current || programsPauseRef.current || document.hidden || Date.now() < programsResumeAtRef.current) return;
       setActiveTab((cur) => keys[(keys.indexOf(cur) + 1) % keys.length]);
     }, 4000);
     return () => clearInterval(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [programsLoading, featuredPrograms]);
- 
 
   return (
-    <div className="min-h-screen overflow-x-clip bg-[#F6EDE6] dark:bg-black text-[#1E293B] dark:text-white">
+    <div className="min-h-screen overflow-x-clip bg-[#F8FAFC] dark:bg-black text-[#1E293B] dark:text-white">
       {/* ── Announcement Banner & Navbar ── */}
-            <ClientOnly>
-                <TexoraFloatingWidget />
+      <ClientOnly>
+        <TexoraFloatingWidget />
         <AnnouncementBanner />
         <Navbar
           theme={theme}
@@ -2668,9 +2777,9 @@ const heroTexts = [
       </ClientOnly>
 
       {/* ── Hero ── */}
-        <section className="relative pt-20 sm:pt-24 pb-16 sm:pb-14 px-4 sm:px-6 min-h-[480px] sm:min-h-[460px] lg:min-h-[440px] lg:h-[68svh] flex items-center overflow-hidden bg-[#1E293B]">
+      <section className="relative pt-20 sm:pt-24 pb-24 sm:pb-20 px-4 sm:px-6 min-h-[480px] sm:min-h-[460px] lg:min-h-[68svh] flex items-center overflow-hidden bg-[#1E293B]">
         {/* Full-bleed background video — loads only after idle, poster keeps a frame visible instantly */}
-                   <video
+        <video
           ref={videoRef}
           src={videoReady ? (heroVideo?.src || heroVideo) : undefined}
           preload="auto"
@@ -2712,19 +2821,17 @@ const heroTexts = [
 
         <div className="max-w-7xl mx-auto relative z-10 w-full">
           <div className="max-w-2xl text-center lg:text-left">
-            <div className="mb-4 sm:mb-5 inline-flex">
-              
-            </div>
-              <style>{`
+            <div className="mb-4 sm:mb-5 inline-flex"></div>
+            <style>{`
               @keyframes heroTextIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-                            @keyframes heroRollIn { from { transform: translateY(140%); } to { transform: translateY(0); } }
+              @keyframes heroRollIn { from { transform: translateY(140%); } to { transform: translateY(0); } }
               @keyframes heroRollOut { from { transform: translateY(0); visibility: visible; } 99% { visibility: visible; } to { transform: translateY(-140%); visibility: hidden; } }
               @media (prefers-reduced-motion: reduce) { .hero-roll > span { animation: none !important; } }
             `}</style>
-                        <ClientOnly
+            <ClientOnly
               fallback={
                 <h1 className="mb-5 leading-[1.1]">
-                <span suppressHydrationWarning className="block whitespace-nowrap text-[26px] min-[400px]:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white">
+                  <span suppressHydrationWarning className="block whitespace-nowrap text-[26px] min-[400px]:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white">
                     {heroTexts[currentSlide + 1].line1}
                   </span>
                   <span suppressHydrationWarning className="block whitespace-nowrap text-[26px] min-[400px]:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-[#F97316]">
@@ -2733,7 +2840,7 @@ const heroTexts = [
                 </h1>
               }
             >
-                            <h1 className="mb-5 leading-[1.1]">
+              <h1 className="mb-5 leading-[1.1]">
                 <HeroRollText
                   text={heroTexts[currentSlide + 1].line1}
                   className="text-[26px] min-[400px]:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white"
@@ -2746,7 +2853,7 @@ const heroTexts = [
                 />
               </h1>
             </ClientOnly>
-                        <p
+            <p
               key={`p-${currentSlide}`}
               suppressHydrationWarning
               className="text-sm min-[400px]:text-base sm:text-lg md:text-xl text-gray-100 mb-6 sm:mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed font-light"
@@ -2754,6 +2861,34 @@ const heroTexts = [
             >
               {heroTexts[currentSlide + 1].desc}
             </p>
+
+            {/* ── Slide-wise CTA buttons ── */}
+            <div
+              key={`cta-${currentSlide}`}
+              className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center lg:justify-start gap-3"
+              style={{ animation: "heroTextIn 0.5s ease 0.1s both" }}
+            >
+              {(heroCtas[currentSlide + 1] || []).map((cta, i) => (
+                <button
+                  key={cta.label}
+                  type="button"
+                  onClick={() => {
+                    if (cta.action === "signup") setShowSignupModal(true);
+                    else if (cta.action === "login") setShowLoginModal(true);
+                    else if (cta.route) navigate(cta.route);
+                    else if (cta.section) scrollToSection(cta.section);
+                  }}
+                  className={
+                    i === 0
+                      ? "inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm sm:text-base text-white bg-gradient-to-r from-[#F97316] to-[#ea580c] shadow-lg shadow-orange-500/30 hover:-translate-y-0.5 transition-all cursor-pointer"
+                      : "inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm sm:text-base text-white bg-white/10 backdrop-blur-md border border-white/30 hover:bg-white/20 hover:-translate-y-0.5 transition-all cursor-pointer"
+                  }
+                >
+                  {cta.label}
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
@@ -2793,16 +2928,103 @@ const heroTexts = [
             />
           ))}
         </div>
-            </section>
+      </section>
 
-            {/* ── Courses ── */}
-            <section
+      {/* ── Courses ── */}
+      <section
         id="courses"
+        ref={coursesRef}
+        style={{ overflowAnchor: "none" }}
         onMouseEnter={() => { programsPauseRef.current = true; }}
         onMouseLeave={() => { programsPauseRef.current = false; }}
-        className="py-6 sm:py-8 scroll-mt-20 bg-[#F8FAFC] dark:bg-black"
+        className="py-4 sm:py-5 scroll-mt-20 bg-[#F8FAFC] dark:bg-black"
       >
         <div className="max-w-[1440px] mx-auto px-4 sm:px-6">
+          {/* ── Journey selector (Learner / Trainer-Admin / Organization) ── */}
+          <div className="mb-6">
+            <div
+              role="tablist"
+              aria-label="Choose your journey"
+              className="flex flex-wrap items-center gap-2 mb-4"
+            >
+              <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 mr-1">
+                You are exploring as
+              </span>
+              {Object.entries(journeyPanels).map(([key, j]) => {
+                const active = journey === key;
+                return (
+                  <button
+                    key={key}
+                    type="button"
+                    role="tab"
+                    aria-selected={active}
+                    onClick={() => setJourney(key)}
+                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border transition-all duration-300 cursor-pointer ${
+                      active
+                        ? "bg-[#F97316] text-white border-[#F97316] shadow-lg shadow-orange-500/30"
+                        : "bg-white dark:bg-gray-900 text-[#1E293B] dark:text-white border-gray-200 dark:border-gray-700 hover:border-[#F97316]/50"
+                    }`}
+                  >
+                    <j.Icon className="w-4 h-4" />
+                    {j.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            {(() => {
+              const j = journeyPanels[journey];
+              return (
+                <div
+                  key={journey}
+                  className="animate-in fade-in-0 duration-500 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_auto] gap-4 items-center bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-4 sm:p-5"
+                >
+                  <div className="min-w-0">
+                    <h3 className="text-lg sm:text-xl font-bold tracking-tight text-[#1E293B] dark:text-white mb-1.5">
+                      {j.title}
+                    </h3>
+                    <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed mb-3 max-w-2xl">
+                      {j.desc}
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {j.benefits.map((b) => (
+                        <span
+                          key={b.text}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-orange-50 dark:bg-white/10 text-xs sm:text-sm font-semibold text-[#1E293B] dark:text-white"
+                        >
+                          <b.Icon className="w-3.5 h-3.5 text-[#F97316]" />
+                          {b.text}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row lg:flex-col gap-2.5">
+                    {j.ctas.map((cta, i) => (
+                      <button
+                        key={cta.label}
+                        type="button"
+                        onClick={() => {
+                          if (cta.action === "signup") setShowSignupModal(true);
+                          else if (cta.route) navigate(cta.route);
+                          else if (cta.section) scrollToSection(cta.section);
+                        }}
+                        className={
+                          i === 0
+                            ? "inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-[#F97316] to-[#ea580c] shadow-md shadow-orange-500/30 hover:-translate-y-0.5 transition-all cursor-pointer whitespace-nowrap"
+                            : "inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm text-[#1E293B] dark:text-white bg-transparent border border-gray-300 dark:border-gray-600 hover:border-[#F97316] hover:text-[#F97316] hover:-translate-y-0.5 transition-all cursor-pointer whitespace-nowrap"
+                        }
+                      >
+                        {cta.label}
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+
           {(() => {
             const source = programsLoading
               ? courses
@@ -2814,7 +3036,7 @@ const heroTexts = [
             return (
               <Tabs
                 value={activeTab}
-                  onValueChange={(v) => {
+                onValueChange={(v) => {
                   setActiveTab(v);
                   programsResumeAtRef.current = Date.now() + 12000; // user picked a tab → pause auto-rotate
                 }}
@@ -2848,9 +3070,15 @@ const heroTexts = [
                 </div>
 
                 {/* ── Right: popular programs grid ── */}
-                <div className="min-w-0">
+                <div className="min-w-0 grid">
                   {Object.entries(source).map(([category, categoryCourses]) => (
-                      <TabsContent key={category} value={category} className="mt-0 animate-in fade-in-0 duration-500">
+                    <TabsContent
+                      key={category}
+                      value={category}
+                      forceMount
+                      style={{ display: "block" }}
+                      className="mt-0 col-start-1 row-start-1 transition-opacity duration-500 data-[state=inactive]:opacity-0 data-[state=inactive]:invisible data-[state=inactive]:pointer-events-none"
+                    >
                       <div className="flex items-center gap-4 mb-4">
                         <h3 className="text-xs sm:text-sm font-bold uppercase tracking-[0.18em] text-[#1E293B] dark:text-white whitespace-nowrap">
                           Popular Programs
@@ -3031,11 +3259,10 @@ const heroTexts = [
         </div>
       </section>
 
-     
       {/* ── ILM ORA Platform hub (AI Companion / Workspace / Calendry) ── */}
       <ProductHubSection navigate={navigate} />
       {/* ── Stats ── */}
-        {/* <section className="py-6 sm:py-8 px-6 bg-white dark:bg-gray-900/50">
+      {/* <section className="py-6 sm:py-8 px-6 bg-white dark:bg-gray-900/50">
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6">
           {stats.map((stat, i) => (
             <div
@@ -3053,18 +3280,18 @@ const heroTexts = [
         </div>
       </section> */}
       {/* ── WatchNow ── */}
-            <ClientOnly>
+      <ClientOnly>
         <WatchNowSection />
       </ClientOnly>
 
       {/* ── Mentors (testimonials — backend-connected) ── */}
       <section
         id="mentors"
-        className="py-4 sm:py-5 px-4 sm:px-6 scroll-mt-20 bg-[#FAF6F2] dark:bg-gray-900/30 overflow-x-hidden"
+        className="py-4 sm:py-5 px-4 sm:px-6 scroll-mt-20 bg-[#F8FAFC] dark:bg-black overflow-x-hidden"
       >
         <div className="max-w-[1200px] mx-auto">
-          <div className="text-center max-w-[900px] lg:max-w-none mx-auto mb-5 sm:mb-5 lg:mb-5">
-                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-3 text-[#1E293B] dark:text-white leading-tight">
+          <div className="text-center max-w-[900px] lg:max-w-none mx-auto mb-3">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-2 text-[#1E293B] dark:text-white leading-tight">
               What Our <span className="text-[#F97316]">Learners</span> Have To
               Say
             </h2>
@@ -3078,11 +3305,11 @@ const heroTexts = [
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-5 sm:mb-6 lg:mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-4">
             {mentorBenefits.map((item, i) => (
               <div
                 key={i}
-                className="h-full flex items-center gap-3 bg-[#FAF6F2] dark:bg-gray-900 rounded-2xl p-4 border border-[#ECECEC] dark:border-gray-800 shadow-[0_10px_35px_rgba(0,0,0,0.08)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                className="h-full flex items-center gap-3 bg-white dark:bg-gray-900 rounded-2xl p-3 border border-[#ECECEC] dark:border-gray-800 shadow-[0_10px_35px_rgba(0,0,0,0.08)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
               >
                 <div className="w-10 h-10 bg-[#1E293B] dark:bg-[#F97316] rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
                   <item.icon className="w-5 h-5 text-white" />
@@ -3094,20 +3321,18 @@ const heroTexts = [
             ))}
           </div>
 
-                    <MentorTestimonialCarousel testimonials={testimonials} />
+          <MentorTestimonialCarousel testimonials={testimonials} />
         </div>
       </section>
-
-     
 
       {/* ── Career Support ── */}
       <section
         id="successstories"
-        className="py-5 px-4 sm:px-6 lg:px-10 scroll-mt-20 bg-[#F6EDE6] dark:bg-black"
+        className="py-4 sm:py-5 px-4 sm:px-6 lg:px-10 scroll-mt-20 bg-[#F8FAFC] dark:bg-black"
       >
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-6">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-3 text-[#1E293B] dark:text-white">
+          <div className="text-center mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-2 text-[#1E293B] dark:text-white">
               Career Support That{" "}
               <span className="text-[#F97316]">Delivers Results</span>
             </h2>
@@ -3116,16 +3341,16 @@ const heroTexts = [
               mapping
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 mb-4">
             {careerSupport.map((item, i) => (
               <div
                 key={i}
-                className="group bg-white dark:bg-gray-900 rounded-2xl p-5 border border-gray-200 dark:border-gray-800 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all"
+                className="group bg-white dark:bg-gray-900 rounded-2xl p-4 border border-gray-200 dark:border-gray-800 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all"
               >
-                <div className="w-12 h-12 bg-[#1E293B] dark:bg-[#F97316] rounded-2xl flex items-center justify-center mb-3 group-hover:scale-105 transition-transform shadow-sm">
-                  <item.icon className="w-6 h-6 text-white" />
+                <div className="w-10 h-10 bg-[#1E293B] dark:bg-[#F97316] rounded-2xl flex items-center justify-center mb-2 group-hover:scale-105 transition-transform shadow-sm">
+                  <item.icon className="w-5 h-5 text-white" />
                 </div>
-                <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-[#1E293B] dark:text-white mb-3">
+                <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-[#1E293B] dark:text-white mb-1.5">
                   {item.title}
                 </h3>
                 <p className="text-base font-normal text-slate-600 dark:text-slate-300 leading-relaxed">
@@ -3136,10 +3361,10 @@ const heroTexts = [
           </div>
 
           {/* ── Wide banner CTA ── */}
-          <div className="bg-[#F6EDE6] dark:bg-gray-900 rounded-3xl relative overflow-hidden border border-[#F97316]/20 shadow-xl">
+          <div className="bg-white dark:bg-gray-900 rounded-3xl relative overflow-hidden border border-[#F97316]/20 shadow-xl">
             <div className="flex flex-col lg:flex-row items-stretch">
               {/* ── Left: full-bleed image, fixed height, cropped to fill ── */}
-              <div className="w-full lg:w-[280px] xl:w-[320px] h-40 sm:h-44 lg:h-auto flex-shrink-0 overflow-hidden">
+              <div className="w-full lg:w-[280px] xl:w-[320px] h-32 sm:h-36 lg:h-auto flex-shrink-0 overflow-hidden">
                 <img
                   src={ctaStudent.src}
                   alt="Student ready to transform their career"
@@ -3166,20 +3391,19 @@ const heroTexts = [
                 >
                   Explore Courses <ArrowRight className="w-4 h-4" />
                 </button>
-                
               </div>
             </div>
           </div>
         </div>
       </section>
-      
+
       <RelatedLinks colors={relatedLinksColors(theme === "dark")} links={SITE_LINKS} />
 
       {/* ── Features ── */}
-        <section className="py-5 sm:py-6 px-6 bg-[#F6EDE6] dark:bg-black">
+      <section className="py-4 sm:py-5 px-4 sm:px-6 bg-[#F8FAFC] dark:bg-black">
         <div className="max-w-7xl mx-auto">
-                    <div className="text-center mb-6">
-                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-3 text-[#1E293B] dark:text-white">
+          <div className="text-center mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-2 text-[#1E293B] dark:text-white">
               Why Choose
               <span className="ml-2">
                 <span className="text-green-600">ILM</span>{" "}
@@ -3190,16 +3414,16 @@ const heroTexts = [
               Everything you need to accelerate your career growth
             </p>
           </div>
-          <div className="grid grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {features.map((feature, i) => (
               <div
                 key={i}
                 className="bg-white dark:bg-gray-900 rounded-2xl p-4 border border-gray-200 dark:border-gray-800 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all group"
               >
-                                <div className="w-11 h-11 bg-[#1E293B] dark:bg-[#F97316] rounded-2xl flex items-center justify-center mb-3 group-hover:scale-105 transition-transform shadow-sm">
+                <div className="w-11 h-11 bg-[#1E293B] dark:bg-[#F97316] rounded-2xl flex items-center justify-center mb-2 group-hover:scale-105 transition-transform shadow-sm">
                   <feature.icon className="w-5 h-5 text-white" />
                 </div>
-                  <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-[#1E293B] dark:text-white mb-2">
+                <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-[#1E293B] dark:text-white mb-1">
                   {feature.title}
                 </h3>
                 <p className="text-base font-normal text-slate-600 dark:text-slate-300 leading-relaxed">
@@ -3211,18 +3435,18 @@ const heroTexts = [
         </div>
       </section>
 
-        <section className="py-5 sm:py-6 px-4 sm:px-6 relative overflow-hidden bg-white dark:bg-[#0F172A]">
+      <section id="partners" className="py-4 sm:py-5 px-4 sm:px-6 relative overflow-hidden bg-[#F8FAFC] dark:bg-black scroll-mt-20">
         <div className="max-w-7xl mx-auto">
-            <div className="text-center mb-6" style={{ marginBottom: 16 }}>
-                        <p className="text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 font-semibold">
+          <div className="text-center" style={{ marginBottom: 12 }}>
+            <p className="text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 font-semibold">
               TRUSTED BY LEADING ORGANIZATIONS
             </p>
 
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-[#1E293B] dark:text-white mt-3">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-[#1E293B] dark:text-white mt-2">
               Top Global <span className="text-[#F97316]">Companies</span>
             </h2>
 
-            <p className="mt-3 max-w-2xl mx-auto text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+            <p className="mt-2 max-w-2xl mx-auto text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
               We collaborate with leading technology providers and business
               organizations to deliver innovative digital solutions.
             </p>
@@ -3237,10 +3461,9 @@ const heroTexts = [
           />
         </div>
       </section>
-            
-      
+
       {/* ── Footer ── */}
-            <ClientOnly>
+      <ClientOnly>
         <Footer scrollToSection={scrollToSection} />
       </ClientOnly>
       {/* ── Login Modal ── */}
@@ -3550,6 +3773,6 @@ const heroTexts = [
           }}
         />
       )}
-            </div>
+    </div>
   );
 }
