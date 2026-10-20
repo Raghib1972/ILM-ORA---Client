@@ -165,7 +165,7 @@ function AdminThumb({ thumbnail, alt = "", style, className }) {
   return <img src={src} alt={alt} className={className} style={style} />;
 }
 
-const CATEGORY_OPTIONS = [
+const DEFAULT_CATEGORY_OPTIONS = [
   "Career Stories",
   "Interview Prep",
   "Resume & Portfolio",
@@ -174,12 +174,32 @@ const CATEGORY_OPTIONS = [
   "Live Sessions",
   "Hands-on Projects",
 ];
-const AUDIENCE_OPTIONS = [
+const DEFAULT_AUDIENCE_OPTIONS = [
   "Students",
   "Professionals",
   "Trainers",
   "Organizations",
 ];
+
+/* Custom options are remembered in the browser so they survive reloads. */
+const loadCustomOptions = (key) => {
+  try {
+    const raw = localStorage.getItem(key);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+};
+const saveCustomOptions = (key, arr) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(arr));
+  } catch {
+    /* ignore */
+  }
+};
+
+const ADD_NEW_VALUE = "__add_new__";
 
 function StatusBadge({ status, dark }) {
   const isPublished = status === "published";
@@ -560,9 +580,59 @@ function StoryEditor({ t, initial, onCancel, onSaved }) {
   const [externalUrl, setExternalUrl] = useState(
     initial?.externalVideoUrl || "",
   );
-  const [thumbnailFile, setThumbnailFile] = useState(null);
+   const [thumbnailFile, setThumbnailFile] = useState(null);
   const [thumbnailPreview, setThumbnailPreview] = useState(null);
   const [error, setError] = useState("");
+
+  // Custom (admin-added) dropdown options
+  const [customCategories, setCustomCategories] = useState(() =>
+    loadCustomOptions("watchnow_custom_categories"),
+  );
+  const [customAudiences, setCustomAudiences] = useState(() =>
+    loadCustomOptions("watchnow_custom_audiences"),
+  );
+  const [addingField, setAddingField] = useState(null); // "category" | "audience" | null
+  const [newOptionText, setNewOptionText] = useState("");
+
+  const categoryOptions = useMemo(() => {
+    const all = [...DEFAULT_CATEGORY_OPTIONS, ...customCategories];
+    // make sure an edited story's existing value always shows up
+    if (category && !all.includes(category)) all.push(category);
+    return all;
+  }, [customCategories, category]);
+
+  const audienceOptions = useMemo(() => {
+    const all = [...DEFAULT_AUDIENCE_OPTIONS, ...customAudiences];
+    if (audience && !all.includes(audience)) all.push(audience);
+    return all;
+  }, [customAudiences, audience]);
+
+  const confirmAddOption = () => {
+    const val = newOptionText.trim();
+    if (!val) return;
+    if (addingField === "category") {
+      if (!categoryOptions.includes(val)) {
+        const next = [...customCategories, val];
+        setCustomCategories(next);
+        saveCustomOptions("watchnow_custom_categories", next);
+      }
+      setCategory(val);
+    } else if (addingField === "audience") {
+      if (!audienceOptions.includes(val)) {
+        const next = [...customAudiences, val];
+        setCustomAudiences(next);
+        saveCustomOptions("watchnow_custom_audiences", next);
+      }
+      setAudience(val);
+    }
+    setAddingField(null);
+    setNewOptionText("");
+  };
+
+  const cancelAddOption = () => {
+    setAddingField(null);
+    setNewOptionText("");
+  };
 
   // Resolve the initial (edit-mode) thumbnail asynchronously — it may be
   // a plain filename that needs a presigned-URL lookup, or an absolute
@@ -762,35 +832,117 @@ function StoryEditor({ t, initial, onCancel, onSaved }) {
           <div
             style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
           >
-            <Field label="Category" t={t}>
+                        <Field label="Category" t={t}>
               <select
                 value={category}
-                onChange={(e) => setCategory(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value === ADD_NEW_VALUE) {
+                    setAddingField("category");
+                    setNewOptionText("");
+                  } else {
+                    setCategory(e.target.value);
+                  }
+                }}
                 style={{ ...getInputStyle(t), cursor: "pointer" }}
               >
                 <option value="">Select category</option>
-                {CATEGORY_OPTIONS.map((c) => (
+                {categoryOptions.map((c) => (
                   <option key={c} value={c}>
                     {c}
                   </option>
                 ))}
+                <option value={ADD_NEW_VALUE}>＋ Add new category…</option>
               </select>
             </Field>
             <Field label="Audience" t={t}>
               <select
                 value={audience}
-                onChange={(e) => setAudience(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value === ADD_NEW_VALUE) {
+                    setAddingField("audience");
+                    setNewOptionText("");
+                  } else {
+                    setAudience(e.target.value);
+                  }
+                }}
                 style={{ ...getInputStyle(t), cursor: "pointer" }}
               >
                 <option value="">Select audience</option>
-                {AUDIENCE_OPTIONS.map((a) => (
+                {audienceOptions.map((a) => (
                   <option key={a} value={a}>
                     {a}
                   </option>
                 ))}
+                <option value={ADD_NEW_VALUE}>＋ Add new audience…</option>
               </select>
             </Field>
           </div>
+                    {addingField && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                padding: 10,
+                borderRadius: 10,
+                border: `1px solid ${t.accent}`,
+                background: t.accentSoft,
+              }}
+            >
+              <input
+                autoFocus
+                value={newOptionText}
+                onChange={(e) => setNewOptionText(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    confirmAddOption();
+                  }
+                  if (e.key === "Escape") cancelAddOption();
+                }}
+                placeholder={
+                  addingField === "category"
+                    ? "Type new category name"
+                    : "Type new audience name"
+                }
+                style={{ ...getInputStyle(t), flex: 1 }}
+              />
+              <button
+                type="button"
+                onClick={confirmAddOption}
+                style={{
+                  padding: "9px 14px",
+                  borderRadius: 8,
+                  border: "none",
+                  background: t.accent,
+                  color: "#fff",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  fontFamily: "Inter,sans-serif",
+                }}
+              >
+                Add
+              </button>
+              <button
+                type="button"
+                onClick={cancelAddOption}
+                style={{
+                  padding: "9px 12px",
+                  borderRadius: 8,
+                  border: t.inputBorder,
+                  background: t.inputBg,
+                  color: t.textSecondary,
+                  fontSize: 12,
+                  fontWeight: 600,
+                  cursor: "pointer",
+                  fontFamily: "Inter,sans-serif",
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          )}
           <Field label="Duration" t={t}>
             <input
               value={duration}
