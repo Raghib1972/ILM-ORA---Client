@@ -165,6 +165,22 @@ function AdminThumb({ thumbnail, alt = "", style, className }) {
   return <img src={src} alt={alt} className={className} style={style} />;
 }
 
+const CATEGORY_OPTIONS = [
+  "Career Stories",
+  "Interview Prep",
+  "Resume & Portfolio",
+  "Platform Guides",
+  "Product Demos",
+  "Live Sessions",
+  "Hands-on Projects",
+];
+const AUDIENCE_OPTIONS = [
+  "Students",
+  "Professionals",
+  "Trainers",
+  "Organizations",
+];
+
 function StatusBadge({ status, dark }) {
   const isPublished = status === "published";
   const cfg = isPublished
@@ -534,7 +550,11 @@ function StoryEditor({ t, initial, onCancel, onSaved }) {
   const isEdit = !!initial?.id;
   const [quote, setQuote] = useState(initial?.quote || "");
   const [personName, setPersonName] = useState(initial?.personName || "");
-  const [personRole, setPersonRole] = useState(initial?.personRole || "");
+    const [personRole, setPersonRole] = useState(initial?.personRole || "");
+  const [title, setTitle] = useState(initial?.title || "");
+  const [category, setCategory] = useState(initial?.category || "");
+  const [audience, setAudience] = useState(initial?.audience || "");
+  const [duration, setDuration] = useState(initial?.duration || "");
   const [mode, setMode] = useState(initial?.externalVideoUrl ? "url" : "file");
   const [videoFile, setVideoFile] = useState(null);
   const [externalUrl, setExternalUrl] = useState(
@@ -577,7 +597,12 @@ function StoryEditor({ t, initial, onCancel, onSaved }) {
     fd.append("personName", personName);
     fd.append("personRole", personRole);
     fd.append("status", status);
-    fd.append("sortOrder", initial?.sortOrder ?? 0);
+        fd.append("sortOrder", initial?.sortOrder ?? 0);
+    // empty string = clear the field (backend applyMeta handles it)
+    fd.append("title", title.trim());
+    fd.append("category", category);
+    fd.append("audience", audience);
+    fd.append("duration", duration.trim());
     if (mode === "url") {
       fd.append("externalVideoUrl", externalUrl.trim());
     } else if (videoFile) {
@@ -720,11 +745,60 @@ function StoryEditor({ t, initial, onCancel, onSaved }) {
               <input
                 value={personRole}
                 onChange={(e) => setPersonRole(e.target.value)}
-                placeholder="e.g. Software Engineer @ Acme"
+                                placeholder="e.g. Software Engineer @ Acme"
                 style={getInputStyle(t)}
               />
             </Field>
           </div>
+
+          <Field label="Video Title" t={t}>
+            <input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="e.g. My Journey at Texora AI"
+              style={getInputStyle(t)}
+            />
+          </Field>
+          <div
+            style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
+          >
+            <Field label="Category" t={t}>
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                style={{ ...getInputStyle(t), cursor: "pointer" }}
+              >
+                <option value="">Select category</option>
+                {CATEGORY_OPTIONS.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Audience" t={t}>
+              <select
+                value={audience}
+                onChange={(e) => setAudience(e.target.value)}
+                style={{ ...getInputStyle(t), cursor: "pointer" }}
+              >
+                <option value="">Select audience</option>
+                {AUDIENCE_OPTIONS.map((a) => (
+                  <option key={a} value={a}>
+                    {a}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          </div>
+          <Field label="Duration" t={t}>
+            <input
+              value={duration}
+              onChange={(e) => setDuration(e.target.value)}
+              placeholder="e.g. 4:32"
+              style={getInputStyle(t)}
+            />
+          </Field>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
@@ -1044,7 +1118,9 @@ export default function AdminWatchNowManagement() {
         !q ||
         v.quote?.toLowerCase().includes(q) ||
         v.personName?.toLowerCase().includes(q) ||
-        v.personRole?.toLowerCase().includes(q);
+                v.personRole?.toLowerCase().includes(q) ||
+        v.title?.toLowerCase().includes(q) ||
+        v.category?.toLowerCase().includes(q);
       const matchesStatus = !statusFilter || v.status === statusFilter;
       return matchesSearch && matchesStatus;
     });

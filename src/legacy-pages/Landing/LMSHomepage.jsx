@@ -1676,7 +1676,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
   const [showModalPw, setShowModalPw] = useState(false);
   const [journey, setJourney] = useState("learner");
 
-  const heroImages = [
+      const heroImages = [
     heroStudent,
     heroStudent2,
     heroStudent3,
@@ -1686,16 +1686,9 @@ export default function LMSHomepage({ theme, toggleTheme }) {
     hero7,
     hero8,
   ];
-  const heroImagePositions = [
-    "center 10%",
-    "center 10%",
-    "center 10%",
-    "center 10%",
-    "center 10%",
-    "center 10%",
-    "center 10%",
-    "center 10%",
-  ];
+  // object-position per image: mobile / desktop
+  const heroPosMobile = ["center", "45% center", "16% center", "center", "center", "center", "center", "center"];
+  const heroPosDesktop = ["center 3%", "center 20%", "center 9%", "center 25%", "center", "center 15%", "center 35%", "center 10%"];
   // Index = currentSlide + 1  ->  0: video, 1: student, 2: high-five, 3: team, 4-8: hero-4 to hero-8
   const heroTexts = [
     {
@@ -2777,8 +2770,9 @@ export default function LMSHomepage({ theme, toggleTheme }) {
       </ClientOnly>
 
       {/* ── Hero ── */}
-      <section className="relative pt-20 sm:pt-24 pb-24 sm:pb-20 px-4 sm:px-6 min-h-[480px] sm:min-h-[460px] lg:min-h-[68svh] flex items-center overflow-hidden bg-[#1E293B]">
-        {/* Full-bleed background video — loads only after idle, poster keeps a frame visible instantly */}
+            <section className="relative pt-20 sm:pt-24 pb-24 sm:pb-20 px-4 sm:px-6 min-h-[520px] sm:min-h-[480px] lg:min-h-[64svh] flex items-center overflow-hidden bg-[#1E293B]">
+                {/* Media layer starts below the fixed navbar so heads are never hidden under it */}
+               <div className="absolute inset-x-0 bottom-0 top-14 sm:top-[62px]">
         <video
           ref={videoRef}
           src={videoReady ? (heroVideo?.src || heroVideo) : undefined}
@@ -2805,9 +2799,10 @@ export default function LMSHomepage({ theme, toggleTheme }) {
             loading={index === 0 ? "eager" : "lazy"}
             decoding="async"
             fetchpriority={index === 0 ? "high" : "low"}
-            className="absolute inset-0 w-full h-full object-cover"
+                        className="hero-media absolute inset-0 w-full h-full object-cover"
             style={{
-              objectPosition: heroImagePositions[index] || "center 10%",
+              "--pm": heroPosMobile[index],
+              "--pd": heroPosDesktop[index],
               opacity: currentSlide === index ? 1 : 0,
               transition: "opacity 0.6s ease",
               zIndex: 0,
@@ -2815,9 +2810,11 @@ export default function LMSHomepage({ theme, toggleTheme }) {
             }}
           />
         ))}
-
-        {/* Dark gradient overlay so text stays readable over any image/video */}
-        <div className="absolute inset-0 bg-gradient-to-b sm:bg-gradient-to-r from-black/75 via-black/60 to-black/50 sm:via-black/55 sm:to-black/15 z-[1]" />
+         </div>
+                {/* Solid dark overlay so text stays readable over any image/video */}
+        <div className="absolute inset-0 bg-black/45 z-[1]" />
+        {/* Directional gradient: top-to-bottom on mobile, left-to-right on desktop */}
+        <div className="absolute inset-0 bg-gradient-to-b sm:bg-gradient-to-r from-black/80 via-black/60 to-black/45 sm:from-black/85 sm:via-black/60 sm:to-black/25 z-[1]" />
 
         <div className="max-w-7xl mx-auto relative z-10 w-full">
           <div className="max-w-2xl text-center lg:text-left">
@@ -2827,10 +2824,12 @@ export default function LMSHomepage({ theme, toggleTheme }) {
               @keyframes heroRollIn { from { transform: translateY(140%); } to { transform: translateY(0); } }
               @keyframes heroRollOut { from { transform: translateY(0); visibility: visible; } 99% { visibility: visible; } to { transform: translateY(-140%); visibility: hidden; } }
               @media (prefers-reduced-motion: reduce) { .hero-roll > span { animation: none !important; } }
+                            .hero-media { object-position: var(--pm, center); }
+              @media (min-width: 640px) { .hero-media { object-position: var(--pd, center top); } }
             `}</style>
             <ClientOnly
               fallback={
-                <h1 className="mb-5 leading-[1.1]">
+                                <h1 className="mb-5 leading-[1.1] drop-shadow-[0_2px_12px_rgba(0,0,0,0.65)]">
                   <span suppressHydrationWarning className="block whitespace-nowrap text-[26px] min-[400px]:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white">
                     {heroTexts[currentSlide + 1].line1}
                   </span>
@@ -2840,7 +2839,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
                 </h1>
               }
             >
-              <h1 className="mb-5 leading-[1.1]">
+                              <h1 className="mb-3 sm:mb-4 leading-[1.1] drop-shadow-[0_2px_12px_rgba(0,0,0,0.65)]">
                 <HeroRollText
                   text={heroTexts[currentSlide + 1].line1}
                   className="text-[26px] min-[400px]:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white"
@@ -2853,11 +2852,14 @@ export default function LMSHomepage({ theme, toggleTheme }) {
                 />
               </h1>
             </ClientOnly>
-            <p
+                        <p
               key={`p-${currentSlide}`}
               suppressHydrationWarning
-              className="text-sm min-[400px]:text-base sm:text-lg md:text-xl text-gray-100 mb-6 sm:mb-8 max-w-xl mx-auto lg:mx-0 leading-relaxed font-light"
-              style={{ animation: "heroTextIn 0.5s ease both" }}
+                            className="text-sm min-[400px]:text-base sm:text-lg md:text-xl text-white mb-5 sm:mb-6 max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal line-clamp-3 min-h-[4.5em] sm:min-h-[3.25em]"
+              style={{
+                animation: "heroTextIn 0.5s ease both",
+                textShadow: "0 1px 8px rgba(0,0,0,0.6)",
+              }}
             >
               {heroTexts[currentSlide + 1].desc}
             </p>
@@ -2881,7 +2883,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
                   className={
                     i === 0
                       ? "inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm sm:text-base text-white bg-gradient-to-r from-[#F97316] to-[#ea580c] shadow-lg shadow-orange-500/30 hover:-translate-y-0.5 transition-all cursor-pointer"
-                      : "inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm sm:text-base text-white bg-white/10 backdrop-blur-md border border-white/30 hover:bg-white/20 hover:-translate-y-0.5 transition-all cursor-pointer"
+                                            : "inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium text-sm sm:text-base text-white/90 bg-transparent border border-white/25 hover:bg-white/10 hover:text-white transition-all cursor-pointer"
                   }
                 >
                   {cta.label}
@@ -2901,8 +2903,8 @@ export default function LMSHomepage({ theme, toggleTheme }) {
               width: currentSlide === -1 ? "28px" : "10px",
               height: "10px",
               borderRadius: "9999px",
-              background:
-                currentSlide === -1 ? "#22c55e" : "rgba(255,255,255,0.4)",
+                            background:
+                currentSlide === -1 ? "#F97316" : "rgba(255,255,255,0.4)",
               border: "none",
               cursor: "pointer",
               padding: 0,
@@ -2945,9 +2947,9 @@ export default function LMSHomepage({ theme, toggleTheme }) {
             <div
               role="tablist"
               aria-label="Choose your journey"
-              className="flex flex-wrap items-center gap-2 mb-4"
+                            className="flex flex-wrap items-center gap-x-1.5 gap-y-2 sm:gap-2 mb-4"
             >
-              <span className="text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 mr-1">
+              <span className="w-full sm:w-auto text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 sm:mr-1">
                 You are exploring as
               </span>
               {Object.entries(journeyPanels).map(([key, j]) => {
@@ -2959,7 +2961,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
                     role="tab"
                     aria-selected={active}
                     onClick={() => setJourney(key)}
-                    className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold border transition-all duration-300 cursor-pointer ${
+                                        className={`inline-flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-2 rounded-full text-xs sm:text-sm font-semibold border whitespace-nowrap transition-all duration-300 cursor-pointer ${
                       active
                         ? "bg-[#F97316] text-white border-[#F97316] shadow-lg shadow-orange-500/30"
                         : "bg-white dark:bg-gray-900 text-[#1E293B] dark:text-white border-gray-200 dark:border-gray-700 hover:border-[#F97316]/50"
