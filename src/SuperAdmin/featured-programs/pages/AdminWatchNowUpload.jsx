@@ -27,6 +27,8 @@ import {
   Loader,
   ListVideo,
   ExternalLink,
+  Heart,
+  RefreshCw,
 } from "lucide-react";
 import videoService from "../../../services/videoService";
 // ⚠️ Adjust this import path to match where ThemeContext actually lives
@@ -122,10 +124,6 @@ function isYouTubeUrl(rawUrl) {
   );
 }
 
-/* ✅ NEW — the backend now sometimes returns a full YouTube thumbnail URL
-   directly (already public, no need to hit our stream endpoint), and
-   sometimes returns just a filename for manually-uploaded thumbnails
-   (needs our stream endpoint to resolve to a signed S3 link). */
 /* ✅ NEW — the backend now sometimes returns a full YouTube thumbnail URL
    directly (already public, no need to hit our stream endpoint), and
    sometimes returns just a filename for manually-uploaded thumbnails
@@ -241,7 +239,15 @@ function StatusBadge({ status, dark }) {
    STAT CARDS — same visual pattern as Featured Programs
    (Total / Active / Inactive / Categories), adapted to stories.
    ============================================================ */
-function StatsBar({ t, stats, loading, statusFilter, setStatusFilter }) {
+function StatsBar({
+  t,
+  stats,
+  loading,
+  statusFilter,
+  setStatusFilter,
+  totalViews = 0,
+  totalLikes = 0,
+}) {
   const cards = [
     {
       key: "",
@@ -270,6 +276,22 @@ function StatsBar({ t, stats, loading, statusFilter, setStatusFilter }) {
       value: stats.externalVideos,
       gradient: "linear-gradient(135deg, #8b5cf6, #6d28d9)",
       icon: ExternalLink,
+      nonFilter: true,
+    },
+    {
+      key: "",
+      label: "Total Views",
+      value: Number(totalViews).toLocaleString("en-IN"),
+      gradient: "linear-gradient(135deg, #0ea5e9, #0369a1)",
+      icon: Eye,
+      nonFilter: true,
+    },
+    {
+      key: "",
+      label: "Total Likes",
+      value: Number(totalLikes).toLocaleString("en-IN"),
+      gradient: "linear-gradient(135deg, #f43f5e, #be123c)",
+      icon: Heart,
       nonFilter: true,
     },
   ];
@@ -1237,6 +1259,15 @@ export default function AdminWatchNowManagement() {
 
   const dragIndexRef = useRef(null);
 
+  // real totals from the backend counters (views / likes per story)
+  const totals = useMemo(
+    () => ({
+      views: items.reduce((n, v) => n + (Number(v.views) || 0), 0),
+      likes: items.reduce((n, v) => n + (Number(v.likes) || 0), 0),
+    }),
+    [items],
+  );
+
   const loadAll = useCallback(async () => {
     setLoading(true);
     setStatsLoading(true);
@@ -1303,9 +1334,15 @@ export default function AdminWatchNowManagement() {
     const from = dragIndexRef.current;
     dragIndexRef.current = null;
     if (from == null || from === targetIdx) return;
+    // idx comes from the *filtered* list -> convert to positions in the full list
+    const fromId = filtered[from]?.id;
+    const toId = filtered[targetIdx]?.id;
+    const fromPos = items.findIndex((v) => v.id === fromId);
+    const toPos = items.findIndex((v) => v.id === toId);
+    if (fromPos < 0 || toPos < 0) return;
     const next = [...items];
-    const [moved] = next.splice(from, 1);
-    next.splice(targetIdx, 0, moved);
+    const [moved] = next.splice(fromPos, 1);
+    next.splice(toPos, 0, moved);
     persistOrder(next);
   };
 
@@ -1325,7 +1362,7 @@ export default function AdminWatchNowManagement() {
       }}
     >
       <div
-        style={{ maxWidth: 1200, margin: "0 auto", padding: "24px 22px 60px" }}
+        style={{ maxWidth: 1360, margin: "0 auto", padding: "24px 22px 60px" }}
       >
         {/* Header */}
         <div
@@ -1397,6 +1434,8 @@ export default function AdminWatchNowManagement() {
             loading={statsLoading}
             statusFilter={statusFilter}
             setStatusFilter={setStatusFilter}
+            totalViews={totals.views}
+            totalLikes={totals.likes}
           />
         </div>
 
@@ -1498,6 +1537,25 @@ export default function AdminWatchNowManagement() {
           >
             {filtered.length} result{filtered.length === 1 ? "" : "s"}
           </span>
+          <button
+            type="button"
+            onClick={loadAll}
+            title="Refresh views & likes"
+            style={{
+              width: 38,
+              height: 38,
+              borderRadius: 8,
+              border: t.inputBorder,
+              background: t.inputBg,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              flexShrink: 0,
+            }}
+          >
+            <RefreshCw size={14} color={t.textMuted} />
+          </button>
         </div>
 
         {/* Table */}
@@ -1550,7 +1608,7 @@ export default function AdminWatchNowManagement() {
                 style={{
                   display: "grid",
                   gridTemplateColumns:
-                    "28px 64px 2fr 1.2fr 100px 90px 140px 100px",
+                    "28px 64px 2fr 1.2fr 100px 72px 72px 90px 140px 100px",
                   gap: 12,
                   padding: "10px 16px",
                   borderBottom: t.surfaceBorder,
@@ -1563,6 +1621,8 @@ export default function AdminWatchNowManagement() {
                   "QUOTE",
                   "PERSON",
                   "SOURCE",
+                  "VIEWS",
+                  "LIKES",
                   "STATUS",
                   "CREATED",
                   "ACTIONS",
@@ -1591,7 +1651,7 @@ export default function AdminWatchNowManagement() {
                   style={{
                     display: "grid",
                     gridTemplateColumns:
-                      "28px 64px 2fr 1.2fr 100px 90px 140px 100px",
+                      "28px 64px 2fr 1.2fr 100px 72px 72px 90px 140px 100px",
                     gap: 12,
                     alignItems: "center",
                     padding: "10px 16px",
@@ -1665,6 +1725,34 @@ export default function AdminWatchNowManagement() {
                       <LinkIcon size={11} />
                     )}
                     {item.videoFileName ? "Uploaded" : "External"}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: 12.5,
+                      fontWeight: 600,
+                      color: t.textSecondary,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 5,
+                    }}
+                    title="Total views"
+                  >
+                    <Eye size={12} color={t.textMuted} />
+                    {(Number(item.views) || 0).toLocaleString("en-IN")}
+                  </span>
+                  <span
+                    style={{
+                      fontSize: 12.5,
+                      fontWeight: 600,
+                      color: t.textSecondary,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 5,
+                    }}
+                    title="Total likes"
+                  >
+                    <Heart size={12} color="#ef4444" />
+                    {(Number(item.likes) || 0).toLocaleString("en-IN")}
                   </span>
                   <StatusBadge status={item.status} dark={dark} />
                   <span style={{ fontSize: 11, color: t.textFaint }}>

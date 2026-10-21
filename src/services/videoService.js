@@ -381,19 +381,6 @@ const videoService = {
   },
 
   /**
-   * Public counters for the /watch-now page. Each returns { views, likes }.
-   */
-  incrementWatchNowView(id) {
-    return axios.post(`${API_GATEWAY}/v1/watch-now/${id}/view`);
-  },
-  likeWatchNow(id) {
-    return axios.post(`${API_GATEWAY}/v1/watch-now/${id}/like`);
-  },
-  unlikeWatchNow(id) {
-    return axios.post(`${API_GATEWAY}/v1/watch-now/${id}/unlike`);
-  },
-
-  /**
    * Create a new WatchNow entry (SUPER_ADMIN only).
    * @param {FormData} formData – "video" optional, "thumbnail" required, + DTO fields
    * @param {Function} onProgress
