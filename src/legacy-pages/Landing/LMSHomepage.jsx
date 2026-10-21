@@ -1444,10 +1444,10 @@ function ProductHubSection({ navigate }) {
       <style>{`@keyframes hubFade { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }`}</style>
 
       <div className="text-center mb-3 sm:mb-4">
-        <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-[#1E293B] dark:text-white">
+        <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight text-[#1E293B] dark:text-white">
           Explore the <span className="text-[#F97316]">ILM ORA Platform</span>
         </h2>
-        <p className="mt-1.5 max-w-4xl mx-auto text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+        <p className="mt-1.5 max-w-4xl mx-auto text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
           Pick a product, preview its features and open it with one click.
         </p>
       </div>
@@ -1497,12 +1497,12 @@ function ProductHubSection({ navigate }) {
           }`}
           style={{ animation: "hubFade 0.35s ease both" }}
         >
-          <h2 className="text-2xl sm:text-3xl xl:text-4xl font-bold tracking-tight text-[#1E293B] dark:text-white leading-tight mb-3">
+          <h2 className="text-xl sm:text-2xl xl:text-3xl font-semibold tracking-tight text-[#1E293B] dark:text-white leading-tight mb-3">
             {product.line1} <br className="hidden lg:block" />
             <span className="text-[#F97316]">{product.line2}</span>
           </h2>
 
-          <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 max-w-md mx-auto lg:mx-0 mb-6 leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-md mx-auto lg:mx-0 mb-6 leading-relaxed">
             {product.desc}
           </p>
 
@@ -2830,10 +2830,10 @@ export default function LMSHomepage({ theme, toggleTheme }) {
             <ClientOnly
               fallback={
                                 <h1 className="mb-5 leading-[1.1] drop-shadow-[0_2px_12px_rgba(0,0,0,0.65)]">
-                  <span suppressHydrationWarning className="block whitespace-nowrap text-[26px] min-[400px]:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white">
+                  <span suppressHydrationWarning className="block whitespace-nowrap text-2xl min-[400px]:text-[28px] sm:text-3xl md:text-4xl lg:text-5xl font-medium text-white">
                     {heroTexts[currentSlide + 1].line1}
                   </span>
-                  <span suppressHydrationWarning className="block whitespace-nowrap text-[26px] min-[400px]:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-[#F97316]">
+                  <span suppressHydrationWarning className="block whitespace-nowrap text-2xl min-[400px]:text-[28px] sm:text-3xl md:text-4xl lg:text-5xl font-medium text-[#F97316]">
                     {heroTexts[currentSlide + 1].line2}
                   </span>
                 </h1>
@@ -2842,20 +2842,20 @@ export default function LMSHomepage({ theme, toggleTheme }) {
                               <h1 className="mb-3 sm:mb-4 leading-[1.1] drop-shadow-[0_2px_12px_rgba(0,0,0,0.65)]">
                 <HeroRollText
                   text={heroTexts[currentSlide + 1].line1}
-                  className="text-[26px] min-[400px]:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium text-white"
+                  className="text-2xl min-[400px]:text-[28px] sm:text-3xl md:text-4xl lg:text-5xl font-medium text-white"
                 />
                 <HeroRollText
                   text={heroTexts[currentSlide + 1].line2}
                   delay={90}
                   gradient="bg-gradient-to-r from-[#F97316] to-[#FBBF24] bg-clip-text text-transparent"
-                  className="text-[26px] min-[400px]:text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-medium"
+                  className="text-2xl min-[400px]:text-[28px] sm:text-3xl md:text-4xl lg:text-5xl font-medium"
                 />
               </h1>
             </ClientOnly>
                         <p
               key={`p-${currentSlide}`}
               suppressHydrationWarning
-                            className="text-sm min-[400px]:text-base sm:text-lg md:text-xl text-white mb-5 sm:mb-6 max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal line-clamp-3 min-h-[4.5em] sm:min-h-[3.25em]"
+                            className="text-sm sm:text-base md:text-lg text-white mb-5 sm:mb-6 max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal line-clamp-3 min-h-[4.5em] sm:min-h-[3.25em]"
               style={{
                 animation: "heroTextIn 0.5s ease both",
                 textShadow: "0 1px 8px rgba(0,0,0,0.6)",
@@ -3049,7 +3049,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
                   <span className="block text-[11px] font-bold uppercase tracking-[0.18em] text-[#6D28D9] dark:text-violet-400 mb-2">
                     Explore by category
                   </span>
-                  <h2 className="text-2xl sm:text-[26px] font-bold tracking-tight text-[#1E293B] dark:text-white leading-tight mb-4 whitespace-nowrap">
+                  <h2 className="text-xl sm:text-[22px] font-semibold tracking-tight text-[#1E293B] dark:text-white leading-tight mb-4 whitespace-nowrap">
                     Featured Programs
                   </h2>
 
@@ -3293,7 +3293,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
       >
         <div className="max-w-[1200px] mx-auto">
           <div className="text-center max-w-[900px] lg:max-w-none mx-auto mb-3">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-2 text-[#1E293B] dark:text-white leading-tight">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight mb-2 text-[#1E293B] dark:text-white leading-tight">
               What Our <span className="text-[#F97316]">Learners</span> Have To
               Say
             </h2>
@@ -3334,11 +3334,11 @@ export default function LMSHomepage({ theme, toggleTheme }) {
       >
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-4">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-2 text-[#1E293B] dark:text-white">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight mb-2 text-[#1E293B] dark:text-white">
               Career Support That{" "}
               <span className="text-[#F97316]">Delivers Results</span>
             </h2>
-            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-3xl mx-auto">
+            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed max-w-3xl mx-auto">
               Get help with interview prep, portfolios, referrals and role
               mapping
             </p>
@@ -3352,10 +3352,10 @@ export default function LMSHomepage({ theme, toggleTheme }) {
                 <div className="w-10 h-10 bg-[#1E293B] dark:bg-[#F97316] rounded-2xl flex items-center justify-center mb-2 group-hover:scale-105 transition-transform shadow-sm">
                   <item.icon className="w-5 h-5 text-white" />
                 </div>
-                <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-[#1E293B] dark:text-white mb-1.5">
+                <h3 className="text-base sm:text-lg font-semibold tracking-tight text-[#1E293B] dark:text-white mb-1.5">
                   {item.title}
                 </h3>
-                <p className="text-base font-normal text-slate-600 dark:text-slate-300 leading-relaxed">
+                <p className="text-sm font-normal text-slate-600 dark:text-slate-300 leading-relaxed">
                   {item.description}
                 </p>
               </div>
@@ -3376,10 +3376,10 @@ export default function LMSHomepage({ theme, toggleTheme }) {
 
               {/* ── Middle: Content ── */}
               <div className="flex-1 flex flex-col justify-center items-center text-center lg:items-start lg:text-left px-6 sm:px-10 py-5 lg:py-4">
-                <h3 className="text-xl sm:text-2xl lg:text-3xl font-semibold tracking-tight mb-2 text-[#1E293B] dark:text-white leading-tight">
+                <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold tracking-tight mb-2 text-[#1E293B] dark:text-white leading-tight">
                   Ready to Transform Your Career?
                 </h3>
-                <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-xl">
+                <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed max-w-xl">
                   Join 5000+ professionals who've already taken the leap with
                   our project-based programs and expert mentorship.
                 </p>
@@ -3425,10 +3425,10 @@ export default function LMSHomepage({ theme, toggleTheme }) {
                 <div className="w-11 h-11 bg-[#1E293B] dark:bg-[#F97316] rounded-2xl flex items-center justify-center mb-2 group-hover:scale-105 transition-transform shadow-sm">
                   <feature.icon className="w-5 h-5 text-white" />
                 </div>
-                <h3 className="text-lg sm:text-xl font-semibold tracking-tight text-[#1E293B] dark:text-white mb-1">
+                <h3 className="text-base sm:text-lg font-semibold tracking-tight text-[#1E293B] dark:text-white mb-1">
                   {feature.title}
                 </h3>
-                <p className="text-base font-normal text-slate-600 dark:text-slate-300 leading-relaxed">
+                <p className="text-sm font-normal text-slate-600 dark:text-slate-300 leading-relaxed">
                   {feature.description}
                 </p>
               </div>

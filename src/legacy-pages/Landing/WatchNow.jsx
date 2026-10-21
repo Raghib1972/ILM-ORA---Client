@@ -2349,37 +2349,40 @@ function WatchNowCarousel({ stories, onSelect, paused, favs, onToggleFav }) {
     return () => ro.disconnect();
   }, []);
 
-  const cardWidth =
+   const cardWidth =
     containerWidth > 0
       ? (containerWidth - GAP * (visibleCount - 1)) / visibleCount
       : 0;
   const step = cardWidth + GAP;
 
+  // cards already screen par fit ho rahe hain -> no marquee, no duplicates
+  const isStatic = stories.length <= visibleCount;
+
   // One "set" is repeated until it is wider than the screen,
   // then rendered twice so the loop never shows a gap.
-  const baseSet = useMemo(() => {
-    if (!stories.length || step <= 0) return stories;
+    const baseSet = useMemo(() => {
+    if (isStatic || !stories.length || step <= 0) return stories;
     const repeats = Math.max(
       1,
       Math.ceil((containerWidth + step) / (stories.length * step)),
     );
     return Array.from({ length: repeats }).flatMap(() => stories);
-  }, [stories, containerWidth, step]);
+  }, [stories, containerWidth, step, isStatic]);
 
   const setWidth = baseSet.length * step;
 
-  const trackItems = useMemo(
+    const trackItems = useMemo(
     () =>
-      [...baseSet, ...baseSet].map((item, i) => ({
+      (isStatic ? baseSet : [...baseSet, ...baseSet]).map((item, i) => ({
         item,
         key: `${i}-${item.id}`,
       })),
-    [baseSet],
+    [baseSet, isStatic],
   );
 
-  // Animation loop
+    // Animation loop
   useEffect(() => {
-    if (!setWidth) return undefined;
+    if (!setWidth || isStatic) return undefined;
     let raf;
     let last = performance.now();
 
@@ -2418,9 +2421,9 @@ function WatchNowCarousel({ stories, onSelect, paused, favs, onToggleFav }) {
       raf = requestAnimationFrame(tick);
     };
 
-    raf = requestAnimationFrame(tick);
+        raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [setWidth]);
+  }, [setWidth, isStatic]);
 
   const goNext = useCallback(() => {
     pendingRef.current += step;
@@ -2435,7 +2438,8 @@ function WatchNowCarousel({ stories, onSelect, paused, favs, onToggleFav }) {
   };
 
   // Drag / swipe (pointer events cover mouse + touch)
-  const onPointerDown = (e) => {
+    const onPointerDown = (e) => {
+    if (isStatic) return;
     movedRef.current = false;
     dragRef.current = {
       dragging: true,
@@ -2481,7 +2485,7 @@ function WatchNowCarousel({ stories, onSelect, paused, favs, onToggleFav }) {
     }
   };
 
-  const showArrows = stories.length > 1;
+    const showArrows = !isStatic;
 
   return (
     <div
@@ -2508,10 +2512,15 @@ function WatchNowCarousel({ stories, onSelect, paused, favs, onToggleFav }) {
         onPointerLeave={endDrag}
         onPointerCancel={endDrag}
       >
-        <div
+                <div
           ref={trackRef}
           className="flex items-stretch select-none py-2"
-          style={{ gap: `${GAP}px`, willChange: "transform" }}
+          style={{
+            gap: `${GAP}px`,
+            willChange: isStatic ? "auto" : "transform",
+            justifyContent: isStatic ? "center" : "flex-start",
+            transform: isStatic ? "none" : undefined,
+          }}
         >
           {trackItems.map(({ item, key }) => (
             <div

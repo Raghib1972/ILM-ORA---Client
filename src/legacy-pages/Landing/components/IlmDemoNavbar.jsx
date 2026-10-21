@@ -1259,9 +1259,8 @@ const userEmail =
             so its own box-sizing/margin/padding reset still applies without
             inheriting the sidebar's marginLeft. */}
         <nav className="d-nav d-reset-scope">
-            <div className="d-nav-logo" onClick={() => navigate("/")}>
+                        <div className="d-nav-logo" style={{ fontSize: "clamp(1.2rem, 3vw, 1.5rem)" }} onClick={() => navigate("/")}>
               <span style={{ color: "#16a34a" }}>ILM</span>&nbsp;<span style={{ color: "#F97316" }}>ORA</span>
-              <span className="d-beta">BETA</span>
             </div>
 
             <div className="d-nav-links">
@@ -1386,6 +1385,8 @@ const userEmail =
       ))}
     </div>
   </div>
+
+    <NavbarSearch />
 
   {/* Theme Toggle */}
   <button

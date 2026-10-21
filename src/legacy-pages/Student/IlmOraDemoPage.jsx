@@ -3982,7 +3982,7 @@
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useEffect, useState, useRef, useCallback, useMemo, Suspense } from "react";
-import { flushSync } from "react-dom";
+import { flushSync, createPortal } from "react-dom";
 import { useNavigate, useLocation, useSearchParams } from "@/lib/routerCompat";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -5433,7 +5433,284 @@ const ICON_COLORS = [
   "#f97316",
   "#3b82f6",
 ];
+import { Search as NavSearchIcon } from "lucide-react";
 
+const NAV_SEARCH_PAGES = [
+  { title: "All Courses", route: "/all-courses", group: "courses", tag: "Courses" },
+  { title: "School Boards", route: "/board", group: "courses", tag: "Courses" },
+  { title: "Competitive Exams – NEET", route: "/competitive/neet", group: "courses", tag: "Courses" },
+  { title: "Competitive Exams – JEE", route: "/competitive/jee", group: "courses", tag: "Courses" },
+  { title: "FDE Academy", route: "/fde-academy", group: "courses", tag: "Courses" },
+  { title: "ILM ORA Talk", route: "/talk", group: "courses", tag: "Courses" },
+  { title: "Study Abroad", route: "/study-abroad", group: "courses", tag: "Courses" },
+  { title: "ILM ORA Gulf", route: "/gulf", group: "courses", tag: "Courses" },
+  { title: "Student Hub", desc: "AI-Powered Learning & Career Growth", route: "/student-hub", group: "features", tag: "Feature" },
+  { title: "Trainer Hub", desc: "Training Management & Mentorship", route: "/trainer-hub", group: "features", tag: "Feature" },
+  { title: "Manager Hub", desc: "Analytics, Performance & Team Development", route: "/manager-hub", group: "features", tag: "Feature" },
+  { title: "Whiteboard", desc: "Draw, Design & Collaborate Visually", route: "/whiteboard", group: "features", tag: "Feature" },
+  { title: "AI Companion", desc: "Your personal AI tutor, 24/7", route: "/ai-companion", group: "features", tag: "Feature" },
+  { title: "AI Resume Builder", desc: "Build a job-ready resume with AI", route: "/resume-builder", group: "features", tag: "Feature" },
+  { title: "Coding Lab", desc: "Practice, Code & Build Real Projects", route: "/coding-lab", group: "features", tag: "Feature" },
+  { title: "Study Plan", desc: "Personalized Study Plans & Progress Tracking", route: "/study-plan", group: "features", tag: "Feature" },
+  { title: "ILM ORA Calendry", desc: "Live classes & video sessions", route: "/calendry", group: "product", tag: "Product" },
+  { title: "Workspace", desc: "Your all-in-one collaborative space", route: "/workspace", group: "product", tag: "Product" },
+  { title: "All Career Tracks", route: "/career", group: "career", tag: "Career Track" },
+  { title: "Software & Web Development", route: "/career?category=software-web", group: "career", tag: "Career Track" },
+  { title: "Data Science & AI", route: "/career?category=data-ai", group: "career", tag: "Career Track" },
+  { title: "Cloud & DevOps", route: "/career?category=cloud-devops", group: "career", tag: "Career Track" },
+  { title: "Cybersecurity", route: "/career?category=cybersecurity", group: "career", tag: "Career Track" },
+  { title: "UI/UX & Design", route: "/career?category=ui-ux-design", group: "career", tag: "Career Track" },
+  { title: "Business & Management", route: "/career?category=business-management", group: "career", tag: "Career Track" },
+  { title: "Mentors", desc: "Learn from industry mentors", route: "/mentors", group: "mentors", tag: "Mentors" },
+  { title: "Workshops", desc: "Hands-on live workshops", route: "/workshops", group: "workshops", tag: "Workshops" },
+];
+
+const NAV_SEARCH_SCOPES = [
+  { key: "all", label: "All", placeholder: "Search courses, pages, mentors…", fallback: "/all-courses" },
+  { key: "courses", label: "Courses", placeholder: "Search courses, e.g. NEET, JEE, FDE…", fallback: "/all-courses" },
+  { key: "features", label: "Features", placeholder: "Search features, e.g. Resume, Coding Lab…" },
+  { key: "product", label: "Products", placeholder: "Search products, e.g. Calendry, Workspace…" },
+  { key: "career", label: "Career Tracks", placeholder: "Search career tracks…", fallback: "/career" },
+  { key: "mentors", label: "Mentors", placeholder: "Search mentors…", fallback: "/mentors" },
+  { key: "workshops", label: "Workshops", placeholder: "Search workshops…", fallback: "/workshops" },
+];
+
+function NavbarSearch({ theme }) {
+  const isDarkTheme = theme === "dark";
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [scopeKey, setScopeKey] = useState("all");
+  const [query, setQuery] = useState("");
+  const [active, setActive] = useState(0);
+  const wrapRef = useRef(null);
+  const panelRef = useRef(null);
+  const inputRef = useRef(null);
+  const [panelTop, setPanelTop] = useState(68);
+  const scope = NAV_SEARCH_SCOPES.find((s) => s.key === scopeKey) || NAV_SEARCH_SCOPES[0];
+
+  // Panel ko navbar ke bilkul neeche rakho (scroll par bhi)
+  useEffect(() => {
+    if (!open) return;
+    const measure = () => {
+      const navEl = wrapRef.current?.closest("nav");
+      if (navEl) setPanelTop(Math.round(navEl.getBoundingClientRect().bottom));
+    };
+    measure();
+    window.addEventListener("scroll", measure, { passive: true });
+    window.addEventListener("resize", measure);
+    return () => {
+      window.removeEventListener("scroll", measure);
+      window.removeEventListener("resize", measure);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    inputRef.current?.focus();
+    const onDown = (e) => {
+      const inWrap = wrapRef.current && wrapRef.current.contains(e.target);
+      const inPanel = panelRef.current && panelRef.current.contains(e.target);
+      if (!inWrap && !inPanel) setOpen(false);
+    };
+    const onKey = (e) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("pointerdown", onDown);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  const raw = query.trim();
+  const tokens = raw.toLowerCase().split(/\s+/).filter(Boolean);
+  const results = NAV_SEARCH_PAGES.filter(
+    (it) =>
+      (scopeKey === "all" || it.group === scopeKey) &&
+      tokens.every((t) => `${it.title} ${it.desc || ""} ${it.tag}`.toLowerCase().includes(t)),
+  ).slice(0, 8);
+
+  const fallbackRow =
+    raw && scope.fallback
+      ? {
+          title: `Search “${raw}” in ${scopeKey === "all" ? "Courses" : scope.label}`,
+          route: `${scope.fallback}?search=${encodeURIComponent(raw)}`,
+          tag: "Search",
+          isFallback: true,
+        }
+      : null;
+  const rows = fallbackRow ? [...results, fallbackRow] : results;
+
+  const go = (row) => {
+    setOpen(false);
+    setQuery("");
+    setActive(0);
+    navigate(row.route);
+  };
+  const submit = (e) => {
+    e.preventDefault();
+    if (rows[active]) go(rows[active]);
+  };
+  const onInputKeyDown = (e) => {
+    if (!rows.length) return;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActive((i) => (i + 1) % rows.length);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActive((i) => (i - 1 + rows.length) % rows.length);
+    }
+  };
+
+  return (
+    <div ref={wrapRef}>
+      <button
+        type="button"
+        aria-label="Search"
+        aria-expanded={open}
+        onClick={() => setOpen((o) => !o)}
+        className={`group w-10 h-10 flex items-center justify-center rounded-xl border-0 bg-[#1F1D1F] ring-[1.5px] ring-inset transition-colors duration-200 flex-shrink-0 outline-none ${
+          open
+            ? "ring-[#F97316] bg-[#F97316]/10"
+            : "ring-white/15 hover:ring-[#F97316] hover:bg-[#F97316]/10"
+        }`}
+      >
+        <NavSearchIcon
+          strokeWidth={2}
+          className={`w-5 h-5 transition-colors duration-200 ${
+            open ? "text-[#F97316]" : "text-white group-hover:text-[#F97316]"
+          }`}
+        />
+      </button>
+
+      {open && createPortal(
+               <div
+          role="search"
+          ref={panelRef}
+          style={{ top: panelTop, zIndex: 9998 }}
+          className={`fixed left-0 right-0 bottom-0 lg:bottom-auto lg:max-h-[80vh] overflow-y-auto border-b shadow-[0_28px_40px_-18px_rgba(0,0,0,0.28)] animate-in fade-in-0 slide-in-from-top-1 duration-200 ${
+            isDarkTheme ? "bg-[#161616] border-white/10" : "bg-white border-slate-200"
+          }`}
+        >
+          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-start gap-8 min-h-full">
+            {/* Left dark feature card (same as mega menu) */}
+            <div
+              className="relative hidden lg:flex flex-shrink-0 w-[220px] h-[220px] rounded-md overflow-hidden text-left p-4 flex-col justify-end border border-white/10"
+              style={{ background: "linear-gradient(160deg,#0b1020 0%,#14182b 60%,#1b1224 100%)" }}
+            >
+              <span
+                aria-hidden="true"
+                className="absolute inset-0 opacity-70"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(rgba(249,115,22,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px)",
+                  backgroundSize: "26px 26px",
+                }}
+              />
+              <span
+                aria-hidden="true"
+                className="absolute left-0 right-0 bottom-0 h-[3px] bg-gradient-to-r from-green-600 via-[#F97316] to-transparent"
+              />
+              <span className="relative text-[13px] text-white underline underline-offset-2">Find</span>
+              <span className="relative text-[26px] font-semibold leading-tight text-white">Search</span>
+            </div>
+
+            {/* Right: search form */}
+            <form onSubmit={submit} className="flex-1 min-w-0">
+              <p className={`text-[11px] font-semibold uppercase tracking-widest mb-2 ${isDarkTheme ? "text-gray-400" : "text-slate-500"}`}>
+                Search in
+              </p>
+              <div className="flex gap-2 overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {NAV_SEARCH_SCOPES.map((s) => (
+                  <button
+                    key={s.key}
+                    type="button"
+                    onClick={() => {
+                      setScopeKey(s.key);
+                      setActive(0);
+                      inputRef.current?.focus();
+                    }}
+                    className={`flex-shrink-0 whitespace-nowrap rounded-full px-3.5 py-1.5 text-[13px] font-semibold border transition-colors ${
+                      scopeKey === s.key
+                        ? "bg-[#F97316] border-[#F97316] text-white"
+                        : isDarkTheme
+                          ? "bg-transparent border-white/15 text-gray-300 hover:border-[#F97316] hover:text-[#F97316]"
+                          : "bg-transparent border-slate-300 text-slate-700 hover:border-[#F97316] hover:text-[#F97316]"
+                    }`}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <div className="relative flex-1">
+                  <NavSearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                  <input
+                    ref={inputRef}
+                    type="search"
+                    value={query}
+                    onChange={(e) => {
+                      setQuery(e.target.value);
+                      setActive(0);
+                    }}
+                    onKeyDown={onInputKeyDown}
+                    placeholder={scope.placeholder}
+                    className={`w-full h-11 pl-9 pr-3 rounded-xl border text-[16px] sm:text-sm outline-none focus:border-[#F97316] ${
+                      isDarkTheme
+                        ? "bg-[#2A2A2A] border-white/10 text-white placeholder:text-gray-500"
+                        : "bg-slate-50 border-slate-300 text-slate-900 placeholder:text-slate-400"
+                    }`}
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="h-11 px-4 rounded-xl bg-gradient-to-br from-[#F97316] to-[#EA580C] text-white font-bold text-sm whitespace-nowrap"
+                >
+                  Search
+                </button>
+              </div>
+
+              {/* Results: plain text links, same look as mega menu */}
+              <p className={`mt-4 mb-1 text-[11px] font-semibold uppercase tracking-widest ${isDarkTheme ? "text-gray-500" : "text-slate-500"}`}>
+                {raw ? "Results" : "Browse"}
+              </p>
+              <div className="lg:max-h-[40vh] lg:overflow-y-auto pb-24 lg:pb-2">
+                {rows.length === 0 ? (
+                  <p className="py-2 text-sm text-gray-400">No matching pages found.</p>
+                ) : (
+                  <ul className="list-none m-0 p-0 grid grid-cols-1 sm:grid-cols-2 gap-x-12">
+                    {rows.map((r, i) => (
+                      <li key={`${r.route}-${r.title}-${i}`}>
+                        <button
+                          type="button"
+                          onMouseEnter={() => setActive(i)}
+                          onClick={() => go(r)}
+                          className={`w-full flex items-center justify-between gap-3 py-2 text-left text-[14px] font-medium bg-transparent border-none cursor-pointer ${
+                            isDarkTheme ? "text-slate-200" : "text-slate-800"
+                          } ${active === i ? "text-[#F97316] underline underline-offset-4" : "hover:text-[#F97316] hover:underline underline-offset-4"} ${
+                            r.isFallback ? "!text-[#F97316]" : ""
+                          }`}
+                        >
+                          <span className="min-w-0 truncate">{r.title}</span>
+                          <span className="flex-shrink-0 text-[10px] font-semibold text-[#F97316] border border-[#F97316]/50 bg-[#F97316]/10 rounded-full px-2 py-0.5 whitespace-nowrap">
+                            {r.tag}
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </form>
+          </div>
+        </div>,
+        document.body
+      )}
+    </div>
+  );
+}
 /* ─── Main Demo Page ─────────────────────────────────────────────────────── */
 export default function IlmOraDemoPage() {
   const navigate = useNavigate();
@@ -7235,12 +7512,9 @@ const renderMegaTrigger = (key) => {
             className="flex items-center cursor-pointer hover:scale-105 transition-transform flex-shrink-0"
             onClick={() => navigate("/")}
           >
-            <span className="text-[22px] sm:text-[28px] md:text-[32px] font-extrabold tracking-wide font-serif leading-none whitespace-nowrap">
+                        <span className="text-[18px] sm:text-[22px] md:text-[24px] font-extrabold tracking-wide font-serif leading-none whitespace-nowrap">
               <span className="text-green-600">ILM</span>{" "}
               <span className="text-[#F97316] ml-1">ORA</span>
-              <span className="inline-flex items-center bg-orange-50 border border-[#F97316] rounded ml-1.5 px-1.5 py-0.5 text-[0.42rem] sm:text-[0.45rem] md:text-[0.5rem] font-sans font-semibold tracking-widest text-[#F97316] uppercase leading-snug align-middle">
-                Beta
-              </span>
             </span>
           </div>
 
@@ -7324,12 +7598,19 @@ const renderMegaTrigger = (key) => {
     <NotificationBell roleOverride={featureRoleKey} />
   )}
 
+        <NavbarSearch theme={theme} />
+
   <button
-    className="d-theme-toggle"
+    type="button"
     onClick={toggleTheme}
     aria-label="Toggle theme"
+    className="group w-10 h-10 flex items-center justify-center rounded-xl border-0 bg-[#1F1D1F] ring-[1.5px] ring-inset ring-white/15 hover:ring-[#F97316] hover:bg-[#F97316]/10 focus:ring-[#F97316] transition-colors duration-200 flex-shrink-0 outline-none"
   >
-    {isDark ? <Sun size={18} /> : <Moon size={18} />}
+    {isDark ? (
+      <Sun strokeWidth={2} className="w-5 h-5 text-white group-hover:text-[#F97316] transition-colors duration-200" />
+    ) : (
+      <Moon strokeWidth={2} className="w-5 h-5 text-white group-hover:text-[#F97316] transition-colors duration-200" />
+    )}
   </button>
 
             {isLoggedIn ? (

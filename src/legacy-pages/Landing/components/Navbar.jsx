@@ -1,7 +1,7 @@
-
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate } from "@/lib/routerCompat";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -24,6 +24,7 @@ import {
   LogOut,
   Menu,
   Moon,
+  Search,
   Sparkles,
   Sun,
   User,
@@ -33,9 +34,14 @@ import {
   PenTool,
   CalendarCheck,
   ArrowRight,
-  Cloud,
+    Cloud,
   Globe,
   Layers,
+  Plane,
+  MessageCircle,
+  School,
+  Landmark,
+  ChevronRight,
 } from "lucide-react";
 import MobileFullScreenMenu from "./MobileFullScreenMenu";
 
@@ -208,6 +214,289 @@ career: {
 
 };
 
+/* ─── Navbar Search — sabhi public pages + courses me live search ───
+   SEARCH_INDEX upar ke menu arrays se auto-banta hai.
+   Koi aur page add karna ho to EXTRA_SEARCH_PAGES me daal do. */
+const EXTRA_SEARCH_PAGES = [
+  { title: "Mentors", desc: "Learn from industry mentors", route: "/mentors", group: "mentors", tag: "Mentors" },
+  { title: "Workshops", desc: "Hands-on live workshops", route: "/workshops", group: "workshops", tag: "Workshops" },
+];
+
+const SEARCH_INDEX = [
+  ...COURSE_CATEGORIES.map((c) => ({ title: c.title, route: c.route, group: "courses", tag: "Courses" })),
+  ...HUB_MENU_ITEMS.map((i) => ({ title: i.title, desc: i.description, route: HUB_ROUTES[i.key], group: "features", tag: "Feature" })),
+  ...PRODUCT_MENU_ITEMS.map((i) => ({ title: i.title, desc: i.description, route: PRODUCT_ROUTES[i.key], group: "product", tag: "Product" })),
+  ...CAREER_TRACK_ITEMS.map((i) => ({ title: i.title, route: i.route, group: "career", tag: "Career Track" })),
+  ...EXTRA_SEARCH_PAGES,
+];
+
+const SEARCH_SCOPES = [
+  { key: "all",       label: "All",            placeholder: "Search courses, pages, mentors…", fallback: "/all-courses" },
+  { key: "courses",   label: "Courses",        placeholder: "Search courses, e.g. NEET, JEE, FDE…",            fallback: "/all-courses" },
+  { key: "features",  label: "Features",       placeholder: "Search features, e.g. Resume, Coding Lab…" },
+  { key: "product",   label: "Products",       placeholder: "Search products, e.g. Calendry, Workspace…" },
+  { key: "career",    label: "Career Tracks",  placeholder: "Search career tracks…",                           fallback: "/career" },
+  { key: "mentors",   label: "Mentors",        placeholder: "Search mentors by name or skill…",                fallback: "/mentors" },
+  { key: "workshops", label: "Workshops",      placeholder: "Search workshops…",                               fallback: "/workshops" },
+];
+const SEARCH_ICON_BY_TITLE = {
+  "All Courses": GraduationCap,
+  "School Boards": School,
+  "FDE Academy": Landmark,
+  "ILM ORA Talk": MessageCircle,
+  "Study Abroad": Plane,
+  "ILM ORA Gulf": Globe,
+};
+const SEARCH_ICON_BY_GROUP = {
+  courses: FileText,
+  features: Sparkles,
+  product: LayoutDashboard,
+  career: Award,
+  mentors: Users,
+  workshops: CalendarCheck,
+};
+const getSearchIcon = (r) =>
+  r.isFallback ? Search : SEARCH_ICON_BY_TITLE[r.title] || SEARCH_ICON_BY_GROUP[r.group] || FileText;
+function NavbarSearch({ theme }) {
+  const isDarkTheme = theme === "dark";
+  const navigate = useNavigate();
+  const [open, setOpen] = useState(false);
+  const [scopeKey, setScopeKey] = useState("all");
+  const [query, setQuery] = useState("");
+  const [active, setActive] = useState(0);
+      const wrapRef = useRef(null);
+  const panelRef = useRef(null);
+  const inputRef = useRef(null);
+  const [panelTop, setPanelTop] = useState(68);
+  const scope = SEARCH_SCOPES.find((s) => s.key === scopeKey) || SEARCH_SCOPES[0];
+
+  // Panel ko navbar ke bilkul neeche rakho (scroll par bhi)
+  useEffect(() => {
+    if (!open) return;
+    const measure = () => {
+      const navEl = wrapRef.current?.closest("nav");
+      if (navEl) setPanelTop(Math.round(navEl.getBoundingClientRect().bottom));
+    };
+    measure();
+    window.addEventListener("scroll", measure, { passive: true });
+    window.addEventListener("resize", measure);
+    return () => {
+      window.removeEventListener("scroll", measure);
+      window.removeEventListener("resize", measure);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    inputRef.current?.focus();
+    const onDown = (e) => {
+          const inWrap = wrapRef.current && wrapRef.current.contains(e.target);
+      const inPanel = panelRef.current && panelRef.current.contains(e.target);
+      if (!inWrap && !inPanel) setOpen(false);
+    };
+    const onKey = (e) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("pointerdown", onDown);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onDown);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  const raw = query.trim();
+  const tokens = raw.toLowerCase().split(/\s+/).filter(Boolean);
+  const results = SEARCH_INDEX.filter(
+    (it) =>
+      it.route &&
+      (scopeKey === "all" || it.group === scopeKey) &&
+      tokens.every((t) => `${it.title} ${it.desc || ""} ${it.tag}`.toLowerCase().includes(t)),
+  ).slice(0, 8);
+
+  const fallbackRow =
+    raw && scope.fallback
+      ? {
+          title: `Search “${raw}” in ${scopeKey === "all" ? "Courses" : scope.label}`,
+          route: `${scope.fallback}?search=${encodeURIComponent(raw)}`,
+          tag: "Search",
+          isFallback: true,
+        }
+      : null;
+  const rows = fallbackRow ? [...results, fallbackRow] : results;
+
+  const go = (row) => {
+    setOpen(false);
+    setQuery("");
+    setActive(0);
+    navigate(row.route);
+  };
+
+  const submit = (e) => {
+    e.preventDefault();
+    if (rows[active]) go(rows[active]);
+  };
+
+  const onInputKeyDown = (e) => {
+    if (!rows.length) return;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setActive((i) => (i + 1) % rows.length);
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setActive((i) => (i - 1 + rows.length) % rows.length);
+    }
+  };
+
+   return (
+    // NOTE: wrapper ko "relative" mat banana, panel nav ke full width me khulta hai
+    <div ref={wrapRef}>
+            <button
+        type="button"
+        aria-label="Search"
+        aria-expanded={open}
+        onClick={() => setOpen((o) => !o)}
+                className={`group w-10 h-10 flex items-center justify-center rounded-xl border-0 bg-[#1F1D1F] ring-[1.5px] ring-inset transition-colors duration-200 flex-shrink-0 outline-none ${
+          open
+            ? "ring-[#F97316] bg-[#F97316]/10"
+            : "ring-white/15 hover:ring-[#F97316] hover:bg-[#F97316]/10"
+        }`}
+      >
+        <Search
+          strokeWidth={2}
+          className={`w-5 h-5 transition-colors duration-200 ${
+            open ? "text-[#F97316]" : "text-white group-hover:text-[#F97316]"
+          }`}
+        />
+      </button>
+
+            {open && createPortal(
+                <div
+          role="search"
+          ref={panelRef}
+          style={{ top: panelTop }}
+          className={`fixed left-0 right-0 bottom-0 lg:bottom-auto lg:max-h-[80vh] overflow-y-auto z-[60] border-b shadow-[0_28px_40px_-18px_rgba(0,0,0,0.28)] animate-in fade-in-0 slide-in-from-top-1 duration-200 ${
+            isDarkTheme ? "bg-[#161616] border-white/10" : "bg-white border-slate-200"
+          }`}
+        >
+          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-start gap-8 min-h-full">
+            {/* Left dark feature card (same as mega menu) */}
+            <div
+              className="relative hidden lg:flex flex-shrink-0 w-[220px] h-[220px] rounded-md overflow-hidden text-left p-4 flex-col justify-end border border-white/10"
+              style={{ background: "linear-gradient(160deg,#0b1020 0%,#14182b 60%,#1b1224 100%)" }}
+            >
+              <span
+                aria-hidden="true"
+                className="absolute inset-0 opacity-70"
+                style={{
+                  backgroundImage:
+                    "linear-gradient(rgba(249,115,22,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px)",
+                  backgroundSize: "26px 26px",
+                }}
+              />
+              <span
+                aria-hidden="true"
+                className="absolute left-0 right-0 bottom-0 h-[3px] bg-gradient-to-r from-green-600 via-[#F97316] to-transparent"
+              />
+              <span className="relative text-[13px] text-white underline underline-offset-2">Find</span>
+              <span className="relative text-[26px] font-semibold leading-tight text-white">Search</span>
+            </div>
+
+            {/* Right: search form */}
+            <form onSubmit={submit} className="flex-1 min-w-0">
+              <p className={`text-[11px] font-semibold uppercase tracking-widest mb-2 ${isDarkTheme ? "text-gray-400" : "text-slate-500"}`}>
+                Search in
+              </p>
+              <div className="flex gap-2 overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {SEARCH_SCOPES.map((s) => (
+                  <button
+                    key={s.key}
+                    type="button"
+                    onClick={() => {
+                      setScopeKey(s.key);
+                      setActive(0);
+                      inputRef.current?.focus();
+                    }}
+                    className={`flex-shrink-0 whitespace-nowrap rounded-full px-3.5 py-1.5 text-[13px] font-semibold border transition-colors ${
+                      scopeKey === s.key
+                        ? "bg-[#F97316] border-[#F97316] text-white"
+                        : isDarkTheme
+                          ? "bg-transparent border-white/15 text-gray-300 hover:border-[#F97316] hover:text-[#F97316]"
+                          : "bg-transparent border-slate-300 text-slate-700 hover:border-[#F97316] hover:text-[#F97316]"
+                    }`}
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                  <input
+                    ref={inputRef}
+                    type="search"
+                    value={query}
+                    onChange={(e) => {
+                      setQuery(e.target.value);
+                      setActive(0);
+                    }}
+                    onKeyDown={onInputKeyDown}
+                    placeholder={scope.placeholder}
+                    className={`w-full h-11 pl-9 pr-3 rounded-xl border text-[16px] sm:text-sm outline-none focus:border-[#F97316] ${
+                      isDarkTheme
+                        ? "bg-[#2A2A2A] border-white/10 text-white placeholder:text-gray-500"
+                        : "bg-slate-50 border-slate-300 text-slate-900 placeholder:text-slate-400"
+                    }`}
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="h-11 px-4 rounded-xl bg-gradient-to-br from-[#F97316] to-[#EA580C] text-white font-bold text-sm whitespace-nowrap"
+                >
+                  Search
+                </button>
+              </div>
+
+              {/* Results: plain text links, same look as mega menu */}
+              <p className={`mt-4 mb-1 text-[11px] font-semibold uppercase tracking-widest ${isDarkTheme ? "text-gray-500" : "text-slate-500"}`}>
+                {raw ? "Results" : "Browse"}
+              </p>
+                                <div className="lg:max-h-[40vh] lg:overflow-y-auto pb-24 lg:pb-2">
+                {rows.length === 0 ? (
+                  <p className="py-2 text-sm text-gray-400">No matching pages found.</p>
+                ) : (
+                  <ul className="list-none m-0 p-0 grid grid-cols-1 sm:grid-cols-2 gap-x-12">
+                    {rows.map((r, i) => (
+                      <li key={`${r.route}-${r.title}-${i}`}>
+                        <button
+                          type="button"
+                          onMouseEnter={() => setActive(i)}
+                          onClick={() => go(r)}
+                          className={`w-full flex items-center justify-between gap-3 py-2 text-left text-[14px] font-medium bg-transparent border-none cursor-pointer ${
+                            isDarkTheme ? "text-slate-200" : "text-slate-800"
+                          } ${active === i ? "text-[#F97316] underline underline-offset-4" : "hover:text-[#F97316] hover:underline underline-offset-4"} ${
+                            r.isFallback ? "!text-[#F97316]" : ""
+                          }`}
+                        >
+                          <span className="min-w-0 truncate">{r.title}</span>
+                          <span className="flex-shrink-0 text-[10px] font-semibold text-[#F97316] border border-[#F97316]/50 bg-[#F97316]/10 rounded-full px-2 py-0.5 whitespace-nowrap">
+                            {r.tag}
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </form>
+                   </div>
+        </div>,
+        document.body
+      )}
+    </div>
+  );
+}
 /* ─────────────────────────────────────────────────────────────────
    NAVBAR — logo, desktop navigation, mega menu, dropdowns, user/login
    state, avatar/profile menu, logout, "Get Started" CTA, mobile menu
@@ -401,12 +690,9 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
               className="flex items-center cursor-pointer hover:scale-105 transition-transform flex-shrink-0"
               onClick={() => navigate("/")}
             >
-              <span className="text-[28px] sm:text-[32px] font-extrabold tracking-wide font-serif leading-none whitespace-nowrap">
+              <span className="text-[20px] sm:text-[24px] font-extrabold tracking-wide font-serif leading-none whitespace-nowrap">
                 <span className="text-green-600">ILM</span>
                 <span className="text-[#F97316] ml-1">ORA</span>
-                <span className="inline-flex items-center bg-orange-50 border border-[#F97316] rounded ml-1.5 px-1.5 py-0.5 text-[0.45rem] sm:text-[0.5rem] font-sans font-semibold tracking-widest text-[#F97316] uppercase leading-snug align-middle">
-                  Beta
-                </span>
               </span>
             </div>
 
@@ -466,14 +752,17 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
 
             {/* Right side */}
             <div className="flex items-center gap-2 xl:gap-3 flex-shrink-0">
-              <button
+              <NavbarSearch theme={theme} />
+                            <button
+                type="button"
                 onClick={toggleTheme}
-                className="w-10 h-10 flex items-center justify-center rounded-xl border border-white/[0.08] hover:border-[#F97316] transition-colors duration-300 shadow-sm bg-[#2A2A2A] flex-shrink-0"
+                aria-label="Toggle theme"
+                                className="group w-10 h-10 flex items-center justify-center rounded-xl border-0 bg-[#1F1D1F] ring-[1.5px] ring-inset ring-white/15 hover:ring-[#F97316] hover:bg-[#F97316]/10 focus:ring-[#F97316] transition-colors duration-200 flex-shrink-0 outline-none"
               >
                 {theme === "dark" ? (
-                  <Sun className="w-[18px] h-[18px] text-[#F97316]" />
+                  <Sun strokeWidth={2} className="w-5 h-5 text-white group-hover:text-[#F97316] transition-colors duration-200" />
                 ) : (
-                  <Moon className="w-[18px] h-[18px] text-gray-300" />
+                  <Moon strokeWidth={2} className="w-5 h-5 text-white group-hover:text-[#F97316] transition-colors duration-200" />
                 )}
               </button>
 
@@ -556,7 +845,7 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
                   onClick={() => setShowLoginModal(true)}
                   className="flex bg-gradient-to-br from-[#F97316] to-[#EA580C] hover:from-[#F97316] hover:to-[#EA580C] text-white font-bold px-3 sm:px-4 xl:px-5 py-2.5 rounded-xl items-center gap-1.5 sm:gap-2 shadow-md hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(249,115,22,0.35)] transition-all duration-300 text-[12px] sm:text-[13px] xl:text-[15px] h-10 whitespace-nowrap"
                 >
-                  <Sparkles className="w-4 h-4" /> Get Started
+                  <Sparkles className="hidden sm:block w-4 h-4" /> Get Started
                 </Button>
               )}
 
