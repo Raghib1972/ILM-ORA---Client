@@ -1317,7 +1317,7 @@ function ProductHubSection({ navigate }) {
   const products = [
     {
       key: "ai",
-      label: "AI Companion",
+      label: "ILM ORA AI Companion",
       icon: MessageSquare,
       badge: "NEW · POWERED BY AI",
       line1: "Meet Your",
