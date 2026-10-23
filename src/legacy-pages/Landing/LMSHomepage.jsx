@@ -47,8 +47,11 @@ import {
   Layers,
   Code2,
   Smartphone,
-  Settings,
+    Settings,
   PenTool,
+  Brain,
+  Eye,
+  Search,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "@/lib/routerCompat";
@@ -1305,6 +1308,166 @@ function WorkspaceTeaser({
     </section>
   );
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// PersonalityPreview — code-drawn illustrations for the Personality Development
+// tab in the platform hub (no image files needed). index = active feature chip.
+// ─────────────────────────────────────────────────────────────────────────────
+function PersonalityPreview({ index = 0 }) {
+  const TEAL = "#0e8fa8";
+  const ORG = "#f97316";
+  const titles = [
+    "How to identify personality",
+    "Internal foundation",
+    "External foundation",
+    "Your 30-day journey",
+    "Quick self-check",
+  ];
+  const orbit = [
+    [MessageSquare, "Communication", ORG],
+    [Eye, "Body language", ORG],
+    [Users, "Behaviour", ORG],
+    [Heart, "Emotions", TEAL],
+    [TrendingUp, "Confidence", TEAL],
+    [Target, "Consistency", TEAL],
+  ];
+  const internal = [
+    [Brain, "Self-awareness & mindset"],
+    [Heart, "Emotional balance"],
+    [TrendingUp, "Confidence & resilience"],
+    [Shield, "Integrity & discipline"],
+    [Target, "Personal responsibility"],
+  ];
+  const external = [
+    [MessageSquare, "Communication"],
+    [Eye, "Body language"],
+    [Heart, "Respect & empathy"],
+    [Star, "Dressing & hygiene"],
+    [Sparkles, "Etiquette"],
+    [Users, "Leadership"],
+  ];
+  const stages = [
+    ["Know", "Days 1–7", "#0e8fa8"],
+    ["Express", "Days 8–14", "#f97316"],
+    ["Balance", "Days 15–21", "#22c55e"],
+    ["Execute", "Days 22–30", "#c2410c"],
+  ];
+  const checks = [
+    ["Self-Awareness", 78],
+    ["Communication", 64],
+    ["Emotional Balance", 52],
+    ["Confidence", 70],
+    ["Discipline", 45],
+  ];
+
+  return (
+    <div
+      className="w-full max-w-[520px] mx-auto rounded-2xl shadow-2xl overflow-hidden flex flex-col h-[300px] sm:h-[320px]"
+      style={{
+        background: "linear-gradient(150deg,#1E293B 0%,#334155 60%,#9A3412 100%)",
+        animation: "hubFade 0.35s ease both",
+      }}
+    >
+      <div className="px-4 pt-3 text-[11px] font-bold uppercase tracking-[0.18em] text-white/70">
+        {titles[index]}
+      </div>
+
+      <div className="flex-1 min-h-0 p-3 sm:p-4 flex items-center justify-center">
+        {index === 0 && (
+          <svg viewBox="0 0 520 300" className="w-full h-full" role="img" aria-label="Six signals around a person">
+            {orbit.map(([, , c], i) => {
+              const a = ((210 + i * 60) * Math.PI) / 180;
+              return (
+                <line
+                  key={i}
+                  x1="260" y1="150"
+                  x2={260 + 190 * Math.cos(a)} y2={150 + 100 * Math.sin(a)}
+                  stroke={c} strokeWidth="2" strokeDasharray="5 5" strokeOpacity=".8"
+                />
+              );
+            })}
+            <circle cx="260" cy="150" r="52" fill="rgba(249,115,22,.2)" />
+            <circle cx="260" cy="150" r="42" fill="#12141c" />
+            <Brain x={244} y={132} size={32} color="#fb923c" strokeWidth={2} />
+            <text x="260" y="186" textAnchor="middle" fontSize="11" fontWeight="600" fill="#fff">Personality</text>
+            {orbit.map(([Icon, label, c], i) => {
+              const a = ((210 + i * 60) * Math.PI) / 180;
+              const x = 260 + 190 * Math.cos(a);
+              const y = 150 + 100 * Math.sin(a);
+              return (
+                <g key={label}>
+                  <circle cx={x} cy={y} r="22" fill={c} stroke="#fff" strokeOpacity=".9" strokeWidth="3" />
+                  <Icon x={x - 11} y={y - 11} size={22} color="#fff" strokeWidth={2} />
+                  <text x={x} y={y + 40} textAnchor="middle" fontSize="12" fontWeight="600" fill="#fff">{label}</text>
+                </g>
+              );
+            })}
+          </svg>
+        )}
+
+        {index === 1 && (
+          <div className="w-full flex flex-col gap-2">
+            {internal.map(([Icon, label]) => (
+              <div key={label} className="flex items-center gap-3 rounded-xl bg-white/10 border border-white/15 px-3 py-2">
+                <span className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: TEAL }}>
+                  <Icon className="w-4 h-4 text-white" />
+                </span>
+                <span className="text-sm font-semibold text-white">{label}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {index === 2 && (
+          <div className="w-full grid grid-cols-2 gap-2">
+            {external.map(([Icon, label]) => (
+              <div key={label} className="flex items-center gap-2.5 rounded-xl bg-white/10 border border-white/15 px-3 py-3">
+                <span className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: ORG }}>
+                  <Icon className="w-4 h-4 text-white" />
+                </span>
+                <span className="text-[13px] font-semibold text-white leading-tight">{label}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {index === 3 && (
+          <div className="w-full">
+            <div className="grid grid-cols-4 gap-2 mb-4">
+              {stages.map(([name, days, c], i) => (
+                <div key={name} className="rounded-xl bg-white/10 border border-white/15 p-2.5 text-center" style={{ borderTop: `3px solid ${c}` }}>
+                  <div className="text-xl font-bold text-white">{i + 1}</div>
+                  <div className="text-xs font-semibold text-white">{name}</div>
+                  <div className="text-[10px] text-white/70 mt-0.5">{days}</div>
+                </div>
+              ))}
+            </div>
+            <div className="h-3 rounded-full bg-white/15 overflow-hidden">
+              <div className="h-full w-full rounded-full" style={{ background: "linear-gradient(90deg,#0e8fa8,#f97316,#22c55e,#c2410c)" }} />
+            </div>
+            <p className="text-center text-xs text-white/80 mt-3">One small task a day for 30 days</p>
+          </div>
+        )}
+
+        {index === 4 && (
+          <div className="w-full flex flex-col gap-3">
+            {checks.map(([label, v]) => (
+              <div key={label}>
+                <div className="flex justify-between text-xs font-semibold text-white mb-1">
+                  <span>{label}</span>
+                  <span className="text-white/70">{v}%</span>
+                </div>
+                <div className="h-2.5 rounded-full bg-white/15 overflow-hidden">
+                  <div className="h-full rounded-full" style={{ width: `${v}%`, background: "linear-gradient(90deg,#0e8fa8,#f97316)" }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 // ─────────────────────────────────────────────────────────────────────────────
 // ProductHubSection — "ILM ORA Platform" hub: left product list, middle copy +
 // feature chips + CTA, right preview image with dots. Pure UI, no backend.
@@ -1379,9 +1542,28 @@ function ProductHubSection({ navigate }) {
       features: [
         { icon: PenTool, label: "Drawing Tools", img: wbDrawingImg },
         { icon: Lightbulb, label: "Diagrams & Mind Maps", img: wbDiagramsImg },
-        { icon: FileText, label: "Templates", img: wbTemplatesImg },
+                { icon: FileText, label: "Templates", img: wbTemplatesImg },
         { icon: Users, label: "Live Collaboration", img: wbCollabImg },
         { icon: Video, label: "Present Mode", img: wbPresentImg },
+      ],
+    },
+    {
+           key: "personality",
+      label: "ILM ORA Personality Development",
+      icon: Brain,
+      badge: "SELF GROWTH",
+      line1: "Know Your Personality.",
+      line2: "Improve It. Prove It.",
+      desc: "Learn how personality is identified, build your inner and outer foundation, follow a 30-day plan and take a quick self-check.",
+      cta: "Explore Personality Development",
+      to: "/personality-development",
+      // img: null → PersonalityPreview illustration dikhta hai
+      features: [
+        { icon: Search, label: "Identify Personality", img: null },
+        { icon: Brain, label: "Internal Foundation", img: null },
+        { icon: Sparkles, label: "External Foundation", img: null },
+        { icon: Target, label: "30-Day Plan", img: null },
+        { icon: ClipboardList, label: "Self-Check", img: null },
       ],
     },
   ];
@@ -1464,7 +1646,7 @@ function ProductHubSection({ navigate }) {
                   key={p.key}
                   onClick={() => selectProduct(i)}
                   aria-pressed={isActive}
-                  className={`flex items-center gap-3 px-3 py-3 rounded-2xl text-left whitespace-nowrap flex-shrink-0 lg:w-full transition-all duration-300 cursor-pointer border-none ${
+                                    className={`flex items-center gap-3 px-3 py-3 rounded-2xl text-left whitespace-nowrap lg:whitespace-normal flex-shrink-0 lg:w-full transition-all duration-300 cursor-pointer border-none ${
                     isActive
                       ? "bg-orange-100 dark:bg-orange-500/15 text-[#F97316]"
                       : "bg-transparent text-[#1E293B] dark:text-white hover:bg-orange-50 dark:hover:bg-white/5"
@@ -1553,15 +1735,19 @@ function ProductHubSection({ navigate }) {
             onKeyDown={(e) => e.key === "Enter" && navigate(product.to)}
             className="cursor-pointer select-none hover:-translate-y-1 transition-transform duration-300"
           >
-            <img
-              key={`${product.key}-${activeFeature}`}
-              src={feature.img.src || feature.img}
-              alt={`${product.label} — ${feature.label}`}
-              loading="lazy"
-              decoding="async"
-              className="w-full h-auto max-w-[520px] mx-auto rounded-2xl shadow-2xl"
-              style={{ animation: "hubFade 0.35s ease both" }}
-            />
+                       {feature.img ? (
+              <img
+                key={`${product.key}-${activeFeature}`}
+                src={feature.img.src || feature.img}
+                alt={`${product.label} — ${feature.label}`}
+                loading="lazy"
+                decoding="async"
+                className="w-full h-auto max-w-[520px] mx-auto rounded-2xl shadow-2xl"
+                style={{ animation: "hubFade 0.35s ease both" }}
+              />
+            ) : (
+              <PersonalityPreview key={`${product.key}-${activeFeature}`} index={activeFeature} />
+            )}
           </div>
 
           <div className="flex items-center justify-center gap-2 mt-5">
