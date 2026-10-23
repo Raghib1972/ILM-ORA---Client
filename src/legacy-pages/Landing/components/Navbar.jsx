@@ -1,3 +1,992 @@
+// "use client";
+
+// import { useEffect, useRef, useState } from "react";
+// import { createPortal } from "react-dom";
+// import { useNavigate } from "@/lib/routerCompat";
+// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+// import { Button } from "@/components/ui/button";
+// import {
+//   DropdownMenu,
+//   DropdownMenuContent,
+//   DropdownMenuItem,
+//   DropdownMenuSeparator,
+//   DropdownMenuTrigger,
+// } from "@/components/ui/dropdown-menu";
+// import {
+//   Award,
+//   BarChart3,
+//   BookOpen,
+//   ChevronDown,
+//   Code2,
+//   FileText,
+//   GraduationCap,
+//   Lock,
+//   LogOut,
+//   Menu,
+//   Moon,
+//   Search,
+//   Sparkles,
+//   Sun,
+//   User,
+//   UserCog,
+//   Users,
+//   LayoutDashboard,
+//   PenTool,
+//   CalendarCheck,
+//   ArrowRight,
+//     Cloud,
+//   Globe,
+//   Layers,
+//   Plane,
+//   MessageCircle,
+//   School,
+//   Landmark,
+//   ChevronRight,
+// } from "lucide-react";
+// import MobileFullScreenMenu from "./MobileFullScreenMenu";
+
+// // ILM ORA Feature dropdown items, in this exact order: Student Hub,
+// // Trainer Hub, Manager Hub, Whiteboard, AI Companion, AI Resume Builder,
+// // Coding Lab.
+// const HUB_MENU_ITEMS = [
+//   { key: "student", title: "Student Hub", description: "AI-Powered Learning & Career Growth", icon: "GraduationCap" },
+//   { key: "trainer", title: "Trainer Hub", description: "Training Management & Mentorship", icon: "Users" },
+//   { key: "admin", title: "Manager Hub", description: "Analytics, Performance & Team Development", icon: "BarChart3" },
+//   { key: "whiteboard", title: "Whiteboard", description: "Draw, Design & Collaborate Visually", icon: "PenTool" },
+//   { key: "aiCompanion", title: "AI Companion", description: "Your personal AI tutor, 24/7", icon: "Sparkles" },
+//   { key: "resume", title: "AI Resume Builder", description: "Build a job-ready resume with AI", icon: "FileText" },
+//   { key: "codingLab", title: "Coding Lab", description: "Practice, Code & Build Real Projects", icon: "Code2" },
+//   { key: "studyPlan", title: "Study Plan", description: "Personalized Study Plans & Progress Tracking", icon: "CalendarCheck" },
+// ];
+
+// // Product dropdown — ILM ORA Calendry (renamed from "ILM ORA Meet"; same
+// // route/functionality) and Workspace only. Resume Builder, AI Companion,
+// // and Whiteboard moved up into ILM ORA Feature above.
+// const PRODUCT_MENU_ITEMS = [
+//   { key: "meet", title: "ILM ORA Calendry", description: "Live classes & video sessions", icon: "LayoutDashboard" },
+//   { key: "workspace", title: "Workspace", description: "Your all-in-one collaborative space", icon: "Users" },
+// ];
+
+// // Icon name (string) → actual lucide-react component.
+// const NAV_ICON_MAP = {
+//   GraduationCap,
+//   Users,
+//   BarChart3,
+//   FileText,
+//   LayoutDashboard,
+//   Sparkles,
+//   PenTool,
+//   Code2,
+//   CalendarCheck,
+//   Award,
+//   Cloud,
+//   Globe,
+//   Layers,
+// };
+// const HUB_ROUTES = {
+//   student: "/student-hub",
+//   trainer: "/trainer-hub",
+//   admin: "/manager-hub",
+//   whiteboard: "/whiteboard",
+//   aiCompanion: "/ai-companion",
+//   resume: "/resume-builder",
+//   codingLab: "/coding-lab",
+//   studyPlan: "/study-plan",
+// };
+// const PRODUCT_ROUTES = {
+//   meet: "/calendry",
+//   resume: "/resume-builder",
+//   workspace: "/workspace",
+//   aiCompanion: "/ai-companion",
+//   whiteboard: "/whiteboard",
+// };
+// const HUB_ICON_COLORS = {
+//   student: "text-green-600",
+//   trainer: "text-blue-600",
+//   admin: "text-purple-600",
+//   whiteboard: "text-orange-500",
+//   aiCompanion: "text-purple-500",
+//   resume: "text-green-600",
+//   codingLab: "text-cyan-600",
+//   studyPlan: "text-orange-500",
+// };
+// const PRODUCT_ICON_COLORS = {
+//   meet: "text-orange-500",
+//   workspace: "text-orange-500",
+// };
+
+// // "Skills" dropdown
+// const CERT_MENU_ITEMS = [
+//   { key: "aws", title: "AWS Certification", description: "Cloud Practitioner to Professional", icon: "Award" },
+//   { key: "microsoft", title: "Microsoft Certification", description: "Azure, M365 & Power Platform", icon: "Layers" },
+//     // { key: "cloud", title: "Cloud Certification", description: "Multi-cloud & vendor-neutral paths", icon: "Cloud", comingSoon: true },
+//   { key: "google", title: "Google Certification", description: "Google Cloud & Workspace exams", icon: "Globe" },
+//   { key: "cisco", title: "Cisco Certification", description: "CCNA, CCNP & CCIE exams and training", icon: "Award" },
+// ];
+// const CERT_ROUTES = {
+//   aws: "/aws",
+//   microsoft: "/microsoft",
+//   cloud: "/ilmora-cloud-certification",
+//   google: "/google",
+//   cisco: "/cisco",
+// };
+// const CERT_ICON_COLORS = {
+//   aws: "text-orange-500",
+//   microsoft: "text-blue-500",
+//   cloud: "text-sky-500",
+//   google: "text-green-500",
+//   cisco: "text-sky-600",
+// };
+
+// // "Career Tracks" dropdown — replaces the old "Skills" tab (Skills is commented out for now).
+// // Career Tracks was removed from the "All Courses" dropdown and now lives here, classified by category.
+// // Edit titles/routes below to match your real /career page filters.
+// const CAREER_TRACK_ITEMS = [
+//   { key: "all-career", title: "All Career Tracks", route: "/career" },
+//   { key: "development-engineering", title: "Development Engineering Platform", route: "/career?platform=dev" },
+//   { key: "ai-agent-ai", title: "AI – Agent AI", route: "/career?platform=ai" },
+//   { key: "contact-center", title: "Contact Center Platform", route: "/career?platform=cx" },
+// ];
+
+// // All Courses dropdown — every item opens its own page (same pages as the
+// // sidebar on /all-courses).
+// const COURSE_CATEGORIES = [
+//   { key: "all", title: "All Courses", route: "/all-courses" },
+//   { key: "school-boards", title: "School Boards", route: "/board" },
+//   { key: "neet", title: "Competitive Exams – NEET", route: "/competitive/neet" },
+//   { key: "jee", title: "Competitive Exams – JEE", route: "/competitive/jee" },
+//   // { key: "career-tracks", title: "Career Tracks", route: "/career" },
+//   { key: "fde-academy", title: "FDE Academy", route: "/fde-academy" },
+//   { key: "ilm-ora-talk", title: "ILM ORA Talk", route: "/talk" },
+//   { key: "study-abroad", title: "Study Abroad", route: "/study-abroad" },
+//   { key: "ilm-ora-gulf", title: "ILM ORA Gulf", route: "/gulf" },
+//   { key: "ilm-ora-feature", title: "ILM ORA Feature", route: "/student-hub" },
+// ];
+
+// // ── Maven-style mega menu data (built from the SAME items/routes above —
+// // nothing is duplicated, so editing the lists above still updates the menu).
+// const MEGA_MENUS = {
+//   courses: {
+//     label: "All Courses",
+//     eyebrow: "Browse",
+//     cardTitle: "All Courses",
+//     cardRoute: "/all-courses",
+//     triggerRoute: "/all-courses", // click on the tab itself still opens All Courses
+//     noChevron: true,
+//     items: COURSE_CATEGORIES.map((c) => ({ key: c.key, title: c.title, route: c.route })),
+//   },
+//   feature: {
+//     label: "ILM ORA Feature",
+//     eyebrow: "Explore",
+//     cardTitle: "ILM ORA Feature",
+//     items: HUB_MENU_ITEMS.map((i) => ({ key: i.key, title: i.title, route: HUB_ROUTES[i.key] })),
+//   },
+//   product: {
+//     label: "Product",
+//     eyebrow: "Explore",
+//     cardTitle: "Product",
+//     items: PRODUCT_MENU_ITEMS.map((i) => ({ key: i.key, title: i.title, route: PRODUCT_ROUTES[i.key] })),
+//   },
+  
+// // Skills tab — commented out for now
+// /*
+// cert: {
+//   label: "Skills",
+//   eyebrow: "Explore skills",
+//   cardTitle: "Skills",
+//   cardRoute: "/all-courses",
+//   items: CERT_MENU_ITEMS.map((i) => ({
+//     key: i.key,
+//     title: i.title,
+//     route: CERT_ROUTES[i.key],
+//     comingSoon: !!i.comingSoon,
+//   })),
+// },
+// */
+
+// career: {
+//   label: "Career Tracks",
+//   eyebrow: "Explore",
+//   cardTitle: "Career Tracks",
+//   cardRoute: "/career",
+//   items: CAREER_TRACK_ITEMS.map((i) => ({ key: i.key, title: i.title, route: i.route })),
+// },
+
+// };
+
+// /* ─── Navbar Search — sabhi public pages + courses me live search ───
+//    SEARCH_INDEX upar ke menu arrays se auto-banta hai.
+//    Koi aur page add karna ho to EXTRA_SEARCH_PAGES me daal do. */
+// const EXTRA_SEARCH_PAGES = [
+//   { title: "Mentors", desc: "Learn from industry mentors", route: "/mentors", group: "mentors", tag: "Mentors" },
+//   { title: "Workshops", desc: "Hands-on live workshops", route: "/workshops", group: "workshops", tag: "Workshops" },
+// ];
+
+// const SEARCH_INDEX = [
+//   ...COURSE_CATEGORIES.map((c) => ({ title: c.title, route: c.route, group: "courses", tag: "Courses" })),
+//   ...HUB_MENU_ITEMS.map((i) => ({ title: i.title, desc: i.description, route: HUB_ROUTES[i.key], group: "features", tag: "Feature" })),
+//   ...PRODUCT_MENU_ITEMS.map((i) => ({ title: i.title, desc: i.description, route: PRODUCT_ROUTES[i.key], group: "product", tag: "Product" })),
+//   ...CAREER_TRACK_ITEMS.map((i) => ({ title: i.title, route: i.route, group: "career", tag: "Career Track" })),
+//   ...EXTRA_SEARCH_PAGES,
+// ];
+
+// const SEARCH_SCOPES = [
+//   { key: "all",       label: "All",            placeholder: "Search courses, pages, mentors…", fallback: "/all-courses" },
+//   { key: "courses",   label: "Courses",        placeholder: "Search courses, e.g. NEET, JEE, FDE…",            fallback: "/all-courses" },
+//   { key: "features",  label: "Features",       placeholder: "Search features, e.g. Resume, Coding Lab…" },
+//   { key: "product",   label: "Products",       placeholder: "Search products, e.g. Calendry, Workspace…" },
+//   { key: "career",    label: "Career Tracks",  placeholder: "Search career tracks…",                           fallback: "/career" },
+//   { key: "mentors",   label: "Mentors",        placeholder: "Search mentors by name or skill…",                fallback: "/mentors" },
+//   { key: "workshops", label: "Workshops",      placeholder: "Search workshops…",                               fallback: "/workshops" },
+// ];
+// const SEARCH_ICON_BY_TITLE = {
+//   "All Courses": GraduationCap,
+//   "School Boards": School,
+//   "FDE Academy": Landmark,
+//   "ILM ORA Talk": MessageCircle,
+//   "Study Abroad": Plane,
+//   "ILM ORA Gulf": Globe,
+// };
+// const SEARCH_ICON_BY_GROUP = {
+//   courses: FileText,
+//   features: Sparkles,
+//   product: LayoutDashboard,
+//   career: Award,
+//   mentors: Users,
+//   workshops: CalendarCheck,
+// };
+// const getSearchIcon = (r) =>
+//   r.isFallback ? Search : SEARCH_ICON_BY_TITLE[r.title] || SEARCH_ICON_BY_GROUP[r.group] || FileText;
+// function NavbarSearch({ theme }) {
+//   const isDarkTheme = theme === "dark";
+//   const navigate = useNavigate();
+//   const [open, setOpen] = useState(false);
+//   const [scopeKey, setScopeKey] = useState("all");
+//   const [query, setQuery] = useState("");
+//   const [active, setActive] = useState(0);
+//       const wrapRef = useRef(null);
+//   const panelRef = useRef(null);
+//   const inputRef = useRef(null);
+//   const [panelTop, setPanelTop] = useState(68);
+//   const scope = SEARCH_SCOPES.find((s) => s.key === scopeKey) || SEARCH_SCOPES[0];
+
+//   // Panel ko navbar ke bilkul neeche rakho (scroll par bhi)
+//   useEffect(() => {
+//     if (!open) return;
+//     const measure = () => {
+//       const navEl = wrapRef.current?.closest("nav");
+//       if (navEl) setPanelTop(Math.round(navEl.getBoundingClientRect().bottom));
+//     };
+//     measure();
+//     window.addEventListener("scroll", measure, { passive: true });
+//     window.addEventListener("resize", measure);
+//     return () => {
+//       window.removeEventListener("scroll", measure);
+//       window.removeEventListener("resize", measure);
+//     };
+//   }, [open]);
+
+//   useEffect(() => {
+//     if (!open) return;
+//     inputRef.current?.focus();
+//     const onDown = (e) => {
+//           const inWrap = wrapRef.current && wrapRef.current.contains(e.target);
+//       const inPanel = panelRef.current && panelRef.current.contains(e.target);
+//       if (!inWrap && !inPanel) setOpen(false);
+//     };
+//     const onKey = (e) => {
+//       if (e.key === "Escape") setOpen(false);
+//     };
+//     document.addEventListener("pointerdown", onDown);
+//     window.addEventListener("keydown", onKey);
+//     return () => {
+//       document.removeEventListener("pointerdown", onDown);
+//       window.removeEventListener("keydown", onKey);
+//     };
+//   }, [open]);
+
+//   const raw = query.trim();
+//   const tokens = raw.toLowerCase().split(/\s+/).filter(Boolean);
+//   const results = SEARCH_INDEX.filter(
+//     (it) =>
+//       it.route &&
+//       (scopeKey === "all" || it.group === scopeKey) &&
+//       tokens.every((t) => `${it.title} ${it.desc || ""} ${it.tag}`.toLowerCase().includes(t)),
+//   ).slice(0, 8);
+
+//   const fallbackRow =
+//     raw && scope.fallback
+//       ? {
+//           title: `Search “${raw}” in ${scopeKey === "all" ? "Courses" : scope.label}`,
+//           route: `${scope.fallback}?search=${encodeURIComponent(raw)}`,
+//           tag: "Search",
+//           isFallback: true,
+//         }
+//       : null;
+//   const rows = fallbackRow ? [...results, fallbackRow] : results;
+
+//   const go = (row) => {
+//     setOpen(false);
+//     setQuery("");
+//     setActive(0);
+//     navigate(row.route);
+//   };
+
+//   const submit = (e) => {
+//     e.preventDefault();
+//     if (rows[active]) go(rows[active]);
+//   };
+
+//   const onInputKeyDown = (e) => {
+//     if (!rows.length) return;
+//     if (e.key === "ArrowDown") {
+//       e.preventDefault();
+//       setActive((i) => (i + 1) % rows.length);
+//     } else if (e.key === "ArrowUp") {
+//       e.preventDefault();
+//       setActive((i) => (i - 1 + rows.length) % rows.length);
+//     }
+//   };
+
+//    return (
+//     // NOTE: wrapper ko "relative" mat banana, panel nav ke full width me khulta hai
+//     <div ref={wrapRef}>
+//             <button
+//         type="button"
+//         aria-label="Search"
+//         aria-expanded={open}
+//         onClick={() => setOpen((o) => !o)}
+//                 className={`group w-10 h-10 flex items-center justify-center rounded-xl border-0 bg-[#1F1D1F] ring-[1.5px] ring-inset transition-colors duration-200 flex-shrink-0 outline-none ${
+//           open
+//             ? "ring-[#F97316] bg-[#F97316]/10"
+//             : "ring-white/15 hover:ring-[#F97316] hover:bg-[#F97316]/10"
+//         }`}
+//       >
+//         <Search
+//           strokeWidth={2}
+//           className={`w-5 h-5 transition-colors duration-200 ${
+//             open ? "text-[#F97316]" : "text-white group-hover:text-[#F97316]"
+//           }`}
+//         />
+//       </button>
+
+//             {open && createPortal(
+//                 <div
+//           role="search"
+//           ref={panelRef}
+//           style={{ top: panelTop }}
+//           className={`fixed left-0 right-0 bottom-0 lg:bottom-auto lg:max-h-[80vh] overflow-y-auto z-[60] border-b shadow-[0_28px_40px_-18px_rgba(0,0,0,0.28)] animate-in fade-in-0 slide-in-from-top-1 duration-200 ${
+//             isDarkTheme ? "bg-[#161616] border-white/10" : "bg-white border-slate-200"
+//           }`}
+//         >
+//           <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-start gap-8 min-h-full">
+//             {/* Left dark feature card (same as mega menu) */}
+//             <div
+//               className="relative hidden lg:flex flex-shrink-0 w-[220px] h-[220px] rounded-md overflow-hidden text-left p-4 flex-col justify-end border border-white/10"
+//               style={{ background: "linear-gradient(160deg,#0b1020 0%,#14182b 60%,#1b1224 100%)" }}
+//             >
+//               <span
+//                 aria-hidden="true"
+//                 className="absolute inset-0 opacity-70"
+//                 style={{
+//                   backgroundImage:
+//                     "linear-gradient(rgba(249,115,22,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px)",
+//                   backgroundSize: "26px 26px",
+//                 }}
+//               />
+//               <span
+//                 aria-hidden="true"
+//                 className="absolute left-0 right-0 bottom-0 h-[3px] bg-gradient-to-r from-green-600 via-[#F97316] to-transparent"
+//               />
+//               <span className="relative text-[13px] text-white underline underline-offset-2">Find</span>
+//               <span className="relative text-[26px] font-semibold leading-tight text-white">Search</span>
+//             </div>
+
+//             {/* Right: search form */}
+//             <form onSubmit={submit} className="flex-1 min-w-0">
+//               <p className={`text-[11px] font-semibold uppercase tracking-widest mb-2 ${isDarkTheme ? "text-gray-400" : "text-slate-500"}`}>
+//                 Search in
+//               </p>
+//               <div className="flex gap-2 overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+//                 {SEARCH_SCOPES.map((s) => (
+//                   <button
+//                     key={s.key}
+//                     type="button"
+//                     onClick={() => {
+//                       setScopeKey(s.key);
+//                       setActive(0);
+//                       inputRef.current?.focus();
+//                     }}
+//                     className={`flex-shrink-0 whitespace-nowrap rounded-full px-3.5 py-1.5 text-[13px] font-semibold border transition-colors ${
+//                       scopeKey === s.key
+//                         ? "bg-[#F97316] border-[#F97316] text-white"
+//                         : isDarkTheme
+//                           ? "bg-transparent border-white/15 text-gray-300 hover:border-[#F97316] hover:text-[#F97316]"
+//                           : "bg-transparent border-slate-300 text-slate-700 hover:border-[#F97316] hover:text-[#F97316]"
+//                     }`}
+//                   >
+//                     {s.label}
+//                   </button>
+//                 ))}
+//               </div>
+
+//               <div className="flex items-center gap-2">
+//                 <div className="relative flex-1">
+//                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+//                   <input
+//                     ref={inputRef}
+//                     type="search"
+//                     value={query}
+//                     onChange={(e) => {
+//                       setQuery(e.target.value);
+//                       setActive(0);
+//                     }}
+//                     onKeyDown={onInputKeyDown}
+//                     placeholder={scope.placeholder}
+//                     className={`w-full h-11 pl-9 pr-3 rounded-xl border text-[16px] sm:text-sm outline-none focus:border-[#F97316] ${
+//                       isDarkTheme
+//                         ? "bg-[#2A2A2A] border-white/10 text-white placeholder:text-gray-500"
+//                         : "bg-slate-50 border-slate-300 text-slate-900 placeholder:text-slate-400"
+//                     }`}
+//                   />
+//                 </div>
+//                 <button
+//                   type="submit"
+//                   className="h-11 px-4 rounded-xl bg-gradient-to-br from-[#F97316] to-[#EA580C] text-white font-bold text-sm whitespace-nowrap"
+//                 >
+//                   Search
+//                 </button>
+//               </div>
+
+//               {/* Results: plain text links, same look as mega menu */}
+//               <p className={`mt-4 mb-1 text-[11px] font-semibold uppercase tracking-widest ${isDarkTheme ? "text-gray-500" : "text-slate-500"}`}>
+//                 {raw ? "Results" : "Browse"}
+//               </p>
+//                                 <div className="lg:max-h-[40vh] lg:overflow-y-auto pb-24 lg:pb-2">
+//                 {rows.length === 0 ? (
+//                   <p className="py-2 text-sm text-gray-400">No matching pages found.</p>
+//                 ) : (
+//                   <ul className="list-none m-0 p-0 grid grid-cols-1 sm:grid-cols-2 gap-x-12">
+//                     {rows.map((r, i) => (
+//                       <li key={`${r.route}-${r.title}-${i}`}>
+//                         <button
+//                           type="button"
+//                           onMouseEnter={() => setActive(i)}
+//                           onClick={() => go(r)}
+//                           className={`w-full flex items-center justify-between gap-3 py-2 text-left text-[14px] font-medium bg-transparent border-none cursor-pointer ${
+//                             isDarkTheme ? "text-slate-200" : "text-slate-800"
+//                           } ${active === i ? "text-[#F97316] underline underline-offset-4" : "hover:text-[#F97316] hover:underline underline-offset-4"} ${
+//                             r.isFallback ? "!text-[#F97316]" : ""
+//                           }`}
+//                         >
+//                           <span className="min-w-0 truncate">{r.title}</span>
+//                           <span className="flex-shrink-0 text-[10px] font-semibold text-[#F97316] border border-[#F97316]/50 bg-[#F97316]/10 rounded-full px-2 py-0.5 whitespace-nowrap">
+//                             {r.tag}
+//                           </span>
+//                         </button>
+//                       </li>
+//                     ))}
+//                   </ul>
+//                 )}
+//               </div>
+//             </form>
+//                    </div>
+//         </div>,
+//         document.body
+//       )}
+//     </div>
+//   );
+// }
+// /* ─────────────────────────────────────────────────────────────────
+//    NAVBAR — logo, desktop navigation, mega menu, dropdowns, user/login
+//    state, avatar/profile menu, logout, "Get Started" CTA, mobile menu
+//    button, theme toggle, scroll effects, sticky behavior.
+// ───────────────────────────────────────────────────────────────── */
+// export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
+//   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+//   const [scrolled, setScrolled] = useState(false);
+//   const [user, setUser] = useState(null);
+
+//   // Maven-style mega menu: which panel is open ("feature" | "product" | "cert" | null)
+//   const [openMenu, setOpenMenu] = useState(null);
+
+//   const navigate = useNavigate();
+
+//   useEffect(() => {
+//     const onKey = (e) => {
+//       if (e.key === "Escape") setOpenMenu(null);
+//     };
+//     window.addEventListener("keydown", onKey);
+//     return () => window.removeEventListener("keydown", onKey);
+//   }, []);
+
+//   // Desktop trigger (chevron flips up + white underline while open, like Maven)
+//   const renderMegaTrigger = (key) => {
+//     const isOpen = openMenu === key;
+//     return (
+//       <div className="relative" data-mega-trigger onMouseEnter={() => setOpenMenu(key)}>
+//         <button
+//           type="button"
+//           aria-haspopup="true"
+//           aria-expanded={isOpen}
+//           onClick={() => {
+//             if (MEGA_MENUS[key].triggerRoute) {
+//               setOpenMenu(null);
+//               navigate(MEGA_MENUS[key].triggerRoute);
+//             } else {
+//               setOpenMenu(key);
+//             }
+//           }}
+//           className={`relative font-medium transition-colors duration-300 px-3 xl:px-4 py-2 rounded-lg text-[13px] xl:text-[15px] whitespace-nowrap bg-transparent border-none cursor-pointer flex items-center gap-1 ${
+//             isOpen ? "text-white" : "text-white hover:text-[#F97316]"
+//           }`}
+//         >
+//           {MEGA_MENUS[key].label}
+//           {!MEGA_MENUS[key].noChevron && (
+//             <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
+//           )}
+//           <span
+//             aria-hidden="true"
+//             className={`absolute left-3 right-3 xl:left-4 xl:right-4 bottom-0 h-[2px] rounded-full bg-white transition-opacity duration-200 ${
+//               isOpen ? "opacity-100" : "opacity-0"
+//             }`}
+//           />
+//         </button>
+//       </div>
+//     );
+//   };
+
+//   useEffect(() => {
+//     const handleScroll = () => setScrolled(window.scrollY > 20);
+//     window.addEventListener("scroll", handleScroll);
+//     return () => window.removeEventListener("scroll", handleScroll);
+//   }, []);
+
+//   // Bug fix: this used to read sessionStorage["user"], a key the real
+//   // login flow never writes to — so this navbar never saw a logged-in
+//   // user. It now reads the SAME real session source IlmOraDemoPage.jsx
+//   // already uses (localStorage["lms_token"] / localStorage["lms_user"]),
+//   // so the same authenticated session is detected everywhere, including
+//   // after navigating away from /ilm-demo to a public page.
+//   useEffect(() => {
+//     const token = localStorage.getItem("lms_token");
+//     const rawUser = localStorage.getItem("lms_user");
+//     let parsedUser = null;
+//     try {
+//       parsedUser = rawUser ? JSON.parse(rawUser) : null;
+//     } catch {
+//       parsedUser = null;
+//     }
+
+//     // Same stale-data guard IlmOraDemoPage.jsx already runs on mount: a
+//     // bare isNewUser:true flag with no matching Google credential is
+//     // leftover data from an interrupted Google sign-in (tab/browser
+//     // closed before role selection finished) — sessionStorage clears on
+//     // session end but localStorage["lms_user"] doesn't, so this flag can
+//     // outlive the real session. Without this check, a public page loaded
+//     // first (before /ilm-demo ever mounts and cleans it up) would trust
+//     // the stale flag and show the avatar for a user who never logged in.
+//     const hasGoogleCred = !!sessionStorage.getItem("ilmora_google_credential");
+//     if (!token && parsedUser?.isNewUser === true && !hasGoogleCred) {
+//       localStorage.removeItem("lms_user");
+//       setUser(null);
+//       return;
+//     }
+
+//     if (token || parsedUser) {
+//       setUser(parsedUser || {});
+//     } else {
+//       setUser(null);
+//     }
+//   }, []);
+
+//   // Same fields the "Student Hub"/"Trainer Hub"/"Manager Hub" logic in
+//   // IlmOraDemoPage.jsx already normalizes role strings with — copied
+//   // here as a pure function (no shared/duplicate STATE, just the same
+//   // string-mapping logic) so "Go to Dashboard" below sends the user to
+//   // the correct role dashboard, same as it does on /ilm-demo.
+//   const normalizeAppRole = (raw) => {
+//     const r = (raw || "").toString().trim().toUpperCase();
+//     if (["TENANT_ADMIN", "ADMIN", "BUSINESS", "MANAGER", "PARTNERSHIP"].includes(r))
+//       return "admin";
+//     if (r === "TRAINER") return "trainer";
+//     if (r === "STUDENT") return "student";
+//     return "";
+//   };
+ 
+//     const goToDashboard = () => {
+//     navigate("/login");
+//   };
+//   // Same roleChangeUsed flag IlmOraDemoPage.jsx's hasUsedRoleChange()
+//   // already reads from lms_user — same source, read here too. Kept for
+//   // potential future use even though the public dropdown no longer
+//   // surfaces an "Edit Role" item itself.
+//   const hasUsedRoleChange = () => !!user?.roleChangeUsed;
+
+//   // Mirrors IlmOraDemoPage.jsx's handleSignOut exactly — same keys
+//   // cleared, so signing out here fully signs the user out everywhere,
+//   // not just on this page.
+//   const handleLogout = () => {
+//     localStorage.removeItem("lms_token");
+//     localStorage.removeItem("lms_user");
+//     localStorage.removeItem("role");
+//     localStorage.removeItem("organizationId");
+//     localStorage.removeItem("selectedPlan");
+//     sessionStorage.removeItem("ilmora_google_user");
+//     sessionStorage.removeItem("ilmora_google_credential");
+//     sessionStorage.removeItem("ilmora_profile_return_path");
+//     setUser(null);
+//     navigate("/", { replace: true });
+//   };
+
+//           const navLinks = [
+//     {
+//       text: "Workshops",
+//       href: "#workshops",
+//       icon: BookOpen,
+//       color: "text-orange-500",
+//       description: "Hands-on Live Workshops",
+//       route: "/workshops",
+//     },
+//   ];
+
+//   const navButtons = [];
+
+//   return (
+//     <>
+//       {/* ── Full-Screen Mobile Menu ── */}
+//       {mobileMenuOpen && (
+//         <MobileFullScreenMenu
+//           onClose={() => setMobileMenuOpen(false)}
+//           navLinks={navLinks}
+//           navButtons={navButtons}
+//           user={user}
+//           navigate={navigate}
+//           handleLogout={handleLogout}
+//           setShowLoginModal={setShowLoginModal}
+//           productMenuItems={PRODUCT_MENU_ITEMS}
+//           productRoutes={PRODUCT_ROUTES}
+//           certMenuItems={CERT_MENU_ITEMS}
+//           // certRoutes={CERT_ROUTES}
+//                     certRoutes={CERT_ROUTES}
+//           careerItems={CAREER_TRACK_ITEMS}
+//         />
+//       )}
+
+//       {/* ── Nav ── */}
+//             <nav
+//         style={{ top: "var(--texora-banner-h, 0px)" }}
+//         onMouseLeave={() => setOpenMenu(null)}
+//         className={`fixed w-full z-50 transition-[background-color,box-shadow] duration-300 bg-[#1F1D1F]/95 border-b border-[#F97316]/20 ${
+//           scrolled
+//             ? "backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.18)]"
+//             : "backdrop-blur-md"
+//         }`}
+//       >
+//         <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+//           <div className="flex items-center justify-between h-[68px]">
+//             {/* Logo */}
+//             <div
+//               className="flex items-center cursor-pointer hover:scale-105 transition-transform flex-shrink-0"
+//               onClick={() => navigate("/")}
+//             >
+//               <span className="text-[20px] sm:text-[24px] font-extrabold tracking-wide font-serif leading-none whitespace-nowrap">
+//                 <span className="text-green-600">ILM</span>
+//                 <span className="text-[#F97316] ml-1">ORA</span>
+//               </span>
+//             </div>
+
+//             {/* Desktop Nav — visible from lg (1024px) and above */}
+//             <div
+//               className="hidden lg:flex items-center gap-1 flex-1 justify-center mx-4 xl:mx-6"
+//               onMouseOver={(e) => {
+//                 if (!e.target.closest("[data-mega-trigger]")) setOpenMenu(null);
+//               }}
+//             >
+//               {/* All Courses — Maven-style mega menu trigger (click still opens /all-courses) */}
+//               {renderMegaTrigger("courses")}
+
+//               {/* ILM ORA Feature + Product — Maven-style mega menu triggers
+//                   (the panel itself is rendered once, below the nav row) */}
+//               {renderMegaTrigger("feature")}
+//               {renderMegaTrigger("product")}
+
+//                         {/* Direct Nav Links — Workshop (Coming Soon) */}
+//               {navLinks.map((link) => (
+//                 <button
+//                   key={link.text}
+//                   type="button"
+//                   disabled={!!link.comingSoon}
+//                   aria-disabled={!!link.comingSoon}
+//                   onClick={() => {
+//                     if (link.comingSoon) return;
+//                     if (link.route) {
+//                       navigate(link.route);
+//                     } else {
+//                       document
+//                         .querySelector(link.href)
+//                         ?.scrollIntoView({ behavior: "smooth" });
+//                     }
+//                   }}
+//                   className={`font-medium transition-colors duration-300 px-3 xl:px-4 py-2 rounded-lg text-[13px] xl:text-[15px] whitespace-nowrap bg-transparent border-none flex items-center gap-2 ${
+//                     link.comingSoon
+//                       ? "text-white/60 cursor-not-allowed"
+//                       : "text-white hover:text-[#F97316] hover:bg-[#F97316]/10 cursor-pointer"
+//                   }`}
+//                 >
+//                   {link.text}
+//                   {link.comingSoon && (
+//                     <span className="text-[10px] font-semibold text-[#F97316] border border-[#F97316]/50 bg-[#F97316]/10 rounded-full px-2 py-0.5 whitespace-nowrap">
+//                       Coming Soon
+//                     </span>
+//                   )}
+//                 </button>
+//               ))}
+
+//                             {/* Skills — commented out for now */}
+//               {/* {renderMegaTrigger("cert")} */}
+
+//               {/* Career Tracks — replaces Skills */}
+//               {renderMegaTrigger("career")}
+//             </div>
+
+//             {/* Right side */}
+//             <div className="flex items-center gap-2 xl:gap-3 flex-shrink-0">
+//               <NavbarSearch theme={theme} />
+//                             <button
+//                 type="button"
+//                 onClick={toggleTheme}
+//                 aria-label="Toggle theme"
+//                                 className="group w-10 h-10 flex items-center justify-center rounded-xl border-0 bg-[#1F1D1F] ring-[1.5px] ring-inset ring-white/15 hover:ring-[#F97316] hover:bg-[#F97316]/10 focus:ring-[#F97316] transition-colors duration-200 flex-shrink-0 outline-none"
+//               >
+//                 {theme === "dark" ? (
+//                   <Sun strokeWidth={2} className="w-5 h-5 text-white group-hover:text-[#F97316] transition-colors duration-200" />
+//                 ) : (
+//                   <Moon strokeWidth={2} className="w-5 h-5 text-white group-hover:text-[#F97316] transition-colors duration-200" />
+//                 )}
+//               </button>
+
+//               {user ? (
+//                 <div className="hidden lg:block">
+//                   <DropdownMenu>
+//                     <DropdownMenuTrigger asChild>
+//                       <Button
+//                         variant="outline"
+//                         className="gap-2 rounded-xl border-white/[0.08] bg-[#2A2A2A] hover:border-[#F97316] text-white h-10 px-3"
+//                       >
+//                         <Avatar className="w-7 h-7">
+//                           <AvatarImage src={user.picture} alt={user.name} />
+//                           <AvatarFallback className="bg-[#1E293B] text-white text-xs">
+//                             {user.name?.charAt(0) || (
+//                               <User className="w-3 h-3" />
+//                             )}
+//                           </AvatarFallback>
+//                         </Avatar>
+//                         <ChevronDown className="w-3 h-3" />
+//                       </Button>
+//                     </DropdownMenuTrigger>
+//                     <DropdownMenuContent
+//                       align="end"
+//                       className="w-72 bg-[#232323] border-white/[0.08]"
+//                     >
+//                       <div className="px-3 py-3 bg-[#2A2A2A] rounded-t-md">
+//                         <p className="font-semibold text-sm text-white truncate">
+//                           {user.name || "User"}
+//                         </p>
+//                         <p className="text-xs text-gray-400 truncate">
+//                           {user.email}
+//                         </p>
+//                       </div>
+//                       <DropdownMenuSeparator />
+//                       {/* Public/landing dropdown is intentionally minimal:
+//                           only "Go to Dashboard" here + "Sign Out" below.
+//                           Profile / Edit Role / Change Password are
+//                           dashboard-only items and live in
+//                           IlmOraDemoPage.jsx's own avatar dropdown — do not
+//                           add them back here; these two UI contexts are
+//                           intentionally different. */}
+//                       {[
+//                         {
+//                           icon: LayoutDashboard,
+//                           label: "Go to Dashboard",
+//                           desc: "Jump back into your dashboard",
+//                           onClick: goToDashboard,
+//                         },
+//                       ].map((item) => (
+//                         <DropdownMenuItem
+//                           key={item.label}
+//                           onClick={item.onClick}
+//                           className="gap-3 cursor-pointer"
+//                         >
+//                           <div className="w-8 h-8 rounded-lg bg-[#F97316]/10 flex items-center justify-center">
+//                             <item.icon className="w-4 h-4 text-[#F97316]" />
+//                           </div>
+//                           <div>
+//                             <p className="text-sm font-medium text-white">
+//                               {item.label}
+//                             </p>
+//                             <p className="text-xs text-gray-400">{item.desc}</p>
+//                           </div>
+//                         </DropdownMenuItem>
+//                       ))}
+//                       <DropdownMenuSeparator />
+//                       <DropdownMenuItem
+//                         onClick={handleLogout}
+//                         className="gap-3 text-red-600 cursor-pointer"
+//                       >
+//                         <LogOut className="w-4 h-4" />
+//                         <span className="text-sm font-medium">Sign Out</span>
+//                       </DropdownMenuItem>
+//                     </DropdownMenuContent>
+//                   </DropdownMenu>
+//                 </div>
+//               ) : (
+//                 <Button
+//                   onClick={() => setShowLoginModal(true)}
+//                   className="flex bg-gradient-to-br from-[#F97316] to-[#EA580C] hover:from-[#F97316] hover:to-[#EA580C] text-white font-bold px-3 sm:px-4 xl:px-5 py-2.5 rounded-xl items-center gap-1.5 sm:gap-2 shadow-md hover:-translate-y-0.5 hover:shadow-[0_12px_30px_rgba(249,115,22,0.35)] transition-all duration-300 text-[12px] sm:text-[13px] xl:text-[15px] h-10 whitespace-nowrap"
+//                 >
+//                   <Sparkles className="hidden sm:block w-4 h-4" /> Get Started
+//                 </Button>
+//               )}
+
+//               {/* Hamburger — only shown below lg (below 1024px) */}
+//               <button
+//                 className="lg:hidden flex items-center justify-center w-10 h-10 rounded-xl border border-white/[0.08] hover:border-[#F97316] bg-[#2A2A2A] transition-colors duration-300 shadow-sm"
+//                 aria-label="Open menu"
+//                 onClick={() => setMobileMenuOpen(true)}
+//               >
+//                 <Menu className="w-5 h-5 text-white" />
+//               </button>
+//             </div>
+//           </div>
+//         </div>
+
+//         {/* ── MEGA MENU PANEL (Maven-style): full-width, white, directly under the nav ── */}
+//         {openMenu && MEGA_MENUS[openMenu] && (
+//           <div
+//             role="menu"
+//             className={`hidden lg:block absolute left-0 right-0 top-full border-b shadow-[0_28px_40px_-18px_rgba(0,0,0,0.28)] animate-in fade-in-0 slide-in-from-top-1 duration-200 ${
+//               theme === "dark" ? "bg-[#161616] border-white/10" : "bg-white border-slate-200"
+//             }`}
+//           >
+//             <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-start gap-8">
+//               {/* Left dark feature card */}
+//               <button
+//                 type="button"
+//                 tabIndex={MEGA_MENUS[openMenu].cardRoute ? 0 : -1}
+//                 onClick={() => {
+//                   if (MEGA_MENUS[openMenu].cardRoute) {
+//                     const r = MEGA_MENUS[openMenu].cardRoute;
+//                     setOpenMenu(null);
+//                     navigate(r);
+//                   }
+//                 }}
+//                 className={`relative flex-shrink-0 w-[220px] h-[220px] rounded-md overflow-hidden text-left p-4 flex flex-col justify-end border border-white/10 ${
+//                   MEGA_MENUS[openMenu].cardRoute ? "cursor-pointer" : "cursor-default"
+//                 }`}
+//                 style={{ background: "linear-gradient(160deg,#0b1020 0%,#14182b 60%,#1b1224 100%)" }}
+//               >
+//                 <span
+//                   aria-hidden="true"
+//                   className="absolute inset-0 opacity-70"
+//                   style={{
+//                     backgroundImage:
+//                       "linear-gradient(rgba(249,115,22,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px)",
+//                     backgroundSize: "26px 26px",
+//                   }}
+//                 />
+//                 <span
+//                   aria-hidden="true"
+//                   className="absolute left-0 right-0 bottom-0 h-[3px] bg-gradient-to-r from-green-600 via-[#F97316] to-transparent"
+//                 />
+//                 <span className="relative text-[13px] text-white underline underline-offset-2">
+//                   {MEGA_MENUS[openMenu].eyebrow}
+//                 </span>
+//                 <span className="relative text-[26px] font-semibold leading-tight text-white">
+//                   {MEGA_MENUS[openMenu].cardTitle}
+//                 </span>
+//               </button>
+
+//               {/* Link columns — fill top→bottom, 5 per column, then next column */}
+//               <ul
+//                 className="list-none m-0 p-0 grid grid-flow-col content-start gap-x-12"
+//                 style={{ gridTemplateRows: "repeat(5, auto)", gridAutoColumns: "minmax(190px, 240px)" }}
+//               >
+//                 {MEGA_MENUS[openMenu].items.map((item) => (
+//                   <li key={item.key}>
+//                     <button
+//                       type="button"
+//                       role="menuitem"
+//                       disabled={item.comingSoon}
+//                       onClick={() => {
+//                         setOpenMenu(null);
+//                         navigate(item.route);
+//                       }}
+//                       className={`flex items-center gap-2 py-2 text-left text-[14px] font-medium bg-transparent border-none ${
+//                         theme === "dark" ? "text-slate-200" : "text-slate-800"
+//                       } ${
+//                         item.comingSoon
+//                           ? "cursor-not-allowed opacity-60"
+//                           : "cursor-pointer hover:text-[#F97316] hover:underline underline-offset-4"
+//                       }`}
+//                     >
+//                       {item.title}
+//                       {item.comingSoon && (
+//                         <>
+//                           <span className="text-[10px] font-semibold text-[#F97316] border border-[#F97316]/50 bg-[#F97316]/10 rounded-full px-2 py-0.5 whitespace-nowrap">
+//                             Coming Soon
+//                           </span>
+//                           <Lock className="w-3.5 h-3.5 text-gray-400" />
+//                         </>
+//                       )}
+//                     </button>
+//                   </li>
+//                 ))}
+//               </ul>
+//             </div>
+//           </div>
+//         )}
+//       </nav>
+//     </>
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -34,7 +1023,7 @@ import {
   PenTool,
   CalendarCheck,
   ArrowRight,
-    Cloud,
+  Cloud,
   Globe,
   Layers,
   Plane,
@@ -119,7 +1108,7 @@ const PRODUCT_ICON_COLORS = {
 const CERT_MENU_ITEMS = [
   { key: "aws", title: "AWS Certification", description: "Cloud Practitioner to Professional", icon: "Award" },
   { key: "microsoft", title: "Microsoft Certification", description: "Azure, M365 & Power Platform", icon: "Layers" },
-    // { key: "cloud", title: "Cloud Certification", description: "Multi-cloud & vendor-neutral paths", icon: "Cloud", comingSoon: true },
+  // { key: "cloud", title: "Cloud Certification", description: "Multi-cloud & vendor-neutral paths", icon: "Cloud", comingSoon: true },
   { key: "google", title: "Google Certification", description: "Google Cloud & Workspace exams", icon: "Globe" },
   { key: "cisco", title: "Cisco Certification", description: "CCNA, CCNP & CCIE exams and training", icon: "Award" },
 ];
@@ -139,13 +1128,17 @@ const CERT_ICON_COLORS = {
 };
 
 // "Career Tracks" dropdown — replaces the old "Skills" tab (Skills is commented out for now).
-// Career Tracks was removed from the "All Courses" dropdown and now lives here, classified by category.
-// Edit titles/routes below to match your real /career page filters.
+// Items are classified into groups (shown as column headings in the mega menu).
+// To add a new category: add its name to CAREER_TRACK_GROUPS and use the same
+// name in the item's `group` field.
+const CAREER_TRACK_GROUPS = ["Career Tracks", "Personal Growth"];
+
 const CAREER_TRACK_ITEMS = [
-  { key: "all-career", title: "All Career Tracks", route: "/career" },
-  { key: "development-engineering", title: "Development Engineering Platform", route: "/career?platform=dev" },
-  { key: "ai-agent-ai", title: "AI – Agent AI", route: "/career?platform=ai" },
-  { key: "contact-center", title: "Contact Center Platform", route: "/career?platform=cx" },
+  { key: "all-career", title: "All Career Tracks", route: "/career", group: "Career Tracks" },
+  { key: "development-engineering", title: "Development Engineering Platform", route: "/career?platform=dev", group: "Career Tracks" },
+  { key: "ai-agent-ai", title: "AI – Agent AI", route: "/career?platform=ai", group: "Career Tracks" },
+  { key: "contact-center", title: "Contact Center Platform", route: "/career?platform=cx", group: "Career Tracks" },
+  { key: "personality-development", title: "Personality Development", route: "/personality-development", group: "Personal Growth" },
 ];
 
 // All Courses dropdown — every item opens its own page (same pages as the
@@ -187,31 +1180,31 @@ const MEGA_MENUS = {
     cardTitle: "Product",
     items: PRODUCT_MENU_ITEMS.map((i) => ({ key: i.key, title: i.title, route: PRODUCT_ROUTES[i.key] })),
   },
-  
-// Skills tab — commented out for now
-/*
-cert: {
-  label: "Skills",
-  eyebrow: "Explore skills",
-  cardTitle: "Skills",
-  cardRoute: "/all-courses",
-  items: CERT_MENU_ITEMS.map((i) => ({
-    key: i.key,
-    title: i.title,
-    route: CERT_ROUTES[i.key],
-    comingSoon: !!i.comingSoon,
-  })),
-},
-*/
 
-career: {
-  label: "Career Tracks",
-  eyebrow: "Explore",
-  cardTitle: "Career Tracks",
-  cardRoute: "/career",
-  items: CAREER_TRACK_ITEMS.map((i) => ({ key: i.key, title: i.title, route: i.route })),
-},
+  // Skills tab — commented out for now
+  /*
+  cert: {
+    label: "Skills",
+    eyebrow: "Explore skills",
+    cardTitle: "Skills",
+    cardRoute: "/all-courses",
+    items: CERT_MENU_ITEMS.map((i) => ({
+      key: i.key,
+      title: i.title,
+      route: CERT_ROUTES[i.key],
+      comingSoon: !!i.comingSoon,
+    })),
+  },
+  */
 
+  career: {
+    label: "Career Tracks",
+    eyebrow: "Explore",
+    cardTitle: "Career Tracks",
+    cardRoute: "/career",
+    groups: CAREER_TRACK_GROUPS,
+    items: CAREER_TRACK_ITEMS.map((i) => ({ key: i.key, title: i.title, route: i.route, group: i.group })),
+  },
 };
 
 /* ─── Navbar Search — sabhi public pages + courses me live search ───
@@ -231,13 +1224,13 @@ const SEARCH_INDEX = [
 ];
 
 const SEARCH_SCOPES = [
-  { key: "all",       label: "All",            placeholder: "Search courses, pages, mentors…", fallback: "/all-courses" },
-  { key: "courses",   label: "Courses",        placeholder: "Search courses, e.g. NEET, JEE, FDE…",            fallback: "/all-courses" },
-  { key: "features",  label: "Features",       placeholder: "Search features, e.g. Resume, Coding Lab…" },
-  { key: "product",   label: "Products",       placeholder: "Search products, e.g. Calendry, Workspace…" },
-  { key: "career",    label: "Career Tracks",  placeholder: "Search career tracks…",                           fallback: "/career" },
-  { key: "mentors",   label: "Mentors",        placeholder: "Search mentors by name or skill…",                fallback: "/mentors" },
-  { key: "workshops", label: "Workshops",      placeholder: "Search workshops…",                               fallback: "/workshops" },
+  { key: "all", label: "All", placeholder: "Search courses, pages, mentors…", fallback: "/all-courses" },
+  { key: "courses", label: "Courses", placeholder: "Search courses, e.g. NEET, JEE, FDE…", fallback: "/all-courses" },
+  { key: "features", label: "Features", placeholder: "Search features, e.g. Resume, Coding Lab…" },
+  { key: "product", label: "Products", placeholder: "Search products, e.g. Calendry, Workspace…" },
+  { key: "career", label: "Career Tracks", placeholder: "Search career tracks…", fallback: "/career" },
+  { key: "mentors", label: "Mentors", placeholder: "Search mentors by name or skill…", fallback: "/mentors" },
+  { key: "workshops", label: "Workshops", placeholder: "Search workshops…", fallback: "/workshops" },
 ];
 const SEARCH_ICON_BY_TITLE = {
   "All Courses": GraduationCap,
@@ -257,6 +1250,7 @@ const SEARCH_ICON_BY_GROUP = {
 };
 const getSearchIcon = (r) =>
   r.isFallback ? Search : SEARCH_ICON_BY_TITLE[r.title] || SEARCH_ICON_BY_GROUP[r.group] || FileText;
+
 function NavbarSearch({ theme }) {
   const isDarkTheme = theme === "dark";
   const navigate = useNavigate();
@@ -264,7 +1258,7 @@ function NavbarSearch({ theme }) {
   const [scopeKey, setScopeKey] = useState("all");
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(0);
-      const wrapRef = useRef(null);
+  const wrapRef = useRef(null);
   const panelRef = useRef(null);
   const inputRef = useRef(null);
   const [panelTop, setPanelTop] = useState(68);
@@ -290,7 +1284,7 @@ function NavbarSearch({ theme }) {
     if (!open) return;
     inputRef.current?.focus();
     const onDown = (e) => {
-          const inWrap = wrapRef.current && wrapRef.current.contains(e.target);
+      const inWrap = wrapRef.current && wrapRef.current.contains(e.target);
       const inPanel = panelRef.current && panelRef.current.contains(e.target);
       if (!inWrap && !inPanel) setOpen(false);
     };
@@ -348,15 +1342,15 @@ function NavbarSearch({ theme }) {
     }
   };
 
-   return (
+  return (
     // NOTE: wrapper ko "relative" mat banana, panel nav ke full width me khulta hai
     <div ref={wrapRef}>
-            <button
+      <button
         type="button"
         aria-label="Search"
         aria-expanded={open}
         onClick={() => setOpen((o) => !o)}
-                className={`group w-10 h-10 flex items-center justify-center rounded-xl border-0 bg-[#1F1D1F] ring-[1.5px] ring-inset transition-colors duration-200 flex-shrink-0 outline-none ${
+        className={`group w-10 h-10 flex items-center justify-center rounded-xl border-0 bg-[#1F1D1F] ring-[1.5px] ring-inset transition-colors duration-200 flex-shrink-0 outline-none ${
           open
             ? "ring-[#F97316] bg-[#F97316]/10"
             : "ring-white/15 hover:ring-[#F97316] hover:bg-[#F97316]/10"
@@ -370,133 +1364,135 @@ function NavbarSearch({ theme }) {
         />
       </button>
 
-            {open && createPortal(
-                <div
-          role="search"
-          ref={panelRef}
-          style={{ top: panelTop }}
-          className={`fixed left-0 right-0 bottom-0 lg:bottom-auto lg:max-h-[80vh] overflow-y-auto z-[60] border-b shadow-[0_28px_40px_-18px_rgba(0,0,0,0.28)] animate-in fade-in-0 slide-in-from-top-1 duration-200 ${
-            isDarkTheme ? "bg-[#161616] border-white/10" : "bg-white border-slate-200"
-          }`}
-        >
-          <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-start gap-8 min-h-full">
-            {/* Left dark feature card (same as mega menu) */}
-            <div
-              className="relative hidden lg:flex flex-shrink-0 w-[220px] h-[220px] rounded-md overflow-hidden text-left p-4 flex-col justify-end border border-white/10"
-              style={{ background: "linear-gradient(160deg,#0b1020 0%,#14182b 60%,#1b1224 100%)" }}
-            >
-              <span
-                aria-hidden="true"
-                className="absolute inset-0 opacity-70"
-                style={{
-                  backgroundImage:
-                    "linear-gradient(rgba(249,115,22,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px)",
-                  backgroundSize: "26px 26px",
-                }}
-              />
-              <span
-                aria-hidden="true"
-                className="absolute left-0 right-0 bottom-0 h-[3px] bg-gradient-to-r from-green-600 via-[#F97316] to-transparent"
-              />
-              <span className="relative text-[13px] text-white underline underline-offset-2">Find</span>
-              <span className="relative text-[26px] font-semibold leading-tight text-white">Search</span>
-            </div>
-
-            {/* Right: search form */}
-            <form onSubmit={submit} className="flex-1 min-w-0">
-              <p className={`text-[11px] font-semibold uppercase tracking-widest mb-2 ${isDarkTheme ? "text-gray-400" : "text-slate-500"}`}>
-                Search in
-              </p>
-              <div className="flex gap-2 overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-                {SEARCH_SCOPES.map((s) => (
-                  <button
-                    key={s.key}
-                    type="button"
-                    onClick={() => {
-                      setScopeKey(s.key);
-                      setActive(0);
-                      inputRef.current?.focus();
-                    }}
-                    className={`flex-shrink-0 whitespace-nowrap rounded-full px-3.5 py-1.5 text-[13px] font-semibold border transition-colors ${
-                      scopeKey === s.key
-                        ? "bg-[#F97316] border-[#F97316] text-white"
-                        : isDarkTheme
-                          ? "bg-transparent border-white/15 text-gray-300 hover:border-[#F97316] hover:text-[#F97316]"
-                          : "bg-transparent border-slate-300 text-slate-700 hover:border-[#F97316] hover:text-[#F97316]"
-                    }`}
-                  >
-                    {s.label}
-                  </button>
-                ))}
+      {open &&
+        createPortal(
+          <div
+            role="search"
+            ref={panelRef}
+            style={{ top: panelTop }}
+            className={`fixed left-0 right-0 bottom-0 lg:bottom-auto lg:max-h-[80vh] overflow-y-auto z-[60] border-b shadow-[0_28px_40px_-18px_rgba(0,0,0,0.28)] animate-in fade-in-0 slide-in-from-top-1 duration-200 ${
+              isDarkTheme ? "bg-[#161616] border-white/10" : "bg-white border-slate-200"
+            }`}
+          >
+            <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-start gap-8 min-h-full">
+              {/* Left dark feature card (same as mega menu) */}
+              <div
+                className="relative hidden lg:flex flex-shrink-0 w-[220px] h-[220px] rounded-md overflow-hidden text-left p-4 flex-col justify-end border border-white/10"
+                style={{ background: "linear-gradient(160deg,#0b1020 0%,#14182b 60%,#1b1224 100%)" }}
+              >
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-0 opacity-70"
+                  style={{
+                    backgroundImage:
+                      "linear-gradient(rgba(249,115,22,.16) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px)",
+                    backgroundSize: "26px 26px",
+                  }}
+                />
+                <span
+                  aria-hidden="true"
+                  className="absolute left-0 right-0 bottom-0 h-[3px] bg-gradient-to-r from-green-600 via-[#F97316] to-transparent"
+                />
+                <span className="relative text-[13px] text-white underline underline-offset-2">Find</span>
+                <span className="relative text-[26px] font-semibold leading-tight text-white">Search</span>
               </div>
 
-              <div className="flex items-center gap-2">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                  <input
-                    ref={inputRef}
-                    type="search"
-                    value={query}
-                    onChange={(e) => {
-                      setQuery(e.target.value);
-                      setActive(0);
-                    }}
-                    onKeyDown={onInputKeyDown}
-                    placeholder={scope.placeholder}
-                    className={`w-full h-11 pl-9 pr-3 rounded-xl border text-[16px] sm:text-sm outline-none focus:border-[#F97316] ${
-                      isDarkTheme
-                        ? "bg-[#2A2A2A] border-white/10 text-white placeholder:text-gray-500"
-                        : "bg-slate-50 border-slate-300 text-slate-900 placeholder:text-slate-400"
-                    }`}
-                  />
+              {/* Right: search form */}
+              <form onSubmit={submit} className="flex-1 min-w-0">
+                <p className={`text-[11px] font-semibold uppercase tracking-widest mb-2 ${isDarkTheme ? "text-gray-400" : "text-slate-500"}`}>
+                  Search in
+                </p>
+                <div className="flex gap-2 overflow-x-auto pb-3 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                  {SEARCH_SCOPES.map((s) => (
+                    <button
+                      key={s.key}
+                      type="button"
+                      onClick={() => {
+                        setScopeKey(s.key);
+                        setActive(0);
+                        inputRef.current?.focus();
+                      }}
+                      className={`flex-shrink-0 whitespace-nowrap rounded-full px-3.5 py-1.5 text-[13px] font-semibold border transition-colors ${
+                        scopeKey === s.key
+                          ? "bg-[#F97316] border-[#F97316] text-white"
+                          : isDarkTheme
+                            ? "bg-transparent border-white/15 text-gray-300 hover:border-[#F97316] hover:text-[#F97316]"
+                            : "bg-transparent border-slate-300 text-slate-700 hover:border-[#F97316] hover:text-[#F97316]"
+                      }`}
+                    >
+                      {s.label}
+                    </button>
+                  ))}
                 </div>
-                <button
-                  type="submit"
-                  className="h-11 px-4 rounded-xl bg-gradient-to-br from-[#F97316] to-[#EA580C] text-white font-bold text-sm whitespace-nowrap"
-                >
-                  Search
-                </button>
-              </div>
 
-              {/* Results: plain text links, same look as mega menu */}
-              <p className={`mt-4 mb-1 text-[11px] font-semibold uppercase tracking-widest ${isDarkTheme ? "text-gray-500" : "text-slate-500"}`}>
-                {raw ? "Results" : "Browse"}
-              </p>
-                                <div className="lg:max-h-[40vh] lg:overflow-y-auto pb-24 lg:pb-2">
-                {rows.length === 0 ? (
-                  <p className="py-2 text-sm text-gray-400">No matching pages found.</p>
-                ) : (
-                  <ul className="list-none m-0 p-0 grid grid-cols-1 sm:grid-cols-2 gap-x-12">
-                    {rows.map((r, i) => (
-                      <li key={`${r.route}-${r.title}-${i}`}>
-                        <button
-                          type="button"
-                          onMouseEnter={() => setActive(i)}
-                          onClick={() => go(r)}
-                          className={`w-full flex items-center justify-between gap-3 py-2 text-left text-[14px] font-medium bg-transparent border-none cursor-pointer ${
-                            isDarkTheme ? "text-slate-200" : "text-slate-800"
-                          } ${active === i ? "text-[#F97316] underline underline-offset-4" : "hover:text-[#F97316] hover:underline underline-offset-4"} ${
-                            r.isFallback ? "!text-[#F97316]" : ""
-                          }`}
-                        >
-                          <span className="min-w-0 truncate">{r.title}</span>
-                          <span className="flex-shrink-0 text-[10px] font-semibold text-[#F97316] border border-[#F97316]/50 bg-[#F97316]/10 rounded-full px-2 py-0.5 whitespace-nowrap">
-                            {r.tag}
-                          </span>
-                        </button>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </form>
-                   </div>
-        </div>,
-        document.body
-      )}
+                <div className="flex items-center gap-2">
+                  <div className="relative flex-1">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                    <input
+                      ref={inputRef}
+                      type="search"
+                      value={query}
+                      onChange={(e) => {
+                        setQuery(e.target.value);
+                        setActive(0);
+                      }}
+                      onKeyDown={onInputKeyDown}
+                      placeholder={scope.placeholder}
+                      className={`w-full h-11 pl-9 pr-3 rounded-xl border text-[16px] sm:text-sm outline-none focus:border-[#F97316] ${
+                        isDarkTheme
+                          ? "bg-[#2A2A2A] border-white/10 text-white placeholder:text-gray-500"
+                          : "bg-slate-50 border-slate-300 text-slate-900 placeholder:text-slate-400"
+                      }`}
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    className="h-11 px-4 rounded-xl bg-gradient-to-br from-[#F97316] to-[#EA580C] text-white font-bold text-sm whitespace-nowrap"
+                  >
+                    Search
+                  </button>
+                </div>
+
+                {/* Results: plain text links, same look as mega menu */}
+                <p className={`mt-4 mb-1 text-[11px] font-semibold uppercase tracking-widest ${isDarkTheme ? "text-gray-500" : "text-slate-500"}`}>
+                  {raw ? "Results" : "Browse"}
+                </p>
+                <div className="lg:max-h-[40vh] lg:overflow-y-auto pb-24 lg:pb-2">
+                  {rows.length === 0 ? (
+                    <p className="py-2 text-sm text-gray-400">No matching pages found.</p>
+                  ) : (
+                    <ul className="list-none m-0 p-0 grid grid-cols-1 sm:grid-cols-2 gap-x-12">
+                      {rows.map((r, i) => (
+                        <li key={`${r.route}-${r.title}-${i}`}>
+                          <button
+                            type="button"
+                            onMouseEnter={() => setActive(i)}
+                            onClick={() => go(r)}
+                            className={`w-full flex items-center justify-between gap-3 py-2 text-left text-[14px] font-medium bg-transparent border-none cursor-pointer ${
+                              isDarkTheme ? "text-slate-200" : "text-slate-800"
+                            } ${active === i ? "text-[#F97316] underline underline-offset-4" : "hover:text-[#F97316] hover:underline underline-offset-4"} ${
+                              r.isFallback ? "!text-[#F97316]" : ""
+                            }`}
+                          >
+                            <span className="min-w-0 truncate">{r.title}</span>
+                            <span className="flex-shrink-0 text-[10px] font-semibold text-[#F97316] border border-[#F97316]/50 bg-[#F97316]/10 rounded-full px-2 py-0.5 whitespace-nowrap">
+                              {r.tag}
+                            </span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </form>
+            </div>
+          </div>,
+          document.body,
+        )}
     </div>
   );
 }
+
 /* ─────────────────────────────────────────────────────────────────
    NAVBAR — logo, desktop navigation, mega menu, dropdowns, user/login
    state, avatar/profile menu, logout, "Get Started" CTA, mobile menu
@@ -507,7 +1503,7 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
   const [scrolled, setScrolled] = useState(false);
   const [user, setUser] = useState(null);
 
-  // Maven-style mega menu: which panel is open ("feature" | "product" | "cert" | null)
+  // Maven-style mega menu: which panel is open ("courses" | "feature" | "product" | "career" | null)
   const [openMenu, setOpenMenu] = useState(null);
 
   const navigate = useNavigate();
@@ -555,6 +1551,38 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
       </div>
     );
   };
+
+  // Single link inside the mega menu panel (used by both grouped and flat layouts)
+  const renderMegaItem = (item) => (
+    <li key={item.key}>
+      <button
+        type="button"
+        role="menuitem"
+        disabled={item.comingSoon}
+        onClick={() => {
+          setOpenMenu(null);
+          navigate(item.route);
+        }}
+        className={`flex items-center gap-2 py-2 text-left text-[14px] font-medium bg-transparent border-none ${
+          theme === "dark" ? "text-slate-200" : "text-slate-800"
+        } ${
+          item.comingSoon
+            ? "cursor-not-allowed opacity-60"
+            : "cursor-pointer hover:text-[#F97316] hover:underline underline-offset-4"
+        }`}
+      >
+        {item.title}
+        {item.comingSoon && (
+          <>
+            <span className="text-[10px] font-semibold text-[#F97316] border border-[#F97316]/50 bg-[#F97316]/10 rounded-full px-2 py-0.5 whitespace-nowrap">
+              Coming Soon
+            </span>
+            <Lock className="w-3.5 h-3.5 text-gray-400" />
+          </>
+        )}
+      </button>
+    </li>
+  );
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -613,8 +1641,8 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
     if (r === "STUDENT") return "student";
     return "";
   };
- 
-    const goToDashboard = () => {
+
+  const goToDashboard = () => {
     navigate("/login");
   };
   // Same roleChangeUsed flag IlmOraDemoPage.jsx's hasUsedRoleChange()
@@ -639,7 +1667,7 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
     navigate("/", { replace: true });
   };
 
-          const navLinks = [
+  const navLinks = [
     {
       text: "Workshops",
       href: "#workshops",
@@ -667,14 +1695,13 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
           productMenuItems={PRODUCT_MENU_ITEMS}
           productRoutes={PRODUCT_ROUTES}
           certMenuItems={CERT_MENU_ITEMS}
-          // certRoutes={CERT_ROUTES}
-                    certRoutes={CERT_ROUTES}
+          certRoutes={CERT_ROUTES}
           careerItems={CAREER_TRACK_ITEMS}
         />
       )}
 
       {/* ── Nav ── */}
-            <nav
+      <nav
         style={{ top: "var(--texora-banner-h, 0px)" }}
         onMouseLeave={() => setOpenMenu(null)}
         className={`fixed w-full z-50 transition-[background-color,box-shadow] duration-300 bg-[#1F1D1F]/95 border-b border-[#F97316]/20 ${
@@ -711,7 +1738,7 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
               {renderMegaTrigger("feature")}
               {renderMegaTrigger("product")}
 
-                        {/* Direct Nav Links — Workshop (Coming Soon) */}
+              {/* Direct Nav Links — Workshop (Coming Soon) */}
               {navLinks.map((link) => (
                 <button
                   key={link.text}
@@ -743,7 +1770,7 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
                 </button>
               ))}
 
-                            {/* Skills — commented out for now */}
+              {/* Skills — commented out for now */}
               {/* {renderMegaTrigger("cert")} */}
 
               {/* Career Tracks — replaces Skills */}
@@ -753,11 +1780,11 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
             {/* Right side */}
             <div className="flex items-center gap-2 xl:gap-3 flex-shrink-0">
               <NavbarSearch theme={theme} />
-                            <button
+              <button
                 type="button"
                 onClick={toggleTheme}
                 aria-label="Toggle theme"
-                                className="group w-10 h-10 flex items-center justify-center rounded-xl border-0 bg-[#1F1D1F] ring-[1.5px] ring-inset ring-white/15 hover:ring-[#F97316] hover:bg-[#F97316]/10 focus:ring-[#F97316] transition-colors duration-200 flex-shrink-0 outline-none"
+                className="group w-10 h-10 flex items-center justify-center rounded-xl border-0 bg-[#1F1D1F] ring-[1.5px] ring-inset ring-white/15 hover:ring-[#F97316] hover:bg-[#F97316]/10 focus:ring-[#F97316] transition-colors duration-200 flex-shrink-0 outline-none"
               >
                 {theme === "dark" ? (
                   <Sun strokeWidth={2} className="w-5 h-5 text-white group-hover:text-[#F97316] transition-colors duration-200" />
@@ -907,42 +1934,32 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
                 </span>
               </button>
 
-              {/* Link columns — fill top→bottom, 5 per column, then next column */}
-              <ul
-                className="list-none m-0 p-0 grid grid-flow-col content-start gap-x-12"
-                style={{ gridTemplateRows: "repeat(5, auto)", gridAutoColumns: "minmax(190px, 240px)" }}
-              >
-                {MEGA_MENUS[openMenu].items.map((item) => (
-                  <li key={item.key}>
-                    <button
-                      type="button"
-                      role="menuitem"
-                      disabled={item.comingSoon}
-                      onClick={() => {
-                        setOpenMenu(null);
-                        navigate(item.route);
-                      }}
-                      className={`flex items-center gap-2 py-2 text-left text-[14px] font-medium bg-transparent border-none ${
-                        theme === "dark" ? "text-slate-200" : "text-slate-800"
-                      } ${
-                        item.comingSoon
-                          ? "cursor-not-allowed opacity-60"
-                          : "cursor-pointer hover:text-[#F97316] hover:underline underline-offset-4"
-                      }`}
-                    >
-                      {item.title}
-                      {item.comingSoon && (
-                        <>
-                          <span className="text-[10px] font-semibold text-[#F97316] border border-[#F97316]/50 bg-[#F97316]/10 rounded-full px-2 py-0.5 whitespace-nowrap">
-                            Coming Soon
-                          </span>
-                          <Lock className="w-3.5 h-3.5 text-gray-400" />
-                        </>
-                      )}
-                    </button>
-                  </li>
-                ))}
-              </ul>
+              {/* Link columns — grouped if the menu has groups, else 5 per column */}
+              {MEGA_MENUS[openMenu].groups ? (
+                <div className="flex items-start gap-12">
+                  {MEGA_MENUS[openMenu].groups.map((g) => (
+                    <div key={g} className="min-w-[210px]">
+                      <p
+                        className={`mb-1 text-[11px] font-semibold uppercase tracking-widest ${
+                          theme === "dark" ? "text-gray-500" : "text-slate-500"
+                        }`}
+                      >
+                        {g}
+                      </p>
+                      <ul className="list-none m-0 p-0">
+                        {MEGA_MENUS[openMenu].items.filter((i) => i.group === g).map(renderMegaItem)}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <ul
+                  className="list-none m-0 p-0 grid grid-flow-col content-start gap-x-12"
+                  style={{ gridTemplateRows: "repeat(5, auto)", gridAutoColumns: "minmax(190px, 240px)" }}
+                >
+                  {MEGA_MENUS[openMenu].items.map(renderMegaItem)}
+                </ul>
+              )}
             </div>
           </div>
         )}
