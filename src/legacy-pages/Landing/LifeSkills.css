@@ -56,11 +56,15 @@
 .ls .card ul{margin:0 0 .5em;padding-left:1.1em;font-size:.88rem;line-height:1.4;color:var(--muted)}
 .ls .card b{color:var(--ink)}
 .ls .tag{display:inline-block;background:var(--a);color:var(--on);border-radius:999px;padding:2px 12px;font-size:.85rem;font-weight:600;margin-bottom:6px}
-.ls .gal{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin:6px 0 18px}
-.ls .gal .photo{margin:0}
-.ls .gal img{aspect-ratio:auto;height:auto;object-fit:contain;background:var(--tint)}
-.ls .gal{align-items:start}
-.ls .gal figcaption{font-size:.78rem;padding:6px 10px}
+.ls .gal{display:flex;gap:12px;margin:6px 0 18px;overflow:hidden;width:100%}
+.ls .gal-track{display:flex;gap:12px;width:max-content;animation:lsgal 40s linear infinite}
+.ls .gal-track>.gal-set{display:flex;gap:12px;flex-shrink:0}
+.ls .gal:hover .gal-track{animation-play-state:paused}
+.ls .gal .photo{margin:0;display:flex;flex-direction:column;flex:0 0 240px;width:240px}
+.ls .gal .photo img,.ls .gal .photo svg{display:block;width:100%;height:auto;aspect-ratio:4/3;object-fit:contain;background:var(--tint);flex:0 0 auto}
+.ls .gal figcaption{font-size:.78rem;padding:8px 12px;flex:1;min-height:3.6em}
+@keyframes lsgal{from{transform:translateX(0)}to{transform:translateX(calc(-50% - 6px))}}
+@media(prefers-reduced-motion:reduce){.ls .gal{overflow-x:auto}.ls .gal-track{animation:none}}
 .ls .notes{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
 .ls .note{background:var(--card);border-radius:12px;padding:10px 14px;border-left:6px solid var(--a)}
 .ls .note h3{font-size:1rem;margin-bottom:.2em}
@@ -117,7 +121,7 @@
 .ls .days{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
 .ls .pl{margin:0;padding-left:1.2em;font-size:.93rem}
 .ls .pl li{margin-bottom:4px}
-.ls .gal svg{display:block;width:100%;aspect-ratio:4/3;height:auto;background:var(--tint)}
+
 .ls .photo svg{display:block;width:100%;height:auto}
 .ls #assess,.ls #plan,.ls #skills{background:var(--paper)}
 .ls .g2.r{grid-template-columns:1fr 1fr}
@@ -150,3 +154,7 @@
 @media(prefers-reduced-motion:reduce){.ls .road .flow{animation:none}}
 .ls [hidden]{display:none!important}
 @media(prefers-reduced-motion:reduce){}
+/* Separate option pages: h1 hero inside .mode, plain nested sections */
+.ls .mode h1{color:var(--a)}
+.ls .mode section{background:transparent}
+.ls .card .btn{margin-top:4px}
