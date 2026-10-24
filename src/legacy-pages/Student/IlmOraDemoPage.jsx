@@ -4121,17 +4121,18 @@ const NAV_CERT_MENU_ITEMS = [
     { key: "cisco",     title: "Cisco Certification",     description: "CCNA, CCNP & CCIE exams and training", icon: Award,  route: "/cisco",     color: "#0284c7" },
 ];
 
-// "Career Tracks" dropdown — replaces the old "Skills" tab
-const CAREER_TRACK_ITEMS = [
-  { key: "all-career", title: "All Career Tracks", route: "/career" },
-  { key: "software-web", title: "Software & Web Development", route: "/career?category=software-web" },
-  { key: "data-ai", title: "Data Science & AI", route: "/career?category=data-ai" },
-  { key: "cloud-devops", title: "Cloud & DevOps", route: "/career?category=cloud-devops" },
-  { key: "cybersecurity", title: "Cybersecurity", route: "/career?category=cybersecurity" },
-  { key: "ui-ux-design", title: "UI/UX & Design", route: "/career?category=ui-ux-design" },
-  { key: "business-management", title: "Business & Management", route: "/career?category=business-management" },
-];
+// "Career Tracks" dropdown — replaces the old "Skills" tab.
+// Items are classified into groups (column headings in the mega menu).
+const CAREER_TRACK_GROUPS = ["Career Tracks", "Personal Growth", "Life Skills"];
 
+const CAREER_TRACK_ITEMS = [
+  { key: "all-career", title: "All Career Tracks", route: "/career", group: "Career Tracks" },
+  { key: "development-engineering", title: "Development Engineering Platform", route: "/career?platform=dev", group: "Career Tracks" },
+  { key: "ai-agent-ai", title: "AI – Agent AI", route: "/career?platform=ai", group: "Career Tracks" },
+  { key: "contact-center", title: "Contact Center Platform", route: "/career?platform=cx", group: "Career Tracks" },
+  { key: "personality-development", title: "Personality Development", route: "/personality-development", group: "Personal Growth" },
+  { key: "life-skills", title: "Learn With or Without AI", route: "/life-skills", group: "Life Skills" },
+];
 const GOOGLE_CLIENT_ID =
   "572421778240-akk3kkb4f60ukuv9pcfrpg2ielm09thk.apps.googleusercontent.com";
 
@@ -5454,13 +5455,12 @@ const NAV_SEARCH_PAGES = [
   { title: "Study Plan", desc: "Personalized Study Plans & Progress Tracking", route: "/study-plan", group: "features", tag: "Feature" },
   { title: "ILM ORA Calendry", desc: "Live classes & video sessions", route: "/calendry", group: "product", tag: "Product" },
   { title: "Workspace", desc: "Your all-in-one collaborative space", route: "/workspace", group: "product", tag: "Product" },
-  { title: "All Career Tracks", route: "/career", group: "career", tag: "Career Track" },
-  { title: "Software & Web Development", route: "/career?category=software-web", group: "career", tag: "Career Track" },
-  { title: "Data Science & AI", route: "/career?category=data-ai", group: "career", tag: "Career Track" },
-  { title: "Cloud & DevOps", route: "/career?category=cloud-devops", group: "career", tag: "Career Track" },
-  { title: "Cybersecurity", route: "/career?category=cybersecurity", group: "career", tag: "Career Track" },
-  { title: "UI/UX & Design", route: "/career?category=ui-ux-design", group: "career", tag: "Career Track" },
-  { title: "Business & Management", route: "/career?category=business-management", group: "career", tag: "Career Track" },
+    { title: "All Career Tracks", route: "/career", group: "career", tag: "Career Track" },
+  { title: "Development Engineering Platform", route: "/career?platform=dev", group: "career", tag: "Career Track" },
+  { title: "AI – Agent AI", route: "/career?platform=ai", group: "career", tag: "Career Track" },
+  { title: "Contact Center Platform", route: "/career?platform=cx", group: "career", tag: "Career Track" },
+  { title: "Personality Development", route: "/personality-development", group: "career", tag: "Career Track" },
+  { title: "Learn With or Without AI", route: "/life-skills", group: "career", tag: "Career Track" },
   { title: "Mentors", desc: "Learn from industry mentors", route: "/mentors", group: "mentors", tag: "Mentors" },
   { title: "Workshops", desc: "Hands-on live workshops", route: "/workshops", group: "workshops", tag: "Workshops" },
 ];
@@ -6607,15 +6607,17 @@ const MEGA_MENUS = {
     })),
   },
   */
-  career: {
+    career: {
     label: "Career Tracks",
     eyebrow: "Explore",
     cardTitle: "Career Tracks",
     cardRoute: "/career",
     ref: certMenuRef,
+    groups: CAREER_TRACK_GROUPS,
     items: CAREER_TRACK_ITEMS.map((i) => ({
       key: i.key,
       title: i.title,
+      group: i.group,
       go: () => { setMega(null); navigate(i.route); },
     })),
   },
@@ -7123,6 +7125,11 @@ const renderMegaTrigger = (key) => {
         .d-mega-link:hover:not(:disabled) { color:var(--d-orange); text-decoration:underline; text-underline-offset:4px; }
         .d-mega-link:disabled { opacity:.6; cursor:not-allowed; }
         .d-mega-soon { font-size:10px; font-weight:700; color:#F97316; border:1px solid rgba(249,115,22,.5); background:rgba(249,115,22,.1); border-radius:999px; padding:2px 8px; white-space:nowrap; }
+        .d-mega-groups { display:flex; align-items:flex-start; gap:48px; }
+        .d-mega-group { min-width:210px; }
+        .d-mega-group-title { margin:0 0 4px; font-size:11px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:#64748b; }
+        .d-mega-group-links { list-style:none; }
+        .d-page[data-theme="dark"] .d-mega-group-title { color:#6b7280; }
 
         /* dark theme */
         .d-page[data-theme="dark"] .d-mega { background:#161616; border-bottom-color:rgba(255,255,255,0.1); }
@@ -7567,8 +7574,9 @@ const renderMegaTrigger = (key) => {
                   <span className="d-mega-card-title">{MEGA_MENUS[openMega].cardTitle}</span>
                 </button>
 
-                <ul className="d-mega-links">
-                  {MEGA_MENUS[openMega].items.map((item) => (
+                                {(() => {
+                  const menu = MEGA_MENUS[openMega];
+                  const renderItem = (item) => (
                     <li key={item.key}>
                       <button
                         type="button"
@@ -7586,8 +7594,23 @@ const renderMegaTrigger = (key) => {
                         )}
                       </button>
                     </li>
-                  ))}
-                </ul>
+                  );
+                  if (menu.groups) {
+                    return (
+                      <div className="d-mega-groups">
+                        {menu.groups.map((g) => (
+                          <div key={g} className="d-mega-group">
+                            <p className="d-mega-group-title">{g}</p>
+                            <ul className="d-mega-group-links">
+                              {menu.items.filter((i) => i.group === g).map(renderItem)}
+                            </ul>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  }
+                  return <ul className="d-mega-links">{menu.items.map(renderItem)}</ul>;
+                })()}
               </div>
             </div>
           )}

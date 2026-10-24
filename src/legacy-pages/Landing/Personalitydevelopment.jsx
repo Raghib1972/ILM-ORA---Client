@@ -777,8 +777,15 @@ const Head = ({ badge, title, sub }) => (
   <div className="pd-head"><h2 dangerouslySetInnerHTML={{ __html: title }} />{sub && <p>{sub}</p>}</div>
 );
 
-// Smooth-scroll without adding #hash to the URL
-const goTo = (id) => (e) => { e.preventDefault(); document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" }); };
+// Smooth-scroll without adding #hash to the URL (scoped to .pd-page, with navbar offset)
+const goTo = (id) => (e) => {
+  e?.preventDefault?.();
+  const root = document.querySelector(".pd-page");
+  const el = root?.querySelector(`#${id}`) || document.getElementById(id);
+  if (!el) return;
+  const y = el.getBoundingClientRect().top + window.scrollY - 80;
+  window.scrollTo({ top: y, behavior: "smooth" });
+};
 
 /* ═══ HOW TO IDENTIFY PERSONALITY ═══ */
 // [title, short line, side, row, icon, detail]
@@ -813,7 +820,14 @@ const EXTERNAL = [
 ];
 
 const IDENT_CSS = `
-.pd-ill{width:100%;max-width:640px;margin:0 auto;display:block}
+.pd-ill{width:100%;max-width:520px;margin:0 auto;display:block;overflow:visible}
+.pd-idsplit{display:grid;grid-template-columns:1fr 1.1fr;gap:clamp(14px,2.4vw,32px);align-items:center}
+.pd-idtxt h2{font-family:'Space Grotesk',sans-serif;font-size:clamp(24px,3.2vw,38px);line-height:1.15;letter-spacing:-.03em;color:var(--pd-text);margin-bottom:10px}
+.pd-idtxt p.lead{font-size:clamp(14px,1.5vw,16px);line-height:1.65;color:var(--pd-sub);margin-bottom:14px}
+.pd-idlist{list-style:none;display:grid;gap:8px;margin:0 0 6px}
+.pd-idlist li{display:flex;gap:10px;align-items:center;font-size:14px;color:var(--pd-text)}
+.pd-idlist li i{width:10px;height:10px;border-radius:50%;background:var(--c);flex:none}
+@media(max-width:900px){.pd-idsplit{grid-template-columns:1fr}}
 .pd-ic{width:38px;height:38px;border-radius:11px;background:var(--c);display:flex;align-items:center;justify-content:center;flex:none}
 .pd-idc{display:flex;gap:12px;align-items:flex-start;border-top:3px solid var(--c)}
 .pd-idc .pd-h3{margin-bottom:3px}.pd-idc .pd-sub{margin-bottom:0}
@@ -835,7 +849,7 @@ function IdentifyMap() {
     return [cx + rx * Math.cos(a), cy + ry * Math.sin(a)];
   });
   return (
-    <svg className="pd-ill" viewBox="0 0 640 520" role="img" aria-label="How to identify personality: six signals around a person" fontFamily="Plus Jakarta Sans,sans-serif">
+    <svg className="pd-ill" viewBox="20 10 600 540" role="img"aria-label="How to identify personality: six signals around a person" fontFamily="Plus Jakarta Sans,sans-serif">
       <defs><clipPath id="pdc"><circle cx={cx} cy={cy} r="96" /></clipPath></defs>
       <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill="none" stroke="var(--pd-border)" strokeWidth="1.5" strokeDasharray="4 6" />
       {IDENTIFY.map(([t, , side], i) => (
@@ -882,10 +896,18 @@ function IdentifyPersonality() {
     <>
       <style>{IDENT_CSS}</style>
       <section className="pd-sec" id="pd-identify"><div className="pd-wrap">
-        <Head badge="Identify" title='How to <span style="color:#f97316">Identify Personality?</span>' sub="Personality shows up as patterns in what people say, do and feel. Look at six signals together, over time, and never from one observation." />
-        <div className="pd-card" style={{ padding: 16 }}>
+                <div className="pd-card pd-idsplit" style={{ padding: "clamp(12px,2vw,24px)" }}>
+          <div className="pd-idtxt">
+            <h2>How to <span style={{ color: "#f97316" }}>Identify Personality?</span></h2>
+            <p className="lead">Personality shows up as patterns in what people say, do and feel. Look at six signals together, over time, and never from one observation.</p>
+            <ul className="pd-idlist">
+              {IDENTIFY.map(([t, , side]) => (
+                <li key={t} style={{ "--c": side === "L" ? "#f97316" : "#0e8fa8" }}><i />{t}</li>
+              ))}
+            </ul>
+            <p className="pd-note" style={{ textAlign: "left", marginTop: 10 }}>Observe patterns over time, not single moments.</p>
+          </div>
           <IdentifyMap />
-          <p className="pd-note">Observe patterns over time, not single moments.</p>
         </div>
         <Marquee d={45} items={IDENTIFY.map(([t, , side, , Icon, d], i) => (
           <div key={`e${i}`}>
@@ -1117,7 +1139,7 @@ const HERO_CSS = `
 .pd-hs-slide{flex:0 0 100%;min-width:0;display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,2vw,24px);align-items:center;padding:0}
 .pd-hs-h{font-family:'Space Grotesk',sans-serif;font-size:clamp(26px,3.8vw,44px);line-height:1.12;letter-spacing:-.03em;color:var(--pd-text);margin-bottom:10px}
 .pd-hs-p{font-size:clamp(14px,1.6vw,16.5px);line-height:1.65;color:var(--pd-sub);max-width:none;margin-bottom:6px}
-.pd-hs-img{background:#fff;border:1px solid var(--pd-border);border-radius:20px;box-shadow:var(--pd-shadow);aspect-ratio:16/10;display:flex;align-items:center;justify-content:center;padding:clamp(6px,1vw,12px);overflow:hidden}
+.pd-hs-img{background:#fff;border:1px solid var(--pd-border);border-radius:20px;box-shadow:var(--pd-shadow);height:clamp(240px,30vw,360px);display:flex;align-items:center;justify-content:center;padding:6px;overflow:hidden}
 .pd-hs-img img{width:100%;height:100%;object-fit:contain;display:block}
 .pd-hs-ctl{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:12px}
 .pd-hs-arrow{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--pd-border);background:transparent;color:var(--pd-text);display:inline-flex;align-items:center;justify-content:center;cursor:pointer}
@@ -1204,7 +1226,7 @@ const PD_CSS = `
 .pd-btn.sm{padding:7px 14px;font-size:13px}.pd-btn[disabled]{opacity:.6;cursor:wait}
 .pd-btn:focus-visible,.pd-tab:focus-visible,.pd-in:focus-visible,summary:focus-visible,.pd-tk input:focus-visible{outline:2px solid #f97316;outline-offset:3px}
 .pd-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
-.pd-hero{padding:clamp(18px,3vw,30px) 0;border-bottom:1px solid var(--pd-border)}
+.pd-hero{padding:clamp(10px,1.6vw,16px) 0;border-bottom:1px solid var(--pd-border)}
 .pd-hero h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(24px,3.6vw,38px);line-height:1.15;letter-spacing:-.03em;color:var(--pd-text);margin:8px 0 6px}
 .pd-hero p.l{font-size:clamp(14px,1.8vw,16px);line-height:1.6;color:var(--pd-sub);max-width:760px;margin-bottom:14px}
 .pd-stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.pd-stats div{background:var(--pd-pill);border:1px solid var(--pd-border);border-radius:12px;padding:8px 14px;font-size:12.5px;color:var(--pd-muted)}.pd-stats b{display:block;font-family:'Space Grotesk',sans-serif;font-size:18px;color:var(--pd-text)}
