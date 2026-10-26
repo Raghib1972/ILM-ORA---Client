@@ -153,6 +153,7 @@ const CAREER_TRACK_ITEMS = [
   { key: "personality-development", title: "Personality Development", route: "/personality-development", group: "Personal Growth" },
     { key: "life-skills-ai", title: "Learn with an AI Coach", route: "/life-skills/ai", group: "Life Skills" },
   { key: "life-skills-own", title: "Learn on Your Own", route: "/life-skills", group: "Life Skills" },
+    { key: "life-skills-storyline", title: "Storyline", route: "/storyline", group: "Life Skills" },
 ];
 // All Courses dropdown — every item opens its own page (same pages as the
 // sidebar on /all-courses).
