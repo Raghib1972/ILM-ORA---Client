@@ -123,15 +123,33 @@ export default function RootLayout({ children }) {
           }}
         />
       </head>
-            <body>
+           
+      <body>
         <AppProviders>{children}</AppProviders>
+
         <Script
           src="https://widget.toracx.texora.ai/widget.js"
           data-organization-id="6ac8af9e340454bd184149a6"
           data-api-key="tcx_218c724563a294fcaf5867824b5fb3bb32ef8e1f711a7e1341f9267aca25fbfe"
           strategy="lazyOnload"
         />
+
+        {/* Google Analytics — ILM ORA GA4 */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-VSSXY4LL8P"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            window.gtag = function(){window.dataLayer.push(arguments);};
+            window.gtag('js', new Date());
+            window.gtag('config', 'G-VSSXY4LL8P');
+          `}
+        </Script>
       </body>
     </html>
+
+
   );
 }
