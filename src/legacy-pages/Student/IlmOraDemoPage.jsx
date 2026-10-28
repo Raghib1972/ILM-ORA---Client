@@ -4123,7 +4123,7 @@ const NAV_CERT_MENU_ITEMS = [
 
 // "Career Tracks" dropdown — replaces the old "Skills" tab.
 // Items are classified into groups (column headings in the mega menu).
-const CAREER_TRACK_GROUPS = ["Career Tracks", "Personal Growth", "Life Skills"];
+const CAREER_TRACK_GROUPS = ["Career Tracks", "Personal Growth", "Life Skills", "Assessments"];
 
 const CAREER_TRACK_ITEMS = [
   { key: "all-career", title: "All Career Tracks", route: "/career", group: "Career Tracks" },
@@ -4134,7 +4134,8 @@ const CAREER_TRACK_ITEMS = [
     { key: "life-skills-ai", title: "Learn with an AI Coach", route: "/life-skills/ai", group: "Life Skills" },
     { key: "life-skills-own", title: "Learn on Your Own", route: "/life-skills", group: "Life Skills" },
   { key: "life-skills-storyline", title: "Storyline", route: "/storyline", group: "Life Skills" },
-  { key: "life-skills-futurism", title: "Futurism", route: "/futurism", group: "Life Skills" },
+    { key: "life-skills-futurism", title: "Futurism", route: "/futurism", group: "Life Skills" },
+  { key: "iq-test", title: "IQ Test", route: "/iq-test", group: "Assessments" },
 ];
 const GOOGLE_CLIENT_ID =
   "572421778240-akk3kkb4f60ukuv9pcfrpg2ielm09thk.apps.googleusercontent.com";
@@ -5466,7 +5467,8 @@ const NAV_SEARCH_PAGES = [
     { title: "Learn with an AI Coach", route: "/life-skills/ai", group: "career", tag: "Career Track" },
      { title: "Learn on Your Own", route: "/life-skills", group: "career", tag: "Career Track" },
   { title: "Storyline", route: "/storyline", group: "career", tag: "Career Track" },
-  { title: "Futurism", route: "/futurism", group: "career", tag: "Career Track" },
+    { title: "Futurism", route: "/futurism", group: "career", tag: "Career Track" },
+  { title: "IQ Test", route: "/iq-test", group: "career", tag: "Career Track" },
   { title: "Mentors", desc: "Learn from industry mentors", route: "/mentors", group: "mentors", tag: "Mentors" },
   { title: "Workshops", desc: "Hands-on live workshops", route: "/workshops", group: "workshops", tag: "Workshops" },
 ];

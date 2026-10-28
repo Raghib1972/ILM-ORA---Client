@@ -143,7 +143,7 @@ const CERT_ICON_COLORS = {
 // Items are classified into groups (shown as column headings in the mega menu).
 // To add a new category: add its name to CAREER_TRACK_GROUPS and use the same
 // name in the item's `group` field.
-const CAREER_TRACK_GROUPS = ["Career Tracks", "Personal Growth", "Life Skills"];
+const CAREER_TRACK_GROUPS = ["Career Tracks", "Personal Growth", "Life Skills", "Assessments"];
 
 const CAREER_TRACK_ITEMS = [
   { key: "all-career", title: "All Career Tracks", route: "/career", group: "Career Tracks" },
@@ -151,6 +151,7 @@ const CAREER_TRACK_ITEMS = [
   { key: "ai-agent-ai", title: "AI – Agent AI", route: "/career?platform=ai", group: "Career Tracks" },
   { key: "contact-center", title: "Contact Center Platform", route: "/career?platform=cx", group: "Career Tracks" },
   { key: "personality-development", title: "Personality Development", route: "/personality-development", group: "Personal Growth" },
+    { key: "iq-test", title: "IQ Test", route: "/iq-test", group: "Assessments" },
     { key: "life-skills-ai", title: "Learn with an AI Coach", route: "/life-skills/ai", group: "Life Skills" },
   { key: "life-skills-own", title: "Learn on Your Own", route: "/life-skills", group: "Life Skills" },
     { key: "life-skills-storyline", title: "Storyline", route: "/storyline", group: "Life Skills" },

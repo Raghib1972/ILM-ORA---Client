@@ -48,8 +48,9 @@ import {
   PenTool,
   Brain,
   Eye,
-  Search,
+    Search,
   Compass,
+  Telescope,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "@/lib/routerCompat";
@@ -82,6 +83,12 @@ import lsCoachImg from "../../assets/life-skills-webp/life-skills-ai-coach.webp"
 import lsPracticeImg from "../../assets/life-skills-webp/Screenshot_20261024-005713.webp";
 import lsOwnImg from "../../assets/life-skills-webp/Screenshot_20261024-005946.webp";
 import lsPlanImg from "../../assets/life-skills-webp/Screenshot_20261024-005851.webp";
+// Futurism + Storyline previews (same files those pages already use)
+import futHeroImg from "../../assets/ILMORA_Futurism_SVGs/01_hero_future_vision.webp";
+import futJourneyImg from "../../assets/ILMORA_Futurism_SVGs/02_journey_10_steps.webp";
+import futRoadmapImg from "../../assets/ILMORA_Futurism_SVGs/03_roadmap_6_levels.webp";
+import futPlanImg from "../../assets/ILMORA_Futurism_SVGs/06_future_plan_preview.webp";
+import futQuizImg from "../../assets/ILMORA_Futurism_SVGs/07_quiz_interface.webp";
 
 import Navbar from "./components/Navbar";
 import AnnouncementBanner from "./components/AnnouncementBanner";
@@ -1470,7 +1477,123 @@ function PersonalityPreview({ index = 0 }) {
     </div>
   );
 }
+// StorylinePreview — code-drawn illustrations for the Storyline tab in the
+// platform hub (no image files needed). index = active feature chip.
 // ─────────────────────────────────────────────────────────────────────────────
+function StorylinePreview({ index = 0 }) {
+  const TEAL = "#0e8fa8";
+  const ORG = "#f97316";
+  const titles = [
+    "The story flow",
+    "6 learning levels",
+    "6 steps to a storyline",
+    "Storyline builder",
+    "Quick checklist",
+  ];
+  const flow = ["Idea", "Events", "People", "Challenge", "Ending", "Message"];
+  const levels = ["The basics", "Structure", "Characters", "Plot", "Advanced techniques", "Review"];
+  const steps = [
+    "Define the purpose",
+    "Outline the events",
+    "Add motivation",
+    "Add obstacles",
+    "Resolve it",
+    "Improve it",
+  ];
+  const builder = [
+    ["Purpose & audience", "Topic · audience · message"],
+    ["Character & goal", "Who · wants what · why"],
+    ["Events & obstacles", "Beginning · middle · obstacle"],
+    ["Turning point & ending", "Decision · ending · lesson"],
+  ];
+  const checks = [
+    "Audience and main message are clear",
+    "Events follow a logical order",
+    "Goal and challenge matter to the character",
+    "Ending points to a meaningful next step",
+    "Visuals support the story",
+  ];
+
+  return (
+    <div
+      className="w-full max-w-[520px] mx-auto rounded-2xl shadow-2xl overflow-hidden flex flex-col h-[300px] sm:h-[320px]"
+      style={{
+        background: "linear-gradient(150deg,#1E293B 0%,#334155 60%,#9A3412 100%)",
+        animation: "hubFade 0.35s ease both",
+      }}
+    >
+      <div className="px-4 pt-3 text-[11px] font-bold uppercase tracking-[0.18em] text-white/70">
+        {titles[index]}
+      </div>
+
+      <div className="flex-1 min-h-0 p-3 sm:p-4 flex items-center justify-center">
+        {index === 0 && (
+          <div className="w-full grid grid-cols-3 gap-2">
+            {flow.map((label, i) => (
+              <div key={label} className="rounded-xl bg-white/10 border border-white/15 p-3 text-center" style={{ borderTop: `3px solid ${i % 2 ? ORG : TEAL}` }}>
+                <div className="text-xl font-bold text-white">{i + 1}</div>
+                <div className="text-xs sm:text-sm font-semibold text-white">{label}</div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {index === 1 && (
+          <div className="w-full grid grid-cols-2 gap-2">
+            {levels.map((label, i) => (
+              <div key={label} className="flex items-center gap-2.5 rounded-xl bg-white/10 border border-white/15 px-3 py-3">
+                <span className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-bold text-white" style={{ background: i % 2 ? ORG : TEAL }}>
+                  {i + 1}
+                </span>
+                <span className="text-[13px] font-semibold text-white leading-tight">{label}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {index === 2 && (
+          <div className="w-full flex flex-col gap-1.5">
+            {steps.map((label, i) => (
+              <div key={label} className="flex items-center gap-3 rounded-xl bg-white/10 border border-white/15 px-3 py-1.5">
+                <span className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-[11px] font-bold text-white" style={{ background: ORG }}>
+                  {i + 1}
+                </span>
+                <span className="text-sm font-semibold text-white">{label}</span>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {index === 3 && (
+          <div className="w-full grid grid-cols-2 gap-2">
+            {builder.map(([title, sub], i) => (
+              <div key={title} className="rounded-xl bg-white/10 border border-white/15 p-3" style={{ borderTop: `3px solid ${i % 2 ? ORG : TEAL}` }}>
+                <div className="text-[13px] font-bold text-white leading-tight mb-1.5">{title}</div>
+                <div className="h-2 rounded-full bg-white/20 mb-1.5" />
+                <div className="h-2 w-2/3 rounded-full bg-white/20 mb-2" />
+                <div className="text-[10px] text-white/70">{sub}</div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {index === 4 && (
+          <div className="w-full flex flex-col gap-2">
+            {checks.map((label) => (
+              <div key={label} className="flex items-center gap-3 rounded-xl bg-white/10 border border-white/15 px-3 py-2">
+                <span className="w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold text-white" style={{ background: "#22c55e" }}>
+                  ✓
+                </span>
+                <span className="text-[13px] font-semibold text-white leading-tight">{label}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ProductHubSection — "ILM ORA Platform" hub: left product list, middle copy +
 // feature chips + CTA, right preview image with dots. Pure UI, no backend.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -1583,7 +1706,44 @@ function ProductHubSection({ navigate }) {
         { icon: MessageSquare, label: "AI Coach", img: lsCoachImg },
         { icon: Mic, label: "Practice", img: lsPracticeImg },
         { icon: BookOpen, label: "On Your Own", img: lsOwnImg },
-        { icon: ClipboardList, label: "Your Plan", img: lsPlanImg },
+                { icon: ClipboardList, label: "Your Plan", img: lsPlanImg },
+      ],
+    },
+    {
+      key: "futurism",
+      label: "ILM ORA Futurism",
+      icon: Telescope,
+      badge: "FUTURE THINKING",
+      line1: "See What's Next.",
+      line2: "Plan For It.",
+      desc: "Spot signals, understand trends, compare scenarios and finish with a one-page Future Plan you can copy or print.",
+      cta: "Explore Futurism",
+      to: "/futurism", // agar Futurism page ka route alag hai to yahan badal dena
+      features: [
+        { icon: Eye, label: "Future Vision", img: futHeroImg },
+        { icon: Compass, label: "10-Step Journey", img: futJourneyImg },
+        { icon: Layers, label: "6 Levels", img: futRoadmapImg },
+        { icon: FileText, label: "Future Plan", img: futPlanImg },
+        { icon: ClipboardList, label: "Quiz", img: futQuizImg },
+      ],
+    },
+    {
+      key: "storyline",
+      label: "ILM ORA Storyline",
+      icon: BookOpen,
+      badge: "STORYTELLING SKILLS",
+      line1: "Turn Ideas Into",
+      line2: "Stories That Stick",
+      desc: "Learn story structure, characters and plot, then build and review your own storyline step by step.",
+      cta: "Explore Storyline",
+      to: "/storyline", // agar Storyline page ka route alag hai to yahan badal dena
+      // img: null → StorylinePreview illustration dikhta hai
+      features: [
+        { icon: Compass, label: "Story Flow", img: null },
+        { icon: Layers, label: "6 Levels", img: null },
+        { icon: Target, label: "6 Steps", img: null },
+        { icon: PenTool, label: "Story Builder", img: null },
+        { icon: ClipboardList, label: "Checklist", img: null },
       ],
     },
   ];
@@ -1765,6 +1925,8 @@ function ProductHubSection({ navigate }) {
                 className="w-full h-auto max-w-[520px] mx-auto rounded-2xl shadow-2xl"
                 style={{ animation: "hubFade 0.35s ease both" }}
               />
+                        ) : product.key === "storyline" ? (
+              <StorylinePreview key={`${product.key}-${activeFeature}`} index={activeFeature} />
             ) : (
               <PersonalityPreview key={`${product.key}-${activeFeature}`} index={activeFeature} />
             )}
