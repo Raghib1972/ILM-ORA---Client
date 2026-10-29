@@ -130,7 +130,7 @@ function mountIlmOra(__R, IMX, __OPT) {
   };
   const RIMG = {
     instructions: ["instructions-guide", "Illustration of an instructions guide"],
-    results: ["results-success", "Illustration celebrating results"],
+    
     report: ["report-sample", "Illustration of a sample report"],
     practice: ["test-practice-student", "Student practising questions"],
   };
@@ -1922,7 +1922,7 @@ function mountIlmOra(__R, IMX, __OPT) {
   if (S.started && !S.done && !S.end) S.end = Date.now() + (S.left || TOTAL_SEC) * 1000;
   const save = () => store.set(S);
   /* ===== UI HELPERS ===== */
-  const $ = (s) => __R.querySelector(s),
+    const $ = (s) => (s === "#dlg" && __ST.dlg) || __R.querySelector(s),
     esc = (s) => String(s).replace(/[&<>"]/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[m]);
   const toast = (m) => {
     const t = $("#toast");
@@ -1966,7 +1966,7 @@ function mountIlmOra(__R, IMX, __OPT) {
       })
       .join("")}</svg>`;
   };
-  const donut = (p, col) =>
+    const donutOld = (p, col) =>
     `<svg viewBox="0 0 100 100" width="130" role="img" aria-label="${p}%"><circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" opacity=".15" stroke-width="12"/><circle cx="50" cy="50" r="40" fill="none" stroke="${col || "#16A34A"}" stroke-width="12" stroke-linecap="round" stroke-dasharray="${(p * 2.513).toFixed(1)} 251.3" transform="rotate(-90 50 50)"/><text x="50" y="57" text-anchor="middle" font-size="22" font-weight="800" fill="currentColor">${p}%</text></svg>`;
   const CATG = {
     Reasoning: ["#F97316", "#fb923c", "🧩"],
@@ -2841,7 +2841,7 @@ ${slMq(
     enh($("#app"), r);
   }
   function enh(root, r) {
-    if (PBN[r] && r !== "test") {
+       if (false && PBN[r] && r !== "test") {
       const b = PBN[r],
         [c1, c2] = b[4].split(",");
       const tgt = root.classList.contains("lsec") ? root.querySelector(".lin") : root;
@@ -3121,6 +3121,110 @@ ${slMq(
     return `<nav class="jr noprint" aria-label="IQ assessment journey"><ol>${JS_.map((s, n) => `<li class="${n < i ? "dn" : n == i ? "cu" : ""}"><a href="#/${s[0]}" ${n == i ? 'aria-current="step"' : ""}><b>${n + 1}</b><span>${s[1]}</span></a></li>`).join("")}</ol>${min ? "" : `<div class="jb"><b>📍 You are here – Step ${i + 1} of ${JS_.length}: ${JS_[i][1]}</b><p>${JI[k][0]}</p><p class="mut"><b>What to do:</b> ${JI[k][1]}</p></div>`}</nav>`;
   };
   ["instructions", "test", "results", "report"].forEach((k) => delete RD[k]);
+  /* ===== IQ TEST PAGE: moving live preview + marquee + flow ===== */
+  const IQM = [
+    ["Logical", "2, 4, 8, 16, ___ ?", ["24", "32", "30", "28"], 1],
+    ["Verbal", "Closest meaning of 'brief'?", ["Short", "Distant", "Loud", "Complex"], 0],
+    ["Numerical", "What is 15% of 200?", ["25", "30", "20", "35"], 1],
+    ["Spatial", "An arrow points ↑ and turns 90° clockwise. Where now?", ["←", "→", "↓", "↑"], 1],
+  ];
+  function iqLive() {
+    const tiles = [
+      ["🧩", "Logical", "Sequences and deduction"],
+      ["📚", "Verbal", "Meaning and analogies"],
+      ["🔢", "Numerical", "Percentages and ratios"],
+      ["📐", "Spatial", "Rotation and shapes"],
+    ]
+      .map((t) => `<div class="iqm-t"><span aria-hidden="true">${t[0]}</span><b>${t[1]}</b><small class="mut">${t[2]}</small></div>`)
+      .join("");
+    const half = tiles + tiles;
+    const flow = [
+      ["Pick areas and timer", "Choose categories, difficulty and how many questions."],
+      ["Answer one by one", "Move freely, mark doubtful questions for review."],
+      ["Get your score", "See your result and the four areas at a glance."],
+      ["Review and practise", "Read every explanation, then practise weak areas."],
+    ]
+      .map((s, i) => `<li><span class="iqm-n">${i + 1}</span><h3>${s[0]}</h3><p class="mut">${s[1]}</p></li>`)
+      .join("");
+    return `<section class="iqm" aria-label="Live test preview"><div class="iqm-bg" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div><div class="iqm-in"><div><span class="badge o">Live preview</span><h2 style="margin-top:8px">See how the test feels</h2><p class="mut">Watch a sample run: one question at a time, a running timer and live progress. This preview plays by itself and is not scored.</p><div class="iqm-dots" aria-hidden="true"><b></b><b></b><b></b><b></b></div><div class="row"><a class="btn" href="#/instructions">Start timed test</a><a class="btn o" href="#/practice">Try practice mode</a></div></div><div class="iqm-demo" role="img" aria-label="Animated preview of a sample test question"><div class="iqm-top"><span class="iqm-chip">Logical</span><span class="iqm-time">12:00</span></div><div class="iqm-prog"><i></i></div><p class="iqm-q"></p><div class="iqm-opts"></div></div></div></section>
+<div class="iqm-mq" aria-hidden="true"><div class="iqm-track">${half}${half}</div></div>
+<section class="iqm-flow" aria-label="How a test run works"><h2>How a run works</h2><div class="iqm-line"><i></i></div><ol>${flow}</ol></section>`;
+  }
+  function iqLiveInit(root) {
+    if (!root) return;
+    const fl = root.querySelector(".iqm-flow");
+    if (fl && !fl.dataset.on) {
+      fl.dataset.on = "1";
+      if ("IntersectionObserver" in window) {
+        const io = new IntersectionObserver(
+          (es) =>
+            es.forEach((x) => {
+              if (x.isIntersecting) {
+                fl.classList.add("on");
+                io.disconnect();
+              }
+            }),
+          { threshold: 0.25 },
+        );
+        io.observe(fl);
+      } else fl.classList.add("on");
+    }
+    const el = root.querySelector(".iqm-demo");
+    if (!el || el.dataset.on) return;
+    el.dataset.on = "1";
+    const chip = el.querySelector(".iqm-chip"),
+      time = el.querySelector(".iqm-time"),
+      bar = el.querySelector(".iqm-prog i"),
+      qq = el.querySelector(".iqm-q"),
+      op = el.querySelector(".iqm-opts"),
+      dots = root.querySelectorAll(".iqm-dots b");
+    const alive = () => el.isConnected;
+    const draw = (d) => {
+      chip.textContent = d[0];
+      qq.textContent = d[1];
+      op.innerHTML = d[2].map((o) => `<div class="iqm-o">${o}</div>`).join("");
+    };
+    const mark = (d, c) => {
+      const n = op.children[d[3]];
+      n && n.classList.add(c);
+    };
+    const fill = (n) => dots.forEach((b, k) => b.classList.toggle("on", k < n));
+    if (matchMedia("(prefers-reduced-motion:reduce)").matches) {
+      draw(IQM[0]);
+      mark(IQM[0], "ok");
+      bar.style.width = "25%";
+      fill(1);
+      return;
+    }
+    let i = 0,
+      secs = 720;
+    const run = () => {
+      if (!alive()) return;
+      const d = IQM[i % 4];
+      draw(d);
+      bar.style.width = ((i % 4) + 1) * 25 + "%";
+      if (i % 4 === 0) fill(0);
+      setTimeout(() => alive() && mark(d, "sel"), 1500);
+      setTimeout(() => {
+        if (alive()) {
+          mark(d, "ok");
+          fill((i % 4) + 1);
+        }
+      }, 2500);
+      setTimeout(() => {
+        i++;
+        run();
+      }, 4300);
+    };
+    run();
+    const h = setInterval(() => {
+      if (!alive()) return clearInterval(h);
+      secs = secs > 0 ? secs - 1 : 720;
+      time.firstChild.nodeValue = mmss(secs);
+    }, 1000);
+    __OFF.push(() => clearInterval(h));
+  }
+ 
   /* overview */
   P["iq-test"] = () => {
     const h = HIST.get(),
@@ -3136,6 +3240,7 @@ ${slMq(
       s = BANK.find((x) => x.id == "LOG-044");
     return `${head("IQ Test Overview", "A short timed reasoning assessment, plus an untimed practice mode.", "IQ Test")}${jr("iq-test")}
 <section class="hero g2"><div><span class="badge o">Practice assessment · not a clinical IQ test</span><h2>See how you reason and what to practise next</h2><p>Choose your categories, difficulty, number of questions (5–50) and timer, then answer multiple-choice questions drawn at random from a bank of ${BANK.length}. You get a score summary, a breakdown per area and a question-by-question report.</p><div class="row"><a class="btn" href="#/instructions">Start timed test</a><a class="btn o" href="#/practice">Try practice mode</a></div></div>${img("iq", "Illustration of a brain and puzzle pieces")}</section>
+${iqLive()}
 <div class="grid">${[
       [BANK.length, "questions in bank"],
       ["5–90 min", "custom timer"],
@@ -3189,17 +3294,94 @@ ${
   };
   /* test */
   const twMsg = (l) => (l <= 60 ? "⏰ Under 1 minute left. The test will submit automatically at 00:00." : "⚠️ Less than 2 minutes left.");
+  let LASTQ = -1;
+  let LOCK = false,
+    DIR = 1;
+  /* Animated question change. to = target index, dir = 1 forward / -1 back, optEl = clicked option label */
+  function qGo(to, dir, optEl) {
+    if (LOCK || S.done || tleft() <= 0) return;
+    const same = to === S.i;
+    if (!same && (to < 0 || to >= Q.length)) return;
+    if (same && !optEl) return;
+    const card = __R.querySelector(".qcard");
+    if (!card || !card.animate || matchMedia("(prefers-reduced-motion:reduce)").matches) {
+      S.i = to;
+      DIR = dir;
+      save();
+      redraw();
+      return;
+    }
+    LOCK = true; /* blocks duplicate answers / clicks until the entrance finishes */
+    card.classList.add("qlock");
+    const pop = optEl ? 160 : 0;
+    /* 1. selected option: highlight + scale */
+    if (optEl)
+      optEl.animate(
+        [
+          { transform: "scale(1)", boxShadow: "0 0 0 0 rgba(22,163,74,0)" },
+          { transform: "scale(1.04)", boxShadow: "0 0 0 6px rgba(22,163,74,.22)", offset: 0.45 },
+          { transform: "scale(1.02)", boxShadow: "0 0 0 0 rgba(22,163,74,0)" },
+        ],
+        { duration: 260, easing: "cubic-bezier(.34,1.56,.64,1)", fill: "forwards" },
+      );
+    /* 2. progress bar animates to the new answered count */
+    const bar = __R.querySelector('[role="progressbar"] i'),
+      pb = __R.querySelector('[role="progressbar"]');
+    if (bar && pb) {
+      const n = Object.keys(S.ans).length;
+      bar.style.transition = "width .3s ease";
+      bar.style.width = (n / Q.length) * 100 + "%";
+      pb.setAttribute("aria-valuenow", n);
+    }
+    let wait = pop + 120;
+    if (!same) {
+      /* 3. counter fades out, whole question card (text, figure, options) slides out */
+      const cn = __R.querySelector(".qcn");
+      if (cn)
+        cn.animate(
+          [
+            { opacity: 1, transform: "none" },
+            { opacity: 0, transform: "translateY(8px)" },
+          ],
+          { duration: 260, delay: pop, easing: "ease-in", fill: "both" },
+        );
+      card.animate(
+        [
+          { transform: "translateX(0) scale(1)", opacity: 1 },
+          { transform: `translateX(${-dir * 56}px) scale(.97)`, opacity: 0 },
+        ],
+        { duration: 340, delay: pop, easing: "cubic-bezier(.55,0,.55,.2)", fill: "both" },
+      );
+      wait = pop + 340;
+    }
+    setTimeout(() => {
+      if (!$("#tm") || S.done) {
+        LOCK = false;
+        return;
+      }
+      S.i = to;
+      DIR = dir;
+      save();
+      redraw(); /* new card slides in via .qanim, counter via .qcnt */
+      const c = __R.querySelector(".qcard");
+      c && c.focus({ preventScroll: true });
+      setTimeout(() => (LOCK = false), same ? 0 : 450);
+    }, wait);
+  }
   function qView() {
+    const anim = LASTQ !== S.i;
+    LASTQ = S.i;
     const q = Q[S.i],
       a = S.ans[q.id],
       n = Object.keys(S.ans).length,
       l = tleft(),
       fl = Q.filter((x) => S.flag[x.id]).length;
     return `<div class="crumb"><a href="#/home">Home</a> › <a href="#/iq-test">IQ Test</a> › Take test</div>${jr("test", 1)}
-<div class="tbar row sp"><div><b>Question ${S.i + 1} of ${Q.length}</b> <span class="mut">· ${n} answered · ${Q.length - n} left${fl ? ` · ${fl} marked` : ""}</span></div><span class="timer${l <= 120 ? " warn" : ""}" id="tm" role="timer" aria-label="Time left">${mmss(l)}</span></div>
+<div class="tbar row sp"><div><b class="qcn${anim ? " qcnt" : ""}">Question ${S.i + 1} of ${Q.length}</b> <span class="mut">· ${n} answered · ${Q.length - n} left${fl ? ` · ${fl} marked` : ""}</span></div><div class="qring${l <= 120 ? " warn" : ""}"><svg viewBox="0 0 60 60" aria-hidden="true"><defs><linearGradient id="qrg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F97316"/><stop offset="1" stop-color="#16A34A"/></linearGradient></defs><circle class="bg" cx="30" cy="30" r="24"/><circle id="tring" cx="30" cy="30" r="24" stroke="url(#qrg)" stroke-dasharray="150.8" style="stroke-dashoffset:${(150.8 * (1 - l / TOTAL_SEC)).toFixed(1)}"/></svg><span class="timer${l <= 120 ? " warn" : ""}" id="tm" role="timer" aria-label="Time left">${mmss(l)}</span></div></div>
 <div id="tw" class="note" role="alert" ${l > 120 ? "hidden" : ""}>${twMsg(l)}</div>
 <div class="prog" style="margin:10px 0" role="progressbar" aria-valuemin="0" aria-valuemax="${Q.length}" aria-valuenow="${n}" aria-label="Questions answered"><i style="width:${(n / Q.length) * 100}%"></i></div>
-<div class="g2" style="align-items:start"><div class="card"><span class="badge">${CATS[q.cat]}</span><fieldset style="border:0;padding:0;margin:8px 0"><legend><h2 style="font-size:1.25rem">${q.text}</h2></legend>${qFig(q)}${q.opts.map((o, i) => `<label class="opt"><input type="radio" name="q" value="${i}" ${a === i ? "checked" : ""}> ${esc(o)}</label>`).join("")}</fieldset>
+<div class="qdots" aria-hidden="true">${Q.map((x, i) => `<i class="${S.ans[x.id] != null ? "a" : ""} ${S.flag[x.id] ? "f" : ""} ${i == S.i ? "c" : ""}"></i>`).join("")}</div>
+<div class="g2" style="align-items:start"><div class="card qcard c-${q.cat}${anim ? " qanim" : ""}" tabindex="-1" style="--qx:${DIR * 56}px"><div class="qbg" aria-hidden="true"><i></i><i></i><i></i></div><div class="qhd"><span class="qic" aria-hidden="true">${{ logical: "🧩", verbal: "📚", numerical: "🔢", spatial: "📐" }[q.cat]}</span><span class="badge">${CATS[q.cat]}</span><span class="badge o">${q.d}</span><span class="qno" aria-hidden="true">${S.i + 1}</span></div><fieldset style="border:0;padding:0;margin:8px 0"><legend><h2 class="qtx">${q.text}</h2></legend>${qFig(q)}${q.opts.map((o, i) => `<label class="opt"><input type="radio" name="q" value="${i}" ${a === i ? "checked" : ""}><span class="ol">${"ABCD"[i]}</span><span class="ot">${esc(o)}</span><span class="ock">✔</span></label>`).join("")}</fieldset>
 <div class="row sp"><button class="btn o" data-act="prev" ${S.i == 0 ? "disabled" : ""}>← Previous</button><button class="btn o" data-act="flag" aria-pressed="${!!S.flag[q.id]}">${S.flag[q.id] ? "⚑ Marked for review" : "⚐ Mark for review"}</button><button class="btn o" data-act="clear" ${a == null ? "disabled" : ""}>Clear answer</button>${S.i < Q.length - 1 ? `<button class="btn" data-act="next">Next →</button>` : `<button class="btn g" data-act="submit">Submit</button>`}</div>
 <p class="mut" style="font-size:.85rem">Answers save automatically. Keys: 1–4 choose · Alt+← / Alt+→ move.</p></div>
 <div class="card"><h3>Question navigator</h3><div class="nav">${Q.map((x, i) => `<button data-go="${i}" class="${S.ans[x.id] != null ? "a" : ""} ${S.flag[x.id] ? "f" : ""} ${i == S.i ? "c" : ""}" ${i == S.i ? 'aria-current="step"' : ""} aria-label="Question ${i + 1}, ${S.ans[x.id] != null ? "answered" : "unanswered"}${S.flag[x.id] ? ", marked for review" : ""}">${i + 1}</button>`).join("")}</div><div class="lg"><span><i class="a"></i>Answered</span><span><i></i>Unanswered</span><span><i class="f"></i>⚑ Marked</span></div><button class="btn g" style="margin-top:4px" data-act="submit">Submit test</button></div></div>`;
@@ -3211,9 +3393,13 @@ ${
       const l = tleft(),
         t = $("#tm"),
         w = $("#tw");
-      if (t) {
+           if (t) {
         t.textContent = mmss(l);
         t.classList.toggle("warn", l <= 120);
+        const rg = $("#tring");
+        if (rg) rg.style.strokeDashoffset = (150.8 * (1 - l / TOTAL_SEC)).toFixed(1);
+        const rw = t.closest(".qring");
+        if (rw) rw.classList.toggle("warn", l <= 120);
       }
       if (w) {
         w.hidden = l > 120;
@@ -3234,7 +3420,10 @@ ${
       setTimeout(() => finish(true));
       return `${head("Time is up", null, "Take test")}<p>Submitting your answers…</p>`;
     }
-    startTick();
+        startTick();
+       LASTQ = -1;
+    LOCK = false;
+    DIR = 1;
     return qView();
   };
   function finish(auto) {
@@ -3268,14 +3457,12 @@ ${
       imp = ks.filter((k) => pcOf(r, k) < 67),
       weak = [...ks].sort((a, b) => pcOf(r, a) - pcOf(r, b))[0],
       cl = (k) => `${CATS[k]}: ${r.sec[k].c}/${r.sec[k].n} correct`;
-    return `${head("Your Results", "Performance summary for the attempt submitted on " + fdt(S.at) + ".", "Results")}${jr("results")}
+              return `${head("Your Results", "Performance summary for the attempt submitted on " + fdt(S.at) + ".", "Results")}${jr("results", 1)}
+${rzHero(r, ks)}
 <div class="grid"><div class="card kp"><p class="mut">Assessment score</p><b>${r.c} / ${r.n}</b>${donut(pct)}<span class="badge o">Not an official IQ score</span></div>
 <div class="card kp"><p class="mut">Answer breakdown</p><div class="grid" style="grid-template-columns:repeat(3,1fr);gap:8px"><div><b style="color:var(--g)">${r.c}</b>Correct</div><div><b style="color:#d92d20">${r.w}</b>Incorrect</div><div><b style="color:var(--mut)">${r.u}</b>Unanswered</div></div><p class="mut">${r.c} + ${r.w} + ${r.u} = ${r.n} questions</p></div>
 <div class="card kp"><p class="mut">Time used</p><b>${mmss(S.used || 0)}</b><p class="mut">of ${mmss(TOTAL_SEC)}</p><p>Accuracy on answered questions: <b>${acc}%</b><br><span class="mut">Score ${pct}% counts unanswered as not correct.</span></p></div></div>
-<div class="card" style="margin:16px 0"><h2>Performance by reasoning area</h2><div class="g2"><div style="text-align:center">${radar(
-      ks.map((k) => pcOf(r, k)),
-      ks.map((k) => CATS[k]),
-    )}</div><div>${bars(ks.map((k) => [CATS[k], pcOf(r, k)]))}<p class="mut">${ks.map(cl).join(" · ")}</p></div></div></div>
+${rzTable(r, ks)}
 <div class="cols2"><div class="card"><h3>💪 Strengths</h3>${str.length ? `<ul>${str.map((k) => `<li>${cl(k)}</li>`).join("")}</ul>` : `<p class="mut">No area reached 67% yet. Start with practice below.</p>`}</div><div class="card"><h3>🎯 Areas to improve</h3>${imp.length ? `<ul>${imp.map((k) => `<li>${cl(k)}${r.sec[k].u ? ` (${r.sec[k].u} unanswered)` : ""}</li>`).join("")}</ul>` : `<p class="mut">No weak area on this set. Try the harder practice questions.</p>`}</div></div>
 <p class="mut">${cfgLine()} Small numbers of questions per area give only rough indicators, not a measure of ability.</p>
 ${pv ? `<div class="card" style="margin:16px 0"><h3>📈 Compared with your previous attempt</h3><p>${pv.c}/${pv.n} → <b>${r.c}/${r.n}</b> (${r.c - pv.c >= 0 ? "+" : ""}${r.c - pv.c}). ${ks.map((k) => `${CATS[k]} ${pv.sec[k]}% → ${pcOf(r, k)}%`).join(" · ")}</p></div>` : ""}
@@ -3290,6 +3477,125 @@ ${pv ? `<div class="card" style="margin:16px 0"><h3>📈 Compared with your prev
     }<p class="mut">Stored in localStorage on this device only. Not synced to any account. <button class="btn s o" data-act="clearhist">Clear saved attempts</button></p></div>
 ${DISC}<p class="row noprint"><a class="btn" href="#/report">View detailed report</a><button class="btn o" data-act="rev">Review answers</button><button class="btn o" data-act="restart">Retake test</button><a class="btn g" href="#/practice?cat=${weak}">Practice again</a></p>`;
   };
+   /* ===== RESULTS: IQ-style orbit graphic + realistic report parts ===== */
+  const rzEst = (r) => Math.round(70 + r.pct * 60);
+  const rzBand = (e) => (e < 85 ? "Developing" : e < 100 ? "Average" : e < 115 ? "Above average" : e < 130 ? "High" : "Very high");
+  const rzLvl = (p) => (p >= 75 ? ["Strong", ""] : p >= 50 ? ["Developing", "o"] : ["Needs practice", "o"]);
+  function rzViz(r, ks, est) {
+    const cx = 260,
+      cy = 210,
+      R = 110,
+      n = Math.max(ks.length, 1);
+    const ang = (i) => -Math.PI / 2 + (i * 2 * Math.PI) / n;
+    const pt = (i, d) => [cx + Math.cos(ang(i)) * d, cy + Math.sin(ang(i)) * d];
+    const f = (a) => a.map((v) => v.toFixed(1)).join(",");
+    const val = ks.map((k) => pcOf(r, k));
+    const rr = (p) => 46 + ((R - 46) * p) / 100;
+    const col = ["#F97316", "#16A34A", "#6366f1", "#0ea5e9"];
+    const poly = val.map((p, i) => f(pt(i, rr(p)))).join(" ");
+    const rings = [R, R * 0.72, R * 0.44]
+      .map(
+        (d, i) =>
+          `<circle cx="${cx}" cy="${cy}" r="${d}" fill="none" stroke="currentColor" stroke-opacity="${i ? 0.14 : 0.25}" ${i == 1 ? 'stroke-dasharray="3 6"' : ""}/>`,
+      )
+      .join("");
+    const spokes = ks
+      .map((k, i) => {
+        const p = pt(i, R);
+        return `<line x1="${cx}" y1="${cy}" x2="${p[0].toFixed(1)}" y2="${p[1].toFixed(1)}" stroke="currentColor" stroke-opacity=".15"/>`;
+      })
+      .join("");
+    const nodes = ks
+      .map((k, i) => {
+        const o = pt(i, R),
+          v = pt(i, rr(val[i]));
+        return `<circle cx="${o[0].toFixed(1)}" cy="${o[1].toFixed(1)}" r="6" fill="var(--card)" stroke="${col[i % 4]}" stroke-width="3"/><circle cx="${v[0].toFixed(1)}" cy="${v[1].toFixed(1)}" r="5" fill="${col[i % 4]}"/>`;
+      })
+      .join("");
+    const labels = ks
+      .map((k, i) => {
+        const c = Math.cos(ang(i)),
+          s = Math.sin(ang(i)),
+          l = pt(i, R + 34);
+        const a = Math.abs(c) < 0.3 ? "middle" : c > 0 ? "start" : "end";
+        const y0 = s < -0.5 ? l[1] - 50 : s > 0.5 ? l[1] - 6 : l[1] - 26;
+        const x = l[0].toFixed(1);
+        return `<g text-anchor="${a}"><text x="${x}" y="${(y0 + 10).toFixed(1)}" font-size="12" font-weight="800" letter-spacing="1.2" fill="${col[i % 4]}">${CATS[k].toUpperCase()}</text><text x="${x}" y="${(y0 + 32).toFixed(1)}" font-size="24" font-weight="800" fill="currentColor">${val[i]}%</text><text x="${x}" y="${(y0 + 48).toFixed(1)}" font-size="11" fill="currentColor" fill-opacity=".65">${r.sec[k].c} of ${r.sec[k].n} correct</text></g>`;
+      })
+      .join("");
+    return `<svg class="rz-viz" viewBox="0 0 520 420" role="img" aria-label="Estimated practice index ${est}. ${ks.map((k, i) => CATS[k] + " " + val[i] + "%").join(", ")}"><defs><linearGradient id="rzg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="520" y2="420"><stop offset="0" stop-color="#F97316"/><stop offset="1" stop-color="#16A34A"/></linearGradient></defs><circle class="sl-dash" cx="${cx}" cy="${cy}" r="${R + 14}" fill="none" stroke="#F97316" stroke-opacity=".5" stroke-width="2" stroke-dasharray="4 10"/>${rings}${spokes}<polygon points="${poly}" fill="url(#rzg)" fill-opacity=".28" stroke="url(#rzg)" stroke-width="3" stroke-linejoin="round"/>${nodes}<circle cx="${cx}" cy="${cy}" r="40" fill="var(--card)" stroke="url(#rzg)" stroke-width="5"/><text x="${cx}" y="${cy + 8}" text-anchor="middle" font-size="30" font-weight="800" fill="currentColor">${est}</text><text x="${cx}" y="${cy + 24}" text-anchor="middle" font-size="9" letter-spacing="2" fill="currentColor" fill-opacity=".65">IQ EST.</text>${labels}</svg>`;
+  }
+   function rzViz2(r, ks, est) {
+    const cx = 300,
+      cy = 230,
+      R = 120,
+      n = Math.max(ks.length, 1);
+    const ang = (i) => -Math.PI / 2 + (i * 2 * Math.PI) / n;
+    const pt = (i, d) => [cx + Math.cos(ang(i)) * d, cy + Math.sin(ang(i)) * d];
+    const f = (a) => a.map((v) => v.toFixed(1)).join(",");
+    const val = ks.map((k) => pcOf(r, k));
+    const rr = (p) => 48 + ((R - 48) * p) / 100;
+    const col = ["#F97316", "#16A34A", "#6366f1", "#0ea5e9"];
+    const poly = val.map((p, i) => f(pt(i, rr(p)))).join(" ");
+    const ticks = Array.from({ length: 72 }, (_, i) => {
+      const a = (i * 2 * Math.PI) / 72,
+        l = i % 6 === 0 ? 9 : 4,
+        c = Math.cos(a),
+        s = Math.sin(a);
+      return `<line x1="${(cx + c * (R + 24)).toFixed(1)}" y1="${(cy + s * (R + 24)).toFixed(1)}" x2="${(cx + c * (R + 24 + l)).toFixed(1)}" y2="${(cy + s * (R + 24 + l)).toFixed(1)}" stroke="currentColor" stroke-opacity="${i % 6 === 0 ? 0.35 : 0.18}" stroke-width="1.5"/>`;
+    }).join("");
+    const rings = [R, R * 0.75, R * 0.5]
+      .map(
+        (d, i) =>
+          `<circle cx="${cx}" cy="${cy}" r="${d.toFixed(1)}" fill="none" stroke="currentColor" stroke-opacity="${i ? 0.13 : 0.24}" ${i === 1 ? 'stroke-dasharray="3 6"' : ""}/>`,
+      )
+      .join("");
+    const spokes = ks
+      .map((k, i) => {
+        const p = pt(i, R);
+        return `<line x1="${cx}" y1="${cy}" x2="${p[0].toFixed(1)}" y2="${p[1].toFixed(1)}" stroke="currentColor" stroke-opacity=".14"/>`;
+      })
+      .join("");
+    const orbit = (rad, dur, c, rev) =>
+      `<g><animateTransform attributeName="transform" type="rotate" from="${rev ? 360 : 0} ${cx} ${cy}" to="${rev ? 0 : 360} ${cx} ${cy}" dur="${dur}s" repeatCount="indefinite"/><circle cx="${cx}" cy="${cy - rad}" r="4" fill="${c}"/></g>`;
+    const nodes = ks
+      .map((k, i) => {
+        const o = pt(i, R),
+          v = pt(i, rr(val[i]));
+        return `<circle cx="${o[0].toFixed(1)}" cy="${o[1].toFixed(1)}" r="7" fill="var(--card)" stroke="${col[i % 4]}" stroke-width="3"/><circle cx="${v[0].toFixed(1)}" cy="${v[1].toFixed(1)}" r="5.5" fill="${col[i % 4]}"><animate attributeName="r" values="5.5;8;5.5" dur="2.6s" repeatCount="indefinite"/></circle>`;
+      })
+      .join("");
+    const labels = ks
+      .map((k, i) => {
+        const c = Math.cos(ang(i)),
+          s = Math.sin(ang(i)),
+          l = pt(i, R + 44);
+        const a = Math.abs(c) < 0.3 ? "middle" : c > 0 ? "start" : "end";
+        const y0 = s < -0.5 ? l[1] - 50 : s > 0.5 ? l[1] - 4 : l[1] - 26;
+        const x = l[0].toFixed(1);
+        return `<g text-anchor="${a}"><text x="${x}" y="${(y0 + 10).toFixed(1)}" font-size="12" font-weight="800" letter-spacing="1.6" fill="${col[i % 4]}">${CATS[k].toUpperCase()}</text><text x="${x}" y="${(y0 + 34).toFixed(1)}" font-size="26" font-weight="800" fill="currentColor">${val[i]}%</text><text x="${x}" y="${(y0 + 50).toFixed(1)}" font-size="11" fill="currentColor" fill-opacity=".62">${r.sec[k].c} of ${r.sec[k].n} correct</text></g>`;
+      })
+      .join("");
+    return `<svg class="rz-viz" viewBox="0 0 600 460" role="img" aria-label="Estimated practice index ${est}. ${ks.map((k, i) => CATS[k] + " " + val[i] + "%").join(", ")}"><defs><linearGradient id="rzg2" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="600" y2="460"><stop offset="0" stop-color="#F97316"/><stop offset="1" stop-color="#16A34A"/></linearGradient><filter id="rzgl" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="8"/></filter></defs>${ticks}<circle cx="${cx}" cy="${cy}" r="${R + 14}" fill="none" stroke="#F97316" stroke-opacity=".45" stroke-width="2" stroke-dasharray="4 10"><animateTransform attributeName="transform" type="rotate" from="0 ${cx} ${cy}" to="360 ${cx} ${cy}" dur="60s" repeatCount="indefinite"/></circle>${rings}${spokes}<g class="rz-poly"><polygon points="${poly}" fill="url(#rzg2)" fill-opacity=".5" filter="url(#rzgl)"/><polygon points="${poly}" fill="url(#rzg2)" fill-opacity=".3" stroke="url(#rzg2)" stroke-width="3" stroke-linejoin="round"/></g>${orbit(R + 14, 14, "#F97316", 0)}${orbit(R * 0.75, 22, "#16A34A", 1)}${orbit(R * 0.5, 32, "#6366f1", 0)}${nodes}<circle cx="${cx}" cy="${cy}" r="50" fill="url(#rzg2)" fill-opacity=".35" filter="url(#rzgl)"/><circle cx="${cx}" cy="${cy}" r="44" fill="var(--card)" stroke="url(#rzg2)" stroke-width="5"/><text x="${cx}" y="${cy + 9}" text-anchor="middle" font-size="34" font-weight="800" fill="currentColor">${est}</text><text x="${cx}" y="${cy + 26}" text-anchor="middle" font-size="9" letter-spacing="2.4" fill="currentColor" fill-opacity=".62">IQ EST.</text>${labels}</svg>`;
+  }
+  function rzHero(r, ks) {
+    const est = rzEst(r),
+      pos = Math.min(100, Math.max(0, ((est - 70) / 60) * 100)),
+      rid = "ILM-" + (S.at || Date.now()).toString(36).toUpperCase().slice(-8);
+    return `<section class="card rz" style="margin:16px 0"><div>${rzViz2(r, ks, est)}</div><div><span class="badge o">Practice estimate · not an official IQ score</span><h2 style="margin-top:8px">Estimated practice index: ${est}</h2><p class="mut">Band: <b>${rzBand(est)}</b>. Scaled from your ${Math.round(r.pct * 100)}% score on this ${r.n}-question set (70 = 0%, 130 = 100%).</p><div class="rz-scale" role="img" aria-label="Position ${est} on a 70 to 130 scale"><i style="left:${pos}%"></i></div><div class="rz-ticks"><span>70</span><span>85</span><span>100</span><span>115</span><span>130</span></div><div class="rz-meta"><div><small>Report ID</small><b>${rid}</b></div><div><small>Candidate</small><b>${esc(S.user || "Guest learner")}</b></div><div><small>Date</small><b>${fdt(S.at)}</b></div><div><small>Time used</small><b>${mmss(S.used || 0)}</b></div><div><small>Questions</small><b>${r.n}</b></div></div></div></section>`;
+  }
+  function rzTable(r, ks) {
+    return `<div class="card" style="margin:16px 0"><h2>Section-wise report</h2><div style="overflow-x:auto"><table class="cmp"><tr><th>Area</th><th>Correct</th><th>Incorrect</th><th>Skipped</th><th>Score</th><th>Level</th></tr>${ks
+      .map((k) => {
+        const s = r.sec[k],
+          p = pcOf(r, k),
+          l = rzLvl(p);
+        return `<tr><td>${CATS[k]}</td><td>${s.c}/${s.n}</td><td>${s.w}</td><td>${s.u}</td><td style="min-width:130px"><div class="rz-bar"><div class="prog"><i style="width:${p}%"></i></div><b>${p}%</b></div></td><td><span class="badge ${l[1]}">${l[0]}</span></td></tr>`;
+      })
+      .join(
+        "",
+      )}</table></div><p class="mut">Levels: Strong 75%+ · Developing 50–74% · Needs practice below 50%. Each area has only a few questions, so treat these as rough indicators.</p></div>`;
+  }
   /* report */
   const RC = {
     logical: [
@@ -3319,6 +3625,7 @@ ${DISC}<p class="row noprint"><a class="btn" href="#/report">View detailed repor
       pct = Math.round(r.pct * 100);
     return `${head("Detailed Report", "Attempt submitted " + fdt(S.at) + " · " + r.c + "/" + r.n + " correct (" + pct + "%) · time " + mmss(S.used || 0), "Report")}${jr("report")}
 <div class="row noprint"><button class="btn" data-act="print">Print / save as PDF</button><a class="btn o" href="#/results">← Back to results</a><a class="btn o" href="#/iq-test">IQ Test main page</a></div>
+${rzHero(r, ks)}
 <div class="card" style="margin:16px 0"><h2>Mistakes and practice by area</h2><div style="overflow-x:auto"><table class="cmp"><tr><th>Area</th><th>Correct</th><th>Incorrect</th><th>Unanswered</th><th>Suggested practice</th></tr>${ks
       .map((k) => {
         const s = r.sec[k];
@@ -3361,7 +3668,7 @@ ${DISC}<p class="row noprint"><a class="btn" href="#/report">View detailed repor
       a = PR.ans[q.id],
       sh = a != null,
       ok = L.filter((x) => PR.ans[x.id] === x.ans).length;
-    return `<p class="mut" aria-live="polite">Question ${PR.i + 1} of ${L.length} · ${ok} answered correctly in this set · no timer · not saved</p><div class="card"><span class="badge">${CATS[q.cat]}</span> <span class="badge o">${q.d}</span><h2 style="font-size:1.25rem;margin-top:8px">${q.text}</h2>${qFig(q)}${q.opts.map((o, i) => `<button class="opt po ${sh ? (i == q.ans ? "ok" : i == a ? "no" : "") : ""}" data-pa="${i}" ${sh ? 'aria-disabled="true"' : ""}>${esc(o)}${sh && i == q.ans ? " ✓ Correct answer" : sh && i == a ? " ✗ Your choice" : ""}</button>`).join("")}${sh ? `<div class="note" role="status"><b>${a == q.ans ? "✓ Correct." : "✗ Not quite."}</b> ${q.why}</div>` : ""}<div class="row sp" style="margin-top:12px"><button class="btn o" data-pn="-1" ${PR.i == 0 ? "disabled" : ""}>← Previous</button>${sh && a != q.ans ? `<button class="btn g" data-pr="1">Try again</button>` : ""}<button class="btn o" data-pshuf="1">🔀 Shuffle</button>${PR.i >= L.length - 1 ? `<button class="btn g" data-psum="1">Finish → summary</button>` : `<button class="btn" data-pn="1">Next →</button>`}</div></div>`;
+    return `<p class="mut" aria-live="polite">Question ${PR.i + 1} of ${L.length} · ${ok} answered correctly in this set · no timer · not saved</p><div class="card qcard c-${q.cat}"><div class="qbg" aria-hidden="true"><i></i><i></i><i></i></div><span class="badge">${CATS[q.cat]}</span> <span class="badge o">${q.d}</span><h2 style="font-size:1.25rem;margin-top:8px">${q.text}</h2>${qFig(q)}${q.opts.map((o, i) => `<button class="opt po ${sh ? (i == q.ans ? "ok" : i == a ? "no" : "") : ""}" data-pa="${i}" ${sh ? 'aria-disabled="true"' : ""}>${esc(o)}${sh && i == q.ans ? " ✓ Correct answer" : sh && i == a ? " ✗ Your choice" : ""}</button>`).join("")}${sh ? `<div class="note" role="status"><b>${a == q.ans ? "✓ Correct." : "✗ Not quite."}</b> ${q.why}</div>` : ""}<div class="row sp" style="margin-top:12px"><button class="btn o" data-pn="-1" ${PR.i == 0 ? "disabled" : ""}>← Previous</button>${sh && a != q.ans ? `<button class="btn g" data-pr="1">Try again</button>` : ""}<button class="btn o" data-pshuf="1">🔀 Shuffle</button>${PR.i >= L.length - 1 ? `<button class="btn g" data-psum="1">Finish → summary</button>` : `<button class="btn" data-pn="1">Next →</button>`}</div></div>`;
   }
   P.practice = () => {
     const m = location.hash.match(/cat=(\w+)/);
@@ -3434,16 +3741,8 @@ ${DISC}<p class="row noprint"><a class="btn" href="#/report">View detailed repor
   });
   __LST("keydown", (e) => {
     if (!$("#tm") || S.done || !e.altKey) return;
-    if (e.key == "ArrowRight" && S.i < Q.length - 1) {
-      S.i++;
-      save();
-      redraw();
-    }
-    if (e.key == "ArrowLeft" && S.i > 0) {
-      S.i--;
-      save();
-      redraw();
-    }
+        if (e.key == "ArrowRight" && S.i < Q.length - 1) qGo(S.i + 1, 1);
+    if (e.key == "ArrowLeft" && S.i > 0) qGo(S.i - 1, -1);
   });
 
   /* ===== TEST SETUP: category, difficulty, count, timer ===== */
@@ -4097,7 +4396,7 @@ ${DISC}<p class="row noprint"><a class="btn" href="#/report">View detailed repor
       .join(
         "",
       )}</table></div><div class="card"><h3>Teaching resources</h3><ul><li><a href="#/pedagogy">Pedagogy guides</a></li><li><a href="#/blog">Worksheets</a></li></ul></div><div class="card"><h3>Create assessment</h3><p class="mut">Placeholder – authoring needs a backend.</p><button class="btn s" data-act="soon">New assessment <span class="badge o">Needs backend</span></button></div></div>`;
-  P.manager = () =>
+   P.managerOld = () =>
     `${head("Manager Hub", "Aggregate, privacy-aware analytics (sample data). Groups under 5 people are hidden.", "Manager")}<div class="grid"><div class="card"><h3>Completion rate</h3>${donut(78)}</div><div class="card"><h3>Avg. progress</h3>${donut(61, "#F97316")}</div><div class="card"><h3>Active teams</h3><div class="big">4</div></div></div><div class="card" style="margin-top:16px"><h2>Team summaries</h2>${bars(
       [
         ["Team North", 84],
@@ -4115,9 +4414,78 @@ ${DISC}<p class="row noprint"><a class="btn" href="#/report">View detailed repor
     ]
       .map((p) => `<circle cx="${p[0]}" cy="${p[1]}" r="4"/>`)
       .join("")}</g></svg></div>`;
+    /* ===== MODERN CHARTS: animated donut, sparkline, trend, team bars ===== */
+  let DN = 0;
+  const donut = (p, col) => {
+    const id = "dg" + ++DN,
+      c1 = col || "#16A34A",
+      c2 = col ? "#fdba74" : "#86efac";
+    return `<svg class="dn" viewBox="0 0 100 100" width="130" role="img" aria-label="${p}%"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient></defs><circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" opacity=".12" stroke-width="10"/><circle class="dn-arc" cx="50" cy="50" r="40" fill="none" stroke="url(#${id})" stroke-width="10" stroke-linecap="round" style="--v:${(p * 2.513).toFixed(1)}" transform="rotate(-90 50 50)"/><text x="50" y="57" text-anchor="middle" font-size="22" font-weight="800" fill="currentColor">${p}%</text></svg>`;
+  };
+  const spark = (v, c) => {
+    const w = 120,
+      h = 44,
+      mx = Math.max(...v),
+      mn = Math.min(...v);
+    const pts = v.map((x, i) => [(i * (w - 8)) / (v.length - 1) + 4, h - 6 - ((x - mn) / (mx - mn || 1)) * (h - 14)]);
+    const d = pts.map((q, i) => (i ? "L" : "M") + q[0].toFixed(1) + " " + q[1].toFixed(1)).join(" ");
+    return `<svg class="spk" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true"><path class="tl-area" d="${d} L${w - 4} ${h} L4 ${h}Z" fill="${c}" opacity=".16"/><path class="tl-line" pathLength="1" d="${d}" fill="none" stroke="${c}" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  };
+  const trendChart = () => {
+    const m = ["May", "Jun", "Jul", "Aug", "Sep", "Oct"],
+      v = [52, 58, 63, 70, 74, 78];
+    const W = 640,
+      H = 250,
+      L = 46,
+      R = 22,
+      T = 22,
+      B = 38;
+    const x = (i) => L + (i * (W - L - R)) / (v.length - 1),
+      y = (n) => T + (1 - (n - 40) / 50) * (H - T - B);
+    const P2 = v.map((n, i) => [x(i), y(n)]);
+    let d = "M" + P2[0][0] + " " + P2[0][1];
+    for (let i = 1; i < P2.length; i++) {
+      const a = P2[i - 1],
+        b = P2[i],
+        cx = (a[0] + b[0]) / 2;
+      d += ` C${cx} ${a[1]} ${cx} ${b[1]} ${b[0]} ${b[1]}`;
+    }
+    const area = d + ` L${P2[P2.length - 1][0]} ${H - B} L${P2[0][0]} ${H - B}Z`;
+    const grid = [40, 55, 70, 85]
+      .map(
+        (n) =>
+          `<line x1="${L}" x2="${W - R}" y1="${y(n)}" y2="${y(n)}" stroke="currentColor" opacity=".12" stroke-dasharray="4 6"/><text x="${L - 8}" y="${y(n) + 4}" text-anchor="end" font-size="11" fill="currentColor" opacity=".55">${n}%</text>`,
+      )
+      .join("");
+    const labels = m.map((s, i) => `<text x="${x(i)}" y="${H - 12}" text-anchor="middle" font-size="12" fill="currentColor" opacity=".6">${s}</text>`).join("");
+    const dots = P2.map(
+      (q, i) =>
+        `<g class="tp" style="--d:${(0.9 + i * 0.12).toFixed(2)}s"><circle class="tp-p" cx="${q[0]}" cy="${q[1]}" r="9" fill="#F97316" opacity=".25"/><circle cx="${q[0]}" cy="${q[1]}" r="5" fill="var(--card)" stroke="#F97316" stroke-width="3"/><circle cx="${q[0]}" cy="${q[1]}" r="18" fill="transparent"/><g class="tt"><rect x="${q[0] - 28}" y="${q[1] - 42}" width="56" height="26" rx="8" fill="var(--ink)"/><text x="${q[0]}" y="${q[1] - 24}" text-anchor="middle" font-size="12" font-weight="700" fill="var(--bg)">${v[i]}%</text></g></g>`,
+    ).join("");
+    return `<svg class="trend" viewBox="0 0 ${W} ${H}" role="img" aria-label="Monthly completion trend rising from 52 to 78 percent"><defs><linearGradient id="tgl" gradientUnits="userSpaceOnUse" x1="${L}" y1="0" x2="${W - R}" y2="0"><stop offset="0" stop-color="#F97316"/><stop offset="1" stop-color="#16A34A"/></linearGradient><linearGradient id="tga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#16A34A" stop-opacity=".28"/><stop offset="1" stop-color="#16A34A" stop-opacity="0"/></linearGradient></defs>${grid}<path class="tl-area" d="${area}" fill="url(#tga)"/><path class="tl-line" pathLength="1" d="${d}" fill="none" stroke="url(#tgl)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>${labels}${dots}</svg>`;
+  };
+  P.manager = () => {
+    const kpi = (ic, t, dl, viz, c) =>
+      `<div class="card kpi" style="--kc:${c}"><div class="kpi-l"><span class="kpi-i">${ic}</span><small>${t}</small>${dl}</div>${viz}</div>`;
+    const teams = [
+      ["Team North", 84, "#F97316"],
+      ["Team South", 71, "#16A34A"],
+      ["Team East", 58, "#6366f1"],
+      ["Team West", 66, "#0ea5e9"],
+    ];
+    const rows = teams
+      .map(
+        (t, i) =>
+          `<div class="tm"><div class="tm-h"><span class="tm-n"><i style="background:${t[2]}"></i>${t[0]}</span><b>${t[1]}%</b></div><div class="tm-b"><span class="tm-f" style="--w:${t[1]}%;--c:${t[2]};--d:${(i * 0.12).toFixed(2)}s"></span></div></div>`,
+      )
+      .join("");
+    return `${head("Manager Hub", "Aggregate, privacy-aware analytics (sample data). Groups under 5 people are hidden.", "Manager")}
+<div class="mgk">${kpi("🎯", "Completion rate", `<span class="dlt">▲ 6% vs last month</span>`, donut(78), "#16A34A")}${kpi("📈", "Avg. progress", `<span class="dlt">▲ 4% vs last month</span>`, donut(61, "#F97316"), "#F97316")}${kpi("👥", "Active teams", `<b class="big">4</b><span class="dlt">All teams active</span>`, spark([2, 3, 3, 4, 4, 4], "#6366f1"), "#6366f1")}</div>
+<div class="mgr"><div class="card"><div class="row sp"><h2>Team summaries</h2><span class="badge">Sample data</span></div>${rows}</div><div class="card"><div class="row sp"><h2>Monthly completion trend</h2><span class="badge o">▲ +26 pts in 6 months</span></div>${trendChart()}</div></div>`;
+  };
   const BP = { n: 1, q: "", tag: "All" };
   P.blog = () =>
-    `${head("Resources", "Articles, guides, videos and worksheets.", "Resources")}<div class="card row rescmp" style="margin-top:8px"><div class="rescmp-i">${img("blog", "Learning resources")}</div><div style="flex:2;min-width:200px"><label for="bq">Search</label><input id="bq" type="search" value="${esc(BP.q)}"></div><div style="flex:1"><label for="bt">Type</label><select id="bt">${["All", ...TAGS].map((x) => `<option ${BP.tag == x ? "selected" : ""}>${x}</option>`).join("")}</select></div></div><div class="grid" id="bl" style="margin-top:14px"></div><div class="row" id="bp" style="margin:16px 0;justify-content:center"></div>`;
+    `${head("Resources", "Articles, guides, videos and worksheets.", "Resources")}<div class="blog-pic">${img("blog", "Learning resources")}</div><div class="card row rescmp" style="margin-top:8px"><div style="flex:2;min-width:200px"><label for="bq">Search</label><input id="bq" type="search" value="${esc(BP.q)}"></div><div style="flex:1"><label for="bt">Type</label><select id="bt">${["All", ...TAGS].map((x) => `<option ${BP.tag == x ? "selected" : ""}>${x}</option>`).join("")}</select></div></div><div class="grid" id="bl" style="margin-top:14px"></div><div class="row" id="bp" style="margin:16px 0;justify-content:center"></div>`;
   function blogList() {
     const f = ARTS.filter((a) => (BP.tag == "All" || a.tag == BP.tag) && a.t.toLowerCase().includes(BP.q.toLowerCase()));
     const pages = Math.max(1, Math.ceil(f.length / 6));
@@ -4156,8 +4524,8 @@ ${DISC}<p class="row noprint"><a class="btn" href="#/report">View detailed repor
       ? f.map((x) => `<details><summary>${x[0]}</summary><p>${x[1]}</p></details>`).join("")
       : "<p>No matching questions.</p>";
   }
-  P.contact = () =>
-    `${head("Contact Us", "Send us a message.", "Contact")}<div class="g2" style="align-items:start"><form class="card" id="cf" novalidate><label for="cn1">Name</label><input id="cn1" autocomplete="name"><div class="err"></div><label for="ce1">Email</label><input id="ce1" type="email" autocomplete="email"><div class="err"></div><label for="cm">Message</label><textarea id="cm" rows="5"></textarea><div class="err"></div><button class="btn" style="margin-top:10px">Send message</button><p class="mut" style="font-size:.82rem">We will email you a verification link. Your message reaches us after you click it.</p><div id="cs" role="status"></div></form><div>${img("contact", "Support team")}<div class="card" style="margin-top:12px"><h3>Contact details</h3><p class="mut">${["contactEmail", "contactPhone", "address"].map((k) => (CONFIG[k] ? esc(CONFIG[k]) : "")).join("<br>") || "Not configured. Set values in CONFIG (project settings)."}</p></div></div></div>`;
+    P.contact = () =>
+    `${head("Contact Us", "Send us a message.", "Contact")}<div class="g2 cgrid"><form class="card" id="cf" novalidate><label for="cn1">Name</label><input id="cn1" autocomplete="name"><div class="err"></div><label for="ce1">Email</label><input id="ce1" type="email" autocomplete="email"><div class="err"></div><label for="cm">Message</label><textarea id="cm" rows="4"></textarea><div class="err"></div><button class="btn" style="margin-top:10px">Send message</button><p class="mut" style="font-size:.82rem">We will email you a verification link. Your message reaches us after you click it.</p></form><div class="card cdet"><h3>Contact details</h3><p class="mut">${["contactEmail", "contactPhone", "address"].map((k) => (CONFIG[k] ? esc(CONFIG[k]) : "")).join("<br>") || "Not configured. Set values in CONFIG (project settings)."}</p><div id="cs" role="status"></div></div></div>`;
  
   
   let DT = "Profile";
@@ -4193,10 +4561,9 @@ ${DISC}<p class="row noprint"><a class="btn" href="#/report">View detailed repor
     const b = e.target.closest("button");
     if (!b) return;
     const a = b.dataset.act;
-    if (b.dataset.go != null) {
-      S.i = +b.dataset.go;
-      save();
-      redraw();
+        if (b.dataset.go != null) {
+      const t = +b.dataset.go;
+      qGo(t, t >= S.i ? 1 : -1);
     }
     if (b.dataset.pg) {
       BP.n = +b.dataset.pg;
@@ -4219,23 +4586,15 @@ ${DISC}<p class="row noprint"><a class="btn" href="#/report">View detailed repor
       d.showModal();
     }
     if (!a) return;
-    if (a == "prev" && S.i > 0 && !S.done) {
-      S.i--;
-      save();
-      redraw();
-    }
-    if (a == "next" && S.i < Q.length - 1 && !S.done) {
-      S.i++;
-      save();
-      redraw();
-    }
-    if (a == "flag" && !S.done) {
+        if (a == "prev" && S.i > 0 && !S.done) qGo(S.i - 1, -1);
+    if (a == "next" && S.i < Q.length - 1 && !S.done) qGo(S.i + 1, 1);
+    if (a == "flag" && !S.done && !LOCK) {
       const id = Q[S.i].id;
       S.flag[id] = !S.flag[id];
       save();
       redraw();
     }
-    if (a == "clear" && !S.done) {
+        if (a == "clear" && !S.done && !LOCK) {
       delete S.ans[Q[S.i].id];
       save();
       redraw();
@@ -4297,11 +4656,16 @@ ${DISC}<p class="row noprint"><a class="btn" href="#/report">View detailed repor
     }
   });
   __LST("change", (e) => {
-    if (e.target.name == "q" && !S.done && tleft() > 0) {
-      S.ans[Q[S.i].id] = +e.target.value;
+        if (e.target.name == "q" && !S.done && tleft() > 0) {
+      const cq = Q[S.i];
+      if (LOCK) {
+        /* mid-transition: ignore, restore the saved choice */
+        __R.querySelectorAll("input[name=q]").forEach((r, i) => (r.checked = S.ans[cq.id] === i));
+        return;
+      }
+      S.ans[cq.id] = +e.target.value;
       save();
-      redraw();
-      __R.querySelector("input[name=q]:checked")?.focus();
+      qGo(S.i < Q.length - 1 ? S.i + 1 : S.i, 1, e.target.closest("label"));
     }
     if (e.target.id == "cc") {
       CF.cat = e.target.value;
@@ -4329,7 +4693,19 @@ ${DISC}<p class="row noprint"><a class="btn" href="#/report">View detailed repor
     }
     if (e.target.id == "fq") faqList(e.target.value);
   });
-    async function sendContact(f, name, email, message) {
+    function contactDemo(f, name, email, message, out) {
+    try {
+      const k = "ilm_contact_outbox";
+      const box = JSON.parse(localStorage.getItem(k) || "[]");
+      box.push({ name, email, message, at: Date.now() });
+      localStorage.setItem(k, JSON.stringify(box.slice(-20)));
+    } catch (e) {}
+    f.reset();
+    out.innerHTML = `<div class="cok" role="status"><b>✅ Message submitted successfully!</b><p style="margin:.3em 0 0">Thank you, ${esc(name)}. We will reply to <b>${esc(email)}</b>.</p><p class="mut" style="margin:.3em 0 0;font-size:.8rem">Demo mode: saved on this device until the email service is connected.</p></div>`;
+    out.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    toast("Message submitted.");
+  }
+  async function sendContact(f, name, email, message) {
     const out = $("#cs"),
       btn = f.querySelector("button");
     btn.disabled = true;
@@ -4341,10 +4717,10 @@ ${DISC}<p class="row noprint"><a class="btn" href="#/report">View detailed repor
         body: JSON.stringify({ name, email, message }),
       });
       const data = await res.json().catch(() => ({}));
-            if (res.status === 404) throw new Error("The email service is not connected yet. Please try again later.");
+      if (res.status === 404) return contactDemo(f, name, email, message, out);
       if (!res.ok) throw new Error(data.error || "Could not send. Please try again.");
       f.reset();
-      out.innerHTML = `<p class="note">Check your email (${esc(email)}) and click the verification link. Your message is sent to us only after you verify.</p>`;
+    out.innerHTML = `<div class="cok" role="status"><b>✅ Message submitted successfully!</b><p style="margin:.3em 0 0">Check your email (${esc(email)}) and click the verification link. Your message reaches us after you verify.</p></div>`;
     } catch (err) {
       out.innerHTML = `<p class="err">${esc(err.message || "Could not send. Please try again.")}</p>`;
     } finally {
@@ -4389,7 +4765,7 @@ ${DISC}<p class="row noprint"><a class="btn" href="#/report">View detailed repor
       if (!/^\S+@\S+\.\S+$/.test(m.value)) n += fail(m, "Enter a valid email.");
       if (t.value.trim().length < 10) n += fail(t, "Message must be at least 10 characters.");
            if (n) {
-        $("#cs").innerHTML = `<p class="err">Please fix the errors above.</p>`;
+      $("#cs").innerHTML = `<p class="err">Please fix the errors in the form.</p>`;
         return;
       }
       sendContact(f, a.value.trim(), m.value.trim(), t.value.trim());
@@ -4547,7 +4923,8 @@ ${DISC}<p class="row noprint"><a class="btn" href="#/report">View detailed repor
     clearTimeout(mqMO.t);
     mqMO.t = setTimeout(() => {
       mqify($("#app"));
-      iconize($("#app"));
+            iconize($("#app"));
+      iqLiveInit($("#app"));
     }, 30);
   });
   mqMO.observe($("#app"), { childList: true, subtree: true });
@@ -4609,6 +4986,8 @@ const PL_CSS = `
 .iqt.iqt-pl .lsec .lin>p.mut{margin:.1em 0 .4em}
 .iqt.iqt-pl .rescmp{padding:10px 14px;gap:12px;flex-wrap:nowrap;align-items:flex-end}
 .iqt.iqt-pl .rescmp-i{flex:none}
+.iqt .hero{background:var(--card)!important;animation:none!important}
+.iqt .hero::before,.iqt .hero::after{display:none!important}
 .iqt.iqt-pl .rescmp-i img,.iqt.iqt-pl .rescmp-i svg{width:64px;height:48px;max-width:64px;max-height:48px;margin:0;padding:2px;object-fit:cover;display:block}
 .iqt.iqt-pl .rescmp label{margin:0 0 2px}
 .iqt.iqt-pl .rescmp input,.iqt.iqt-pl .rescmp select{padding:7px 10px}
@@ -4700,7 +5079,299 @@ const PL_CSS = `
 @media(max-width:640px){
   .iqt.iqt-pl .lsec .card.row{flex-wrap:wrap}
 }
+
+/* ===== FIX: popup (dialog) centered + proper padding ===== */
+.iqt dialog#dlg{position:fixed;inset:0;margin:auto;padding:22px 24px;width:min(92vw,480px);max-width:480px;height:fit-content;max-height:88vh;overflow:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--card);color:var(--ink);box-shadow:0 24px 60px rgba(0,0,0,.35);z-index:100}
+.iqt dialog#dlg:not([open]){display:none}
+.iqt dialog#dlg::backdrop{background:rgba(0,0,0,.55)}
+.iqt dialog#dlg h2{margin:0 0 .5em;font-size:1.3rem}
+.iqt dialog#dlg p{margin:0 0 .8em}
+.iqt dialog#dlg .row{margin-top:14px;gap:10px}
+.iqt dialog#dlg .btn{flex:1 1 auto;justify-content:center}
+
+/* ===== RESULTS: IQ-style orbit graphic (page theme colors) ===== */
+.iqt .rz{display:grid;gap:18px;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);align-items:center}
+@media(max-width:860px){.iqt .rz{grid-template-columns:1fr}}
+.iqt .rz-viz{display:block;width:100%;max-width:560px;height:auto;margin:0 auto;color:var(--ink)}
+.iqt .rz-scale{position:relative;height:12px;border-radius:9px;background:linear-gradient(90deg,#ef4444,#f59e0b,#16A34A);margin:28px 0 6px}
+.iqt .rz-scale i{position:absolute;top:-7px;width:4px;height:26px;border-radius:3px;background:var(--ink);transform:translateX(-50%)}
+.iqt .rz-ticks{display:flex;justify-content:space-between;font-size:.75rem;color:var(--mut)}
+.iqt .rz-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:14px}
+.iqt .rz-meta div{border:1px solid var(--line);border-radius:12px;padding:8px 12px;background:var(--bg)}
+.iqt .rz-meta small{display:block;color:var(--mut);font-size:.7rem;text-transform:uppercase;letter-spacing:.05em}
+.iqt .rz-meta b{font-size:.95rem;overflow-wrap:anywhere}
+.iqt .rz-bar{display:flex;align-items:center;gap:8px}
+.iqt .rz-bar .prog{flex:1}
+.iqt .rz{position:relative;overflow:hidden;padding:24px;background:radial-gradient(circle at 20% 35%,rgba(249,115,22,.12),transparent 55%),radial-gradient(circle at 85% 75%,rgba(22,163,74,.12),transparent 55%),var(--card)}
+.iqt .rz-viz{max-width:620px}
+.iqt .rz-poly{transform-box:view-box;transform-origin:300px 230px;animation:rzpop 1.1s cubic-bezier(.2,.7,.2,1) both}
+@keyframes rzpop{from{transform:scale(.15);opacity:0}}
+.iqt .rz h2{font-size:1.6rem}
+@media(prefers-reduced-motion:reduce){.iqt .rz-poly{animation:none}}
+/* ===== CONTACT: success box ===== */
+.iqt .cok{margin-top:12px;padding:14px 16px;border-radius:12px;border:1.5px solid var(--g);background:rgba(22,163,74,.12);animation:iqmin .5s ease both}
+
+/* ===== IQ TEST: moving live preview, marquee, flow ===== */
+.iqt .iqm{position:relative;overflow:hidden;margin:20px 0;padding:clamp(18px,3vw,34px);border-radius:24px;border:1px solid var(--line);background:radial-gradient(circle at 15% 20%,rgba(249,115,22,.14),transparent 55%),radial-gradient(circle at 90% 85%,rgba(99,102,241,.14),transparent 55%),var(--card)}
+.iqt .iqm-bg i{position:absolute;border-radius:50%;pointer-events:none;animation:iqmf 9s ease-in-out infinite}
+.iqt .iqm-bg i:nth-child(1){width:70px;height:70px;left:4%;top:10%;background:rgba(249,115,22,.22)}
+.iqt .iqm-bg i:nth-child(2){width:44px;height:44px;left:46%;top:6%;background:rgba(22,163,74,.22);animation-delay:-2s}
+.iqt .iqm-bg i:nth-child(3){width:90px;height:90px;right:3%;bottom:8%;background:rgba(99,102,241,.2);animation-delay:-4s}
+.iqt .iqm-bg i:nth-child(4){width:30px;height:30px;left:40%;bottom:10%;border-radius:8px;background:rgba(14,165,233,.28);animation-delay:-1s}
+.iqt .iqm-bg i:nth-child(5){width:36px;height:36px;right:30%;top:14%;border-radius:8px;background:rgba(249,115,22,.25);animation-delay:-5s}
+@keyframes iqmf{50%{transform:translate(18px,-26px) rotate(25deg)}}
+.iqt .iqm-in{position:relative;display:grid;gap:28px;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);align-items:center}
+@media(max-width:820px){.iqt .iqm-in{grid-template-columns:1fr}}
+.iqt .iqm-demo{background:var(--bg);border:1px solid var(--line);border-radius:20px;padding:18px;min-height:300px;box-shadow:0 18px 40px rgba(0,0,0,.14);animation:iqmf2 6s ease-in-out infinite}
+@keyframes iqmf2{50%{transform:translateY(-8px)}}
+.iqt .iqm-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.iqt .iqm-chip{padding:3px 12px;border-radius:99px;font-size:.75rem;font-weight:800;background:rgba(249,115,22,.16);color:var(--od)}
+.iqt .iqm-time{font-variant-numeric:tabular-nums;font-weight:800;background:var(--ink);color:var(--bg);padding:4px 10px;border-radius:9px}
+.iqt .iqm-prog{height:8px;border-radius:8px;background:var(--line);overflow:hidden}
+.iqt .iqm-prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--o),var(--g));transition:width .8s cubic-bezier(.2,.7,.2,1)}
+.iqt .iqm-q{font-weight:800;font-size:1.15rem;margin:16px 0 10px;min-height:2.6em;animation:iqmin .5s ease both}
+.iqt .iqm-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.iqt .iqm-o{border:2px solid var(--line);border-radius:12px;padding:10px 12px;font-weight:600;background:var(--card);transition:all .3s;animation:iqmin .5s ease both}
+.iqt .iqm-o:nth-child(2){animation-delay:.08s}
+.iqt .iqm-o:nth-child(3){animation-delay:.16s}
+.iqt .iqm-o:nth-child(4){animation-delay:.24s}
+.iqt .iqm-o.sel{border-color:var(--o);background:rgba(249,115,22,.12);transform:scale(1.03)}
+.iqt .iqm-o.ok{border-color:var(--g);background:rgba(22,163,74,.16)}
+@keyframes iqmin{from{opacity:0;transform:translateY(12px)}}
+.iqt .iqm-dots{display:flex;gap:8px;margin:14px 0}
+.iqt .iqm-dots b{width:34px;height:8px;border-radius:6px;background:var(--line);transition:background .4s}
+.iqt .iqm-dots b.on{background:var(--g)}
+.iqt .iqm-mq{overflow:hidden;margin:6px 0 18px;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.iqt .iqm-track{display:flex;width:max-content;animation:iqmq 32s linear infinite}
+.iqt .iqm-mq:hover .iqm-track{animation-play-state:paused}
+.iqt .iqm-t{display:flex;flex-direction:column;gap:2px;min-width:210px;margin:0 8px;padding:14px 20px;border:1px solid var(--line);border-radius:14px;background:var(--card);transition:transform .25s,border-color .25s}
+.iqt .iqm-t:hover{transform:translateY(-4px);border-color:var(--o)}
+.iqt .iqm-t span{font-size:1.4rem;color:var(--o)}
+@keyframes iqmq{to{transform:translateX(-50%)}}
+.iqt .iqm-flow{margin:10px 0 24px}
+.iqt .iqm-line{height:4px;border-radius:4px;background:var(--line);margin:12px 0 18px;overflow:hidden}
+.iqt .iqm-line i{display:block;height:100%;transform:scaleX(0);transform-origin:left;background:linear-gradient(90deg,var(--o),var(--g));transition:transform 1.6s ease .2s}
+.iqt .iqm-flow.on .iqm-line i{transform:scaleX(1)}
+.iqt .iqm-flow ol{list-style:none;padding:0;margin:0;display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.iqt .iqm-flow li{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;opacity:0;transform:translateY(30px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.2,1)}
+.iqt .iqm-flow.on li{opacity:1;transform:none}
+.iqt .iqm-flow.on li:nth-child(2){transition-delay:.25s}
+.iqt .iqm-flow.on li:nth-child(3){transition-delay:.5s}
+.iqt .iqm-flow.on li:nth-child(4){transition-delay:.75s}
+.iqt .iqm-n{display:grid;place-items:center;width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--o),var(--g));color:#fff;font-weight:800;margin-bottom:8px}
+.iqt .iqm-flow li p{margin:0}
+@media(prefers-reduced-motion:reduce){.iqt .iqm-track,.iqt .iqm-demo,.iqt .iqm-bg i{animation:none}.iqt .iqm-flow li{opacity:1;transform:none}.iqt .iqm-line i{transform:none}}
+/* ===== TEST PAGE: moving question card, timer ring, dots ===== */
+.iqt .qring{position:relative;width:60px;height:60px;flex:none}
+.iqt .qring svg{width:60px;height:60px;transform:rotate(-90deg);display:block}
+.iqt .qring circle{fill:none;stroke-width:5}
+.iqt .qring .bg{stroke:var(--line)}
+.iqt .qring #tring{stroke-linecap:round;transition:stroke-dashoffset 1s linear}
+.iqt .qring.warn #tring{stroke:#d92d20}
+.iqt .qring span.timer{position:absolute;inset:0;display:grid;place-items:center;background:none;color:var(--ink);padding:0;border-radius:0;font-size:.8rem}
+.iqt .qring span.timer.warn{background:none;color:#d92d20}
+.iqt .qring.warn{animation:qpulse 1.2s infinite;border-radius:50%}
+.iqt .tbar ~ .prog i{animation:none;transition:width .6s}
+.iqt .qdots{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 12px}
+.iqt .qdots i{width:14px;height:14px;border-radius:50%;background:var(--line);transition:all .3s}
+.iqt .qdots i.a{background:var(--g)}
+.iqt .qdots i.f{box-shadow:0 0 0 2px var(--o)}
+.iqt .qdots i.c{background:var(--o);transform:scale(1.35);animation:qpulse 1.6s infinite}
+@keyframes qpulse{50%{box-shadow:0 0 0 6px rgba(249,115,22,.22)}}
+.iqt .qcard{position:relative;overflow:hidden;border-top:5px solid var(--cc,#F97316)}
+.iqt .c-logical{--cc:#F97316}
+.iqt .c-verbal{--cc:#16A34A}
+.iqt .c-numerical{--cc:#6366f1}
+.iqt .c-spatial{--cc:#0ea5e9}
+.iqt .qcard>*{position:relative;z-index:1}
+.iqt .qcard>.qbg{position:absolute;inset:0;z-index:0;pointer-events:none}
+.iqt .qbg i{position:absolute;border-radius:50%;background:var(--cc);opacity:.1;animation:iqmf 9s ease-in-out infinite}
+.iqt .qbg i:nth-child(1){width:110px;height:110px;left:-30px;top:-30px}
+.iqt .qbg i:nth-child(2){width:70px;height:70px;right:10%;bottom:8%;animation-delay:-3s}
+.iqt .qbg i:nth-child(3){width:44px;height:44px;right:32%;top:18%;border-radius:10px;animation-delay:-5s}
+.iqt .qhd{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.iqt .qic{display:grid;place-items:center;width:44px;height:44px;border-radius:14px;background:var(--cc);color:#fff;font-size:1.4rem;animation:iqmf2 4s ease-in-out infinite}
+.iqt .qno{margin-left:auto;font-size:2.6rem;font-weight:800;line-height:1;color:var(--cc);opacity:.28}
+.iqt .qtx{font-size:1.3rem}
+.iqt .qanim{animation:qslide .6s cubic-bezier(.2,.8,.2,1) both}
+@keyframes qslide{from{opacity:0;transform:translateX(var(--qx,56px)) scale(.97)}}
+.iqt .qcard:focus{outline:none}
+.iqt .qlock{pointer-events:none}
+.iqt .qcn{display:inline-block}
+.iqt .qcnt{animation:qcnt .5s cubic-bezier(.2,.8,.2,1) both}
+@keyframes qcnt{from{opacity:0;transform:translateY(-10px)}}
+@media(max-width:640px){.iqt .qanim{animation-duration:.5s}}
+.iqt .qanim .opt{animation:iqmin .5s ease backwards}
+.iqt .qanim .opt:nth-of-type(2){animation-delay:.08s}
+.iqt .qanim .opt:nth-of-type(3){animation-delay:.16s}
+.iqt .qanim .opt:nth-of-type(4){animation-delay:.24s}
+.iqt .qcard .opt{position:relative;gap:12px;transition:transform .2s,border-color .2s,background .2s,box-shadow .2s}
+.iqt .qcard .opt:hover{transform:translateX(6px);border-color:var(--cc);box-shadow:0 8px 20px rgba(0,0,0,.08)}
+.iqt .qcard .opt input{position:absolute;opacity:0;pointer-events:none}
+.iqt .qcard .opt:has(input:focus-visible){outline:3px solid var(--g);outline-offset:2px}
+.iqt .ol{display:grid;place-items:center;width:32px;height:32px;border-radius:10px;border:2px solid var(--line);font-weight:800;flex:none;transition:all .2s}
+.iqt .qcard .opt:has(input:checked) .ol{background:var(--g);border-color:var(--g);color:#fff;animation:qpop .4s}
+@keyframes qpop{40%{transform:scale(1.3) rotate(-8deg)}}
+.iqt .ot{flex:1}
+.iqt .ock{opacity:0;color:var(--g);transform:scale(.4);transition:all .3s}
+.iqt .qcard .opt:has(input:checked) .ock{opacity:1;transform:none}
+.iqt .nav button{transition:transform .2s,border-color .2s}
+.iqt .nav button:hover{transform:translateY(-3px);border-color:var(--o)}
+.iqt .nav .c{animation:qpulse 1.6s infinite}
+.iqt .po{transition:transform .2s,border-color .2s}
+.iqt .po:hover{transform:translateX(6px);border-color:var(--o)}
+@media(prefers-reduced-motion:reduce){.iqt .qbg i,.iqt .qic,.iqt .qanim,.iqt .qanim .opt,.iqt .qdots i.c,.iqt .nav .c,.iqt .qring.warn{animation:none}.iqt .qring #tring{transition:none}}
+
+/* ===== CLEAN WHITE LOOK: remove all pink/peach/gradient tints ===== */
+.iqt .hero{background:var(--card)!important;animation:none!important;border:1px solid var(--line)}
+.iqt .hero::before,.iqt .hero::after{display:none!important}
+.iqt .iqm{background:var(--card)!important}
+.iqt .iqm-bg{display:none!important}
+.iqt .rz{background:var(--card)!important}
+.iqt .qbg{display:none!important}
+.iqt .tease,.iqt .jb,.iqt .note{background:var(--card)!important}
+.iqt .tease{border:1px solid var(--line)}
+.iqt .lsec:nth-child(even):not(.sl-wrapper){background:transparent!important}
+.iqt .sl-sec.alt{background:transparent!important}
+.iqt .sl-card.hov:hover{background:var(--sl-sf);color:inherit;box-shadow:0 10px 22px rgba(0,0,0,.08);border-color:var(--line);transform:none}
+.iqt .sl-card.hov:hover *{color:inherit!important}
+.iqt .iqm-demo{animation:none!important;box-shadow:0 8px 24px rgba(0,0,0,.08)}
+
+/* ===== CONTACT: compact form so Send button is visible ===== */
+.iqt #cf{padding:14px 18px}
+.iqt #cf label{margin:6px 0 2px;font-size:.85rem}
+.iqt #cf input{padding:7px 10px;min-height:36px}
+.iqt #cf textarea{padding:7px 10px;min-height:0;height:84px;resize:vertical}
+.iqt #cf .err{min-height:0;margin:0;line-height:1.1}
+.iqt #cf .btn{margin-top:8px!important;padding:8px 16px}
+.iqt #cf p.mut{margin:6px 0 0}
+.iqt #cs{margin-top:6px}
+.iqt #sec-contact .cgrid{display:grid!important;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.iqt #sec-contact .cdet{min-height:0}
+.iqt #sec-contact .cdet h3{margin-bottom:.3em}
+.iqt #sec-contact .cdet .cok{margin-top:8px;padding:10px 14px}
+@media(max-width:760px){.iqt #sec-contact .cgrid{grid-template-columns:1fr!important}}
+
+/* ===== CLEAN SPACING: undo cramped layout in every section ===== */
+.iqt.iqt-pl .lsec{padding:32px 0;border-top:1px solid var(--line)}
+.iqt.iqt-pl .lsec:first-child{border-top:0}
+.iqt.iqt-pl .lsec h2.lh{display:block;font-size:1.7rem;margin:0 0 6px}
+.iqt.iqt-pl .lsec .lin>p.mut{display:block;margin:0 0 20px;font-size:.95rem}
+.iqt.iqt-pl .lsec section.s{margin:28px 0}
+.iqt.iqt-pl .lsec .grid{gap:16px}
+.iqt.iqt-pl .lsec .card{padding:18px}
+.iqt.iqt-pl .lsec .card h3{margin-bottom:.4em}
+.iqt.iqt-pl .lsec .card.row{padding:14px 16px;gap:14px;flex-wrap:wrap;margin:14px 0 0}
+.iqt.iqt-pl .lsec .card.row label{font-size:.85rem;margin:0 0 4px}
+.iqt.iqt-pl .lsec .card.row input,
+.iqt.iqt-pl .lsec .card.row select{padding:9px 12px;min-height:40px;font-size:.95rem}
+.iqt.iqt-pl #cn{margin:10px 0 0;font-size:.9rem}
+.iqt.iqt-pl #bl,.iqt.iqt-pl #cl2,.iqt.iqt-pl #plan{margin-top:18px!important}
+.iqt.iqt-pl #bp{margin:18px 0!important}
+.iqt.iqt-pl .mqx{gap:16px;padding:6px 2px 14px;margin-top:16px}
+.iqt.iqt-pl .mqx>*{padding:14px!important}
+
+/* contact */
+.iqt #sec-contact .cgrid{gap:24px;margin-top:8px}
+.iqt #cf{padding:22px}
+.iqt #cf label{margin:12px 0 4px;font-size:.9rem}
+.iqt #cf label:first-child{margin-top:0}
+.iqt #cf input{padding:10px 12px;min-height:42px}
+.iqt #cf textarea{padding:10px 12px;height:110px}
+.iqt #cf .err{min-height:1em;margin:2px 0 0}
+.iqt #cf .btn{margin-top:14px!important;padding:10px 22px}
+.iqt #cf p.mut{margin:12px 0 0}
+.iqt #sec-contact .cdet{padding:22px}
+.iqt #sec-contact .cdet h3{margin-bottom:.6em}
+.iqt #sec-contact .cdet .cok{margin-top:14px;padding:14px 16px}
+
+/* ===== COMPACT BUTTONS + FILTER ROWS (all sections) ===== */
+.iqt.iqt-pl .btn{padding:8px 16px;min-height:0;font-size:.9rem;border-radius:10px;gap:6px;line-height:1.2}
+.iqt.iqt-pl .btn.s{padding:5px 12px;font-size:.8rem;border-radius:8px}
+.iqt.iqt-pl .btn.o{border-width:1.5px}
+.iqt.iqt-pl .btn:hover{transform:none;box-shadow:none}
+.iqt.iqt-pl .row{gap:8px}
+.iqt.iqt-pl .row>.btn{flex:0 0 auto}
+.iqt.iqt-pl .sl-btn{min-height:0;padding:8px 16px;font-size:.88rem;border-radius:8px}
+.iqt.iqt-pl .sl-row{gap:8px;margin-top:12px}
+.iqt.iqt-pl .sl-tabs button,.iqt.iqt-pl .tabs button{min-height:0;padding:6px 12px;font-size:.85rem}
+.iqt.iqt-pl .nav button{width:34px;height:34px;font-size:.85rem}
+.iqt.iqt-pl .pedrow .btn{padding:5px 12px;font-size:.8rem}
+.iqt.iqt-pl dialog#dlg .btn{padding:8px 16px}
+
+/* filter rows: Search / Type / Level all same height and aligned */
+.iqt.iqt-pl .lsec .card.row{display:flex;align-items:flex-end;gap:12px;padding:12px 14px;flex-wrap:wrap}
+.iqt.iqt-pl .lsec .card.row>div{display:flex;flex-direction:column;justify-content:flex-end}
+.iqt.iqt-pl .lsec .card.row label{margin:0 0 4px;font-size:.78rem;line-height:1.2}
+.iqt.iqt-pl .lsec .card.row input,
+.iqt.iqt-pl .lsec .card.row select{height:38px;min-height:0;padding:0 12px;font-size:.9rem;border-radius:8px}
+.iqt.iqt-pl .lsec .card.row .btn{height:38px;padding:0 16px}
+.iqt.iqt-pl .rescmp-i{align-self:flex-end}
+.iqt.iqt-pl .rescmp-i img,.iqt.iqt-pl .rescmp-i svg{width:38px;height:38px;max-width:38px;max-height:38px;padding:0;margin:0;border-radius:8px;object-fit:cover}
+
+/* tighter vertical rhythm */
+.iqt.iqt-pl .lsec{padding:24px 0}
+.iqt.iqt-pl .lsec .card{padding:16px}
+.iqt.iqt-pl .lsec h2.lh{margin:0 0 4px}
+.iqt.iqt-pl .lsec .lin>p.mut{margin:0 0 14px}
+.iqt.iqt-pl .lsec .card.row{margin:10px 0 0}
+.iqt.iqt-pl #bl,.iqt.iqt-pl #cl2,.iqt.iqt-pl #plan{margin-top:14px!important}
+.iqt #cf .btn{margin-top:12px!important;padding:8px 18px}
 `;
+
+const PL_CSS2 = `
+/* ===== MODERN CHARTS + MOTION ===== */
+.iqt .dn-arc{stroke-dasharray:var(--v) 251.3;transition:stroke-dasharray 1.5s cubic-bezier(.2,.7,.2,1) .2s;filter:drop-shadow(0 0 4px rgba(22,163,74,.3))}
+.iqt .rv:not(.in) .dn-arc{stroke-dasharray:0 251.3}
+.iqt .tl-line{stroke-dasharray:1;stroke-dashoffset:0;transition:stroke-dashoffset 1.6s cubic-bezier(.2,.7,.2,1) .2s}
+.iqt .rv:not(.in) .tl-line{stroke-dashoffset:1}
+.iqt .tl-area{transition:opacity 1s ease .7s}
+.iqt .rv:not(.in) .tl-area{opacity:0}
+.iqt .tp{transition:opacity .5s ease var(--d,0s)}
+.iqt .rv:not(.in) .tp{opacity:0}
+.iqt .tp-p{transform-box:fill-box;transform-origin:center;animation:tpp 2.4s ease-in-out infinite}
+@keyframes tpp{50%{transform:scale(1.7);opacity:0}}
+.iqt .tt{opacity:0;transition:opacity .2s;pointer-events:none}
+.iqt .tp:hover .tt{opacity:1}
+.iqt .trend{display:block;width:100%;height:auto;color:var(--ink)}
+
+/* shimmer on every progress bar */
+.iqt .prog i{position:relative;overflow:hidden;border-radius:9px}
+.iqt .prog i::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.45),transparent);transform:translateX(-100%);animation:shm 2.4s ease-in-out infinite 1.2s}
+@keyframes shm{to{transform:translateX(100%)}}
+
+/* manager dashboard */
+.iqt .mgk{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:6px}
+.iqt .kpi{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 20px!important;position:relative;overflow:hidden}
+.iqt .kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--kc,var(--o))}
+.iqt .kpi:hover{transform:translateY(-4px);box-shadow:0 14px 30px rgba(0,0,0,.1)}
+.iqt .kpi-l{display:flex;flex-direction:column;gap:4px;min-width:0}
+.iqt .kpi-l small{color:var(--mut);font-weight:600;font-size:.85rem}
+.iqt .kpi-i{display:grid;place-items:center;width:38px;height:38px;border-radius:12px;background:color-mix(in srgb,var(--kc,var(--o)) 14%,transparent);color:var(--kc,var(--o));font-size:1.2rem;margin-bottom:4px}
+.iqt .dlt{font-size:.78rem;font-weight:700;color:var(--gd)}
+.iqt .kpi .dn{width:96px;height:96px;flex:none}
+.iqt .kpi .big{font-size:2.6rem}
+.iqt .kpi .spk{width:120px;height:44px;flex:none}
+.iqt .mgr{display:grid;gap:16px;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);margin-top:16px;align-items:stretch}
+@media(max-width:900px){.iqt .mgr{grid-template-columns:1fr}}
+.iqt .mgr h2{font-size:1.1rem;margin:0}
+.iqt .mgr .row{margin-bottom:12px}
+.iqt .tm{margin:16px 0}
+.iqt .tm-h{display:flex;justify-content:space-between;font-size:.9rem;font-weight:600;margin-bottom:6px}
+.iqt .tm-n{display:flex;align-items:center;gap:8px}
+.iqt .tm-n i{width:10px;height:10px;border-radius:50%}
+.iqt .tm-b{height:12px;border-radius:99px;background:var(--line);overflow:hidden}
+.iqt .tm-f{display:block;position:relative;overflow:hidden;height:100%;width:var(--w);border-radius:99px;background:var(--c);transform-origin:left;transition:transform 1.2s cubic-bezier(.2,.7,.2,1) var(--d,0s);box-shadow:0 0 12px color-mix(in srgb,var(--c) 45%,transparent)}
+.iqt .tm-f::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(255,255,255,.5),transparent);transform:translateX(-100%);animation:shm 2.6s ease-in-out infinite 1.4s}
+.iqt .rv:not(.in) .tm-f{transform:scaleX(0)}
+
+/* Resources: picture at top-right of the section */
+.iqt #sec-blog .lin{position:relative}
+.iqt .blog-pic{position:absolute;top:0;right:0;z-index:1}
+.iqt .blog-pic img{width:84px!important;height:84px!important;max-width:84px;max-height:84px;aspect-ratio:1;object-fit:cover;margin:0;padding:4px}
+@media(max-width:640px){.iqt .blog-pic img{width:56px!important;height:56px!important;max-width:56px;max-height:56px}}
+`;
+
 export default function IQTest({
   defaultRoute = "home",
   showShell = true,
@@ -4794,7 +5465,7 @@ export default function IQTest({
       toggleTheme={handleToggleTheme}
       scrollToSection={scrollToSection}
     >
-      <style>{PL_CSS}</style>
+            <style>{PL_CSS + PL_CSS2}</style>
       {body}
     </PublicLayout>
   );

@@ -770,10 +770,37 @@ export const courseService = {
       headers: authHeader(),
     });
   },
-  // ✅ NEW — student's plan summary: course visibility cap + modules-per-course cap
+    // ✅ NEW — student's plan summary: course visibility cap + modules-per-course cap
   getStudentPlanSummary() {
     return axios.get(`${API}/courses/student/plan-summary`, {
       headers: authHeader(),
     });
+  },
+
+  // ===================== MARKETING BANNER (CMS) =====================
+  // Base path: /api/cms/marketing-banner  (SUPER_ADMIN, except the public GET)
+  getMarketingBanners() {
+    return axios.get(`${API}/cms/marketing-banner`, { headers: authHeader() });
+  },
+  createMarketingBanner(data) {
+    return axios.post(`${API}/cms/marketing-banner`, data, { headers: authHeader() });
+  },
+  updateMarketingBanner(id, data) {
+    return axios.put(`${API}/cms/marketing-banner/${id}`, data, { headers: authHeader() });
+  },
+  setMarketingBannerStatus(id, enabled) {
+    return axios.patch(`${API}/cms/marketing-banner/${id}/status`, { enabled }, { headers: authHeader() });
+  },
+  deleteMarketingBanner(id) {
+    return axios.delete(`${API}/cms/marketing-banner/${id}`, { headers: authHeader() });
+  },
+  uploadMarketingBannerLogo(file) {
+    const formData = new FormData();
+    formData.append("file", file);
+    return axios.post(`${API}/cms/marketing-banner/upload-logo`, formData, { headers: authHeader() });
+  },
+  // public (no auth) — landing page strip
+  getActiveMarketingBanners() {
+    return axios.get(`${API}/cms/marketing-banner/public`);
   },
 };

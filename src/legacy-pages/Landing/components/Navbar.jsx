@@ -149,7 +149,7 @@ const CAREER_TRACK_ITEMS = [
   { key: "all-career", title: "All Career Tracks", route: "/career", group: "Career Tracks" },
   { key: "development-engineering", title: "Development Engineering Platform", route: "/career?platform=dev", group: "Career Tracks" },
   { key: "ai-agent-ai", title: "AI – Agent AI", route: "/career?platform=ai", group: "Career Tracks" },
-  { key: "contact-center", title: "Contact Center Platform", route: "/career?platform=cx", group: "Career Tracks" },
+    { key: "contact-center", title: "ToraCX – Agentic CX", route: "/toracx-agentic-cx", group: "Career Tracks" },
   { key: "personality-development", title: "Personality Development", route: "/personality-development", group: "Personal Growth" },
     { key: "iq-test", title: "IQ Test", route: "/iq-test", group: "Assessments" },
     { key: "life-skills-ai", title: "Learn with an AI Coach", route: "/life-skills/ai", group: "Life Skills" },

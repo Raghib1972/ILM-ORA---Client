@@ -490,3 +490,47 @@ html.dark .texora-banner__summary { color: #b3b3bd; }
 html.dark .texora-banner__divider { background: #374151; }
 html.dark .texora-banner__divider--accent { background: rgba(255, 106, 0, 0.6); }
 html.dark .texora-banner__close { color: #ffffff; }
+
+/* ============ Banner carousel (API-driven) ============ */
+
+.texora-banner__slide {
+  animation: texora-banner-slide 0.4s ease both;
+}
+
+@keyframes texora-banner-slide {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.texora-banner__dots {
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 5px;
+  z-index: 2;
+}
+
+.texora-banner__dot {
+  width: 6px;
+  height: 6px;
+  padding: 0;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  background: rgba(20, 20, 40, 0.25);
+  transition: width 0.3s ease, background 0.3s ease;
+}
+
+.texora-banner__dot--active {
+  width: 16px;
+  background: #ff6a00;
+}
+
+html.dark .texora-banner__dot { background: rgba(255, 255, 255, 0.35); }
+html.dark .texora-banner__dot--active { background: #ff6a00; }
+
+@media (prefers-reduced-motion: reduce) {
+  .texora-banner__slide { animation: none !important; }
+}

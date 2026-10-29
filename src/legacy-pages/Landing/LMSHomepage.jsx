@@ -1801,23 +1801,23 @@ function ProductHubSection({ navigate }) {
       id="product-hub"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
-      className="relative py-4 sm:py-5 px-4 sm:px-6 scroll-mt-20 overflow-hidden bg-[#F8FAFC] dark:bg-black"
+           className="relative py-2 sm:py-3 px-4 sm:px-6 scroll-mt-20 overflow-hidden bg-[#F8FAFC] dark:bg-black"
     >
       <style>{`@keyframes hubFade { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }`}</style>
 
-      <div className="text-center mb-3 sm:mb-4">
-        <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight text-[#1E293B] dark:text-white">
+      <div className="text-center mb-2 sm:mb-3">
+                <h2 className="text-lg sm:text-xl md:text-2xl font-semibold tracking-tight text-[#1E293B] dark:text-white">
           Explore the <span className="text-[#F97316]">ILM ORA Platform</span>
         </h2>
-        <p className="mt-1.5 max-w-4xl mx-auto text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed">
+        <p className="mt-1 max-w-4xl mx-auto text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
           Pick a product, preview its features and open it with one click.
         </p>
       </div>
 
-      <div className="max-w-[1400px] mx-auto grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[220px_minmax(0,1fr)_minmax(0,1.2fr)] xl:grid-cols-[260px_minmax(0,1fr)_minmax(0,1.35fr)] gap-5 lg:gap-6 xl:gap-8 items-center">
-        {/* ── Left: product list ── */}
+            <div className="max-w-[1400px] mx-auto grid grid-cols-[minmax(0,1fr)] lg:grid-cols-[250px_minmax(0,1fr)_minmax(0,1.2fr)] xl:grid-cols-[270px_minmax(0,1fr)_minmax(0,1.35fr)] gap-3 lg:gap-5 xl:gap-6 items-start">
+               {/* ── Left: product list ── */}
         <div className="min-w-0">
-          <div className="flex lg:flex-col gap-2 overflow-x-auto lg:overflow-visible pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex lg:flex-col gap-1 overflow-x-auto lg:overflow-visible pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             {products.map((p, i) => {
               const isActive = activeProduct === i;
               return (
@@ -1826,25 +1826,25 @@ function ProductHubSection({ navigate }) {
                   key={p.key}
                   onClick={() => selectProduct(i)}
                   aria-pressed={isActive}
-                                    className={`flex items-center gap-3 px-3 py-3 rounded-2xl text-left whitespace-nowrap lg:whitespace-normal flex-shrink-0 lg:w-full transition-all duration-300 cursor-pointer border-none ${
+                  className={`group flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-left whitespace-nowrap flex-shrink-0 lg:w-full transition-all duration-300 cursor-pointer border-none ${
                     isActive
-                      ? "bg-orange-100 dark:bg-orange-500/15 text-[#F97316]"
-                      : "bg-transparent text-[#1E293B] dark:text-white hover:bg-orange-50 dark:hover:bg-white/5"
+                      ? "bg-[#F97316] text-white shadow-md shadow-orange-500/30"
+                      : "bg-transparent text-[#1E293B] dark:text-white hover:bg-[#F97316] hover:text-white hover:shadow-md hover:shadow-orange-500/30"
                   }`}
                 >
                   <span
-                    className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                    className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 transition-colors duration-300 ${
                       isActive
-                        ? "bg-[#F97316] text-white"
-                        : "bg-gray-100 dark:bg-white/10 text-[#1E293B] dark:text-white"
+                        ? "bg-white/25 text-white"
+                        : "bg-gray-100 dark:bg-white/10 text-[#1E293B] dark:text-white group-hover:bg-white/25 group-hover:text-white"
                     }`}
                   >
-                    <p.icon className="w-5 h-5" />
+                    <p.icon className="w-4 h-4" />
                   </span>
-                  <span className="font-semibold text-sm sm:text-base flex-1">
+                  <span className="font-semibold text-[13px] sm:text-sm flex-1 truncate">
                     {p.label}
                   </span>
-                  <ChevronRight className="w-4 h-4 opacity-60 hidden lg:block" />
+                  <ChevronRight className="w-4 h-4 opacity-60 hidden lg:block flex-shrink-0" />
                 </button>
               );
             })}
@@ -1854,34 +1854,34 @@ function ProductHubSection({ navigate }) {
         {/* ── Middle: copy + chips + CTA ── */}
         <div
           key={product.key}
-          className={`min-w-0 text-center lg:text-left ${
+                    className={`min-w-0 text-center lg:text-left lg:pt-6 ${
             product.key === "calendar" ? "hidden" : ""
           }`}
           style={{ animation: "hubFade 0.35s ease both" }}
         >
-          <h2 className="text-xl sm:text-2xl xl:text-3xl font-semibold tracking-tight text-[#1E293B] dark:text-white leading-tight mb-3">
-            {product.line1} <br className="hidden lg:block" />
+                    <h2 className="text-base sm:text-lg font-semibold tracking-tight text-[#1E293B] dark:text-white leading-snug mb-2 lg:whitespace-nowrap">
+            {product.line1}{" "}
             <span className="text-[#F97316]">{product.line2}</span>
           </h2>
 
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 max-w-md mx-auto lg:mx-0 mb-6 leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-md mx-auto lg:mx-0 mb-4 leading-relaxed">
             {product.desc}
           </p>
 
-          <div className="flex flex-wrap items-center justify-center lg:justify-start gap-2 mb-4">
+          <div className="flex flex-wrap items-center justify-center lg:justify-start gap-1.5 mb-3">
             {product.features.map((f, i) => (
               <button
                 type="button"
                 key={f.label}
                 onClick={() => setActiveFeature(i)}
                 aria-pressed={activeFeature === i}
-                className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold border transition-all duration-300 cursor-pointer ${
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] sm:text-xs font-semibold border transition-all duration-300 cursor-pointer ${
                   activeFeature === i
-                    ? "bg-[#F97316] text-white border-[#F97316] shadow-lg shadow-orange-500/30"
+                    ? "bg-[#F97316] text-white border-[#F97316] shadow-md shadow-orange-500/30"
                     : "bg-white dark:bg-white/10 text-[#1E293B] dark:text-white border-gray-100 dark:border-white/15 hover:border-[#F97316]/40"
                 }`}
               >
-                <f.icon className={`w-4 h-4 ${activeFeature === i ? "text-white" : ""}`} />
+                <f.icon className={`w-3.5 h-3.5 ${activeFeature === i ? "text-white" : ""}`} />
                 {f.label}
               </button>
             ))}
@@ -1890,9 +1890,9 @@ function ProductHubSection({ navigate }) {
           <button
             type="button"
             onClick={() => navigate(product.to)}
-            className="inline-flex items-center justify-center gap-2 bg-[#F97316] text-white font-semibold px-6 py-3.5 rounded-xl text-sm sm:text-base whitespace-nowrap hover:bg-[#EA580C] transition-all hover:scale-105 shadow-lg shadow-orange-500/30"
+            className="inline-flex items-center justify-center gap-1.5 bg-[#F97316] text-white font-semibold px-4 py-2 rounded-lg text-xs sm:text-sm whitespace-nowrap hover:bg-[#EA580C] transition-all hover:scale-105 shadow-md shadow-orange-500/30"
           >
-            {product.cta} <ArrowRight className="w-4 h-4" />
+            {product.cta} <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
@@ -1932,7 +1932,7 @@ function ProductHubSection({ navigate }) {
             )}
           </div>
 
-          <div className="flex items-center justify-center gap-2 mt-5">
+                    <div className="flex items-center justify-center gap-2 mt-3">
             {product.features.map((f, i) => (
               <button
                 type="button"
@@ -3035,8 +3035,8 @@ export default function LMSHomepage({ theme, toggleTheme }) {
             alt={`Hero Student ${index + 1}`}
             loading={index === 0 ? "eager" : "lazy"}
             decoding="async"
-            fetchpriority={index === 0 ? "high" : "low"}
-                        className="hero-media absolute inset-0 w-full h-full object-cover"
+            fetchPriority={index === 0 ? "high" : "low"}
+            className="hero-media absolute inset-0 w-full h-full object-cover"
             style={{
               "--pm": heroPosMobile[index],
               "--pd": heroPosDesktop[index],

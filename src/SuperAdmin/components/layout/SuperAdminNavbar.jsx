@@ -211,9 +211,15 @@ const NAV = [
         icon: ic.featuredPrograms,
         permission: null,
       },
-      {
+            {
         label: "Platform Overview",
         path: "/superadmin/cms/platform-overview",
+        icon: ic.featuredPrograms,
+        permission: null,
+      },
+      {
+        label: "Marketing Banner",
+        path: "/superadmin/cms/marketing-banner",
         icon: ic.featuredPrograms,
         permission: null,
       },

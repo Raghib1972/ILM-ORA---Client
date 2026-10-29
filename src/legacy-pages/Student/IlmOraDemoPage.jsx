@@ -4096,7 +4096,16 @@ import {
   ChevronDown,
   Trophy,
   Code2,
-  Cloud,
+    Cloud,
+  LayoutGrid,
+  Laptop,
+  Headset,
+  Brain,
+  Lightbulb,
+  Calendar,
+  Atom,
+  Plus,
+  MessageSquare,
 } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -4112,6 +4121,31 @@ const NAV_ICON_MAP = { GraduationCap, Users, BarChart3, FileText, LayoutDashboar
 const HUB_ICON_COLORS = { student: "#16a34a", trainer: "#3b82f6", admin: "#a855f7", whiteboard: "#F97316", studyPlan: "#F97316", aiCompanion: "#a855f7", resume: "#16a34a", codingLab: "#0ea5e9" };
 const PRODUCT_ICON_COLORS = { meet: "#F97316", resume: "#16a34a", workspace: "#F97316" };
 
+// Mobile menu — All Courses tiles (desktop COURSE_CATEGORIES ko touch nahi kiya)
+const MOBILE_COURSE_TILES = [
+  { key: "all", title: "All Courses", route: "/all-courses", icon: LayoutGrid, color: "#f97316" },
+  { key: "school-boards", title: "School Boards", route: "/board", icon: GraduationCap, color: "#22c55e" },
+  { key: "neet", title: "Competitive Exams – NEET", route: "/competitive/neet", icon: Plus, color: "#ef4444" },
+  { key: "jee", title: "Competitive Exams – JEE", route: "/competitive/jee", icon: Atom, color: "#a855f7" },
+  { key: "fde-academy", title: "FDE Academy", route: "/fde-academy", icon: BookOpen, color: "#3b82f6" },
+  { key: "ilm-ora-talk", title: "ILM ORA Talk", route: "/talk", icon: MessageSquare, color: "#f97316" },
+  { key: "study-abroad", title: "Study Abroad", route: "/study-abroad", icon: Globe, color: "#06b6d4" },
+  { key: "ilm-ora-gulf", title: "ILM ORA Gulf", route: "/gulf", icon: Building2, color: "#22c55e" },
+];
+
+// Mobile menu — Career Tracks icons/colors, keyed by CAREER_TRACK_ITEMS key
+const CAREER_STYLE = {
+  "all-career": { icon: LayoutGrid, color: "#22c55e" },
+  "development-engineering": { icon: Laptop, color: "#f97316" },
+  "ai-agent-ai": { icon: Bot, color: "#3b82f6" },
+  "contact-center": { icon: Headset, color: "#a855f7" },
+  "personality-development": { icon: User, color: "#f97316" },
+  "iq-test": { icon: Brain, color: "#22c55e" },
+  "life-skills-ai": { icon: GraduationCap, color: "#a855f7" },
+  "life-skills-own": { icon: BookOpen, color: "#06b6d4" },
+  "life-skills-storyline": { icon: FileText, color: "#3b82f6" },
+  "life-skills-futurism": { icon: Lightbulb, color: "#f97316" },
+};
 // "All Certification" dropdown (same items/routes as Navbar.jsx)
 const NAV_CERT_MENU_ITEMS = [
   { key: "aws",       title: "AWS Certification",       description: "Cloud Practitioner to Professional", icon: Award,  route: "/aws",       color: "#FF9900" },
@@ -4129,7 +4163,7 @@ const CAREER_TRACK_ITEMS = [
   { key: "all-career", title: "All Career Tracks", route: "/career", group: "Career Tracks" },
   { key: "development-engineering", title: "Development Engineering Platform", route: "/career?platform=dev", group: "Career Tracks" },
   { key: "ai-agent-ai", title: "AI – Agent AI", route: "/career?platform=ai", group: "Career Tracks" },
-  { key: "contact-center", title: "Contact Center Platform", route: "/career?platform=cx", group: "Career Tracks" },
+    { key: "contact-center", title: "ToraCX – Agentic CX", route: "/toracx-agentic-cx", group: "Career Tracks" },
   { key: "personality-development", title: "Personality Development", route: "/personality-development", group: "Personal Growth" },
     { key: "life-skills-ai", title: "Learn with an AI Coach", route: "/life-skills/ai", group: "Life Skills" },
     { key: "life-skills-own", title: "Learn on Your Own", route: "/life-skills", group: "Life Skills" },
@@ -5462,7 +5496,7 @@ const NAV_SEARCH_PAGES = [
     { title: "All Career Tracks", route: "/career", group: "career", tag: "Career Track" },
   { title: "Development Engineering Platform", route: "/career?platform=dev", group: "career", tag: "Career Track" },
   { title: "AI – Agent AI", route: "/career?platform=ai", group: "career", tag: "Career Track" },
-  { title: "Contact Center Platform", route: "/career?platform=cx", group: "career", tag: "Career Track" },
+    { title: "ToraCX – Agentic CX", route: "/toracx-agentic-cx", group: "career", tag: "Career Track" },
   { title: "Personality Development", route: "/personality-development", group: "career", tag: "Career Track" },
     { title: "Learn with an AI Coach", route: "/life-skills/ai", group: "career", tag: "Career Track" },
      { title: "Learn on Your Own", route: "/life-skills", group: "career", tag: "Career Track" },
@@ -5834,9 +5868,10 @@ export default function IlmOraDemoPage() {
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false); // ← responsive mobile nav toggle
-  const [mobileFeatureOpen, setMobileFeatureOpen] = useState(true); // ← ILM ORA Feature accordion, full-screen mobile menu
-  const [mobileProductOpen, setMobileProductOpen] = useState(true); // ← Product accordion, full-screen mobile menu
-  const [mobileCertOpen, setMobileCertOpen] = useState(true); // ← All Certification accordion, full-screen mobile menu
+  const [mobileCoursesOpen, setMobileCoursesOpen] = useState(false); // ← All Courses accordion, full-screen mobile menu
+  const [mobileFeatureOpen, setMobileFeatureOpen] = useState(false); // ← ILM ORA Feature accordion, full-screen mobile menu
+  const [mobileProductOpen, setMobileProductOpen] = useState(false); // ← Product accordion, full-screen mobile menu
+  const [mobileCertOpen, setMobileCertOpen] = useState(false); // ← Career Tracks accordion, full-screen mobile menu
 
   // Which role was picked in Step 4 (kept for reference / feature lookups)
   const [selectedRole, setSelectedRole] = useState(null);
@@ -7154,7 +7189,15 @@ const renderMegaTrigger = (key) => {
         .d-nav-hub-card-title { font-size:0.8rem; font-weight:700; color:#f1f5f9; line-height:1.2; }
         .d-nav-hub-card-desc { font-size:0.68rem; color:#94a3b8; margin-top:4px; line-height:1.3; }
         .d-mobile-section-items-hub { display:grid; grid-template-columns:repeat(2, 1fr); gap:8px; padding:2px 0 4px; }
-
+                /* Mobile menu — 2-column tiles (All Courses / Product / Career Tracks) */
+        .d-mobile-tile-grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px; padding:4px 0 6px; }
+        .d-mobile-tile { display:flex; align-items:center; gap:10px; min-height:60px; min-width:0; padding:10px; text-align:left; background:#1A1A1A; border:1px solid rgba(255,255,255,0.06); border-radius:12px; cursor:pointer; font-family:'DM Sans',sans-serif; transition:border-color .15s, background .15s; }
+        .d-mobile-tile:hover { border-color:rgba(249,115,22,0.4); background:rgba(249,115,22,0.06); }
+        .d-mobile-tile-stack { flex-direction:column; align-items:flex-start; gap:8px; }
+        .d-mobile-tile-icon { flex-shrink:0; width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; }
+        .d-mobile-tile-icon-light { background:#fff7ed; }
+        .d-mobile-tile-title { display:block; font-size:0.8rem; font-weight:700; color:#f8fafc; line-height:1.25; }
+        .d-mobile-tile-desc { display:block; font-size:0.7rem; color:#94a3b8; margin-top:2px; line-height:1.3; }
         /* Mobile hamburger + full-screen nav overlay (pure CSS, driven by a checkbox-like React toggle) */
         .d-nav-hamburger { display:flex; width:38px; height:38px; align-items:center; justify-content:center; background:rgba(255,255,255,0.06); border:1.5px solid rgba(255,255,255,0.12); border-radius:10px; color:#e5e7eb; cursor:pointer; flex-shrink:0; }
         @media(min-width:1024px){ .d-nav-hamburger { display:none; } }
@@ -7762,16 +7805,44 @@ const renderMegaTrigger = (key) => {
             </div>
 
             <div className="d-mobile-menu-body">
+                            {/* All Courses — collapsible accordion, 2-column tiles */}
               <button
-                className="d-nav-link"
-                onClick={() => {
-                  setMobileNavOpen(false);
-                  goToAllCourses();
-                }}
+                type="button"
+                className="d-mobile-section-header"
+                onClick={() => setMobileCoursesOpen((o) => !o)}
               >
-                <GraduationCap size={18} color="#16a34a" />
                 All Courses
+                <ChevronDown
+                  size={18}
+                  className={`d-mobile-section-chevron ${mobileCoursesOpen ? "open" : ""}`}
+                />
               </button>
+              {mobileCoursesOpen && (
+                <div className="d-mobile-tile-grid">
+                  {MOBILE_COURSE_TILES.map((item) => {
+                    const TileIcon = item.icon;
+                    return (
+                      <button
+                        key={item.key}
+                        type="button"
+                        className="d-mobile-tile"
+                        onClick={() => {
+                          setMobileNavOpen(false);
+                          navigate(item.route);
+                        }}
+                      >
+                        <span
+                          className="d-mobile-tile-icon"
+                          style={{ background: `${item.color}1f`, border: `1px solid ${item.color}33` }}
+                        >
+                          <TileIcon size={20} color={item.color} />
+                        </span>
+                        <span className="d-mobile-tile-title">{item.title}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
 
               <div className="d-mobile-menu-divider" />
 
@@ -7827,29 +7898,27 @@ const renderMegaTrigger = (key) => {
                   className={`d-mobile-section-chevron ${mobileProductOpen ? "open" : ""}`}
                 />
               </button>
-              {mobileProductOpen && (
-                <div className="d-mobile-section-items">
+                            {mobileProductOpen && (
+                <div className="d-mobile-tile-grid">
                   {PRODUCT_MENU_ITEMS.map((item) => {
-                    const ItemIcon = NAV_ICON_MAP[item.icon];
+                    // "meet" (ILM ORA Calendry) ke liye calendar icon
+                    const ItemIcon = item.key === "meet" ? Calendar : NAV_ICON_MAP[item.icon];
                     return (
                       <button
                         key={item.key}
-                        className="d-mobile-section-item"
+                        type="button"
+                        className="d-mobile-tile d-mobile-tile-stack"
                         onClick={() => {
                           setMobileNavOpen(false);
                           goToProductSection(item.key);
                         }}
                       >
-                        <span className="d-mobile-section-item-icon">
+                        <span className="d-mobile-tile-icon d-mobile-tile-icon-light">
                           <ItemIcon size={20} color={PRODUCT_ICON_COLORS[item.key]} />
                         </span>
                         <span>
-                          <span className="d-mobile-section-item-title">
-                            {item.title}
-                          </span>
-                          <span className="d-mobile-section-item-desc">
-                            {item.description}
-                          </span>
+                          <span className="d-mobile-tile-title">{item.title}</span>
+                          <span className="d-mobile-tile-desc">{item.description}</span>
                         </span>
                       </button>
                     );
@@ -7889,22 +7958,25 @@ const renderMegaTrigger = (key) => {
 </button>
 
 {mobileCertOpen && (
-  <div className="d-mobile-section-items">
-    {CAREER_TRACK_ITEMS.map((item) => (
-      <button
-        key={item.key}
-        type="button"
-        className="d-mobile-section-item"
-        onClick={() => {
-          setMobileNavOpen(false);
-          navigate(item.route);
-        }}
-      >
-        <span style={{ flex: 1 }}>
-          <span className="d-mobile-section-item-title">{item.title}</span>
-        </span>
-      </button>
-    ))}
+  <div className="d-mobile-tile-grid">
+    {CAREER_TRACK_ITEMS.map((item) => {
+      const s = CAREER_STYLE[item.key] || { icon: LayoutGrid, color: "#f97316" };
+      const TileIcon = s.icon;
+      return (
+        <button
+          key={item.key}
+          type="button"
+          className="d-mobile-tile"
+          onClick={() => {
+            setMobileNavOpen(false);
+            navigate(item.route);
+          }}
+        >
+          <TileIcon size={26} color={s.color} style={{ flexShrink: 0 }} />
+          <span className="d-mobile-tile-title">{item.title}</span>
+        </button>
+      );
+    })}
   </div>
 )}
 

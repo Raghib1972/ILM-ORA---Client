@@ -17,8 +17,21 @@ import {
   Award,
   Cloud,
   Globe,
-  Layers,
+    Layers,
   Lock,
+  LayoutGrid,
+  Laptop,
+  Bot,
+  Headset,
+  Brain,
+  Lightbulb,
+  BookOpen,
+  Calendar,
+  Atom,
+  Plus,
+  MessageSquare,
+  Building2,
+  User,
 } from "lucide-react";
 
 /* ─────────────────────────────────────────────────────────────────
@@ -66,19 +79,31 @@ export default function MobileFullScreenMenu({
     { key: "studyPlan", route: productRoutes.studyPlan, icon: CalendarCheck, color: "#f97316", title: "Study Plan", desc: "Personalized Study Plans & Progress Tracking" },
   ];
 
-    // All Courses items — same list/routes as the desktop mega menu.
+     // All Courses items — same list/routes as the desktop mega menu.
   const COURSE_ITEMS = [
-    { key: "all", title: "All Courses", route: "/all-courses" },
-    { key: "school-boards", title: "School Boards", route: "/board" },
-    { key: "neet", title: "Competitive Exams – NEET", route: "/competitive/neet" },
-    { key: "jee", title: "Competitive Exams – JEE", route: "/competitive/jee" },
-        // { key: "career-tracks", title: "Career Tracks", route: "/career" }, // moved to its own accordion
-    { key: "fde-academy", title: "FDE Academy", route: "/fde-academy" },
-    { key: "ilm-ora-talk", title: "ILM ORA Talk", route: "/talk" },
-    { key: "study-abroad", title: "Study Abroad", route: "/study-abroad" },
-    { key: "ilm-ora-gulf", title: "ILM ORA Gulf", route: "/gulf" },
-        { key: "ilm-ora-feature", title: "ILM ORA Feature", route: "/student-hub" },
+    { key: "all", title: "All Courses", route: "/all-courses", icon: LayoutGrid, color: "#f97316" },
+    { key: "school-boards", title: "School Boards", route: "/board", icon: GraduationCap, color: "#22c55e" },
+    { key: "neet", title: "Competitive Exams – NEET", route: "/competitive/neet", icon: Plus, color: "#ef4444" },
+    { key: "jee", title: "Competitive Exams – JEE", route: "/competitive/jee", icon: Atom, color: "#a855f7" },
+    { key: "fde-academy", title: "FDE Academy", route: "/fde-academy", icon: BookOpen, color: "#3b82f6" },
+    { key: "ilm-ora-talk", title: "ILM ORA Talk", route: "/talk", icon: MessageSquare, color: "#f97316" },
+    { key: "study-abroad", title: "Study Abroad", route: "/study-abroad", icon: Globe, color: "#06b6d4" },
+    { key: "ilm-ora-gulf", title: "ILM ORA Gulf", route: "/gulf", icon: Building2, color: "#22c55e" },
   ];
+
+  // Career Tracks icons/colors — keyed by item.key coming from Navbar's CAREER_TRACK_ITEMS
+  const CAREER_STYLE = {
+    "all-career": { icon: LayoutGrid, color: "#22c55e" },
+    "development-engineering": { icon: Laptop, color: "#f97316" },
+    "ai-agent-ai": { icon: Bot, color: "#3b82f6" },
+    "contact-center": { icon: Headset, color: "#a855f7" },
+    "personality-development": { icon: User, color: "#f97316" },
+    "iq-test": { icon: Brain, color: "#22c55e" },
+    "life-skills-ai": { icon: GraduationCap, color: "#a855f7" },
+    "life-skills-own": { icon: BookOpen, color: "#06b6d4" },
+    "life-skills-storyline": { icon: FileText, color: "#3b82f6" },
+    "life-skills-futurism": { icon: Lightbulb, color: "#f97316" },
+  };
 
   const AccordionSection = ({ label, isOpen, onToggle, children }) => (
     <div style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
@@ -124,7 +149,75 @@ export default function MobileFullScreenMenu({
         </div>
       )}
     </div>
-  );
+    );
+
+  // 2-column grid wrapper shared by Courses / Product / Career Tracks
+  const TILE_GRID = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 };
+
+  // variant: "box"   → icon inside a tinted rounded square (All Courses)
+  //          "bare"  → plain coloured icon (Career Tracks)
+  //          "stack" → light icon box on top, title + desc below (Product)
+  const MenuTile = ({ Icon, color, title, desc, variant = "box", onClick }) => {
+    const centerBox = {
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      flexShrink: 0,
+    };
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        style={{
+          display: "flex",
+          flexDirection: variant === "stack" ? "column" : "row",
+          alignItems: variant === "stack" ? "flex-start" : "center",
+          gap: variant === "stack" ? 10 : 12,
+          padding: variant === "stack" ? 12 : "12px 10px",
+          minHeight: variant === "stack" ? 0 : 64,
+          minWidth: 0,
+          borderRadius: 12,
+          border: "1px solid rgba(255,255,255,0.06)",
+          background: "#1A1A1A",
+          cursor: "pointer",
+          textAlign: "left",
+        }}
+      >
+        {variant === "stack" && (
+          <div style={{ ...centerBox, width: 40, height: 40, borderRadius: 10, background: "#fff7ed" }}>
+            {Icon && <Icon size={20} style={{ color }} />}
+          </div>
+        )}
+        {variant === "box" && (
+          <div
+            style={{
+              ...centerBox,
+              width: 38,
+              height: 38,
+              borderRadius: 10,
+              background: `${color}1f`,
+              border: `1px solid ${color}33`,
+            }}
+          >
+            {Icon && <Icon size={20} style={{ color }} />}
+          </div>
+        )}
+        {variant === "bare" && Icon && (
+          <Icon size={26} style={{ color, flexShrink: 0 }} />
+        )}
+        <div style={{ minWidth: 0 }}>
+          <p style={{ margin: 0, fontSize: 13.5, fontWeight: 600, color: "#ffffff", lineHeight: 1.25 }}>
+            {title}
+          </p>
+          {desc && (
+            <p style={{ margin: "3px 0 0", fontSize: 12, color: "#9CA3AF", lineHeight: 1.35 }}>
+              {desc}
+            </p>
+          )}
+        </div>
+      </button>
+    );
+  };
 
   return (
     <div
@@ -210,38 +303,21 @@ export default function MobileFullScreenMenu({
           isOpen={coursesOpen}
           onToggle={() => setCoursesOpen((p) => !p)}
         >
-          {COURSE_ITEMS.map((item) => (
-            <button
-              key={item.key}
-              type="button"
-              onClick={() => {
-                navigate(item.route);
-                onClose();
-              }}
-              style={{
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                padding: "12px 12px",
-                border: "none",
-                borderRadius: 10,
-                background: "transparent",
-                cursor: "pointer",
-                textAlign: "left",
-                fontSize: 14,
-                fontWeight: 500,
-                color: "#ffffff",
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "rgba(249,115,22,0.12)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "transparent";
-              }}
-            >
-              {item.title}
-            </button>
-          ))}
+                  <div style={TILE_GRID}>
+            {COURSE_ITEMS.map((item) => (
+              <MenuTile
+                key={item.key}
+                variant="box"
+                Icon={item.icon}
+                color={item.color}
+                title={item.title}
+                onClick={() => {
+                  navigate(item.route);
+                  onClose();
+                }}
+              />
+            ))}
+          </div>
         </AccordionSection>
 
         {/* Divider */}
@@ -349,89 +425,33 @@ export default function MobileFullScreenMenu({
           isOpen={productOpen}
           onToggle={() => setProductOpen((p) => !p)}
         >
-          {productMenuItems.map((item) => {
-            const iconMap = {
-              Users,
-              FileText,
-              LayoutDashboard,
-              Sparkles,
-            };
-            const Icon = iconMap[item.icon];
+                    <div style={TILE_GRID}>
+            {productMenuItems.map((item) => {
+              const iconMap = {
+                Users,
+                FileText,
+                LayoutDashboard,
+                Sparkles,
+              };
+              // "meet" (ILM ORA Calendry) shows a calendar icon
+              const Icon = item.key === "meet" ? Calendar : iconMap[item.icon];
 
-            return (
-              <button
-                key={item.key}
-                onClick={() => {
-                  navigate(productRoutes[item.key]);
-                  onClose();
-                }}
-                style={{
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "flex-start",
-                  gap: 12,
-                  padding: "12px 12px",
-                  border: "none",
-                  background: "transparent",
-                  cursor: "pointer",
-                  textAlign: "left",
-                }}
-              >
-                <div
-                  style={{
-                    width: 36,
-                    height: 36,
-                    background:
-                      item.key === "resume"
-                        ? "#f0fdf4"
-                        : item.key === "aiCompanion"
-                        ? "#faf5ff"
-                        : "#fff7ed",
-                    borderRadius: 8,
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0,
+              return (
+                <MenuTile
+                  key={item.key}
+                  variant="stack"
+                  Icon={Icon}
+                  color="#f97316"
+                  title={item.title}
+                  desc={item.description}
+                  onClick={() => {
+                    navigate(productRoutes[item.key]);
+                    onClose();
                   }}
-                >
-                  {Icon && (
-                    <Icon
-                      size={18}
-                      style={{
-                        color:
-                          item.key === "resume"
-                            ? "#16a34a"
-                            : item.key === "aiCompanion"
-                            ? "#9333ea"
-                            : "#f97316",
-                      }}
-                    />
-                  )}
-                </div>
-                <div>
-                  <p
-                    style={{
-                      fontSize: 14,
-                      fontWeight: 600,
-                      color: "#ffffff",
-                      margin: 0,
-                    }}
-                  >
-                    {item.title}
-                  </p>
-                  <p
-                    style={{
-                      fontSize: 12,
-                      color: "#9CA3AF",
-                      margin: "2px 0 0",
-                    }}
-                  >
-                    {item.description}
-                  </p>
-                </div>
-              </button>
-            );
-          })}
+                />
+              );
+            })}
+          </div>
         </AccordionSection>
                 <button
           onClick={() => {
@@ -465,32 +485,24 @@ export default function MobileFullScreenMenu({
           isOpen={careerOpen}
           onToggle={() => setCareerOpen((p) => !p)}
         >
-          {careerItems.map((item) => (
-            <button
-              key={item.key}
-              type="button"
-              onClick={() => {
-                navigate(item.route);
-                onClose();
-              }}
-              style={{
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                padding: "12px 12px",
-                border: "none",
-                borderRadius: 10,
-                background: "transparent",
-                cursor: "pointer",
-                textAlign: "left",
-                fontSize: 14,
-                fontWeight: 600,
-                color: "#ffffff",
-              }}
-            >
-              {item.title}
-            </button>
-          ))}
+                    <div style={TILE_GRID}>
+            {careerItems.map((item) => {
+              const s = CAREER_STYLE[item.key] || { icon: LayoutGrid, color: "#f97316" };
+              return (
+                <MenuTile
+                  key={item.key}
+                  variant="bare"
+                  Icon={s.icon}
+                  color={s.color}
+                  title={item.title}
+                  onClick={() => {
+                    navigate(item.route);
+                    onClose();
+                  }}
+                />
+              );
+            })}
+          </div>
         </AccordionSection>
 
         {/* ── Skills Accordion — commented out for now
