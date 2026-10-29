@@ -328,7 +328,7 @@ html.dark .texora-panel__cta {
   position: relative;
   width: 100%;
   z-index: 10;
-  background: linear-gradient(90deg, #fdeede 0%, #fdf2e8 50%, #fdf6ef 100%);
+  background: #f9fafb;
   border-bottom: 1px solid rgba(20, 20, 40, 0.06);
   animation: texora-banner-in 0.3s ease;
 }
