@@ -19,6 +19,7 @@ import {
   X,
   Menu,
   FileText,
+  ClipboardList,
 } from "lucide-react";
 
 export const WORKSPACE_TABS = [
@@ -27,11 +28,28 @@ export const WORKSPACE_TABS = [
     items: [
       { id: "overview", label: "Overview", icon: LayoutGrid },
       { id: "events", label: "Events", icon: CalendarDays },
-      { id: "booking-pages", label: "Booking Pages", icon: Link2, badge: "New" },
+      {
+        id: "booking-pages",
+        label: "Booking Pages",
+        icon: Link2,
+        badge: "New",
+      },
       { id: "instant-meeting", label: "Instant Meeting", icon: Video },
+      {
+  id: "task-orbit",
+  label: "Task Orbit",
+  icon: Video,
+  badge: "New",
+},
       { id: "calendar", label: "Calendar", icon: CalendarIcon },
       { id: "calendar-sync", label: "Calendar Sync", icon: RefreshCw },
       { id: "summaries", label: "Summaries", icon: FileText },
+      {
+        id: "meeting-reports",
+        label: "Meeting Reports",
+        icon: ClipboardList,
+        badge: "New",
+      },
       { id: "email", label: "Email", icon: Mail },
     ],
   },
@@ -49,16 +67,27 @@ export const WORKSPACE_TABS = [
     items: [
       { id: "availability", label: "Availability", icon: CalendarCheck2 },
       { id: "integrations", label: "Integrations", icon: Plug },
-      { id: "workspace-settings", label: "Workspace Settings", icon: SettingsIcon },
+      {
+        id: "workspace-settings",
+        label: "Workspace Settings",
+        icon: SettingsIcon,
+      },
     ],
   },
 ];
 
-export default function WorkspaceSidebar({ active, onSelect, isOpen = false, onClose }) {
+export default function WorkspaceSidebar({
+  active,
+  onSelect,
+  isOpen = false,
+  onClose,
+}) {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <aside className={`ws-sidebar ${isOpen ? "is-open" : ""} ${collapsed ? "is-collapsed" : ""}`}>
+    <aside
+      className={`ws-sidebar ${isOpen ? "is-open" : ""} ${collapsed ? "is-collapsed" : ""}`}
+    >
       <div className="ws-sidebar-head">
         {!collapsed && (
           <span className="ws-sidebar-head-label">
@@ -70,7 +99,9 @@ export default function WorkspaceSidebar({ active, onSelect, isOpen = false, onC
           type="button"
           className="ws-sidebar-collapse"
           onClick={() => setCollapsed((p) => !p)}
-          aria-label={collapsed ? "Expand navigation menu" : "Collapse navigation menu"}
+          aria-label={
+            collapsed ? "Expand navigation menu" : "Collapse navigation menu"
+          }
           title={collapsed ? "Expand" : "Collapse"}
         >
           <Menu size={16} />

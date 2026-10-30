@@ -1,6 +1,5 @@
 "use client";
 
-
 import React, { useEffect, useState } from "react";
 import { Menu } from "lucide-react";
 import WorkspaceSidebar from "../components/WorkspaceSidebar";
@@ -10,6 +9,7 @@ import Overview from "./workspace/Overview";
 import Events from "./workspace/Events";
 import InstantMeeting from "./workspace/InstantMeeting";
 import Summaries from "./workspace/Summaries";
+import MeetingReports from "./workspace/MeetingReports";
 import Calendar from "./workspace/Calendar";
 import CalendarSync from "./workspace/CalendarSync";
 import Email from "./workspace/Email";
@@ -21,7 +21,7 @@ import Availability from "./workspace/Availability";
 import BookingPages from "./workspace/BookingPages";
 import Integrations from "./workspace/Integrations";
 import WorkspaceSettings from "./workspace/WorkspaceSettings";
-
+import TaskOrbit from "./workspace/TaskOrbit";
 export default function WorkspaceApp() {
   const [tab, setTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -100,8 +100,12 @@ export default function WorkspaceApp() {
         return <BookingPages />;
       case "instant-meeting":
         return <InstantMeeting />;
+        case "task-orbit":
+        return <TaskOrbit />;
       case "summaries":
         return <Summaries />;
+      case "meeting-reports":
+        return <MeetingReports />;
       case "calendar":
         return <Calendar />;
       case "calendar-sync":

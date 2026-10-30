@@ -65,7 +65,8 @@ const HUB_MENU_ITEMS = [
 // and Whiteboard moved up into ILM ORA Feature above.
 const PRODUCT_MENU_ITEMS = [
   { key: "meet", title: "ILM ORA Calendry", description: "Live classes & video sessions", icon: "LayoutDashboard" },
-  { key: "workspace", title: "Workspace", description: "Your all-in-one collaborative space", icon: "Users" },
+    { key: "workspace", title: "Workspace", description: "Your all-in-one collaborative space", icon: "Users" },
+  { key: "hrhub", title: "HR Hub — HR Management & Training", description: "HR Management & Training", icon: "Layers" },
 ];
 
 // Icon name (string) → actual lucide-react component.
@@ -95,6 +96,7 @@ const HUB_ROUTES = {
   studyPlan: "/study-plan",
 };
 const PRODUCT_ROUTES = {
+  hrhub: "/Hr-Hub",
   meet: "/calendry",
   resume: "/resume-builder",
   workspace: "/workspace",
@@ -112,6 +114,7 @@ const HUB_ICON_COLORS = {
   studyPlan: "text-orange-500",
 };
 const PRODUCT_ICON_COLORS = {
+  hrhub: "text-orange-500",
   meet: "text-orange-500",
   workspace: "text-orange-500",
 };
@@ -171,7 +174,16 @@ const COURSE_CATEGORIES = [
   { key: "ilm-ora-gulf", title: "ILM ORA Gulf", route: "/gulf" },
   { key: "ilm-ora-feature", title: "ILM ORA Feature", route: "/student-hub" },
 ];
-
+// Headings for the grouped mega menus (same layout as Career Tracks)
+const COURSE_GROUP = {
+  all: "Courses", "school-boards": "Courses", neet: "Courses", jee: "Courses",
+  "fde-academy": "Programs", "ilm-ora-talk": "Programs", "study-abroad": "Programs",
+  "ilm-ora-gulf": "Programs", "ilm-ora-feature": "Programs",
+};
+const FEATURE_GROUP = {
+  student: "Hubs", trainer: "Hubs", admin: "Hubs",
+  whiteboard: "Tools", aiCompanion: "Tools", resume: "Tools", codingLab: "Tools", studyPlan: "Tools",
+};
 // ── Maven-style mega menu data (built from the SAME items/routes above —
 // nothing is duplicated, so editing the lists above still updates the menu).
 const MEGA_MENUS = {
@@ -182,19 +194,22 @@ const MEGA_MENUS = {
     cardRoute: "/all-courses",
     triggerRoute: "/all-courses", // click on the tab itself still opens All Courses
     noChevron: true,
-    items: COURSE_CATEGORIES.map((c) => ({ key: c.key, title: c.title, route: c.route })),
+        groups: ["Courses", "Programs"],
+    items: COURSE_CATEGORIES.map((c) => ({ key: c.key, title: c.title, route: c.route, group: COURSE_GROUP[c.key] })),
   },
   feature: {
     label: "ILM ORA Feature",
     eyebrow: "Explore",
     cardTitle: "ILM ORA Feature",
-    items: HUB_MENU_ITEMS.map((i) => ({ key: i.key, title: i.title, route: HUB_ROUTES[i.key] })),
+       groups: ["Hubs", "Tools"],
+    items: HUB_MENU_ITEMS.map((i) => ({ key: i.key, title: i.title, route: HUB_ROUTES[i.key], group: FEATURE_GROUP[i.key] })),
   },
   product: {
     label: "Product",
     eyebrow: "Explore",
     cardTitle: "Product",
-    items: PRODUCT_MENU_ITEMS.map((i) => ({ key: i.key, title: i.title, route: PRODUCT_ROUTES[i.key] })),
+        groups: ["Product"],
+    items: PRODUCT_MENU_ITEMS.map((i) => ({ key: i.key, title: i.title, route: PRODUCT_ROUTES[i.key], group: "Product" })),
   },
 
   // Skills tab — commented out for now

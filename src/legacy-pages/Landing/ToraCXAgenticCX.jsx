@@ -10,6 +10,35 @@ import stack from "../../assets/toracx/stack.webp";
 import room from "../../assets/toracx/room.webp";
 import grow from "../../assets/toracx/grow.webp";
 import lab from "../../assets/toracx/lab.webp";
+/* ── Real photos (posters) — change the extension here if your files are .jpg/.png ── */
+import p01 from "../../assets/toracx/01-contact-center-portrait.webp";
+import p02 from "../../assets/toracx/02-customer-support-portrait.webp";
+import p03 from "../../assets/toracx/03-business-analytics.webp";
+import p04 from "../../assets/toracx/04-ai-customer-experience-portrait.webp";
+import p05 from "../../assets/toracx/05-omnichannel-customer-interaction.webp";
+import p06 from "../../assets/toracx/06-digital-customer-support.webp";
+import p07 from "../../assets/toracx/07-ai-voice-agent-support.webp";
+import p08 from "../../assets/toracx/08-contact-center-agent.webp";
+import p09 from "../../assets/toracx/09-contact-center-team.webp";
+import p10 from "../../assets/toracx/10-live-analytics-monitoring.webp";
+import p11 from "../../assets/toracx/11-customer-service-team.webp";
+import p12 from "../../assets/toracx/12-customer-support-conversation.webp";
+import p13 from "../../assets/toracx/13-voice-customer-interaction.webp";
+import p14 from "../../assets/toracx/14-toracx-actual-product-demo.webp";
+import p15 from "../../assets/toracx/15-team-collaboration-workflow.webp";
+/* ── Videos ── */
+import v03 from "../../assets/toracx/videos/03-business-analytics.mp4";
+import v05 from "../../assets/toracx/videos/05-omnichannel-customer-interaction.mp4";
+import v06 from "../../assets/toracx/videos/06-digital-customer-support.mp4";
+import v07 from "../../assets/toracx/videos/07-ai-voice-agent-support.mp4";
+import v08 from "../../assets/toracx/videos/08-contact-center-agent.mp4";
+import v09 from "../../assets/toracx/videos/09-contact-center-team.mp4";
+import v10 from "../../assets/toracx/videos/10-live-analytics-monitoring.mp4";
+import v11 from "../../assets/toracx/videos/11-customer-service-team.mp4";
+import v12 from "../../assets/toracx/videos/12-customer-support-conversation.mp4";
+import v13 from "../../assets/toracx/videos/13-voice-customer-interaction.mp4";
+import v14 from "../../assets/toracx/videos/14-toracx-actual-product-demo.mp4";
+import v15 from "../../assets/toracx/videos/15-team-collaboration-workflow.mp4";
 
 /* ─────────────────────────────────────────────────────────────────
    ToraCX · Contact Center to Agentic CX
@@ -430,17 +459,69 @@ const CSS = `@import url("https://fonts.googleapis.com/css2?family=Inter:wght@40
 .tcx .btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
 .tcx[data-theme="dark"] .ef input,.tcx[data-theme="dark"] .ef select,.tcx[data-theme="dark"] .ef textarea{background:#1B1E29;color:var(--ink);border-color:var(--line)}
 .tcx[data-theme="dark"] .eerr{background:rgba(220,38,38,.18);color:#fecaca}
+.tcx .ph .art video,.tcx .hphoto video{width:100%;aspect-ratio:4/3;height:auto;object-fit:cover;display:block;background:#0b1220}
+.tcx .art.pt{max-width:460px;margin-left:auto}
+.tcx .art.pt img,.tcx .art.pt video{aspect-ratio:4/5}
+.tcx .vc{margin:0;border-radius:22px;overflow:hidden;border:1px solid var(--line);background:#fff;box-shadow:var(--sh)}
+.tcx .vc video,.tcx .vc img{width:100%;aspect-ratio:16/10;object-fit:cover;display:block;background:#0b1220}
+.tcx .vc figcaption{padding:16px 20px 18px}
+.tcx .vc figcaption b{display:block;font-size:17px}
+.tcx .vc figcaption span{font-size:14px;color:var(--mut)}
+.tcx .av img{width:100%;height:100%;object-fit:cover;display:block}
+.tcx[data-theme="dark"] .vc{background:#1B1E29}
+.tcx .strip{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:22px;padding:56px 0 24px;justify-content:stretch}
+.tcx .strip small{grid-column:1/-1;margin-bottom:8px}
+.tcx .strip a.lg,.tcx[data-theme="dark"] .strip a.lg{padding:10px 18px;border:1px solid var(--line);background:#fff;border-radius:16px;overflow:hidden;width:100%;height:104px;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 24px -14px rgba(15,23,42,.35);transition:transform .25s,box-shadow .25s}
+.tcx .strip a.lg:hover{background:#fff;border-color:var(--o);transform:translateY(-4px);box-shadow:var(--sh)}
+.tcx .strip a.lg img{width:100%;height:100%;object-fit:contain;display:block}
+@media(max-width:1060px){.tcx .strip{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){.tcx .strip{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.tcx .strip a.lg{height:88px}}
 `;
 
 /* Next static imports give { src, width, height } — the engine needs the url */
 const u = (m) => (m && m.src) || m;
+/* Platform logos: picked up by file name, so any extension works (png/jpg/webp/svg) */
+const logoCtx = require.context(
+  "../../assets/toracx",
+  false,
+  /^\.\/(genesys|nice-cxone|amazon-connect|zoom-contact-center|tora-cx)\.(png|jpe?g|webp|svg|avif)$/
+);
+const logo = (name) => {
+  const k = logoCtx.keys().find((x) => x.startsWith("./" + name + "."));
+  if (!k) return "";
+  const m = logoCtx(k);
+  return u(m.default || m);
+};
+
+const MEDIA = {
+  ccPortrait: { poster: u(p01) },
+  supPortrait: { poster: u(p02) },
+  aiPortrait: { poster: u(p04) },
+  analytics: { poster: u(p03), video: u(v03) },
+  omni: { poster: u(p05), video: u(v05) },
+  digital: { poster: u(p06), video: u(v06) },
+  aiVoice: { poster: u(p07), video: u(v07) },
+  agent: { poster: u(p08), video: u(v08) },
+  team: { poster: u(p09), video: u(v09) },
+  live: { poster: u(p10), video: u(v10) },
+  service: { poster: u(p11), video: u(v11) },
+  convo: { poster: u(p12), video: u(v12) },
+  voice: { poster: u(p13), video: u(v13) },
+  demo: { poster: u(p14), video: u(v14) },
+  collab: { poster: u(p15), video: u(v15) },
+  logoGenesys: { poster: logo("genesys") },
+  logoNice: { poster: logo("nice-cxone") },
+  logoAmazon: { poster: logo("amazon-connect") },
+  logoZoom: { poster: logo("zoom-contact-center") },
+  logoToracx: { poster: logo("tora-cx") },
+};
 const IMAGES = { hero: u(hero), chan: u(chan), road: u(road), dash: u(dash), stack: u(stack), room: u(room), grow: u(grow), lab: u(lab) };
 
 export default function ToraCXAgenticCX({ theme = "light" }) {
   const rootRef = useRef(null);
 
   useEffect(() => {
-    const cleanup = initToraCX(rootRef.current, IMAGES);
+    const cleanup = initToraCX(rootRef.current, IMAGES, MEDIA);
     return cleanup;
   }, []);
 

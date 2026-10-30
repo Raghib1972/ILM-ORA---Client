@@ -1972,7 +1972,148 @@ const getCategoryIcon = (name = "") => {
   if (/program|code|develop/.test(n)) return Code2;
   return BookOpen;
 };
+// ─────────────────────────────────────────────────────────────────────────────
+// Hero "pill" mode — video shrinks into an oval and floating UI cards fly in.
+// ─────────────────────────────────────────────────────────────────────────────
+function HeroFloat({ show, from = "left", delay = 0, bob = 0, className = "", children }) {
+  const off = {
+    left: "translate3d(-70px,0,0) scale(.96)",
+    right: "translate3d(70px,0,0) scale(.96)",
+    up: "translate3d(0,-40px,0) scale(.96)",
+    down: "translate3d(0,40px,0) scale(.96)",
+    zoom: "scale(.7)",
+  }[from];
+  const d = show ? delay : 0;
+  return (
+    <div
+      className={`absolute ${className}`}
+      style={{
+        opacity: show ? 1 : 0,
+        transform: show ? "none" : off,
+        transition: `opacity .55s ease ${d}ms, transform .85s cubic-bezier(.22,1,.36,1) ${d}ms`,
+        willChange: "transform, opacity",
+      }}
+    >
+      <div className="hx-bob" style={{ animationDelay: `${bob}s` }}>
+        {children}
+      </div>
+    </div>
+  );
+}
 
+const HX_PANEL =
+  "rounded-xl bg-white text-[#1E293B] border border-[#F97316]/40 shadow-[0_12px_30px_rgba(15,23,42,0.18)]";
+const HX_BARS = [8, 14, 22, 12, 18, 24, 10, 20, 14, 22, 9, 16, 24, 12, 18, 10];
+
+function HeroFloatingCards({ show }) {
+  return (
+    <>
+      <style>{`
+        .hx-media { clip-path: inset(0% 0% 0% 0% round 0px); transition: clip-path 1s cubic-bezier(.65,0,.35,1); will-change: clip-path; }
+        .hx-media[data-pill="1"] { clip-path: inset(10% 14% 10% 14% round 260px); }
+        @media (max-width: 639px) { .hx-media[data-pill="1"] { clip-path: inset(24% 4% 24% 4% round 260px); } }
+        @keyframes hxBob { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-8px) rotate(.4deg); } }
+        @keyframes hxBar { 0%,100% { transform: scaleY(.3); } 50% { transform: scaleY(1); } }
+        .hx-bob { animation: hxBob 4.5s ease-in-out infinite; }
+        .hx-bar { width: 3px; border-radius: 3px; background: #F97316; transform-origin: center; animation: hxBar 1s ease-in-out infinite; }
+        @media (prefers-reduced-motion: reduce) { .hx-bob, .hx-bar { animation: none !important; } }
+      `}</style>
+
+           <div className="pointer-events-none absolute inset-0 z-10 block" aria-hidden="true">
+        {/* AI Companion */}
+        <HeroFloat show={show} from="left" delay={700} bob={0} className="left-2 top-[14%] w-[150px] md:left-[7%] md:top-[24%] md:w-[230px]">
+          <div className={`${HX_PANEL} p-2 md:p-3`}>
+            <div className="flex items-center gap-1.5 md:gap-2 mb-1 md:mb-1.5">
+              <span className="w-5 h-5 md:w-6 md:h-6 rounded-full bg-[#F97316]/15 flex items-center justify-center">
+                <Bot className="w-3 h-3 md:w-3.5 md:h-3.5 text-[#F97316]" />
+              </span>
+              <span className="text-[11px] md:text-[12px] font-bold">AI Companion</span>
+              <span className="relative ml-auto flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75 animate-ping" />
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-green-500" />
+              </span>
+            </div>
+            <p className="text-[9.5px] md:text-[11px] leading-snug text-slate-600 line-clamp-2 md:line-clamp-none">
+              Here’s your recap. I’ll summarise today’s class and plan your next steps.
+            </p>
+          </div>
+        </HeroFloat>
+
+        {/* Mentor Copilot */}
+        <HeroFloat show={show} from="right" delay={850} bob={0.6} className="right-2 top-[21%] w-[138px] md:right-[9%] md:top-[17%] md:w-[215px]">
+          <div className={`${HX_PANEL} p-2 md:p-3`}>
+            <div className="flex items-center gap-1.5 md:gap-2">
+              <span className="text-[11px] md:text-[12px] font-bold flex items-center gap-1 md:gap-1.5">
+                <Sparkles className="w-3 h-3 md:w-3.5 md:h-3.5 text-[#F97316]" /> Mentor Copilot
+              </span>
+              <span
+                className="ml-auto w-5 h-5 md:w-7 md:h-7 rounded-full flex items-center justify-center text-[8px] md:text-[10px] font-bold"
+                style={{ background: "linear-gradient(135deg,#FFE8A3,#FFC7B8)" }}
+              >
+                MR
+              </span>
+            </div>
+            <div className="mt-1.5 md:mt-2 flex items-center gap-1 md:gap-1.5 rounded-lg bg-slate-100 px-1.5 md:px-2 py-1 md:py-1.5 text-[8.5px] md:text-[10px] font-semibold text-slate-600">
+              <FileText className="w-2.5 h-2.5 md:w-3 md:h-3 flex-shrink-0" /> <span className="truncate">REVIEW PROJECT FEEDBACK</span>
+            </div>
+          </div>
+        </HeroFloat>
+
+        {/* Class booked */}
+        <HeroFloat show={show} from="right" delay={1050} bob={1.1} className="right-3 top-[46%] md:right-[17%] md:top-[40%]">
+          <div className={`${HX_PANEL} px-2 py-1 md:px-3 md:py-1.5 flex items-center gap-1 md:gap-1.5 text-[10px] md:text-[11px] font-semibold`}>
+            <CalendarClock className="w-3 h-3 md:w-3.5 md:h-3.5 text-[#F97316]" /> Class booked
+          </div>
+        </HeroFloat>
+
+        {/* Certificate issued */}
+        <HeroFloat show={show} from="right" delay={1200} bob={1.6} className="right-8 top-[54%] md:right-[10%] md:top-[49%]">
+          <div className={`${HX_PANEL} px-2 py-1 md:px-3 md:py-1.5 flex items-center gap-1 md:gap-1.5 text-[10px] md:text-[11px] font-semibold`}>
+            <Award className="w-3 h-3 md:w-3.5 md:h-3.5 text-[#F97316]" /> Certificate issued
+          </div>
+        </HeroFloat>
+
+        {/* Live Notes */}
+        <HeroFloat show={show} from="left" delay={1000} bob={0.9} className="left-2 bottom-[22%] w-[150px] md:left-[10%] md:bottom-[24%] md:w-[250px]">
+          <div className={`${HX_PANEL} p-2 md:p-3`}>
+            <div className="flex items-center gap-1.5 md:gap-2 mb-0.5 md:mb-1">
+              <Mic className="w-3 h-3 md:w-3.5 md:h-3.5 text-[#F97316]" />
+              <span className="text-[11px] md:text-[12px] font-bold">Live Notes</span>
+            </div>
+            <p className="text-[9.5px] md:text-[11px] leading-snug text-slate-600 line-clamp-2 md:line-clamp-none">
+              Transcribing your session and tagging key moments…
+            </p>
+          </div>
+        </HeroFloat>
+
+        {/* Waveform + Improving */}
+        <HeroFloat show={show} from="down" delay={1300} bob={0.3} className="right-2 bottom-[12%] md:right-[20%] md:bottom-[17%]">
+          <div className="flex items-center gap-1.5 md:gap-3">
+            <div className={`${HX_PANEL} px-2 md:px-3 py-1.5 md:py-2 flex items-center gap-[2px] md:gap-[3px] h-[28px] md:h-[34px]`}>
+              {HX_BARS.map((h, i) => (
+                <span
+                  key={i}
+                  className={`hx-bar ${i > 9 ? "hidden md:block" : ""}`}
+                  style={{ height: h, animationDelay: `${i * 0.07}s` }}
+                />
+              ))}
+            </div>
+            <span className="inline-flex items-center gap-1 md:gap-1.5 rounded-lg bg-[#16a34a] text-white text-[10px] md:text-[11px] font-semibold px-2 py-1.5 md:px-3 md:py-2 shadow-lg">
+              <TrendingUp className="w-3 h-3 md:w-3.5 md:h-3.5" /> Improving
+            </span>
+          </div>
+        </HeroFloat>
+
+        {/* Notes saved */}
+        <HeroFloat show={show} from="up" delay={1450} bob={1.4} className="left-6 bottom-[13%] md:left-[17%] md:bottom-[13%]">
+          <div className={`${HX_PANEL} px-2 py-1 md:px-3 md:py-1.5 flex items-center gap-1 md:gap-1.5 text-[10px] md:text-[11px] font-semibold`}>
+            <Zap className="w-3 h-3 md:w-3.5 md:h-3.5 text-[#F97316]" /> Notes saved
+          </div>
+        </HeroFloat>
+      </div>
+    </>
+  );
+}
 function HeroRollText({ text, className = "", gradient = "", delay = 0 }) {
   const [shown, setShown] = useState(text);
   const [leaving, setLeaving] = useState(null);
@@ -2224,7 +2365,50 @@ export default function LMSHomepage({ theme, toggleTheme }) {
     if (p && p.catch) p.catch(() => {});
   }, [videoReady, currentSlide]);
   const carouselTimerRef = useRef(null);
+  
 
+  // ── Hero "pill" cycle: full-bleed video ⇄ oval video + floating cards ──
+  const [heroPill, setHeroPill] = useState(false);
+  const heroSectionRef = useRef(null);
+
+  useEffect(() => {
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+
+    let inView = true;
+    const el = heroSectionRef.current;
+
+    const io =
+      el && "IntersectionObserver" in window
+        ? new IntersectionObserver(
+            ([e]) => {
+              inView = e.isIntersecting;
+            },
+            { threshold: 0.3 }
+          )
+        : null;
+
+    if (io) io.observe(el);
+
+    let t;
+
+    const schedule = (next) => {
+      t = setTimeout(() => {
+        if (document.hidden || !inView) return schedule(next);
+
+        setHeroPill(next);
+        schedule(!next);
+      }, next ? 4200 : 5200);
+    };
+
+    schedule(true);
+
+    return () => {
+      clearTimeout(t);
+      io && io.disconnect();
+    };
+  }, []);
+
+ 
   const navigate = useNavigate();
 
   const startCarouselTimer = () => {
@@ -2992,7 +3176,26 @@ export default function LMSHomepage({ theme, toggleTheme }) {
   }, [programsLoading, featuredPrograms]);
 
   return (
-    <div className="min-h-screen overflow-x-clip bg-[#F8FAFC] dark:bg-black text-[#1E293B] dark:text-white">
+        <div
+      data-theme={theme}
+      className="lms-home min-h-screen overflow-x-clip text-[#1E293B] dark:text-white"
+    >
+      {/* ToraCX-matching background (grid + same light/dark colours) */}
+      <style>{`
+        .lms-home{--bg:#f9fafc;--gridc:#eaebef;background-color:var(--bg);background-image:linear-gradient(var(--gridc) 1px,transparent 1px),linear-gradient(90deg,var(--gridc) 1px,transparent 1px);background-size:30px 30px}
+        .dark .lms-home,.lms-home[data-theme="dark"]{--bg:#12141C;--gridc:#1B1F2B;color-scheme:dark}
+
+        /* sections ka purana solid bg hata do taaki grid dikhe */
+        .lms-home .bg-\\[\\#F8FAFC\\],
+        .lms-home .dark\\:bg-black{background-color:transparent!important}
+
+        /* dark mode cards + borders ToraCX jaise */
+        .dark .lms-home .dark\\:bg-gray-900,
+        .lms-home[data-theme="dark"] .dark\\:bg-gray-900{background-color:#1B1E29!important}
+        .dark .lms-home .dark\\:border-gray-800,
+        .lms-home[data-theme="dark"] .dark\\:border-gray-800{border-color:#2D3243!important}
+      `}</style>
+
       {/* ── Announcement Banner & Navbar ── */}
       <ClientOnly>
         <TexoraFloatingWidget />
@@ -3009,7 +3212,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
       {/* ── Hero ── */}
             <section className="relative pt-20 sm:pt-24 pb-24 sm:pb-20 px-4 sm:px-6 min-h-[520px] sm:min-h-[480px] lg:min-h-[64svh] flex items-center overflow-hidden bg-[#1E293B]">
                 {/* Media layer starts below the fixed navbar so heads are never hidden under it */}
-               <div className="absolute inset-x-0 bottom-0 top-14 sm:top-[62px]">
+              <div className="hx-media absolute inset-x-0 bottom-0 top-14 sm:top-[62px]" data-pill={heroPill ? "1" : "0"}>
         <video
           ref={videoRef}
           src={videoReady ? (heroVideo?.src || heroVideo) : undefined}
@@ -3049,12 +3252,20 @@ export default function LMSHomepage({ theme, toggleTheme }) {
         ))}
          </div>
                 {/* Solid dark overlay so text stays readable over any image/video */}
-        <div className="absolute inset-0 bg-black/45 z-[1]" />
+        <div className="absolute inset-0 bg-black/45 z-[1]" style={{ opacity: heroPill ? 0 : 1, transition: "opacity .8s ease" }} />
         {/* Directional gradient: top-to-bottom on mobile, left-to-right on desktop */}
-        <div className="absolute inset-0 bg-gradient-to-b sm:bg-gradient-to-r from-black/80 via-black/60 to-black/45 sm:from-black/85 sm:via-black/60 sm:to-black/25 z-[1]" />
+        <div className="absolute inset-0 bg-gradient-to-b sm:bg-gradient-to-r from-black/80 via-black/60 to-black/45 sm:from-black/85 sm:via-black/60 sm:to-black/25 z-[1]" style={{ opacity: heroPill ? 0 : 1, transition: "opacity .8s ease" }} />
 
         <div className="max-w-7xl mx-auto relative z-10 w-full">
-          <div className="max-w-2xl text-center lg:text-left">
+          <div
+  className="max-w-2xl text-center lg:text-left"
+  style={{
+    opacity: heroPill ? 0 : 1,
+    transform: heroPill ? "translateY(18px)" : "none",
+    pointerEvents: heroPill ? "none" : "auto",
+    transition: "opacity .6s ease, transform .8s cubic-bezier(.65,0,.35,1)",
+  }}
+>
             <div className="mb-4 sm:mb-5 inline-flex"></div>
             <style>{`
               @keyframes heroTextIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -3132,7 +3343,13 @@ export default function LMSHomepage({ theme, toggleTheme }) {
         </div>
 
         {/* Slide indicator dots — bottom center, over the background */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2.5">
+        <HeroFloatingCards show={heroPill} />
+
+{/* Slide indicator dots — bottom center, over the background */}
+<div
+  className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2.5"
+  style={{ opacity: heroPill ? 0 : 1, pointerEvents: heroPill ? "none" : "auto", transition: "opacity .5s ease" }}
+>
           <button
             onClick={() => goToSlide(-1)}
             aria-label="Show video"

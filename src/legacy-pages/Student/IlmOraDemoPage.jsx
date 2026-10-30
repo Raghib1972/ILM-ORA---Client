@@ -4119,7 +4119,13 @@ gsap.registerPlugin(ScrollTrigger);
 const NAV_ICON_MAP = { GraduationCap, Users, BarChart3, FileText, LayoutDashboard, Sparkles, PenTool, Code2, CalendarCheck };
 // HUB_ICON_COLORS mein color add karo
 const HUB_ICON_COLORS = { student: "#16a34a", trainer: "#3b82f6", admin: "#a855f7", whiteboard: "#F97316", studyPlan: "#F97316", aiCompanion: "#a855f7", resume: "#16a34a", codingLab: "#0ea5e9" };
-const PRODUCT_ICON_COLORS = { meet: "#F97316", resume: "#16a34a", workspace: "#F97316" };
+const PRODUCT_ICON_COLORS = { meet: "#F97316", resume: "#16a34a", workspace: "#F97316", hrhub: "#F97316" };
+
+// HR Hub: Product menu ka naya item (navMenuData.js ko touch nahi kiya)
+const HR_HUB_ITEM = { key: "hrhub", title: "HR Hub — HR Management & Training", description: "HR Management & Training", icon: "Users" };
+const PRODUCT_ITEMS_ALL = PRODUCT_MENU_ITEMS.some((i) => i.key === "hrhub")
+  ? PRODUCT_MENU_ITEMS
+  : [...PRODUCT_MENU_ITEMS, HR_HUB_ITEM];
 
 // Mobile menu — All Courses tiles (desktop COURSE_CATEGORIES ko touch nahi kiya)
 const MOBILE_COURSE_TILES = [
@@ -5492,7 +5498,8 @@ const NAV_SEARCH_PAGES = [
   { title: "Coding Lab", desc: "Practice, Code & Build Real Projects", route: "/coding-lab", group: "features", tag: "Feature" },
   { title: "Study Plan", desc: "Personalized Study Plans & Progress Tracking", route: "/study-plan", group: "features", tag: "Feature" },
   { title: "ILM ORA Calendry", desc: "Live classes & video sessions", route: "/calendry", group: "product", tag: "Product" },
-  { title: "Workspace", desc: "Your all-in-one collaborative space", route: "/workspace", group: "product", tag: "Product" },
+    { title: "Workspace", desc: "Your all-in-one collaborative space", route: "/workspace", group: "product", tag: "Product" },
+  { title: "HR Hub — HR Management & Training", desc: "HR Management & Training", route: "/Hr-Hub", group: "product", tag: "Product" },
     { title: "All Career Tracks", route: "/career", group: "career", tag: "Career Track" },
   { title: "Development Engineering Platform", route: "/career?platform=dev", group: "career", tag: "Career Track" },
   { title: "AI – Agent AI", route: "/career?platform=ai", group: "career", tag: "Career Track" },
@@ -6546,6 +6553,7 @@ const HUB_ROUTES = {
 };
 
 const PRODUCT_ROUTES = {
+  hrhub: "/Hr-Hub",
   meet: "/calendry",
   resume: "/resume-builder",
   workspace: "/workspace",
@@ -6565,6 +6573,7 @@ const goToHub = (hubKey) => {
 // Product → real public product page
 const goToProductSection = (productKey) => {
   setProductMenuOpen(false);
+  if (productKey === "hrhub") { navigate(PRODUCT_ROUTES.hrhub); return; }
 
   if (isLoggedIn && hasRole) {
     navigate(PRODUCT_ROUTES[productKey] || "/");
@@ -6601,6 +6610,16 @@ const COURSE_CATEGORIES = [
   { key: "ilm-ora-gulf", title: "ILM ORA Gulf", route: "/gulf" },
   { key: "ilm-ora-feature", title: "ILM ORA Feature", route: "/student-hub" },
 ];
+// Mega menu headings (Career Tracks jaisa layout)
+const COURSE_GROUP = {
+  all: "Courses", "school-boards": "Courses", neet: "Courses", jee: "Courses",
+  "fde-academy": "Programs", "ilm-ora-talk": "Programs", "study-abroad": "Programs",
+  "ilm-ora-gulf": "Programs", "ilm-ora-feature": "Programs",
+};
+const FEATURE_GROUP = {
+  student: "Hubs", trainer: "Hubs", admin: "Hubs",
+  whiteboard: "Tools", aiCompanion: "Tools", resume: "Tools", codingLab: "Tools", studyPlan: "Tools",
+};
 const MEGA_MENUS = {
   courses: {
     label: "All Courses",
@@ -6610,9 +6629,11 @@ const MEGA_MENUS = {
     triggerRoute: "/all-courses",
     noChevron: true,
     ref: coursesMenuRef,
-        items: COURSE_CATEGORIES.map((c) => ({
+        groups: ["Courses", "Programs"],
+    items: COURSE_CATEGORIES.map((c) => ({
       key: c.key,
       title: c.title,
+      group: COURSE_GROUP[c.key] || "Programs",
       go: () => { setMega(null); navigate(c.route); },
     })),
   },
@@ -6621,14 +6642,16 @@ const MEGA_MENUS = {
     eyebrow: "Explore",
     cardTitle: "ILM ORA Feature",
     ref: featureMenuRef,
-    items: HUB_MENU_ITEMS.map((i) => ({ key: i.key, title: i.title, go: () => goToHub(i.key) })),
+        groups: ["Hubs", "Tools"],
+    items: HUB_MENU_ITEMS.map((i) => ({ key: i.key, title: i.title, group: FEATURE_GROUP[i.key] || "Tools", go: () => goToHub(i.key) })),
   },
   product: {
     label: "Product",
     eyebrow: "Explore",
     cardTitle: "Product",
     ref: productMenuRef,
-    items: PRODUCT_MENU_ITEMS.map((i) => ({ key: i.key, title: i.title, go: () => goToProductSection(i.key) })),
+        groups: ["Product"],
+    items: PRODUCT_ITEMS_ALL.map((i) => ({ key: i.key, title: i.title, group: "Product", go: () => goToProductSection(i.key) })),
   },
   
     // Skills tab — commented out for now
@@ -7900,7 +7923,7 @@ const renderMegaTrigger = (key) => {
               </button>
                             {mobileProductOpen && (
                 <div className="d-mobile-tile-grid">
-                  {PRODUCT_MENU_ITEMS.map((item) => {
+                                    {PRODUCT_ITEMS_ALL.map((item) => {
                     // "meet" (ILM ORA Calendry) ke liye calendar icon
                     const ItemIcon = item.key === "meet" ? Calendar : NAV_ICON_MAP[item.icon];
                     return (
