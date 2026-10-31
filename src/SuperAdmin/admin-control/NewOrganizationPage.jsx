@@ -1,20 +1,39 @@
-"use client";
+﻿"use client";
 
 // pages/NewOrganizationPage.jsx
-// SuperAdmin → Create a new organization
+// SuperAdmin â†’ Create a new organization (+ its admin, who gets a set-password email)
 // Route: /superadmin/organizations/new
 
 import React, { useState } from "react";
 import { useNavigate } from "@/lib/routerCompat";
-import { useSaas } from "../context/SaasContext";
 import { useTheme } from "../context/ThemeContext";
 import BreadcrumbNavigation from "../components/layout/navigation/BreadcrumbNavigation";
+// âš ï¸ Use the SAME import path that OrganizationPage.jsx uses for authService
+// (there it is "../../../services/authService"). Adjust the ../ count if needed.
+import authService from "../../services/authService";
 
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // CONSTANTS
-// ─────────────────────────────────────────────
-const PLANS = ["free", "starter", "pro", "enterprise"];
-const STATUSES = ["active", "inactive", "trial"];
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Plan names MUST match com.lms.auth.constants.PlanLimits in auth-service.
+// Other microservices read the same names from Kafka events.
+const PLANS = ["trial", "starter", "growth"];
+// Plan â‰  status. "trial" is a plan, so status is only active / inactive.
+const STATUSES = ["active", "inactive"];
+
+// Default limits per plan â€” mirror of PlanLimits.java. Used only to pre-fill
+// the form; if the admin does not change them, we send null and auth-service
+// applies its own defaults (so the backend stays the source of truth).
+const PLAN_LIMITS = {
+  trial:   { students: 20,  trainers: 3,  departments: 1, branchesPerDept: 2, batchesPerBranch: 2 },
+  starter: { students: 50,  trainers: 10, departments: 2, branchesPerDept: 3, batchesPerBranch: 3 },
+  growth:  { students: 150, trainers: 25, departments: 5, branchesPerDept: 5, batchesPerBranch: 5 },
+};
+
+// Same durations the payment flow offers (PlanDurationLimits: 1, 6, 12 months)
+const EXPIRY_CHOICES = [1, 6, 12];
+
+const EMAIL_RE = /\S+@\S+\.\S+/;
 
 const INDUSTRIES = [
   "Education",
@@ -30,54 +49,81 @@ const INDUSTRIES = [
 ];
 
 const PLAN_CONFIG = {
-  free:       { label: "Free",       dot: "#94a3b8", bg: "rgba(148,163,184,0.12)", color: "#64748b" },
-  starter:    { label: "Starter",    dot: "#14b8a6", bg: "rgba(20,184,166,0.12)",  color: "#0d9488" },
-  pro:        { label: "Pro",        dot: "#8b5cf6", bg: "rgba(139,92,246,0.12)",  color: "#7c3aed" },
-  enterprise: { label: "Enterprise", dot: "#f59e0b", bg: "rgba(245,158,11,0.12)",  color: "#d97706" },
+  trial:   { label: "Trial",   dot: "#f59e0b", bg: "rgba(245,158,11,0.12)",  color: "#d97706" },
+  starter: { label: "Starter", dot: "#14b8a6", bg: "rgba(20,184,166,0.12)",  color: "#0d9488" },
+  growth:  { label: "Growth",  dot: "#8b5cf6", bg: "rgba(139,92,246,0.12)",  color: "#7c3aed" },
 };
 
 const STATUS_CONFIG = {
-  active:   { label: "Active",   dot: "#10b981", bg: "rgba(16,185,129,0.12)",  color: "#059669" },
-  inactive: { label: "Inactive", dot: "#ef4444", bg: "rgba(239,68,68,0.12)",   color: "#dc2626" },
-  trial:    { label: "Trial",    dot: "#f59e0b", bg: "rgba(245,158,11,0.12)",   color: "#d97706" },
+  active:   { label: "Active",   dot: "#10b981", bg: "rgba(16,185,129,0.12)", color: "#059669" },
+  inactive: { label: "Inactive", dot: "#ef4444", bg: "rgba(239,68,68,0.12)",  color: "#dc2626" },
 };
 
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// DATE HELPERS (local time, yyyy-MM-dd)
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+const toISO = (d) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+// Same clamping as Java's LocalDate.plusMonths (Jan 31 + 1 month = Feb 28/29)
+const addMonthsISO = (months) => {
+  const d = new Date();
+  const day = d.getDate();
+  d.setDate(1);
+  d.setMonth(d.getMonth() + months);
+  const lastDay = new Date(d.getFullYear(), d.getMonth() + 1, 0).getDate();
+  d.setDate(Math.min(day, lastDay));
+  return toISO(d);
+};
+
+const tomorrowISO = () => {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  return toISO(d);
+};
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // INITIAL FORM STATE
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+const DEFAULT_PLAN = "starter";
+
 const INITIAL_FORM = {
   name:         "",
   domain:       "",
   industry:     "",
   location:     "",
   contactEmail: "",
-  plan:         "starter",
-  status:       "active",
-  maxStudents:  100,
-  maxTrainers:  10,
-  planExpiry:   "",
   description:  "",
+  adminName:    "",
+  adminEmail:   "",
+  plan:         DEFAULT_PLAN,
+  status:       "active",
+  planExpiry:   "",
+  maxStudents:  PLAN_LIMITS[DEFAULT_PLAN].students,
+  maxTrainers:  PLAN_LIMITS[DEFAULT_PLAN].trainers,
 };
 
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // FIELD COMPONENT
-// ─────────────────────────────────────────────
-const Field = ({ label, required, error, children }) => (
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+const Field = ({ label, required, error, hint, hintColor, children }) => (
   <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
     <label style={{ fontSize: 12, fontWeight: 600, color: error ? "#ef4444" : undefined }}>
       {label}
       {required && <span style={{ color: "#ef4444", marginLeft: 3 }}>*</span>}
     </label>
     {children}
-    {error && (
+    {error ? (
       <span style={{ fontSize: 11, color: "#ef4444" }}>{error}</span>
-    )}
+    ) : hint ? (
+      <span style={{ fontSize: 11, color: hintColor }}>{hint}</span>
+    ) : null}
   </div>
 );
 
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // SECTION HEADER
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const SectionHeader = ({ icon, title, txtMain }) => (
   <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
     <span style={{ fontSize: 16 }}>{icon}</span>
@@ -85,9 +131,9 @@ const SectionHeader = ({ icon, title, txtMain }) => (
   </div>
 );
 
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // BADGE PREVIEW
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const BadgePreview = ({ cfg }) => {
   if (!cfg) return null;
   return (
@@ -102,9 +148,9 @@ const BadgePreview = ({ cfg }) => {
   );
 };
 
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // AVATAR PREVIEW
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const AVATAR_COLORS = [
   ["#6366f1","#818cf8"],["#8b5cf6","#a78bfa"],["#ec4899","#f472b6"],
   ["#14b8a6","#2dd4bf"],["#f59e0b","#fbbf24"],["#10b981","#34d399"],
@@ -117,20 +163,24 @@ function initials(name = "") {
   return name.split(" ").map((w) => w[0] || "").join("").slice(0, 2).toUpperCase() || "?";
 }
 
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // MAIN PAGE
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const NewOrganizationPage = () => {
   const navigate  = useNavigate();
   const { dark }  = useTheme();
-  const { createOrganization, addOrganization } = useSaas();
 
-  const [form,    setForm]    = useState(INITIAL_FORM);
-  const [errors,  setErrors]  = useState({});
-  const [loading, setLoading] = useState(false);
-  const [success, setSuccess] = useState(false);
+  const [form,        setForm]        = useState(INITIAL_FORM);
+  const [errors,      setErrors]      = useState({});
+  const [loading,     setLoading]     = useState(false);
+  const [success,     setSuccess]     = useState(false);
+  const [inviteSent,  setInviteSent]  = useState(true);
+  const [submitError, setSubmitError] = useState("");
 
-  // ── Design tokens (same as rest of codebase) ──
+  const isTrial = form.plan === "trial";
+  const planDefaults = PLAN_LIMITS[form.plan];
+
+  // â”€â”€ Design tokens (same as rest of codebase) â”€â”€
   const cardBg  = dark ? "rgba(255,255,255,0.03)" : "#ffffff";
   const cardBdr = dark ? "rgba(255,255,255,0.08)" : "#e5e7eb";
   const txtMain = dark ? "#f1f5f9" : "#0f172a";
@@ -140,7 +190,7 @@ const NewOrganizationPage = () => {
   const inputFocus = "#6366f1";
   const divClr  = dark ? "rgba(255,255,255,0.06)" : "#f1f5f9";
 
-  // ── Input style helper ──
+  // â”€â”€ Input style helper â”€â”€
   const inputStyle = (hasError) => ({
     width: "100%",
     padding: "9px 12px",
@@ -159,10 +209,34 @@ const NewOrganizationPage = () => {
     cursor: "pointer",
   });
 
-  // ── Handlers ──
+  // focus / blur border colour handlers
+  const focusProps = (hasError) => ({
+    onFocus: (e) => { e.target.style.borderColor = inputFocus; },
+    onBlur:  (e) => { e.target.style.borderColor = hasError ? "#ef4444" : inputBdr; },
+  });
+
+  // â”€â”€ Handlers â”€â”€
   const set = (key, val) => {
-    setForm((prev) => ({ ...prev, [key]: val }));
-    if (errors[key]) setErrors((prev) => ({ ...prev, [key]: "" }));
+    setForm((prev) => {
+      // Picking a plan pre-fills that plan's default limits and
+      // clears the expiry for trial (trial never expires).
+      if (key === "plan") {
+        const d = PLAN_LIMITS[val];
+        return {
+          ...prev,
+          plan: val,
+          maxStudents: d.students,
+          maxTrainers: d.trainers,
+          planExpiry: val === "trial" ? "" : prev.planExpiry,
+        };
+      }
+      return { ...prev, [key]: val };
+    });
+    setErrors((prev) => {
+      const next = { ...prev, [key]: "" };
+      if (key === "plan") next.planExpiry = "";
+      return next;
+    });
   };
 
   const validate = () => {
@@ -170,11 +244,24 @@ const NewOrganizationPage = () => {
     if (!form.name.trim())         e.name         = "Organization name is required";
     if (!form.domain.trim())       e.domain       = "Domain is required";
     if (!form.contactEmail.trim()) e.contactEmail = "Contact email is required";
-    else if (!/\S+@\S+\.\S+/.test(form.contactEmail))
+    else if (!EMAIL_RE.test(form.contactEmail))
       e.contactEmail = "Enter a valid email address";
     if (!form.industry)            e.industry     = "Please select an industry";
-    if (form.maxStudents < 1)      e.maxStudents  = "Must be at least 1";
-    if (form.maxTrainers < 1)      e.maxTrainers  = "Must be at least 1";
+
+    if (!form.adminName.trim())    e.adminName    = "Admin name is required";
+    if (!form.adminEmail.trim())   e.adminEmail   = "Admin email is required";
+    else if (!EMAIL_RE.test(form.adminEmail))
+      e.adminEmail = "Enter a valid email address";
+
+    if (!isTrial) {
+      if (!form.planExpiry)
+        e.planExpiry = "Expiry date is required for this plan";
+      else if (form.planExpiry <= toISO(new Date()))
+        e.planExpiry = "Expiry date must be in the future";
+    }
+
+    if (Number(form.maxStudents) < 1) e.maxStudents = "Must be at least 1";
+    if (Number(form.maxTrainers) < 1) e.maxTrainers = "Must be at least 1";
     return e;
   };
 
@@ -182,49 +269,94 @@ const NewOrganizationPage = () => {
     const e = validate();
     if (Object.keys(e).length > 0) {
       setErrors(e);
-      // Scroll to top to show errors
       window.scrollTo({ top: 0, behavior: "smooth" });
       return;
     }
 
     setLoading(true);
+    setSubmitError("");
     try {
-      const newOrg = {
-        ...form,
-        maxStudents: Number(form.maxStudents),
-        maxTrainers: Number(form.maxTrainers),
-        createdAt:   new Date().toISOString(),
-        id:          `org_${Date.now()}`,
+      const students = Number(form.maxStudents);
+      const trainers = Number(form.maxTrainers);
+
+      // Field names match CreateOrganizationRequest in auth-service.
+      const payload = {
+        name:         form.name.trim(),
+        domain:       form.domain.trim(),
+        contactEmail: form.contactEmail.trim(),
+        location:     form.location.trim(),
+        industry:     form.industry,
+        description:  form.description.trim(),
+        plan:         form.plan,
+        status:       form.status,
+        planExpiryDate: isTrial ? null : form.planExpiry, // yyyy-MM-dd
+        // Only send a limit if it differs from the plan default (custom limit)
+        maxStudents:  students !== planDefaults.students ? students : null,
+        maxTrainers:  trainers !== planDefaults.trainers ? trainers : null,
+        adminName:    form.adminName.trim(),
+        adminEmail:   form.adminEmail.trim(),
       };
 
-      // Support both common function names in SaasContext
-      if (typeof createOrganization === "function") {
-        await createOrganization(newOrg);
-      } else if (typeof addOrganization === "function") {
-        await addOrganization(newOrg);
-      }
+      const res = await authService.createOrganizationWithAdmin(payload);
 
+      const sent = res?.inviteEmailSent !== false;
+      setInviteSent(sent);
       setSuccess(true);
-      setTimeout(() => {
-        navigate("/superadmin/organizations");
-      }, 1200);
+      if (sent) {
+        setTimeout(() => navigate("/superadmin/organizations"), 1800);
+      }
     } catch (err) {
       console.error("Failed to create organization:", err);
+      const status = err?.response?.status;
+      const serverMsg = err?.response?.data?.message;
+      setSubmitError(
+        status === 409
+          ? "A user with this admin email already exists. Use a different admin email."
+          : serverMsg ||
+            (status === 400
+              ? "Please check the form details and try again."
+              : "Could not create the organization. Please try again.")
+      );
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } finally {
       setLoading(false);
     }
   };
 
-  // ── Avatar preview colors ──
+  // â”€â”€ Avatar preview colors â”€â”€
   const [avatarA, avatarB] = avatarColor(form.name);
 
-  // ── Success state ──
+  // â”€â”€ Success state â”€â”€
   if (success) {
     return (
-      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "80px 40px", gap: 16 }}>
-        <div style={{ fontSize: 56 }}>🎉</div>
-        <div style={{ fontSize: 18, fontWeight: 800, color: txtMain }}>Organization Created!</div>
-        <div style={{ fontSize: 13, color: txtSub }}>Redirecting to organizations list…</div>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "80px 40px", gap: 14, textAlign: "center" }}>
+        <div style={{ fontSize: 56 }}>{inviteSent ? "ðŸŽ‰" : "âš ï¸"}</div>
+        <div style={{ fontSize: 18, fontWeight: 800, color: txtMain }}>Organization created</div>
+        {inviteSent ? (
+          <>
+            <div style={{ fontSize: 13, color: txtSub }}>
+              A set-password email was sent to {form.adminEmail.trim()}.
+            </div>
+            <div style={{ fontSize: 12, color: txtSub }}>Redirecting to organizations listâ€¦</div>
+          </>
+        ) : (
+          <>
+            <div style={{ fontSize: 13, color: "#d97706", maxWidth: 420 }}>
+              The invite email to {form.adminEmail.trim()} could not be sent. Open the
+              organization and choose â€œResend inviteâ€.
+            </div>
+            <button
+              onClick={() => navigate("/superadmin/organizations")}
+              style={{
+                marginTop: 6, padding: "9px 22px", borderRadius: 8, fontSize: 13, fontWeight: 700,
+                background: "linear-gradient(135deg, #6366f1, #8b5cf6)", color: "#fff",
+                border: "none", cursor: "pointer",
+              }}
+            >
+              Go to organizations
+            </button>
+          </>
+        )}
       </div>
     );
   }
@@ -280,7 +412,7 @@ const NewOrganizationPage = () => {
                   style={{ animation: "spin 1s linear infinite" }}>
                   <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
                 </svg>
-                Creating…
+                Creatingâ€¦
               </>
             ) : (
               <>
@@ -294,14 +426,25 @@ const NewOrganizationPage = () => {
         </div>
       </div>
 
+      {/* Server error */}
+      {submitError && (
+        <div style={{
+          padding: "10px 14px", borderRadius: 10, fontSize: 13, fontWeight: 600,
+          background: "rgba(239,68,68,0.10)", color: "#dc2626",
+          border: "1px solid rgba(239,68,68,0.30)",
+        }}>
+          {submitError}
+        </div>
+      )}
+
       <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 20, alignItems: "start" }}>
 
-        {/* ── LEFT: Form ── */}
+        {/* â”€â”€ LEFT: Form â”€â”€ */}
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 
           {/* Basic Info */}
           <div style={{ background: cardBg, border: `1px solid ${cardBdr}`, borderRadius: 14, padding: "22px 24px" }}>
-            <SectionHeader icon="🏢" title="Basic Information" txtMain={txtMain} />
+            <SectionHeader icon="ðŸ¢" title="Basic Information" txtMain={txtMain} />
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
               <Field label="Organization Name" required error={errors.name}>
                 <input
@@ -309,8 +452,7 @@ const NewOrganizationPage = () => {
                   onChange={(e) => set("name", e.target.value)}
                   placeholder="e.g. Texora AI"
                   style={inputStyle(errors.name)}
-                  onFocus={(e) => { e.target.style.borderColor = inputFocus; }}
-                  onBlur={(e)  => { e.target.style.borderColor = errors.name ? "#ef4444" : inputBdr; }}
+                  {...focusProps(errors.name)}
                 />
               </Field>
 
@@ -320,20 +462,19 @@ const NewOrganizationPage = () => {
                   onChange={(e) => set("domain", e.target.value)}
                   placeholder="e.g. texora.ai"
                   style={inputStyle(errors.domain)}
-                  onFocus={(e) => { e.target.style.borderColor = inputFocus; }}
-                  onBlur={(e)  => { e.target.style.borderColor = errors.domain ? "#ef4444" : inputBdr; }}
+                  {...focusProps(errors.domain)}
                 />
               </Field>
 
-              <Field label="Contact Email" required error={errors.contactEmail}>
+              <Field label="Contact Email" required error={errors.contactEmail}
+                hint="General contact for the organization" hintColor={txtSub}>
                 <input
                   type="email"
                   value={form.contactEmail}
                   onChange={(e) => set("contactEmail", e.target.value)}
-                  placeholder="e.g. admin@texora.ai"
+                  placeholder="e.g. contact@texora.ai"
                   style={inputStyle(errors.contactEmail)}
-                  onFocus={(e) => { e.target.style.borderColor = inputFocus; }}
-                  onBlur={(e)  => { e.target.style.borderColor = errors.contactEmail ? "#ef4444" : inputBdr; }}
+                  {...focusProps(errors.contactEmail)}
                 />
               </Field>
 
@@ -343,8 +484,7 @@ const NewOrganizationPage = () => {
                   onChange={(e) => set("location", e.target.value)}
                   placeholder="e.g. New Delhi, India"
                   style={inputStyle(false)}
-                  onFocus={(e) => { e.target.style.borderColor = inputFocus; }}
-                  onBlur={(e)  => { e.target.style.borderColor = inputBdr; }}
+                  {...focusProps(false)}
                 />
               </Field>
 
@@ -353,10 +493,9 @@ const NewOrganizationPage = () => {
                   value={form.industry}
                   onChange={(e) => set("industry", e.target.value)}
                   style={selectStyle(errors.industry)}
-                  onFocus={(e) => { e.target.style.borderColor = inputFocus; }}
-                  onBlur={(e)  => { e.target.style.borderColor = errors.industry ? "#ef4444" : inputBdr; }}
+                  {...focusProps(errors.industry)}
                 >
-                  <option value="">Select industry…</option>
+                  <option value="">Select industryâ€¦</option>
                   {INDUSTRIES.map((ind) => (
                     <option key={ind} value={ind}>{ind}</option>
                   ))}
@@ -369,8 +508,35 @@ const NewOrganizationPage = () => {
                   onChange={(e) => set("description", e.target.value)}
                   placeholder="Brief description (optional)"
                   style={inputStyle(false)}
-                  onFocus={(e) => { e.target.style.borderColor = inputFocus; }}
-                  onBlur={(e)  => { e.target.style.borderColor = inputBdr; }}
+                  {...focusProps(false)}
+                />
+              </Field>
+            </div>
+          </div>
+
+          {/* Organization Admin */}
+          <div style={{ background: cardBg, border: `1px solid ${cardBdr}`, borderRadius: 14, padding: "22px 24px" }}>
+            <SectionHeader icon="ðŸ‘¤" title="Organization Admin" txtMain={txtMain} />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
+              <Field label="Admin Name" required error={errors.adminName}>
+                <input
+                  value={form.adminName}
+                  onChange={(e) => set("adminName", e.target.value)}
+                  placeholder="e.g. Priya Sharma"
+                  style={inputStyle(errors.adminName)}
+                  {...focusProps(errors.adminName)}
+                />
+              </Field>
+
+              <Field label="Admin Email" required error={errors.adminEmail}
+                hint="We email this address a link to set a password and sign in." hintColor={txtSub}>
+                <input
+                  type="email"
+                  value={form.adminEmail}
+                  onChange={(e) => set("adminEmail", e.target.value)}
+                  placeholder="e.g. priya@texora.ai"
+                  style={inputStyle(errors.adminEmail)}
+                  {...focusProps(errors.adminEmail)}
                 />
               </Field>
             </div>
@@ -378,26 +544,28 @@ const NewOrganizationPage = () => {
 
           {/* Plan & Status */}
           <div style={{ background: cardBg, border: `1px solid ${cardBdr}`, borderRadius: 14, padding: "22px 24px" }}>
-            <SectionHeader icon="📋" title="Plan & Status" txtMain={txtMain} />
+            <SectionHeader icon="ðŸ“‹" title="Plan & Status" txtMain={txtMain} />
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
 
-              {/* Plan selector — visual cards */}
+              {/* Plan selector â€” visual cards */}
               <Field label="Plan">
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                   {PLANS.map((p) => {
                     const cfg = PLAN_CONFIG[p];
                     const active = form.plan === p;
                     return (
                       <button
                         key={p}
+                        type="button"
                         onClick={() => set("plan", p)}
                         style={{
-                          padding: "8px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700,
+                          padding: "7px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700,
                           border: `1px solid ${active ? cfg.color : inputBdr}`,
                           background: active ? cfg.bg : inputBg,
                           color: active ? cfg.color : txtSub,
                           cursor: "pointer", transition: "all 0.15s",
                           display: "flex", alignItems: "center", gap: 5,
+                          textAlign: "left",
                         }}
                       >
                         <span style={{ width: 6, height: 6, borderRadius: "50%", background: cfg.dot, flexShrink: 0 }} />
@@ -417,6 +585,7 @@ const NewOrganizationPage = () => {
                     return (
                       <button
                         key={s}
+                        type="button"
                         onClick={() => set("status", s)}
                         style={{
                           padding: "7px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700,
@@ -437,22 +606,53 @@ const NewOrganizationPage = () => {
               </Field>
 
               {/* Plan Expiry */}
-              <Field label="Plan Expiry Date">
+              <Field
+                label="Plan Expiry Date"
+                required={!isTrial}
+                error={errors.planExpiry}
+                hint={isTrial ? "Trial plans do not expire." : "When the plan ends, the organization returns to Trial."}
+                hintColor={txtSub}
+              >
                 <input
                   type="date"
                   value={form.planExpiry}
+                  min={tomorrowISO()}
+                  disabled={isTrial}
                   onChange={(e) => set("planExpiry", e.target.value)}
-                  style={inputStyle(false)}
-                  onFocus={(e) => { e.target.style.borderColor = inputFocus; }}
-                  onBlur={(e)  => { e.target.style.borderColor = inputBdr; }}
+                  style={{ ...inputStyle(errors.planExpiry), opacity: isTrial ? 0.5 : 1, cursor: isTrial ? "not-allowed" : "text" }}
+                  {...focusProps(errors.planExpiry)}
                 />
+                {!isTrial && (
+                  <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+                    {EXPIRY_CHOICES.map((m) => (
+                      <button
+                        key={m}
+                        type="button"
+                        onClick={() => set("planExpiry", addMonthsISO(m))}
+                        style={{
+                          padding: "4px 9px", borderRadius: 999, fontSize: 11, fontWeight: 600,
+                          border: `1px solid ${inputBdr}`, background: inputBg, color: txtSub,
+                          cursor: "pointer",
+                        }}
+                      >
+                        {m} {m === 1 ? "month" : "months"}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </Field>
             </div>
           </div>
 
           {/* Limits */}
           <div style={{ background: cardBg, border: `1px solid ${cardBdr}`, borderRadius: 14, padding: "22px 24px" }}>
-            <SectionHeader icon="⚙️" title="Usage Limits" txtMain={txtMain} />
+            <SectionHeader icon="âš™ï¸" title="Usage Limits" txtMain={txtMain} />
+            <div style={{ fontSize: 12, color: txtSub, marginBottom: 14, lineHeight: 1.5 }}>
+              Pre-filled from the {PLAN_CONFIG[form.plan].label} plan, which also allows up to{" "}
+              {planDefaults.departments} {planDefaults.departments === 1 ? "department" : "departments"},{" "}
+              {planDefaults.branchesPerDept} branches per department and {planDefaults.batchesPerBranch} batches per
+              branch. Change students or trainers only to give this organization a custom limit.
+            </div>
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
               <Field label="Max Students" error={errors.maxStudents}>
                 <input
@@ -461,8 +661,7 @@ const NewOrganizationPage = () => {
                   value={form.maxStudents}
                   onChange={(e) => set("maxStudents", e.target.value)}
                   style={inputStyle(errors.maxStudents)}
-                  onFocus={(e) => { e.target.style.borderColor = inputFocus; }}
-                  onBlur={(e)  => { e.target.style.borderColor = errors.maxStudents ? "#ef4444" : inputBdr; }}
+                  {...focusProps(errors.maxStudents)}
                 />
               </Field>
 
@@ -473,15 +672,14 @@ const NewOrganizationPage = () => {
                   value={form.maxTrainers}
                   onChange={(e) => set("maxTrainers", e.target.value)}
                   style={inputStyle(errors.maxTrainers)}
-                  onFocus={(e) => { e.target.style.borderColor = inputFocus; }}
-                  onBlur={(e)  => { e.target.style.borderColor = errors.maxTrainers ? "#ef4444" : inputBdr; }}
+                  {...focusProps(errors.maxTrainers)}
                 />
               </Field>
             </div>
           </div>
         </div>
 
-        {/* ── RIGHT: Live Preview ── */}
+        {/* â”€â”€ RIGHT: Live Preview â”€â”€ */}
         <div style={{ display: "flex", flexDirection: "column", gap: 16, position: "sticky", top: 20 }}>
 
           {/* Preview Card */}
@@ -514,10 +712,12 @@ const NewOrganizationPage = () => {
             {/* Details */}
             <div style={{ borderTop: `1px solid ${divClr}`, paddingTop: 12, display: "flex", flexDirection: "column", gap: 8 }}>
               {[
-                { icon: "🌐", val: form.domain       || "—", label: "Domain" },
-                { icon: "🏭", val: form.industry     || "—", label: "Industry" },
-                { icon: "📍", val: form.location     || "—", label: "Location" },
-                { icon: "✉️", val: form.contactEmail || "—", label: "Email" },
+                { icon: "ðŸŒ", val: form.domain       || "â€”", label: "Domain" },
+                { icon: "ðŸ­", val: form.industry     || "â€”", label: "Industry" },
+                { icon: "ðŸ“", val: form.location     || "â€”", label: "Location" },
+                { icon: "âœ‰ï¸", val: form.contactEmail || "â€”", label: "Email" },
+                { icon: "ðŸ‘¤", val: form.adminEmail   || "â€”", label: "Admin" },
+                { icon: "ðŸ“…", val: isTrial ? "No expiry" : (form.planExpiry || "â€”"), label: "Expires" },
               ].map(({ icon, val, label }) => (
                 <div key={label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <span style={{ fontSize: 12 }}>{icon}</span>
@@ -550,10 +750,13 @@ const NewOrganizationPage = () => {
               {[
                 { label: "Organization name",  done: !!form.name.trim() },
                 { label: "Domain",             done: !!form.domain.trim() },
-                { label: "Contact email",      done: !!form.contactEmail.trim() && /\S+@\S+\.\S+/.test(form.contactEmail) },
+                { label: "Contact email",      done: EMAIL_RE.test(form.contactEmail) },
                 { label: "Industry selected",  done: !!form.industry },
+                { label: "Admin name",         done: !!form.adminName.trim() },
+                { label: "Admin email",        done: EMAIL_RE.test(form.adminEmail) },
                 { label: "Plan selected",      done: !!form.plan },
                 { label: "Status selected",    done: !!form.status },
+                { label: "Plan expiry",        done: isTrial || !!form.planExpiry },
               ].map(({ label, done }) => (
                 <div key={label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <div style={{
@@ -590,3 +793,5 @@ const NewOrganizationPage = () => {
 };
 
 export default NewOrganizationPage;
+
+

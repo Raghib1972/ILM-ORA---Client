@@ -1,15 +1,15 @@
-"use client";
+﻿"use client";
 
 // export default OrganizationPage;
-// OrganizationPage.jsx — connected to real backend API
+// OrganizationPage.jsx â€” connected to real backend API
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "@/lib/routerCompat";
 import authService from "../../services/authService";
 import userService from "../../services/userService";
 
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // HELPERS
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const formatDate = (d) =>
   d
     ? new Date(d).toLocaleDateString("en-GB", {
@@ -17,7 +17,7 @@ const formatDate = (d) =>
         month: "short",
         year: "numeric",
       })
-    : "—";
+    : "â€”";
 
 const STATUS_CONFIG = {
   active: { label: "Active", bg: "#dcfce7", color: "#16a34a", dot: "#16a34a" },
@@ -33,31 +33,34 @@ const STATUS_CONFIG = {
 const PLAN_CONFIG = {
   free: { label: "Free", bg: "#f1f5f9", color: "#64748b" },
   trial: { label: "Trial", bg: "#fef9c3", color: "#ca8a04" },
+  starter: { label: "Starter", bg: "#ccfbf1", color: "#0d9488" },
+  growth: { label: "Growth", bg: "#ede9fe", color: "#7c3aed" },
+  // legacy names (older rows) â€” kept only so their badges still render
   pro: { label: "Pro", bg: "#ede9fe", color: "#7c3aed" },
   enterprise: { label: "Enterprise", bg: "#dbeafe", color: "#1d4ed8" },
 };
 
-// Map backend org shape → UI shape
+// Map backend org shape â†’ UI shape
 function mapOrg(o) {
   return {
     id: o.id,
-    name: o.name || "—",
-    email: o.email || "—",
-    city: o.city || "—",
-    phone: o.phone || "—",
+    name: o.name || "â€”",
+    email: o.email || "â€”",
+    city: o.city || "â€”",
+    phone: o.phone || "â€”",
     plan: (o.plan || "trial").toLowerCase(),
     status: (o.status || "active").toLowerCase(),
-    managerName: o.managerName || "—",
-    managerEmail: o.managerEmail || "—",
+    managerName: o.managerName || "â€”",
+    managerEmail: o.managerEmail || "â€”",
     ownerId: o.ownerId || null,
     createdAt: o.createdAt || null,
     updatedAt: o.updatedAt || null,
   };
 }
 
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // BADGE
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const Badge = ({ cfg }) => {
   if (!cfg) return null;
   return (
@@ -89,9 +92,9 @@ const Badge = ({ cfg }) => {
   );
 };
 
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // AVATAR
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const AVATAR_COLORS = [
   ["#6366f1", "#818cf8"],
   ["#8b5cf6", "#a78bfa"],
@@ -135,9 +138,9 @@ const OrgAvatar = ({ name, size = 38 }) => {
   );
 };
 
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // SIDE PANEL
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const OrgDetailsPanel = ({
   org,
   onClose,
@@ -148,12 +151,13 @@ const OrgDetailsPanel = ({
   const navigate = useNavigate();
   const [capacity, setCapacity] = useState(null);
 
-  // ── NEW: inline edit state ──
+  // â”€â”€ NEW: inline edit state â”€â”€
   const [editing, setEditing] = useState(false);
   const [editForm, setEditForm] = useState({});
   const [saving, setSaving] = useState(false);
 
   const [onboardingData, setOnboardingData] = useState(null);
+  const [resending, setResending] = useState(false);
 
   useEffect(() => {
     if (!org?.id) return;
@@ -174,6 +178,24 @@ const OrgDetailsPanel = ({
   }, [org?.managerEmail]);
 
   if (!org) return null;
+
+  // Re-send the set-password email to the organization admin
+  const handleResendInvite = async () => {
+    if (!org?.managerEmail || org.managerEmail === "â€”") return;
+    setResending(true);
+    try {
+      await authService.adminResendSetPasswordEmailByEmail(org.managerEmail);
+      alert(`Invite sent to ${org.managerEmail}`);
+    } catch (err) {
+      alert(
+        err?.response?.status === 400
+          ? "This admin has already set a password."
+          : "Failed to send the invite. Please try again.",
+      );
+    } finally {
+      setResending(false);
+    }
+  };
 
   const panelBg = dark ? "#0f1117" : "#fff";
   const txtMain = dark ? "#f1f5f9" : "#0f172a";
@@ -201,7 +223,7 @@ const OrgDetailsPanel = ({
           wordBreak: "break-all",
         }}
       >
-        {value || "—"}
+        {value || "â€”"}
       </span>
     </div>
   );
@@ -345,9 +367,27 @@ const OrgDetailsPanel = ({
               </div>
             </div>
           </div>
+          <button
+            onClick={handleResendInvite}
+            disabled={resending}
+            style={{
+              marginTop: 10,
+              padding: "6px 12px",
+              borderRadius: 7,
+              fontSize: 11,
+              fontWeight: 700,
+              border: "1px solid #6366f140",
+              background: "#6366f10d",
+              color: "#6366f1",
+              cursor: resending ? "not-allowed" : "pointer",
+              opacity: resending ? 0.6 : 1,
+            }}
+          >
+            {resending ? "Sendingâ€¦" : "Resend invite"}
+          </button>
         </div>
 
-        {/* ── Organization Details ── */}
+        {/* â”€â”€ Organization Details â”€â”€ */}
         <div
           style={{
             background: dark ? "rgba(255,255,255,0.03)" : "#f8fafc",
@@ -377,7 +417,7 @@ const OrgDetailsPanel = ({
               Organization Details
             </div>
 
-            {/* ── EDIT / SAVE / CANCEL buttons ── */}
+            {/* â”€â”€ EDIT / SAVE / CANCEL buttons â”€â”€ */}
             {!editing ? (
               <button
                 onClick={() => {
@@ -410,7 +450,7 @@ const OrgDetailsPanel = ({
                     maxDepartments: capacity?.maxDepartments ?? "",
                     maxBranchesPerDept: capacity?.maxBranchesPerDept ?? "",
                     maxBatchesPerBranch: capacity?.maxBatchesPerBranch ?? "",
-                    // ✅ Admin self-fill fields pre-populated from capacity
+                    // âœ… Admin self-fill fields pre-populated from capacity
                     organizationName: capacity?.organizationName ?? "",
                     domain: capacity?.domain ?? "",
                     contactEmail: capacity?.contactEmail ?? "",
@@ -432,7 +472,7 @@ const OrgDetailsPanel = ({
                   cursor: "pointer",
                 }}
               >
-                ✏️ Edit
+                âœï¸ Edit
               </button>
             ) : (
               <div style={{ display: "flex", gap: 5 }}>
@@ -483,7 +523,7 @@ const OrgDetailsPanel = ({
                   onClick={async () => {
                     setSaving(true);
                     try {
-                      // ✅ Call 1: Super admin locked fields (name, plan, limits etc.)
+                      // âœ… Call 1: Super admin locked fields (name, plan, limits etc.)
                       await authService.updateOrganization(org.id, {
                         name: editForm.name,
                         email: editForm.email,
@@ -510,7 +550,7 @@ const OrgDetailsPanel = ({
                           : null,
                       });
 
-                      // ✅ Call 2: Admin self-fill fields (org profile details)
+                      // âœ… Call 2: Admin self-fill fields (org profile details)
                       await authService.updateAdminOrgProfile(org.id, {
                         organizationName: editForm.organizationName,
                         domain: editForm.domain,
@@ -543,7 +583,7 @@ const OrgDetailsPanel = ({
                     opacity: saving ? 0.6 : 1,
                   }}
                 >
-                  {saving ? "Saving…" : "💾 Save"}
+                  {saving ? "Savingâ€¦" : "ðŸ’¾ Save"}
                 </button>
               </div>
             )}
@@ -553,7 +593,7 @@ const OrgDetailsPanel = ({
           <Row label="Created" value={formatDate(org.createdAt)} />
           <Row label="Updated" value={formatDate(org.updatedAt)} />
 
-          {/* ── INLINE EDIT FORM (shown only when editing) ── */}
+          {/* â”€â”€ INLINE EDIT FORM (shown only when editing) â”€â”€ */}
           {editing && (
             <div
               style={{
@@ -576,7 +616,7 @@ const OrgDetailsPanel = ({
                 { key: "maxDepartments", label: "Max Departments" },
                 { key: "maxBranchesPerDept", label: "Max Branches Per Dept" },
                 { key: "maxBatchesPerBranch", label: "Max Batches Per Branch" },
-                // ✅ Admin self-fill fields
+                // âœ… Admin self-fill fields
                 { key: "organizationName", label: "Organization Name" },
                 { key: "domain", label: "Domain" },
                 { key: "contactEmail", label: "Contact Email" },
@@ -658,7 +698,7 @@ const OrgDetailsPanel = ({
                     outline: "none",
                   }}
                 >
-                  {["free", "trial", "pro", "enterprise"].map((p) => (
+                  {["trial", "starter", "growth"].map((p) => (
                     <option key={p} value={p}>
                       {p}
                     </option>
@@ -696,7 +736,7 @@ const OrgDetailsPanel = ({
                     outline: "none",
                   }}
                 >
-                  {["active", "inactive", "trial"].map((s) => (
+                  {["active", "inactive"].map((s) => (
                     <option key={s} value={s}>
                       {s}
                     </option>
@@ -799,8 +839,8 @@ const OrgDetailsPanel = ({
                 }}
               >
                 {capacity
-                  ? `${capacity.currentTrainers ?? 0} / ${capacity.maxTrainers ?? "∞"}`
-                  : "—"}
+                  ? `${capacity.currentTrainers ?? 0} / ${capacity.maxTrainers ?? "âˆž"}`
+                  : "â€”"}
               </span>
             </div>
             {capacity?.maxTrainers != null && (
@@ -853,8 +893,8 @@ const OrgDetailsPanel = ({
                 }}
               >
                 {capacity
-                  ? `${capacity.currentStudents ?? 0} / ${capacity.maxStudents ?? "∞"}`
-                  : "—"}
+                  ? `${capacity.currentStudents ?? 0} / ${capacity.maxStudents ?? "âˆž"}`
+                  : "â€”"}
               </span>
             </div>
             {capacity?.maxStudents != null && (
@@ -897,7 +937,7 @@ const OrgDetailsPanel = ({
             </div>
           </div>
         </div>
-        {/* ── Admin Onboarding Responses ── */}
+        {/* â”€â”€ Admin Onboarding Responses â”€â”€ */}
         {onboardingData &&
           onboardingData.onboardingAnswers &&
           Object.keys(onboardingData.onboardingAnswers).length > 0 && (
@@ -1060,9 +1100,9 @@ const OrgDetailsPanel = ({
   );
 };
 
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // ORG ROW
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const OrgRow = ({
   org,
   dark,
@@ -1207,9 +1247,9 @@ const OrgRow = ({
   );
 };
 
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 // MAIN PAGE
-// ─────────────────────────────────────────────
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 const OrganizationPage = () => {
   const navigate = useNavigate();
   const dark = false;
@@ -1226,7 +1266,7 @@ const OrganizationPage = () => {
   const [confirmDelete, setConfirmDelete] = useState(null);
   const [actionLoading, setActionLoading] = useState(false);
 
-  // ── Fetch orgs from backend ──
+  // â”€â”€ Fetch orgs from backend â”€â”€
   useEffect(() => {
     setLoading(true);
     authService
@@ -1242,7 +1282,7 @@ const OrganizationPage = () => {
       });
   }, []);
 
-  // ── Filter ──
+  // â”€â”€ Filter â”€â”€
   const filtered = useMemo(() => {
     return organizations.filter((o) => {
       const q = search.toLowerCase();
@@ -1258,7 +1298,7 @@ const OrganizationPage = () => {
     });
   }, [organizations, search, statusFilter, planFilter]);
 
-  // ── Status toggle ──
+  // â”€â”€ Status toggle â”€â”€
   const handleStatusToggle = async (org) => {
     const next = org.status === "active" ? "inactive" : "active";
     setActionLoading(true);
@@ -1277,7 +1317,7 @@ const OrganizationPage = () => {
     }
   };
 
-  // ── Delete ──
+  // â”€â”€ Delete â”€â”€
   const confirmDeleteOrg = async () => {
     if (!confirmDelete) return;
     setActionLoading(true);
@@ -1294,7 +1334,7 @@ const OrganizationPage = () => {
     }
   };
 
-  // ── Colors ──
+  // â”€â”€ Colors â”€â”€
   const bg = dark ? "#0a0d14" : "#f8fafc";
   const cardBg = dark ? "#0f1117" : "#fff";
   const txtMain = dark ? "#f1f5f9" : "#0f172a";
@@ -1304,7 +1344,7 @@ const OrganizationPage = () => {
 
   const activeCount = organizations.filter((o) => o.status === "active").length;
 
-  // ── Loading ──
+  // â”€â”€ Loading â”€â”€
   if (loading)
     return (
       <div
@@ -1329,13 +1369,13 @@ const OrganizationPage = () => {
           }}
         />
         <span style={{ fontSize: 13, color: "#94a3b8" }}>
-          Loading organizations…
+          Loading organizationsâ€¦
         </span>
         <style>{`@keyframes spin { to { transform:rotate(360deg); } }`}</style>
       </div>
     );
 
-  // ── Error ──
+  // â”€â”€ Error â”€â”€
   if (apiError)
     return (
       <div
@@ -1349,7 +1389,7 @@ const OrganizationPage = () => {
           fontFamily: "Inter,sans-serif",
         }}
       >
-        <div style={{ fontSize: 32 }}>⚠️</div>
+        <div style={{ fontSize: 32 }}>âš ï¸</div>
         <span style={{ fontSize: 14, color: "#374151", fontWeight: 600 }}>
           {apiError}
         </span>
@@ -1382,7 +1422,7 @@ const OrganizationPage = () => {
     >
       <style>{`@keyframes spin { to { transform:rotate(360deg); } } * { box-sizing:border-box; }`}</style>
 
-      {/* ── Header ── */}
+      {/* â”€â”€ Header â”€â”€ */}
       <div
         style={{
           display: "flex",
@@ -1403,7 +1443,7 @@ const OrganizationPage = () => {
             Organizations
           </h1>
           <p style={{ fontSize: 13, color: txtSub, margin: "4px 0 0" }}>
-            {organizations.length} total · {activeCount} active
+            {organizations.length} total Â· {activeCount} active
           </p>
         </div>
         <button
@@ -1437,7 +1477,7 @@ const OrganizationPage = () => {
         </button>
       </div>
 
-      {/* ── Stat pills ── */}
+      {/* â”€â”€ Stat pills â”€â”€ */}
       <div
         style={{
           display: "flex",
@@ -1492,7 +1532,7 @@ const OrganizationPage = () => {
         ))}
       </div>
 
-      {/* ── Filters ── */}
+      {/* â”€â”€ Filters â”€â”€ */}
       <div
         style={{
           display: "flex",
@@ -1522,7 +1562,7 @@ const OrganizationPage = () => {
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by name, email, owner…"
+            placeholder="Search by name, email, ownerâ€¦"
             style={{
               width: "100%",
               padding: "8px 12px 8px 30px",
@@ -1540,13 +1580,13 @@ const OrganizationPage = () => {
           [
             statusFilter,
             setStatusFilter,
-            ["all", "active", "inactive", "trial"],
+            ["all", "active", "inactive"],
             "All Status",
           ],
           [
             planFilter,
             setPlanFilter,
-            ["all", "free", "trial", "pro", "enterprise"],
+            ["all", "trial", "starter", "growth"],
             "All Plans",
           ],
         ].map(([val, setter, opts, placeholder], i) => (
@@ -1586,7 +1626,7 @@ const OrganizationPage = () => {
         </span>
       </div>
 
-      {/* ── Table ── */}
+      {/* â”€â”€ Table â”€â”€ */}
       <div
         style={{
           background: cardBg,
@@ -1626,7 +1666,7 @@ const OrganizationPage = () => {
         {/* Rows */}
         {filtered.length === 0 ? (
           <div style={{ padding: "52px 0", textAlign: "center" }}>
-            <div style={{ fontSize: 32, marginBottom: 10 }}>🏢</div>
+            <div style={{ fontSize: 32, marginBottom: 10 }}>ðŸ¢</div>
             <div style={{ fontSize: 14, fontWeight: 600, color: txtMain }}>
               No organizations found
             </div>
@@ -1653,7 +1693,7 @@ const OrganizationPage = () => {
         )}
       </div>
 
-      {/* ── Side Panel ── */}
+      {/* â”€â”€ Side Panel â”€â”€ */}
       {selectedOrg && (
         <OrgDetailsPanel
           org={selectedOrg}
@@ -1667,7 +1707,7 @@ const OrganizationPage = () => {
         />
       )}
 
-      {/* ── Delete Confirm ── */}
+      {/* â”€â”€ Delete Confirm â”€â”€ */}
       {confirmDelete && (
         <div
           style={{
@@ -1765,7 +1805,7 @@ const OrganizationPage = () => {
                   opacity: actionLoading ? 0.6 : 1,
                 }}
               >
-                {actionLoading ? "Deleting…" : "Delete"}
+                {actionLoading ? "Deletingâ€¦" : "Delete"}
               </button>
             </div>
           </div>
@@ -1776,3 +1816,5 @@ const OrganizationPage = () => {
 };
 
 export default OrganizationPage;
+
+

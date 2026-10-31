@@ -174,6 +174,14 @@ const authService = {
     return api.post("/organizations", payload).then((res) => res.data);
   },
 
+  // POST create org + its admin (super admin). The admin receives a
+  // set-password email. Returns { organization, inviteEmailSent }.
+  createOrganizationWithAdmin(payload) {
+    return api
+      .post("/organizations/with-admin", payload)
+      .then((res) => res.data);
+  },
+
   // GET single org
   getOrganizationById(id) {
     return api.get(`/organizations/${id}`).then((res) => res.data);
