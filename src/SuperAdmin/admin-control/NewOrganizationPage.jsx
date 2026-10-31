@@ -149,6 +149,7 @@ const INITIAL_FORM = {
   name:         "",
   domain:       "",
   industry:     "",
+  industryOther: "",   // custom industry name when "Other" is chosen
   location:     "",
   contactEmail: "",
   description:  "",
@@ -244,6 +245,9 @@ const NewOrganizationPage = () => {
   const [submitError, setSubmitError] = useState("");
 
   const isTrial = form.plan === "trial";
+  // If "Other" is chosen, the typed name is what we save and show
+  const finalIndustry =
+    form.industry === "Other" ? form.industryOther.trim() : form.industry;
   const planDefaults = PLAN_LIMITS[form.plan];
 
   // -- Design tokens (same as rest of codebase) --
@@ -290,6 +294,8 @@ const NewOrganizationPage = () => {
     else if (!EMAIL_RE.test(form.contactEmail))
       e.contactEmail = "Enter a valid email address";
     if (!form.industry)            e.industry     = "Please select an industry";
+    else if (form.industry === "Other" && !form.industryOther.trim())
+      e.industryOther = "Please enter the industry name";
 
     if (!form.adminName.trim())    e.adminName    = "Admin name is required";
     if (!form.adminEmail.trim())   e.adminEmail   = "Admin email is required";
@@ -333,11 +339,15 @@ const NewOrganizationPage = () => {
           planExpiry: val === "trial" ? "" : prev.planExpiry,
         };
       }
+      if (key === "industry" && val !== "Other") {
+        return { ...prev, industry: val, industryOther: "" };
+      }
       return { ...prev, [key]: val };
     });
     setErrors((prev) => {
       const next = { ...prev, [key]: "" };
       if (key === "plan") next.planExpiry = "";
+      if (key === "industry") next.industryOther = "";
       return next;
     });
   };
@@ -362,7 +372,7 @@ const NewOrganizationPage = () => {
         domain:       form.domain.trim(),
         contactEmail: form.contactEmail.trim(),
         location:     form.location.trim(),
-        industry:     form.industry,
+        industry:     finalIndustry,
         description:  form.description.trim(),
         plan:         form.plan,
         status:       form.status,
@@ -535,15 +545,30 @@ const NewOrganizationPage = () => {
                 </select>
               </Field>
 
-              <Field label="Description">
-                <input
-                  value={form.description}
-                  onChange={(e) => set("description", e.target.value)}
-                  placeholder="Brief description (optional)"
-                  style={inputStyle(false)}
-                  {...focusProps(false)}
-                />
-              </Field>
+              {form.industry === "Other" && (
+                <Field label="Industry Name" required error={errors.industryOther}>
+                  <input
+                    autoFocus
+                    value={form.industryOther}
+                    onChange={(e) => set("industryOther", e.target.value)}
+                    placeholder="e.g. Agriculture"
+                    style={inputStyle(errors.industryOther)}
+                    {...focusProps(errors.industryOther)}
+                  />
+                </Field>
+              )}
+
+              <div style={form.industry === "Other" ? { gridColumn: "1 / -1" } : undefined}>
+                <Field label="Description">
+                  <input
+                    value={form.description}
+                    onChange={(e) => set("description", e.target.value)}
+                    placeholder="Brief description (optional)"
+                    style={inputStyle(false)}
+                    {...focusProps(false)}
+                  />
+                </Field>
+              </div>
             </div>
           </div>
 
@@ -812,7 +837,7 @@ const NewOrganizationPage = () => {
             <div style={{ borderTop: `1px solid ${divClr}`, paddingTop: 12, display: "flex", flexDirection: "column", gap: 8 }}>
               {[
                 { val: form.domain       || "-", label: "Domain" },
-                { val: form.industry     || "-", label: "Industry" },
+                { val: finalIndustry     || "-", label: "Industry" },
                 { val: form.location     || "-", label: "Location" },
                 { val: form.contactEmail || "-", label: "Email" },
                 { val: form.adminEmail   || "-", label: "Admin" },
@@ -849,7 +874,7 @@ const NewOrganizationPage = () => {
                 { label: "Organization name",  done: !!form.name.trim() },
                 { label: "Domain",             done: !!form.domain.trim() },
                 { label: "Contact email",      done: EMAIL_RE.test(form.contactEmail) },
-                { label: "Industry selected",  done: !!form.industry },
+                { label: "Industry selected",  done: !!form.industry && (form.industry !== "Other" || !!form.industryOther.trim()) },
                 { label: "Admin name",         done: !!form.adminName.trim() },
                 { label: "Admin email",        done: EMAIL_RE.test(form.adminEmail) },
                 { label: "Plan selected",      done: !!form.plan },
@@ -891,4 +916,5 @@ const NewOrganizationPage = () => {
 };
 
 export default NewOrganizationPage;
+
 
