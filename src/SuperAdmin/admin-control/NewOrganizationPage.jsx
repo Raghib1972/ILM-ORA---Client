@@ -1,28 +1,31 @@
 ﻿"use client";
 
 // pages/NewOrganizationPage.jsx
-// SuperAdmin â†’ Create a new organization (+ its admin, who gets a set-password email)
+// SuperAdmin -> Create a new organization (+ its admin, who gets a set-password email)
 // Route: /superadmin/organizations/new
+//
+// NOTE: this file is intentionally ASCII-only (no emoji / special symbols).
+// Icons are inline SVG so they can never turn into garbled text.
 
 import React, { useState } from "react";
 import { useNavigate } from "@/lib/routerCompat";
 import { useTheme } from "../context/ThemeContext";
 import BreadcrumbNavigation from "../components/layout/navigation/BreadcrumbNavigation";
-// âš ï¸ Use the SAME import path that OrganizationPage.jsx uses for authService
-// (there it is "../../../services/authService"). Adjust the ../ count if needed.
+// IMPORTANT: use the SAME import path that OrganizationPage.jsx uses for authService
+// (there it is "../../services/authService"). Adjust the ../ count if needed.
 import authService from "../../services/authService";
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -----------------------------------------------------------------------------
 // CONSTANTS
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -----------------------------------------------------------------------------
 // Plan names MUST match com.lms.auth.constants.PlanLimits in auth-service.
 // Other microservices read the same names from Kafka events.
 const PLANS = ["trial", "starter", "growth"];
-// Plan â‰  status. "trial" is a plan, so status is only active / inactive.
+// Plan is not status. "trial" is a plan, so status is only active / inactive.
 const STATUSES = ["active", "inactive"];
 
-// Default limits per plan â€” mirror of PlanLimits.java. Used only to pre-fill
-// the form; if the admin does not change them, we send null and auth-service
+// Default limits per plan - mirror of PlanLimits.java. Used only to pre-fill
+// the form; if the admin does not change them we send null and auth-service
 // applies its own defaults (so the backend stays the source of truth).
 const PLAN_LIMITS = {
   trial:   { students: 20,  trainers: 3,  departments: 1, branchesPerDept: 2, batchesPerBranch: 2 },
@@ -59,13 +62,68 @@ const STATUS_CONFIG = {
   inactive: { label: "Inactive", dot: "#ef4444", bg: "rgba(239,68,68,0.12)",  color: "#dc2626" },
 };
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -----------------------------------------------------------------------------
+// ICONS (inline SVG, no emoji)
+// -----------------------------------------------------------------------------
+const ICON_PATHS = {
+  building: (
+    <>
+      <rect x="4" y="2" width="16" height="20" rx="2" />
+      <path d="M9 22v-4h6v4" />
+      <path d="M8 6h.01M12 6h.01M16 6h.01M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01" />
+    </>
+  ),
+  user: (
+    <>
+      <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </>
+  ),
+  clipboard: (
+    <>
+      <rect x="8" y="2" width="8" height="4" rx="1" />
+      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+      <path d="M12 11h4M12 16h4M8 11h.01M8 16h.01" />
+    </>
+  ),
+  sliders: <path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6" />,
+  check: (
+    <>
+      <circle cx="12" cy="12" r="10" />
+      <path d="M8 12l3 3 5-6" />
+    </>
+  ),
+  alert: (
+    <>
+      <path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z" />
+      <path d="M12 9v4M12 17h.01" />
+    </>
+  ),
+};
+
+const Icon = ({ name, size = 16, color }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke={color || "currentColor"}
+    strokeWidth={2}
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    style={{ flexShrink: 0 }}
+  >
+    {ICON_PATHS[name]}
+  </svg>
+);
+
+// -----------------------------------------------------------------------------
 // DATE HELPERS (local time, yyyy-MM-dd)
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -----------------------------------------------------------------------------
 const toISO = (d) =>
   `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 
-// Same clamping as Java's LocalDate.plusMonths (Jan 31 + 1 month = Feb 28/29)
+// Same clamping as Java LocalDate.plusMonths (Jan 31 + 1 month = Feb 28/29)
 const addMonthsISO = (months) => {
   const d = new Date();
   const day = d.getDate();
@@ -82,9 +140,9 @@ const tomorrowISO = () => {
   return toISO(d);
 };
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -----------------------------------------------------------------------------
 // INITIAL FORM STATE
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -----------------------------------------------------------------------------
 const DEFAULT_PLAN = "starter";
 
 const INITIAL_FORM = {
@@ -103,9 +161,9 @@ const INITIAL_FORM = {
   maxTrainers:  PLAN_LIMITS[DEFAULT_PLAN].trainers,
 };
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -----------------------------------------------------------------------------
 // FIELD COMPONENT
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -----------------------------------------------------------------------------
 const Field = ({ label, required, error, hint, hintColor, children }) => (
   <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
     <label style={{ fontSize: 12, fontWeight: 600, color: error ? "#ef4444" : undefined }}>
@@ -121,19 +179,27 @@ const Field = ({ label, required, error, hint, hintColor, children }) => (
   </div>
 );
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -----------------------------------------------------------------------------
 // SECTION HEADER
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -----------------------------------------------------------------------------
 const SectionHeader = ({ icon, title, txtMain }) => (
-  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
-    <span style={{ fontSize: 16 }}>{icon}</span>
+  <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
+    <span
+      style={{
+        width: 28, height: 28, borderRadius: 8, flexShrink: 0,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        background: "rgba(99,102,241,0.12)", color: "#6366f1",
+      }}
+    >
+      <Icon name={icon} size={15} />
+    </span>
     <div style={{ fontSize: 13, fontWeight: 700, color: txtMain }}>{title}</div>
   </div>
 );
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -----------------------------------------------------------------------------
 // BADGE PREVIEW
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -----------------------------------------------------------------------------
 const BadgePreview = ({ cfg }) => {
   if (!cfg) return null;
   return (
@@ -148,13 +214,13 @@ const BadgePreview = ({ cfg }) => {
   );
 };
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -----------------------------------------------------------------------------
 // AVATAR PREVIEW
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -----------------------------------------------------------------------------
 const AVATAR_COLORS = [
-  ["#6366f1","#818cf8"],["#8b5cf6","#a78bfa"],["#ec4899","#f472b6"],
-  ["#14b8a6","#2dd4bf"],["#f59e0b","#fbbf24"],["#10b981","#34d399"],
-  ["#3b82f6","#60a5fa"],["#ef4444","#f87171"],
+  ["#6366f1", "#818cf8"], ["#8b5cf6", "#a78bfa"], ["#ec4899", "#f472b6"],
+  ["#14b8a6", "#2dd4bf"], ["#f59e0b", "#fbbf24"], ["#10b981", "#34d399"],
+  ["#3b82f6", "#60a5fa"], ["#ef4444", "#f87171"],
 ];
 const avatarColor = (name = "") =>
   AVATAR_COLORS[(name.charCodeAt(0) || 0) % AVATAR_COLORS.length];
@@ -163,9 +229,9 @@ function initials(name = "") {
   return name.split(" ").map((w) => w[0] || "").join("").slice(0, 2).toUpperCase() || "?";
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -----------------------------------------------------------------------------
 // MAIN PAGE
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// -----------------------------------------------------------------------------
 const NewOrganizationPage = () => {
   const navigate  = useNavigate();
   const { dark }  = useTheme();
@@ -180,7 +246,7 @@ const NewOrganizationPage = () => {
   const isTrial = form.plan === "trial";
   const planDefaults = PLAN_LIMITS[form.plan];
 
-  // â”€â”€ Design tokens (same as rest of codebase) â”€â”€
+  // -- Design tokens (same as rest of codebase) --
   const cardBg  = dark ? "rgba(255,255,255,0.03)" : "#ffffff";
   const cardBdr = dark ? "rgba(255,255,255,0.08)" : "#e5e7eb";
   const txtMain = dark ? "#f1f5f9" : "#0f172a";
@@ -190,7 +256,7 @@ const NewOrganizationPage = () => {
   const inputFocus = "#6366f1";
   const divClr  = dark ? "rgba(255,255,255,0.06)" : "#f1f5f9";
 
-  // â”€â”€ Input style helper â”€â”€
+  // -- Input style helper --
   const inputStyle = (hasError) => ({
     width: "100%",
     padding: "9px 12px",
@@ -215,30 +281,7 @@ const NewOrganizationPage = () => {
     onBlur:  (e) => { e.target.style.borderColor = hasError ? "#ef4444" : inputBdr; },
   });
 
-  // â”€â”€ Handlers â”€â”€
-  const set = (key, val) => {
-    setForm((prev) => {
-      // Picking a plan pre-fills that plan's default limits and
-      // clears the expiry for trial (trial never expires).
-      if (key === "plan") {
-        const d = PLAN_LIMITS[val];
-        return {
-          ...prev,
-          plan: val,
-          maxStudents: d.students,
-          maxTrainers: d.trainers,
-          planExpiry: val === "trial" ? "" : prev.planExpiry,
-        };
-      }
-      return { ...prev, [key]: val };
-    });
-    setErrors((prev) => {
-      const next = { ...prev, [key]: "" };
-      if (key === "plan") next.planExpiry = "";
-      return next;
-    });
-  };
-
+  // -- Validation (pure: returns an errors object, does not set state) --
   const validate = () => {
     const e = {};
     if (!form.name.trim())         e.name         = "Organization name is required";
@@ -263,6 +306,40 @@ const NewOrganizationPage = () => {
     if (Number(form.maxStudents) < 1) e.maxStudents = "Must be at least 1";
     if (Number(form.maxTrainers) < 1) e.maxTrainers = "Must be at least 1";
     return e;
+  };
+
+  // Create button is enabled only when nothing is missing
+  const remaining = Object.keys(validate()).length;
+  const canSubmit = remaining === 0 && !loading;
+
+  // A past expiry date is flagged immediately while typing/picking
+  const expiryLiveError =
+    !isTrial && form.planExpiry && form.planExpiry <= toISO(new Date())
+      ? "Expiry date must be in the future"
+      : "";
+
+  // -- Handlers --
+  const set = (key, val) => {
+    setForm((prev) => {
+      // Picking a plan pre-fills that plan's default limits and
+      // clears the expiry for trial (trial never expires).
+      if (key === "plan") {
+        const d = PLAN_LIMITS[val];
+        return {
+          ...prev,
+          plan: val,
+          maxStudents: d.students,
+          maxTrainers: d.trainers,
+          planExpiry: val === "trial" ? "" : prev.planExpiry,
+        };
+      }
+      return { ...prev, [key]: val };
+    });
+    setErrors((prev) => {
+      const next = { ...prev, [key]: "" };
+      if (key === "plan") next.planExpiry = "";
+      return next;
+    });
   };
 
   const handleSubmit = async () => {
@@ -323,27 +400,27 @@ const NewOrganizationPage = () => {
     }
   };
 
-  // â”€â”€ Avatar preview colors â”€â”€
+  // -- Avatar preview colors --
   const [avatarA, avatarB] = avatarColor(form.name);
 
-  // â”€â”€ Success state â”€â”€
+  // -- Success state --
   if (success) {
     return (
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "80px 40px", gap: 14, textAlign: "center" }}>
-        <div style={{ fontSize: 56 }}>{inviteSent ? "ðŸŽ‰" : "âš ï¸"}</div>
+        <Icon name={inviteSent ? "check" : "alert"} size={56} color={inviteSent ? "#10b981" : "#d97706"} />
         <div style={{ fontSize: 18, fontWeight: 800, color: txtMain }}>Organization created</div>
         {inviteSent ? (
           <>
             <div style={{ fontSize: 13, color: txtSub }}>
               A set-password email was sent to {form.adminEmail.trim()}.
             </div>
-            <div style={{ fontSize: 12, color: txtSub }}>Redirecting to organizations listâ€¦</div>
+            <div style={{ fontSize: 12, color: txtSub }}>Redirecting to organizations list...</div>
           </>
         ) : (
           <>
             <div style={{ fontSize: 13, color: "#d97706", maxWidth: 420 }}>
               The invite email to {form.adminEmail.trim()} could not be sent. Open the
-              organization and choose â€œResend inviteâ€.
+              organization and click &quot;Resend invite&quot;.
             </div>
             <button
               onClick={() => navigate("/superadmin/organizations")}
@@ -372,58 +449,14 @@ const NewOrganizationPage = () => {
         ]}
       />
 
-      {/* Page Header */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
-        <div>
-          <h1 style={{ fontSize: 22, fontWeight: 800, color: txtMain, margin: 0, letterSpacing: "-0.02em" }}>
-            New Organization
-          </h1>
-          <p style={{ fontSize: 13, color: txtSub, margin: "4px 0 0" }}>
-            Fill in the details to onboard a new organization
-          </p>
-        </div>
-
-        {/* Action buttons */}
-        <div style={{ display: "flex", gap: 10 }}>
-          <button
-            onClick={() => navigate("/superadmin/organizations")}
-            style={{
-              padding: "9px 18px", borderRadius: 8, fontSize: 13, fontWeight: 600,
-              background: dark ? "rgba(255,255,255,0.05)" : "#f1f5f9",
-              color: txtSub, border: "none", cursor: "pointer",
-            }}
-          >
-            Cancel
-          </button>
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            style={{
-              padding: "9px 22px", borderRadius: 8, fontSize: 13, fontWeight: 700,
-              background: loading ? "#818cf8" : "linear-gradient(135deg, #6366f1, #8b5cf6)",
-              color: "#fff", border: "none", cursor: loading ? "not-allowed" : "pointer",
-              display: "flex", alignItems: "center", gap: 8,
-              opacity: loading ? 0.8 : 1,
-            }}
-          >
-            {loading ? (
-              <>
-                <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}
-                  style={{ animation: "spin 1s linear infinite" }}>
-                  <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
-                </svg>
-                Creatingâ€¦
-              </>
-            ) : (
-              <>
-                <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
-                  <path d="M12 5v14M5 12h14" />
-                </svg>
-                Create Organization
-              </>
-            )}
-          </button>
-        </div>
+      {/* Page Header (no buttons here - Create / Cancel are at the bottom) */}
+      <div>
+        <h1 style={{ fontSize: 22, fontWeight: 800, color: txtMain, margin: 0, letterSpacing: "-0.02em" }}>
+          New Organization
+        </h1>
+        <p style={{ fontSize: 13, color: txtSub, margin: "4px 0 0" }}>
+          Fill in the details to onboard a new organization
+        </p>
       </div>
 
       {/* Server error */}
@@ -439,12 +472,12 @@ const NewOrganizationPage = () => {
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 320px", gap: 20, alignItems: "start" }}>
 
-        {/* â”€â”€ LEFT: Form â”€â”€ */}
+        {/* ---- LEFT: Form ---- */}
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
 
           {/* Basic Info */}
           <div style={{ background: cardBg, border: `1px solid ${cardBdr}`, borderRadius: 14, padding: "22px 24px" }}>
-            <SectionHeader icon="ðŸ¢" title="Basic Information" txtMain={txtMain} />
+            <SectionHeader icon="building" title="Basic Information" txtMain={txtMain} />
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
               <Field label="Organization Name" required error={errors.name}>
                 <input
@@ -495,7 +528,7 @@ const NewOrganizationPage = () => {
                   style={selectStyle(errors.industry)}
                   {...focusProps(errors.industry)}
                 >
-                  <option value="">Select industryâ€¦</option>
+                  <option value="">Select industry...</option>
                   {INDUSTRIES.map((ind) => (
                     <option key={ind} value={ind}>{ind}</option>
                   ))}
@@ -516,7 +549,7 @@ const NewOrganizationPage = () => {
 
           {/* Organization Admin */}
           <div style={{ background: cardBg, border: `1px solid ${cardBdr}`, borderRadius: 14, padding: "22px 24px" }}>
-            <SectionHeader icon="ðŸ‘¤" title="Organization Admin" txtMain={txtMain} />
+            <SectionHeader icon="user" title="Organization Admin" txtMain={txtMain} />
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
               <Field label="Admin Name" required error={errors.adminName}>
                 <input
@@ -544,10 +577,10 @@ const NewOrganizationPage = () => {
 
           {/* Plan & Status */}
           <div style={{ background: cardBg, border: `1px solid ${cardBdr}`, borderRadius: 14, padding: "22px 24px" }}>
-            <SectionHeader icon="ðŸ“‹" title="Plan & Status" txtMain={txtMain} />
+            <SectionHeader icon="clipboard" title="Plan & Status" txtMain={txtMain} />
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 14 }}>
 
-              {/* Plan selector â€” visual cards */}
+              {/* Plan selector */}
               <Field label="Plan">
                 <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
                   {PLANS.map((p) => {
@@ -609,7 +642,7 @@ const NewOrganizationPage = () => {
               <Field
                 label="Plan Expiry Date"
                 required={!isTrial}
-                error={errors.planExpiry}
+                error={errors.planExpiry || expiryLiveError}
                 hint={isTrial ? "Trial plans do not expire." : "When the plan ends, the organization returns to Trial."}
                 hintColor={txtSub}
               >
@@ -619,8 +652,12 @@ const NewOrganizationPage = () => {
                   min={tomorrowISO()}
                   disabled={isTrial}
                   onChange={(e) => set("planExpiry", e.target.value)}
-                  style={{ ...inputStyle(errors.planExpiry), opacity: isTrial ? 0.5 : 1, cursor: isTrial ? "not-allowed" : "text" }}
-                  {...focusProps(errors.planExpiry)}
+                  style={{
+                    ...inputStyle(errors.planExpiry || expiryLiveError),
+                    opacity: isTrial ? 0.5 : 1,
+                    cursor: isTrial ? "not-allowed" : "text",
+                  }}
+                  {...focusProps(errors.planExpiry || expiryLiveError)}
                 />
                 {!isTrial && (
                   <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
@@ -646,7 +683,7 @@ const NewOrganizationPage = () => {
 
           {/* Limits */}
           <div style={{ background: cardBg, border: `1px solid ${cardBdr}`, borderRadius: 14, padding: "22px 24px" }}>
-            <SectionHeader icon="âš™ï¸" title="Usage Limits" txtMain={txtMain} />
+            <SectionHeader icon="sliders" title="Usage Limits" txtMain={txtMain} />
             <div style={{ fontSize: 12, color: txtSub, marginBottom: 14, lineHeight: 1.5 }}>
               Pre-filled from the {PLAN_CONFIG[form.plan].label} plan, which also allows up to{" "}
               {planDefaults.departments} {planDefaults.departments === 1 ? "department" : "departments"},{" "}
@@ -677,9 +714,71 @@ const NewOrganizationPage = () => {
               </Field>
             </div>
           </div>
+
+          {/* ---- Bottom action bar: Cancel + Create (enabled only when form is complete) ---- */}
+          <div
+            style={{
+              background: cardBg, border: `1px solid ${cardBdr}`, borderRadius: 14,
+              padding: "16px 24px", display: "flex", alignItems: "center",
+              justifyContent: "space-between", gap: 12, flexWrap: "wrap",
+            }}
+          >
+            <div style={{ fontSize: 12, fontWeight: 600, color: canSubmit ? "#059669" : txtSub }}>
+              {canSubmit
+                ? "All required details are filled. Ready to create."
+                : `${remaining} required ${remaining === 1 ? "item" : "items"} left to fill.`}
+            </div>
+
+            <div style={{ display: "flex", gap: 10 }}>
+              <button
+                type="button"
+                onClick={() => navigate("/superadmin/organizations")}
+                style={{
+                  padding: "9px 18px", borderRadius: 8, fontSize: 13, fontWeight: 600,
+                  background: dark ? "rgba(255,255,255,0.05)" : "#f1f5f9",
+                  color: txtSub, border: "none", cursor: "pointer",
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={!canSubmit}
+                style={{
+                  padding: "9px 22px", borderRadius: 8, fontSize: 13, fontWeight: 700,
+                  background: canSubmit
+                    ? "linear-gradient(135deg, #6366f1, #8b5cf6)"
+                    : dark ? "rgba(255,255,255,0.08)" : "#cbd5e1",
+                  color: canSubmit ? "#fff" : dark ? "#64748b" : "#94a3b8",
+                  border: "none",
+                  cursor: canSubmit ? "pointer" : "not-allowed",
+                  display: "flex", alignItems: "center", gap: 8,
+                  transition: "background 0.15s",
+                }}
+              >
+                {loading ? (
+                  <>
+                    <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}
+                      style={{ animation: "spin 1s linear infinite" }}>
+                      <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+                    </svg>
+                    Creating...
+                  </>
+                ) : (
+                  <>
+                    <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.5}>
+                      <path d="M12 5v14M5 12h14" />
+                    </svg>
+                    Create Organization
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* â”€â”€ RIGHT: Live Preview â”€â”€ */}
+        {/* ---- RIGHT: Live Preview ---- */}
         <div style={{ display: "flex", flexDirection: "column", gap: 16, position: "sticky", top: 20 }}>
 
           {/* Preview Card */}
@@ -712,16 +811,15 @@ const NewOrganizationPage = () => {
             {/* Details */}
             <div style={{ borderTop: `1px solid ${divClr}`, paddingTop: 12, display: "flex", flexDirection: "column", gap: 8 }}>
               {[
-                { icon: "ðŸŒ", val: form.domain       || "â€”", label: "Domain" },
-                { icon: "ðŸ­", val: form.industry     || "â€”", label: "Industry" },
-                { icon: "ðŸ“", val: form.location     || "â€”", label: "Location" },
-                { icon: "âœ‰ï¸", val: form.contactEmail || "â€”", label: "Email" },
-                { icon: "ðŸ‘¤", val: form.adminEmail   || "â€”", label: "Admin" },
-                { icon: "ðŸ“…", val: isTrial ? "No expiry" : (form.planExpiry || "â€”"), label: "Expires" },
-              ].map(({ icon, val, label }) => (
+                { val: form.domain       || "-", label: "Domain" },
+                { val: form.industry     || "-", label: "Industry" },
+                { val: form.location     || "-", label: "Location" },
+                { val: form.contactEmail || "-", label: "Email" },
+                { val: form.adminEmail   || "-", label: "Admin" },
+                { val: isTrial ? "No expiry" : (form.planExpiry || "-"), label: "Expires" },
+              ].map(({ val, label }) => (
                 <div key={label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span style={{ fontSize: 12 }}>{icon}</span>
-                  <span style={{ fontSize: 11, color: txtSub, minWidth: 52 }}>{label}</span>
+                  <span style={{ fontSize: 11, color: txtSub, minWidth: 56 }}>{label}</span>
                   <span style={{ fontSize: 12, color: txtMain, fontWeight: 500, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{val}</span>
                 </div>
               ))}
@@ -756,7 +854,7 @@ const NewOrganizationPage = () => {
                 { label: "Admin email",        done: EMAIL_RE.test(form.adminEmail) },
                 { label: "Plan selected",      done: !!form.plan },
                 { label: "Status selected",    done: !!form.status },
-                { label: "Plan expiry",        done: isTrial || !!form.planExpiry },
+                { label: "Plan expiry",        done: isTrial || (!!form.planExpiry && !expiryLiveError) },
               ].map(({ label, done }) => (
                 <div key={label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <div style={{
@@ -793,5 +891,4 @@ const NewOrganizationPage = () => {
 };
 
 export default NewOrganizationPage;
-
 
