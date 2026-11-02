@@ -43,6 +43,7 @@ import {
   School,
   Landmark,
   ChevronRight,
+  Megaphone,
 } from "lucide-react";
 import MobileFullScreenMenu from "./MobileFullScreenMenu";
 
@@ -64,9 +65,10 @@ const HUB_MENU_ITEMS = [
 // route/functionality) and Workspace only. Resume Builder, AI Companion,
 // and Whiteboard moved up into ILM ORA Feature above.
 const PRODUCT_MENU_ITEMS = [
-  { key: "meet", title: "ILM ORA Calendry", description: "Live classes & video sessions", icon: "LayoutDashboard" },
-    { key: "workspace", title: "Workspace", description: "Your all-in-one collaborative space", icon: "Users" },
-  { key: "hrhub", title: "HR Hub — HR Management & Training", description: "HR Management & Training", icon: "Layers" },
+  { key: "meet", title: "ILM ORA Calendry", description: "Live classes & video sessions", icon: "CalendarCheck" },
+  { key: "workspace", title: "Workspace", description: "All-in-one collaborative space", icon: "LayoutDashboard" },
+  { key: "hrhub", title: "HR Hub", description: "HR Management & Training", icon: "Users" },
+  { key: "digitalMarketing", title: "Digital Marketing Hub", description: "21 modules, labs & real project", icon: "Megaphone" },
 ];
 
 // Icon name (string) → actual lucide-react component.
@@ -84,6 +86,7 @@ const NAV_ICON_MAP = {
   Cloud,
   Globe,
   Layers,
+  Megaphone,
 };
 const HUB_ROUTES = {
   student: "/student-hub",
@@ -99,9 +102,10 @@ const PRODUCT_ROUTES = {
   hrhub: "/Hr-Hub",
   meet: "/calendry",
   resume: "/resume-builder",
-  workspace: "/workspace",
+   workspace: "/workspace",
   aiCompanion: "/ai-companion",
   whiteboard: "/whiteboard",
+  digitalMarketing: "/digital-marketing-hub",
 };
 const HUB_ICON_COLORS = {
   student: "text-green-600",
@@ -114,9 +118,10 @@ const HUB_ICON_COLORS = {
   studyPlan: "text-orange-500",
 };
 const PRODUCT_ICON_COLORS = {
-  hrhub: "text-orange-500",
+  hrhub: "text-blue-600",
   meet: "text-orange-500",
-  workspace: "text-orange-500",
+  workspace: "text-purple-500",
+  digitalMarketing: "text-green-600",
 };
 
 // "Skills" dropdown

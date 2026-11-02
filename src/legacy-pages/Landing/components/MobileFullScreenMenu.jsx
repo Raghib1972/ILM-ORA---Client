@@ -32,6 +32,7 @@ import {
   MessageSquare,
   Building2,
   User,
+  Megaphone,
 } from "lucide-react";
 
 /* ─────────────────────────────────────────────────────────────────
@@ -426,29 +427,67 @@ export default function MobileFullScreenMenu({
           onToggle={() => setProductOpen((p) => !p)}
         >
                     <div style={TILE_GRID}>
-            {productMenuItems.map((item) => {
+                        {productMenuItems.map((item) => {
               const iconMap = {
                 Users,
                 FileText,
                 LayoutDashboard,
                 Sparkles,
+                CalendarCheck,
+                Megaphone,
               };
-              // "meet" (ILM ORA Calendry) shows a calendar icon
-              const Icon = item.key === "meet" ? Calendar : iconMap[item.icon];
+              const colorMap = {
+                meet: "#f97316",
+                workspace: "#9333ea",
+                hrhub: "#2563eb",
+                digitalMarketing: "#16a34a",
+              };
+              const Icon = iconMap[item.icon] || LayoutGrid;
+              const color = colorMap[item.key] || "#f97316";
 
               return (
-                <MenuTile
+                <button
                   key={item.key}
-                  variant="stack"
-                  Icon={Icon}
-                  color="#f97316"
-                  title={item.title}
-                  desc={item.description}
                   onClick={() => {
                     navigate(productRoutes[item.key]);
                     onClose();
                   }}
-                />
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "flex-start",
+                    gap: 4,
+                    padding: 10,
+                    borderRadius: 10,
+                    border: "1px solid rgba(255,255,255,0.05)",
+                    background: "#1A1A1A",
+                    cursor: "pointer",
+                    textAlign: "left",
+                  }}
+                >
+                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                    <Icon size={16} style={{ color, flexShrink: 0 }} />
+                    <span
+                      style={{
+                        fontSize: 12.5,
+                        fontWeight: 600,
+                        color: "#ffffff",
+                        lineHeight: 1.2,
+                      }}
+                    >
+                      {item.title}
+                    </span>
+                  </div>
+                  <span
+                    style={{
+                      fontSize: 10.5,
+                      color: "#9CA3AF",
+                      lineHeight: 1.35,
+                    }}
+                  >
+                    {item.description}
+                  </span>
+                </button>
               );
             })}
           </div>

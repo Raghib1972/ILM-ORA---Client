@@ -4116,16 +4116,19 @@ gsap.registerPlugin(ScrollTrigger);
 // data file — only the item content (title/description/icon) is shared.
 
 // NAV_ICON_MAP mein Code2 add karo
-const NAV_ICON_MAP = { GraduationCap, Users, BarChart3, FileText, LayoutDashboard, Sparkles, PenTool, Code2, CalendarCheck };
+const NAV_ICON_MAP = { GraduationCap, Users, BarChart3, FileText, LayoutDashboard, Sparkles, PenTool, Code2, CalendarCheck, Megaphone, Layers };
 // HUB_ICON_COLORS mein color add karo
 const HUB_ICON_COLORS = { student: "#16a34a", trainer: "#3b82f6", admin: "#a855f7", whiteboard: "#F97316", studyPlan: "#F97316", aiCompanion: "#a855f7", resume: "#16a34a", codingLab: "#0ea5e9" };
-const PRODUCT_ICON_COLORS = { meet: "#F97316", resume: "#16a34a", workspace: "#F97316", hrhub: "#F97316" };
+const PRODUCT_ICON_COLORS = { meet: "#F97316", resume: "#16a34a", workspace: "#a855f7", hrhub: "#2563eb", digitalMarketing: "#16a34a" };
 
-// HR Hub: Product menu ka naya item (navMenuData.js ko touch nahi kiya)
-const HR_HUB_ITEM = { key: "hrhub", title: "HR Hub — HR Management & Training", description: "HR Management & Training", icon: "Users" };
-const PRODUCT_ITEMS_ALL = PRODUCT_MENU_ITEMS.some((i) => i.key === "hrhub")
-  ? PRODUCT_MENU_ITEMS
-  : [...PRODUCT_MENU_ITEMS, HR_HUB_ITEM];
+// HR Hub + Digital Marketing Hub: Product menu ke extra items (navMenuData.js ko touch nahi kiya)
+const HR_HUB_ITEM = { key: "hrhub", title: "HR Hub", description: "HR Management & Training", icon: "Users" };
+const DM_HUB_ITEM = { key: "digitalMarketing", title: "Digital Marketing Hub", description: "21 modules, labs & real project", icon: "Megaphone" };
+const PRODUCT_ITEMS_ALL = [
+  ...PRODUCT_MENU_ITEMS.filter((i) => i.key !== "hrhub" && i.key !== "digitalMarketing"),
+  HR_HUB_ITEM,
+  DM_HUB_ITEM,
+];
 
 // Mobile menu — All Courses tiles (desktop COURSE_CATEGORIES ko touch nahi kiya)
 const MOBILE_COURSE_TILES = [
@@ -5499,7 +5502,8 @@ const NAV_SEARCH_PAGES = [
   { title: "Study Plan", desc: "Personalized Study Plans & Progress Tracking", route: "/study-plan", group: "features", tag: "Feature" },
   { title: "ILM ORA Calendry", desc: "Live classes & video sessions", route: "/calendry", group: "product", tag: "Product" },
     { title: "Workspace", desc: "Your all-in-one collaborative space", route: "/workspace", group: "product", tag: "Product" },
-  { title: "HR Hub — HR Management & Training", desc: "HR Management & Training", route: "/Hr-Hub", group: "product", tag: "Product" },
+    { title: "HR Hub", desc: "HR Management & Training", route: "/Hr-Hub", group: "product", tag: "Product" },
+  { title: "Digital Marketing Hub", desc: "21 modules, labs & real project", route: "/digital-marketing-hub", group: "product", tag: "Product" },
     { title: "All Career Tracks", route: "/career", group: "career", tag: "Career Track" },
   { title: "Development Engineering Platform", route: "/career?platform=dev", group: "career", tag: "Career Track" },
   { title: "AI – Agent AI", route: "/career?platform=ai", group: "career", tag: "Career Track" },
@@ -6554,6 +6558,7 @@ const HUB_ROUTES = {
 
 const PRODUCT_ROUTES = {
   hrhub: "/Hr-Hub",
+  digitalMarketing: "/digital-marketing-hub",
   meet: "/calendry",
   resume: "/resume-builder",
   workspace: "/workspace",
@@ -6573,7 +6578,7 @@ const goToHub = (hubKey) => {
 // Product → real public product page
 const goToProductSection = (productKey) => {
   setProductMenuOpen(false);
-  if (productKey === "hrhub") { navigate(PRODUCT_ROUTES.hrhub); return; }
+    if (productKey === "hrhub" || productKey === "digitalMarketing") { navigate(PRODUCT_ROUTES[productKey]); return; }
 
   if (isLoggedIn && hasRole) {
     navigate(PRODUCT_ROUTES[productKey] || "/");
@@ -7922,27 +7927,24 @@ const renderMegaTrigger = (key) => {
                 />
               </button>
                             {mobileProductOpen && (
-                <div className="d-mobile-tile-grid">
-                                    {PRODUCT_ITEMS_ALL.map((item) => {
-                    // "meet" (ILM ORA Calendry) ke liye calendar icon
-                    const ItemIcon = item.key === "meet" ? Calendar : NAV_ICON_MAP[item.icon];
+                <div className="d-mobile-section-items-hub">
+                  {PRODUCT_ITEMS_ALL.map((item) => {
+                    const ItemIcon = item.key === "meet" ? CalendarCheck : NAV_ICON_MAP[item.icon] || LayoutGrid;
                     return (
                       <button
                         key={item.key}
                         type="button"
-                        className="d-mobile-tile d-mobile-tile-stack"
+                        className="d-nav-hub-card"
                         onClick={() => {
                           setMobileNavOpen(false);
                           goToProductSection(item.key);
                         }}
                       >
-                        <span className="d-mobile-tile-icon d-mobile-tile-icon-light">
-                          <ItemIcon size={20} color={PRODUCT_ICON_COLORS[item.key]} />
-                        </span>
-                        <span>
-                          <span className="d-mobile-tile-title">{item.title}</span>
-                          <span className="d-mobile-tile-desc">{item.description}</span>
-                        </span>
+                        <div className="d-nav-hub-card-top">
+                          <ItemIcon size={17} color={PRODUCT_ICON_COLORS[item.key] || "#F97316"} />
+                          <span className="d-nav-hub-card-title">{item.title}</span>
+                        </div>
+                        <span className="d-nav-hub-card-desc">{item.description}</span>
                       </button>
                     );
                   })}

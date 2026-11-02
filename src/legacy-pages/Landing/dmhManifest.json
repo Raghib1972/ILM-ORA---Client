@@ -1,0 +1,23 @@
+{
+  "images": {
+    "i1": "/dmh/images/i1.jpg",
+    "i2": "/dmh/images/i2.jpg",
+    "i3": "/dmh/images/i3.jpg",
+    "i4": "/dmh/images/i4.jpg",
+    "i5": "/dmh/images/i5.jpg",
+    "i6": "/dmh/images/i6.jpg",
+    "i7": "/dmh/images/i7.jpg",
+    "i8": "/dmh/images/i8.jpg",
+    "i9": "/dmh/images/i9.jpg",
+    "i10": "/dmh/images/i10.jpg",
+    "i11": "/dmh/images/i11.jpg",
+    "i12": "/dmh/images/i12.png"
+  },
+  "videos": [
+    "/dmh/video/v1.mp4",
+    "/dmh/video/v2.mp4",
+    "/dmh/video/v3.mp4",
+    "/dmh/video/v4.mp4",
+    "/dmh/video/v5.mp4"
+  ]
+}
