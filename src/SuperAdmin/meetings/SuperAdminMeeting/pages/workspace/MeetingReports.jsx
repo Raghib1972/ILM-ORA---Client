@@ -178,8 +178,16 @@ function ParticipantCard({ p, onTranscript }) {
 }
 
 // ───────────── transcript modal ─────────────
+// The transcript is shown in English. originalText (what was actually spoken, e.g. Hindi / Urdu / Telugu) is
+// null for sessions made before the translation step, and equal to text for lines that were already English.
+const hasOriginal = (s) =>
+  !!s.originalText &&
+  s.originalText.trim() !== "" &&
+  s.originalText.trim() !== (s.text || "").trim();
+
 function TranscriptModal({ sessionId, person, onClose }) {
   const [items, setItems] = useState([]);
+  const [showOriginal, setShowOriginal] = useState(false);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -208,25 +216,44 @@ function TranscriptModal({ sessionId, person, onClose }) {
     load(0);
   }, [load]);
 
+  const anyOriginal = items.some(hasOriginal);
+
   return (
     <div className="mr-modal-scrim" onMouseDown={onClose}>
       <div className="mr-modal" onMouseDown={(e) => e.stopPropagation()}>
         <div className="mr-modal-head">
           <h3>Transcript — {person.displayName}</h3>
-          <button
-            type="button"
-            className="icon-btn"
-            onClick={onClose}
-            aria-label="Close"
-          >
-            <X size={16} />
-          </button>
+          <div className="mr-modal-actions">
+            {anyOriginal && (
+              <button
+                type="button"
+                className="mr-toggle"
+                aria-pressed={showOriginal}
+                onClick={() => setShowOriginal((v) => !v)}
+              >
+                {showOriginal ? "Hide original" : "Show original"}
+              </button>
+            )}
+            <button
+              type="button"
+              className="icon-btn"
+              onClick={onClose}
+              aria-label="Close"
+            >
+              <X size={16} />
+            </button>
+          </div>
         </div>
         <div className="mr-modal-body">
           {items.map((s) => (
             <div className="mr-seg" key={s.id}>
               <span className="mr-seg-time">{s.timeIst}</span>
-              <span className="mr-seg-text">{s.text}</span>
+              <span className="mr-seg-body">
+                <span className="mr-seg-text">{s.text}</span>
+                {showOriginal && hasOriginal(s) && (
+                  <span className="mr-seg-orig">{s.originalText}</span>
+                )}
+              </span>
             </div>
           ))}
           {!loading && !error && items.length === 0 && (
@@ -690,4 +717,9 @@ const MR_CSS = `
 .mr-seg{display:flex;gap:10px;padding:5px 0;font-size:13px;line-height:1.5}
 .mr-seg-time{color:var(--brand);font-weight:700;min-width:64px;flex-shrink:0}
 .mr-seg-text{white-space:pre-wrap}
+.mr-seg-body{display:flex;flex-direction:column;gap:2px;min-width:0}
+.mr-seg-orig{white-space:pre-wrap;color:var(--muted);font-size:12px;line-height:1.45;border-left:2px solid var(--border);padding-left:8px}
+.mr-modal-actions{display:flex;align-items:center;gap:8px}
+.mr-toggle{border:1px solid var(--border);background:var(--card);color:var(--muted);border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:700;cursor:pointer}
+.mr-toggle[aria-pressed="true"]{border-color:var(--brand);color:var(--brand);background:var(--tone-purple-soft)}
 `;
