@@ -3,19 +3,13 @@
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import authService from "../../services/authService";
-
+import { getRoleHomeRoute } from "@/utils/roleHomeRedirect";
 export default function GithubCallback() {
   const router = useRouter();
   const ran = useRef(false);
 
-  const redirectByRole = (role) => {
-    switch ((role || "").toUpperCase()) {
-      case "SUPER_ADMIN":
-        router.replace("/superadmin");
-        break;
-      default:
-        router.replace("/ilm-demo");
-    }
+    const redirectByRole = (role) => {
+    router.replace(getRoleHomeRoute(role));
   };
 
   useEffect(() => {

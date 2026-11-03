@@ -3981,7 +3981,7 @@
 "use client";
 
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import { useEffect, useState, useRef, useCallback, useMemo, Suspense } from "react";
+import { useEffect, useLayoutEffect, useState, useRef, useCallback, useMemo, Suspense } from "react";
 import { flushSync, createPortal } from "react-dom";
 import { useNavigate, useLocation, useSearchParams } from "@/lib/routerCompat";
 import { gsap } from "gsap";
@@ -4005,6 +4005,7 @@ import Footer from "../Landing/components/Footer";
 import { HUB_MENU_ITEMS, PRODUCT_MENU_ITEMS } from "../Landing/components/navMenuData";
 import IlmDemoProfilePage from "../IlmDemoProfilePage";
 import NotificationBell from "../../components/NotificationBell";
+import { getRoleHomeRoute } from "@/utils/roleHomeRedirect";
 // ILM ORA Feature dropdown pages — Student, Trainer and Manager Hub.
 // These are standalone public pages opened from the top navbar dropdown.
 // The selected hub opens its actual route instead of rendering inside /ilm-demo.
@@ -4576,15 +4577,14 @@ function LoginModal({ onClose, onGoogleSuccess, onAuthenticated }) {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const redirectByRole = (role) => {
+     const redirectByRole = (role) => {
     onClose();
-    const r = (role || "").toUpperCase();
-    switch (r) {
-      case "SUPER_ADMIN":
-        navigate("/superadmin", { replace: true });
-        break;
-      default:
-        navigate("/ilm-demo", { replace: true });
+    const target = getRoleHomeRoute(role);
+    if (target === "/ilm-demo" || target === "/superadmin") {
+      navigate(target, { replace: true });
+    } else {
+      // Isi page par rewrite hota hai, isliye turant URL badlo
+      window.history.replaceState(window.history.state, "", target);
     }
   };
 
@@ -5773,7 +5773,11 @@ export default function IlmOraDemoPage() {
   // shareable/refreshable, but it never triggers a real route change —
   // we stay on /ilm-demo and just swap what renders below the sidebar.
   const [searchParams, setSearchParams] = useSearchParams();
-  const activeSection = searchParams.get("section") || null;
+    // /admin/workspace jaisa URL ho to wahi section hai; purana ?section= bhi chalega
+  const pathSection = /^\/(student|trainer|admin|business)\/.+/.test(location.pathname || "")
+    ? location.pathname
+    : null;
+  const activeSection = searchParams.get("section") || pathSection || null;
   const [showLogin, setShowLogin] = useState(false);
   const [showRolePopup, setShowRolePopup] = useState(false);
   const [showInterestPopup, setShowInterestPopup] = useState(false);
@@ -5831,7 +5835,12 @@ export default function IlmOraDemoPage() {
   const [showProfile, setShowProfile] = useState(
     () => searchParams.get("view") === "profile",
   );
-  useEffect(() => {
+   useEffect(() => {
+    // URL me already sahi state hai to kuch mat badlo (warna mount par
+    // URL wapas /ilm-demo ban jata hai)
+    const inUrl = searchParams.get("view") === "profile";
+    const hasLeftovers = !!(searchParams.get("target") || searchParams.get("tab"));
+    if (showProfile ? inUrl : !inUrl && !hasLeftovers) return;
     setSearchParams(
       (prev) => {
         const next = new URLSearchParams(prev);
@@ -6060,12 +6069,50 @@ export default function IlmOraDemoPage() {
 
   // Guard for the showProfile/`?view=profile` URL-persistence fix above:
   // don't honor a stale `?view=profile` URL for a logged-out session
-  // (e.g. a link shared/reopened after logout) — fall back to the normal
+    // (e.g. a link shared/reopened after logout) — fall back to the normal
   // logged-out view instead of rendering the Profile page.
   useEffect(() => {
     if (!isLoggedIn && showProfile) setShowProfile(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoggedIn]);
+
+    // useLayoutEffect = browser paint se PEHLE chalta hai, aur replaceState
+  // se URL turant badalta hai (page dobara fetch nahi hota, kyunki
+  // /student, /trainer, /admin, /business sab isi page par rewrite hote hain).
+    useLayoutEffect(() => {
+    if (isSigningOut || showRolePopup || showInterestPopup || showProfile) return;
+    if (!isLoggedIn || !hasRole || savedUser?.isNewUser) return;
+    const target = getRoleHomeRoute(
+      localStorage.getItem("role") || savedUser?.role,
+    );
+    if (!target || target === "/ilm-demo") return;
+
+    const applyRoleUrl = () => {
+      // Sirf tab chalao jab URL abhi /ilm-demo hai
+      // (/admin, /admin/workspace par ye kuch nahi karega)
+      if (window.location.pathname !== "/ilm-demo") return;
+      const sp = new URLSearchParams(window.location.search);
+      const sec = sp.get("section");
+      // purane ?section=/admin/workspace links ko /admin/workspace bana do
+      const dest = sec && sec.startsWith("/") ? sec : target;
+      sp.delete("section");
+      const qs = sp.toString();
+      window.history.replaceState(
+        window.history.state,
+        "",
+        dest + (qs ? "?" + qs : "") + window.location.hash,
+      );
+    };
+    applyRoleUrl();
+    // Next apna URL redirect ke BAAD set karta hai, isliye dobara check
+    const t1 = setTimeout(applyRoleUrl, 0);
+    const t2 = setTimeout(applyRoleUrl, 120);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasRole, hasRealSession, isSigningOut, showRolePopup, showInterestPopup, showProfile, location.pathname]);
 
   const userName =
     signupUser?.name ||
@@ -6415,13 +6462,21 @@ export default function IlmOraDemoPage() {
       );
     }
 
-    setShowInterestPopup(false);
+        setShowInterestPopup(false);
     setGoogleUserInfo(null);
     addToast({
       type: "star",
       title: "You're in!",
       desc: "Explore your role-based dashboard below.",
     });
+    // Real session ban gaya ho tabhi role ke URL par bhejo
+        if (localStorage.getItem("lms_token")) {
+      window.history.replaceState(
+        window.history.state,
+        "",
+        getRoleHomeRoute(appRole),
+      );
+    }
   };
 
   const handleInterestChosen = (interestKey) => {
@@ -6523,20 +6578,23 @@ export default function IlmOraDemoPage() {
       setShowRolePopup(true);
       return;
     }
-    const role = normalizeAppRole(user.role) || "student";
+       const role = normalizeAppRole(user.role) || "student";
     const homePath = ROLE_HOME_PATH[role] || "/student";
-    setSearchParams(
-      (prev) => {
-        const next = new URLSearchParams(prev);
-        if (!path || path === homePath) {
-          next.delete("section"); // "Dashboard" → back to the demo overview
-        } else {
-          next.set("section", path);
-        }
-        return next;
-      },
-      { replace: false },
-    );
+    const dest = !path || path === homePath ? homePath : path;
+    if (typeof dest === "string" && dest.startsWith("/")) {
+      // page remount nahi hoga, sirf URL badlega (/admin/workspace)
+      window.history.pushState(null, "", dest);
+    } else {
+      // "hub:..." / "page:..." jaise special sections purane tarike se
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          next.set("section", dest);
+          return next;
+        },
+        { replace: false },
+      );
+    }
   };
 
 // ─────────────────────────────────────────────────────────────
@@ -6805,16 +6863,11 @@ const renderMegaTrigger = (key) => {
   setProfileScrollTarget(null);
   setProfileReturnPath(null);
 
-  // /ilm-demo is the existing Dashboard shell.
-  // Removing ?section returns the SAME logged-in user
-  // to their role-based Dashboard Home.
-  setSearchParams(
-    (prev) => {
-      const next = new URLSearchParams(prev);
-      next.delete("section");
-      return next;
-    },
-    { replace: true }
+    // Role ke Dashboard Home URL par wapas (/admin, /student ...)
+  window.history.pushState(
+    null,
+    "",
+    getRoleHomeRoute(localStorage.getItem("role") || user?.role),
   );
 };
   const handleProfileCompleted = () => {
@@ -6826,7 +6879,10 @@ const renderMegaTrigger = (key) => {
     // se seedha uska dashboard khulega (goToDashboard already role-based
     // navigate karta hai — Student -> /student/dashboard, Trainer ->
     // /trainer/dashboard, Admin -> /admin/dashboard).
-    navigate("/ilm-demo", { replace: true });
+       navigate(
+      getRoleHomeRoute(localStorage.getItem("role") || getSavedUser()?.role),
+      { replace: true },
+    );
     addToast({
       type: "star",
       title: "Profile Completed! 🎉",

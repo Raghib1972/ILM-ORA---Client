@@ -35,8 +35,28 @@ const nextConfig = {
       { source: "/ilm-ora-talk", destination: "/talk", permanent: true },
       { source: "/ilmora-talk", destination: "/talk", permanent: true },
       { source: "/platforms", destination: "/career", permanent: true },
-      { source: "/school-class/:path*", destination: "/board/:path*", permanent: true },
+            { source: "/school-class/:path*", destination: "/board/:path*", permanent: true },
     ];
+  },
+
+  // Role dashboards: browser me URL /student, /trainer, /admin, /business
+  // dikhta hai, lekin content /ilm-demo (image-2 wala shell) ka render hota hai.
+  // beforeFiles zaroori hai taaki app/student/page.jsx pehle match na ho.
+  async rewrites() {
+    return {
+      beforeFiles: [
+               { source: "/student", destination: "/ilm-demo" },
+        { source: "/trainer", destination: "/ilm-demo" },
+        { source: "/admin", destination: "/ilm-demo" },
+        { source: "/business", destination: "/ilm-demo" },
+        // /admin/workspace, /student/roadmap etc. bhi isi shell me khulenge
+        // (login pages ko chhod kar, jaise /admin/login)
+        {
+          source: "/:role(student|trainer|admin|business)/:path((?!login).+)",
+          destination: "/ilm-demo",
+        },
+      ],
+    };
   },
 
   // Decouples "does the production build succeed" from "is the code

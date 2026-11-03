@@ -8,6 +8,7 @@ import auth from "../../../auth";
 import authService from "../../../services/authService";
 import SignupModal from "../SignupModal";
 import ForgotPasswordModal from "../ForgotPasswordModal";
+import { getRoleHomeRoute } from "@/utils/roleHomeRedirect";
 
 const GOOGLE_CLIENT_ID =
   "572421778240-akk3kkb4f60ukuv9pcfrpg2ielm09thk.apps.googleusercontent.com";
@@ -50,20 +51,8 @@ export default function AuthModals({ showLogin, onCloseLogin, onOpenLogin }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [showLogin, onCloseLogin]);
 
-  const redirectByRole = (role) => {
-    // Kept in sync with Login.jsx and IlmOraDemoPage.jsx's LoginModal —
-    // every login entry point in the app must land the user on the same
-    // /ilm-demo preview page after signing in (SUPER_ADMIN is the only
-    // exception). This modal used to send people straight to their real
-    // dashboard route instead, which is why login felt inconsistent:
-    // where you landed depended on which "Login" button you clicked.
-    switch ((role || "").toUpperCase()) {
-      case "SUPER_ADMIN":
-        navigate("/superadmin", { replace: true });
-        break;
-      default:
-        navigate("/ilm-demo", { replace: true });
-    }
+   const redirectByRole = (role) => {
+    navigate(getRoleHomeRoute(role), { replace: true });
   };
 
   const handleModalSubmit = async (e) => {

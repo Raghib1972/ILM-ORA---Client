@@ -586,6 +586,7 @@ import { useNavigate } from "@/lib/routerCompat";
 import auth from "../../auth";
 import authService from "../../services/authService";
 import { registerFcmToken } from "../../services/firebaseService";
+import { getRoleHomeRoute } from "@/utils/roleHomeRedirect";
 // ADDED FROM REACT: GitHub / LinkedIn OAuth URL helpers
 import {
   getGithubAuthUrl,
@@ -600,14 +601,8 @@ const TexoraLogin = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const redirectByRole = (role) => {
-    switch ((role || "").toUpperCase()) {
-      case "SUPER_ADMIN":
-        navigate("/superadmin", { replace: true });
-        break;
-      default:
-        navigate("/ilm-demo", { replace: true });
-    }
+    const redirectByRole = (role) => {
+    navigate(getRoleHomeRoute(role), { replace: true });
   };
   /* ─── FCM helper ─────────────────────────────────── */
   const tryRegisterFcm = () => {
