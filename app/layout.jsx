@@ -47,6 +47,17 @@ export const metadata = {
   },
 };
 
+// [Phase 1a] Next 14 viewport export (must be separate from `metadata`).
+// - viewportFit "cover" lets the page draw under notches; the pt-safe/pb-safe
+//   helpers in globals.css then keep content clear of them.
+// - Zoom is intentionally NOT disabled (maximumScale/userScalable) - that is
+//   an accessibility failure.
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">

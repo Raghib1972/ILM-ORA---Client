@@ -1,0 +1,211 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   RESPONSIVE TOOLKIT — Phase 1b
+   Imported once from app/globals.css. Everything here is in the `rs-` / `--`
+   namespace so it can NEVER collide with legacy classes (.stat-grid,
+   .dashboard-shell ... are defined in several places already).
+
+   Lives in `@layer base/components`, so Tailwind utilities and inline
+   styles still win when a page needs to override something.
+
+   Breakpoints (see tokens/breakpoints.js):
+     xs 360 · sm 640 · md 768 · lg 1024 · xl 1280 · 2xl 1536 · 3xl 1920
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@layer base {
+  :root {
+    /* Fluid spacing: linear between 360px (min) and 1440px (max). */
+    --page-x: clamp(12px, 5.33px + 1.852vw, 32px);
+    --page-y: clamp(12px, 8px + 1.111vw, 24px);
+    --gap: clamp(8px, 5.33px + 0.741vw, 16px);
+    --gap-lg: clamp(12px, 8px + 1.111vw, 24px);
+
+    /* Fluid type */
+    --fs-h1: clamp(20px, 16.67px + 0.926vw, 30px);
+    --fs-h2: clamp(17px, 15.33px + 0.463vw, 22px);
+    --fs-h3: clamp(15px, 14px + 0.278vw, 18px);
+    --fs-body: clamp(14px, 13.5px + 0.14vw, 15px);
+    --fs-small: clamp(12px, 11.5px + 0.14vw, 13px);
+
+    --content-max: 1680px;
+    --tap: 44px;
+
+    /* Stacking order */
+    --z-base: 1;
+    --z-sticky: 20;
+    --z-nav: 40;
+    --z-drawer: 60;
+    --z-modal: 80;
+    --z-popover: 90;
+    --z-toast: 100;
+
+    /* Safe-area (notch / home indicator). 0 on normal screens. */
+    --safe-t: env(safe-area-inset-top, 0px);
+    --safe-b: env(safe-area-inset-bottom, 0px);
+    --safe-l: env(safe-area-inset-left, 0px);
+    --safe-r: env(safe-area-inset-right, 0px);
+  }
+}
+
+@layer components {
+  /* ── Page wrapper ───────────────────────────────────────────────────── */
+  .rs-page {
+    width: 100%;
+    min-width: 0;
+    max-width: var(--content-max);
+    margin-inline: auto;
+    padding: var(--page-y) var(--page-x) calc(var(--page-y) + 28px);
+  }
+
+  /* ── Layout helpers ─────────────────────────────────────────────────── */
+  /* Auto-fit grid: no breakpoints needed. min(...,100%) stops a column from
+     being wider than a tiny phone. Tune with --rs-min / --rs-gap. */
+  .rs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(var(--rs-min, 240px), 100%), 1fr));
+    gap: var(--rs-gap, var(--gap));
+    min-width: 0;
+  }
+  .rs-grid > * { min-width: 0; } /* lets children shrink instead of overflowing */
+
+  .rs-stack { display: flex; flex-direction: column; gap: var(--rs-gap, var(--gap)); min-width: 0; }
+  .rs-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--rs-gap, var(--gap)); min-width: 0; }
+
+  /* Title + actions header. Actions wrap under the title on narrow screens. */
+  .rs-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--gap); }
+  .rs-header > :first-child { flex: 1 1 240px; min-width: 0; }
+  .rs-header-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+  @media (max-width: 639.98px) {
+    .rs-header-actions { width: 100%; }
+    .rs-header-actions > * { flex: 1 1 auto; }
+  }
+
+  /* ── Horizontal scroll container (tables, tab bars, code) ───────────── */
+  .rs-scroll-x {
+    position: relative;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+  }
+  .rs-scroll-x.rs-no-bar { scrollbar-width: none; }
+  .rs-scroll-x.rs-no-bar::-webkit-scrollbar { display: none; }
+  /* Edge fade; ScrollTabs sets --rs-fl / --rs-fr (0px or 24px) from JS. */
+  .rs-fade-x {
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 var(--rs-fl, 0px), #000 calc(100% - var(--rs-fr, 0px)), transparent);
+    mask-image: linear-gradient(to right, transparent, #000 var(--rs-fl, 0px), #000 calc(100% - var(--rs-fr, 0px)), transparent);
+  }
+  /* Kanban / card rails: columns snap into place when swiped. */
+  .rs-snap-x { display: flex; gap: var(--gap); overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: var(--page-x); -webkit-overflow-scrolling: touch; }
+  .rs-snap-x > * { scroll-snap-align: start; flex: 0 0 min(86%, 340px); }
+
+  /* ── Table (base look; override freely) ─────────────────────────────── */
+  .rs-table { width: 100%; border-collapse: collapse; font-size: var(--fs-small); }
+  .rs-table th { text-align: left; font-weight: 600; white-space: nowrap; padding: 10px 12px; border-bottom: 1px solid var(--rs-border, hsl(var(--border))); opacity: .75; }
+  .rs-table td { padding: 10px 12px; border-bottom: 1px solid var(--rs-border, hsl(var(--border))); vertical-align: middle; }
+  .rs-table td.rs-num, .rs-table th.rs-num { text-align: right; font-variant-numeric: tabular-nums; }
+  .rs-table tr[data-clickable="true"] { cursor: pointer; }
+  @media (hover: hover) { .rs-table tr[data-clickable="true"]:hover td { background: var(--rs-row-hover, hsl(var(--muted) / .5)); } }
+
+  /* Table -> cards. Needs data-label="Header" on each <td>.
+     Variants: --md (cards below 768)   --lg (cards below 1024). */
+  @media (max-width: 767.98px) {
+    .rs-table-cards--md, .rs-table-cards--md tbody, .rs-table-cards--md tr, .rs-table-cards--md td { display: block; }
+    .rs-table-cards--md thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .rs-table-cards--md tr { margin-bottom: 10px; padding: 6px 14px; border: 1px solid var(--rs-border, hsl(var(--border))); border-radius: 14px; background: var(--rs-card-bg, hsl(var(--card))); }
+    .rs-table-cards--md td { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 8px 0; border: 0; text-align: right; min-width: 0; }
+    .rs-table-cards--md td + td { border-top: 1px dashed var(--rs-border, hsl(var(--border))); }
+    .rs-table-cards--md td::before { content: attr(data-label); flex-shrink: 0; font-weight: 600; font-size: var(--fs-small); opacity: .65; text-align: left; }
+    .rs-table-cards--md td[data-label=""]::before, .rs-table-cards--md td:not([data-label])::before { display: none; }
+    .rs-table-cards--md td[data-primary="true"] { font-weight: 600; font-size: var(--fs-body); justify-content: flex-start; text-align: left; }
+  }
+  @media (max-width: 1023.98px) {
+    .rs-table-cards--lg, .rs-table-cards--lg tbody, .rs-table-cards--lg tr, .rs-table-cards--lg td { display: block; }
+    .rs-table-cards--lg thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    .rs-table-cards--lg tr { margin-bottom: 10px; padding: 6px 14px; border: 1px solid var(--rs-border, hsl(var(--border))); border-radius: 14px; background: var(--rs-card-bg, hsl(var(--card))); }
+    .rs-table-cards--lg td { display: flex; justify-content: space-between; align-items: center; gap: 14px; padding: 8px 0; border: 0; text-align: right; min-width: 0; }
+    .rs-table-cards--lg td + td { border-top: 1px dashed var(--rs-border, hsl(var(--border))); }
+    .rs-table-cards--lg td::before { content: attr(data-label); flex-shrink: 0; font-weight: 600; font-size: var(--fs-small); opacity: .65; text-align: left; }
+    .rs-table-cards--lg td[data-label=""]::before, .rs-table-cards--lg td:not([data-label])::before { display: none; }
+    .rs-table-cards--lg td[data-primary="true"] { font-weight: 600; font-size: var(--fs-body); justify-content: flex-start; text-align: left; }
+  }
+
+  /* ── Modal -> bottom sheet ──────────────────────────────────────────── */
+  .rs-sheet-backdrop {
+    position: fixed; inset: 0; z-index: var(--z-modal);
+    display: flex; align-items: center; justify-content: center;
+    padding: max(16px, var(--safe-t)) max(16px, var(--safe-r)) max(16px, var(--safe-b)) max(16px, var(--safe-l));
+    background: var(--rs-scrim, rgba(10, 10, 15, .55));
+    -webkit-backdrop-filter: blur(2px); backdrop-filter: blur(2px);
+    animation: rs-fade .18s ease both;
+  }
+  .rs-sheet {
+    position: relative; display: flex; flex-direction: column;
+    width: min(var(--rs-sheet-w, 560px), 100%);
+    max-height: min(90vh, 90dvh);
+    background: var(--rs-sheet-bg, hsl(var(--card)));
+    color: var(--rs-sheet-fg, hsl(var(--card-foreground)));
+    border: 1px solid var(--rs-border, hsl(var(--border)));
+    border-radius: 18px;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, .28);
+    outline: none;
+    animation: rs-pop .2s cubic-bezier(.2, .8, .2, 1) both;
+  }
+  .rs-sheet-handle { display: none; width: 40px; height: 4px; border-radius: 4px; margin: 8px auto 0; background: currentColor; opacity: .22; flex-shrink: 0; }
+  .rs-sheet-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 20px 10px; flex-shrink: 0; }
+  .rs-sheet-title { margin: 0; font-size: var(--fs-h3); font-weight: 700; min-width: 0; }
+  .rs-sheet-close { flex-shrink: 0; display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 0; border-radius: 10px; background: transparent; color: inherit; cursor: pointer; font-size: 20px; line-height: 1; opacity: .7; }
+  @media (hover: hover) { .rs-sheet-close:hover { opacity: 1; background: hsl(var(--muted)); } }
+  .rs-sheet-body { padding: 8px 20px 20px; overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; min-height: 0; flex: 1 1 auto; }
+  .rs-sheet-foot { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; padding: 12px 20px calc(14px + var(--safe-b)); border-top: 1px solid var(--rs-border, hsl(var(--border))); flex-shrink: 0; }
+
+  @media (max-width: 767.98px) {
+    .rs-sheet-backdrop { align-items: flex-end; padding: 0; }
+    .rs-sheet { width: 100%; max-height: min(92vh, 92dvh); border-radius: 20px 20px 0 0; border-bottom: 0; animation: rs-sheet-up .26s cubic-bezier(.2, .8, .2, 1) both; }
+    .rs-sheet-handle { display: block; }
+    .rs-sheet-body { padding-bottom: calc(20px + var(--safe-b)); }
+    .rs-sheet-foot > * { flex: 1 1 auto; }
+  }
+
+  /* ── Tabs that scroll sideways ──────────────────────────────────────── */
+  .rs-tabs { display: flex; gap: 4px; position: relative; }
+  .rs-tab {
+    flex: 0 0 auto; display: inline-flex; align-items: center; gap: 6px;
+    padding: 10px 14px; min-height: 40px; border: 0; background: transparent; color: inherit;
+    font: inherit; font-size: var(--fs-body); font-weight: 500; white-space: nowrap; cursor: pointer;
+    border-bottom: 2px solid transparent; opacity: .7; border-radius: 8px 8px 0 0;
+  }
+  .rs-tab[aria-selected="true"] { opacity: 1; font-weight: 700; border-bottom-color: var(--rs-accent, hsl(var(--primary))); }
+  .rs-tab:focus-visible { outline: 2px solid var(--rs-accent, hsl(var(--ring))); outline-offset: -2px; }
+  @media (hover: hover) { .rs-tab:hover { opacity: 1; background: hsl(var(--muted) / .6); } }
+
+  /* ── Visibility helpers ─────────────────────────────────────────────── */
+  /* lt-X = hide BELOW X     ge-X = hide FROM X upward                     */
+  @media (max-width: 639.98px)  { .rs-hide-lt-sm  { display: none !important; } }
+  @media (max-width: 767.98px)  { .rs-hide-lt-md  { display: none !important; } }
+  @media (max-width: 1023.98px) { .rs-hide-lt-lg  { display: none !important; } }
+  @media (max-width: 1279.98px) { .rs-hide-lt-xl  { display: none !important; } }
+  @media (min-width: 640px)  { .rs-hide-ge-sm  { display: none !important; } }
+  @media (min-width: 768px)  { .rs-hide-ge-md  { display: none !important; } }
+  @media (min-width: 1024px) { .rs-hide-ge-lg  { display: none !important; } }
+  @media (min-width: 1280px) { .rs-hide-ge-xl  { display: none !important; } }
+
+  /* ── Touch & text helpers ───────────────────────────────────────────── */
+  @media (pointer: coarse) { .rs-touch { min-height: var(--tap); min-width: var(--tap); } }
+  .rs-clamp-1, .rs-clamp-2, .rs-clamp-3 { display: -webkit-box; -webkit-box-orient: vertical; overflow: hidden; }
+  .rs-clamp-1 { -webkit-line-clamp: 1; line-clamp: 1; }
+  .rs-clamp-2 { -webkit-line-clamp: 2; line-clamp: 2; }
+  .rs-clamp-3 { -webkit-line-clamp: 3; line-clamp: 3; }
+  .rs-break { overflow-wrap: anywhere; word-break: break-word; }
+
+  /* ── Chart frame ────────────────────────────────────────────────────── */
+  .rs-chart { width: 100%; min-width: 0; position: relative; }
+
+  @keyframes rs-fade { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes rs-pop { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+  @keyframes rs-sheet-up { from { transform: translateY(100%); } to { transform: none; } }
+  @media (prefers-reduced-motion: reduce) {
+    .rs-sheet-backdrop, .rs-sheet { animation-duration: .01ms !important; }
+  }
+}

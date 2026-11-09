@@ -100,8 +100,12 @@ const GLOBAL_LAYOUT_CSS = `
     .stat-card { padding: 16px 14px 14px !important; }
     .hero-flex { gap: 12px; }
   }
+   /* ── Opt-in (Phase 1b): <PageContainer fluid contained> ── */
+  .dashboard-shell.dashboard-shell--fluid { padding: var(--page-y, 24px) var(--page-x, 32px) calc(var(--page-y, 24px) + 28px); }
+  .dashboard-shell.dashboard-shell--contained { max-width: var(--content-max, 1680px); margin-inline: auto; }
 
   /* ── Very small phones (<=380px) ── */
+  
   @media (max-width: 380px) {
     .stat-grid { grid-template-columns: 1fr; }
     .progress-summary-grid { grid-template-columns: 1fr; }
@@ -115,7 +119,7 @@ const GLOBAL_LAYOUT_CSS = `
  * @param {string} props.textColor - T[mode].text from tokens/colors.js
  * @param {React.ReactNode} props.children
  */
-const PageContainer = ({ mode = "dark", pageBg, textColor, children }) => (
+const PageContainer = ({ mode = "dark", pageBg, textColor, fluid = false, contained = false, children }) => (
   <div
     style={{
       minHeight: "100vh",
@@ -126,7 +130,10 @@ const PageContainer = ({ mode = "dark", pageBg, textColor, children }) => (
     }}
   >
     <style>{GLOBAL_LAYOUT_CSS}</style>
-    <div className="dashboard-shell" style={{ position: "relative", zIndex: 1 }}>
+        <div
+      className={`dashboard-shell${fluid ? " dashboard-shell--fluid" : ""}${contained ? " dashboard-shell--contained" : ""}`}
+      style={{ position: "relative", zIndex: 1 }}
+    >
       {children}
     </div>
   </div>

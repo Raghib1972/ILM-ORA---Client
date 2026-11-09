@@ -31,3 +31,22 @@ export { default as Badge } from "./components/Badge";
 export { default as Panel } from "./components/Panel";
 
 export { useAutoDarkMode } from "./hooks/useAutoDarkMode";
+
+// ── Phase 1b: responsive toolkit ──
+// ChartFrame is NOT exported here (it pulls in recharts). Import it by path:
+//   import ChartFrame from "@/design-system/components/responsive/ChartFrame";
+export { BP, BP_ORDER, SERVER_DEFAULT_BP, CONTENT_MAX, Z, up, down, LEGACY_BREAKPOINT_MAP } from "./tokens/breakpoints";
+export {
+  useMediaQuery,
+  useBreakpoint,
+  useIsTouch,
+  useCanHover,
+  usePrefersReducedMotion,
+  useIsLandscape,
+} from "./hooks/useMediaQuery";
+export { useLockBodyScroll } from "./hooks/useLockBodyScroll";
+export { useFocusTrap } from "./hooks/useFocusTrap";
+// export { default as ResponsiveGrid } from "./components/responsive/ResponsiveGrid";
+// export { default as ResponsiveTable } from "./components/responsive/ResponsiveTable";
+// export { default as ResponsiveModal } from "./components/responsive/ResponsiveModal";
+// export { default as ScrollTabs } from "./components/responsive/ScrollTabs";
