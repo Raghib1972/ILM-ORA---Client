@@ -10,6 +10,7 @@ import Events from "./workspace/Events";
 import InstantMeeting from "./workspace/InstantMeeting";
 import Summaries from "./workspace/Summaries";
 import MeetingReports from "./workspace/MeetingReports";
+import TaskOrbit from "./workspace/TaskOrbit";
 import NoteTrackerAsk from "./workspace/notetracker/NoteTrackerAsk";
 import NoteTrackerMeetings from "./workspace/notetracker/NoteTrackerMeetings";
 import NoteTrackerNotes from "./workspace/notetracker/NoteTrackerNotes";
@@ -127,8 +128,12 @@ export default function WorkspaceApp() {
         return <InstantMeeting />;
       case "summaries":
         return <Summaries />;
-      case "meeting-reports":
+            case "meeting-reports":
         return <MeetingReports />;
+
+      case "task-orbit":
+        return <TaskOrbit />;
+
       case "nt-ask":
         return (
           <NoteTrackerAsk

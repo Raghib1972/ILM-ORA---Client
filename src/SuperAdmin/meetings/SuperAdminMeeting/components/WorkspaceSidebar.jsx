@@ -23,9 +23,10 @@ import {
   MessageCircle,
   StickyNote,
   Paperclip,
-  GitBranch,
+   GitBranch,
   CheckSquare,
   Activity,
+  Orbit,
 } from "lucide-react";
 
 export const WORKSPACE_TABS = [
@@ -44,10 +45,16 @@ export const WORKSPACE_TABS = [
       { id: "calendar", label: "Calendar", icon: CalendarIcon },
       { id: "calendar-sync", label: "Calendar Sync", icon: RefreshCw },
       { id: "summaries", label: "Summaries", icon: FileText },
-      {
+            {
         id: "meeting-reports",
         label: "Meeting Reports",
         icon: ClipboardList,
+        badge: "New",
+      },
+      {
+        id: "task-orbit",
+        label: "Task Orbit",
+        icon: Orbit,
         badge: "New",
       },
       { id: "email", label: "Email", icon: Mail },

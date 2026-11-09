@@ -8,9 +8,10 @@ import {
   ArrowRight,
   Copy,
   X,
-  Link2,
+    Link2,
   Repeat,
   ShieldCheck,
+  Trash2,
 } from "lucide-react";
 import PageHead from "../../components/PageHead";
 import { useToast } from "../../components/Toast";
@@ -20,6 +21,7 @@ import { useToast } from "../../components/Toast";
 import {
   getMyMeetings,
   createPermanentMeeting,
+  deleteMeetingApi,
 } from "../../../../../services/liveSessionService";
 
 // Logged-in user's display name — same approach as the old file.
@@ -133,7 +135,37 @@ export default function TaskOrbit() {
       setCreating(false);
     }
   };
+  // ── Delete Task Orbit Room ─────────────────────────────
+  const [deletingId, setDeletingId] = useState(null);
 
+  const handleDelete = async (meeting) => {
+    const confirmed = window.confirm(
+      `Delete "${meeting.title || "this room"}" permanently? This ends the room for everyone and cannot be undone. Recordings and summaries are not affected.`,
+    );
+
+    if (!confirmed) return;
+
+    setDeletingId(meeting.id);
+
+    try {
+      await deleteMeetingApi(meeting.id);
+
+      setRooms((cur) =>
+        cur.filter((m) => m.id !== meeting.id),
+      );
+
+      showToast("Task Orbit room deleted");
+    } catch (err) {
+      console.error("Failed to delete Task Orbit meeting", err);
+
+      showToast(
+        err?.response?.data?.error ||
+          "Couldn't delete the room. Try again.",
+      );
+    } finally {
+      setDeletingId(null);
+    }
+  };
   return (
     <div className="ws-content">
       <PageHead
@@ -283,12 +315,22 @@ export default function TaskOrbit() {
                 onClick={() => copyLink(buildMeetingLink(m.joinCode))}
               >
                 <Copy size={13} /> Copy link
-              </button>
+                            </button>
               <button
                 className="btn-ghost btn-sm"
                 onClick={() => navigate(`/workspace/${m.joinCode}`)}
               >
                 Open <ArrowRight size={13} />
+              </button>
+
+              <button
+                className="btn-ghost btn-sm"
+                onClick={() => handleDelete(m)}
+                disabled={deletingId === m.id}
+                style={{ color: "#dc2626" }}
+              >
+                <Trash2 size={13} />{" "}
+                {deletingId === m.id ? "Deleting…" : "Delete"}
               </button>
             </div>
           ))
