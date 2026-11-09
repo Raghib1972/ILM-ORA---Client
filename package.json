@@ -6,7 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "audit:responsive": "node scripts/responsive-audit.mjs",
+    "check:responsive": "node scripts/responsive-check.mjs"
   },
   "dependencies": {
     "@gsap/react": "^2.1.2",
@@ -55,6 +57,7 @@
     "@tailwindcss/postcss": "^4.1.17",
     "eslint": "^8.57.1",
     "eslint-config-next": "^14.2.35",
+    "playwright": "^1.49.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.1.17"
   },

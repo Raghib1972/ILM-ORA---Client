@@ -1,0 +1,4209 @@
+{
+  "totals": {
+    "student": 2247,
+    "trainer": 3015,
+    "admin": 1798,
+    "superadmin": 2335,
+    "shared": 4633
+  },
+  "rows": [
+    {
+      "file": "src/legacy-pages/Student/IlmOraDemoPage.jsx",
+      "role": "student",
+      "lines": 4609,
+      "score": 399,
+      "hits": {
+        "fixedWidth": 106,
+        "fixedGrid": 13,
+        "fixedPos": 6,
+        "vh100": 7,
+        "overflowHidden": 2,
+        "smallFont": 11,
+        "hoverOnly": 3
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/ManagerHub.jsx",
+      "role": "shared",
+      "lines": 3150,
+      "score": 355,
+      "hits": {
+        "fixedWidth": 43,
+        "fixedGrid": 12,
+        "vh100": 4,
+        "jsWidth": 4,
+        "overflowHidden": 19,
+        "smallFont": 135,
+        "hoverOnly": 20
+      }
+    },
+    {
+      "file": "src/SuperAdmin/admin-control/Onboardingdashboard.jsx",
+      "role": "superadmin",
+      "lines": 9262,
+      "score": 313,
+      "hits": {
+        "fixedWidth": 10,
+        "fixedGrid": 2,
+        "fixedPos": 10,
+        "vh100": 4,
+        "overflowHidden": 35,
+        "smallFont": 211,
+        "hoverOnly": 3
+      }
+    },
+    {
+      "file": "src/Student/ResumeBuilder.jsx",
+      "role": "student",
+      "lines": 7949,
+      "score": 302,
+      "hits": {
+        "fixedWidth": 26,
+        "fixedGrid": 6,
+        "fixedPos": 9,
+        "vh100": 4,
+        "overflowHidden": 13,
+        "smallFont": 158,
+        "hoverOnly": 9
+      }
+    },
+    {
+      "file": "src/SuperAdmin/admin-control/OrganizationDetailsPage.jsx",
+      "role": "superadmin",
+      "lines": 8573,
+      "score": 299,
+      "hits": {
+        "fixedWidth": 10,
+        "fixedGrid": 2,
+        "fixedPos": 10,
+        "overflowHidden": 23,
+        "smallFont": 213,
+        "hoverOnly": 7
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/TrainerHub.jsx",
+      "role": "shared",
+      "lines": 2543,
+      "score": 295,
+      "hits": {
+        "fixedWidth": 43,
+        "fixedGrid": 12,
+        "vh100": 1,
+        "jsWidth": 4,
+        "overflowHidden": 21,
+        "smallFont": 92,
+        "hoverOnly": 7
+      }
+    },
+    {
+      "file": "src/legacy-pages/Student/OnboardingLanding.jsx",
+      "role": "student",
+      "lines": 1696,
+      "score": 290,
+      "hits": {
+        "fixedWidth": 67,
+        "fixedGrid": 23,
+        "fixedPos": 3,
+        "vh100": 2,
+        "jsWidth": 5
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/StudentHub.jsx",
+      "role": "shared",
+      "lines": 3308,
+      "score": 282,
+      "hits": {
+        "fixedWidth": 54,
+        "fixedGrid": 10,
+        "vh100": 2,
+        "overflowHidden": 14,
+        "smallFont": 59,
+        "hoverOnly": 13
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/FDEAcademy.jsx",
+      "role": "shared",
+      "lines": 2245,
+      "score": 260,
+      "hits": {
+        "fixedWidth": 6,
+        "fixedPos": 2,
+        "vh100": 2,
+        "jsWidth": 4,
+        "overflowHidden": 12,
+        "smallFont": 214
+      }
+    },
+    {
+      "file": "src/Trainer/LiveSessionControls.jsx",
+      "role": "trainer",
+      "lines": 7098,
+      "score": 224,
+      "hits": {
+        "fixedWidth": 16,
+        "fixedGrid": 2,
+        "fixedPos": 7,
+        "vh100": 4,
+        "jsWidth": 4,
+        "overflowHidden": 44,
+        "smallFont": 92,
+        "hoverOnly": 4
+      }
+    },
+    {
+      "file": "src/SuperAdmin/admin-control/SuperAdminBatchControl.jsx",
+      "role": "superadmin",
+      "lines": 6795,
+      "score": 212,
+      "hits": {
+        "fixedWidth": 8,
+        "vh100": 6,
+        "jsWidth": 2,
+        "overflowHidden": 8,
+        "smallFont": 164
+      }
+    },
+    {
+      "file": "src/components/live/LiveRoom.jsx",
+      "role": "shared",
+      "lines": 3989,
+      "score": 189,
+      "hits": {
+        "fixedWidth": 23,
+        "fixedPos": 7,
+        "jsWidth": 3,
+        "overflowHidden": 30,
+        "smallFont": 68,
+        "hoverOnly": 2
+      }
+    },
+    {
+      "file": "src/Admin/Adminfeedback.jsx",
+      "role": "admin",
+      "lines": 2398,
+      "score": 182,
+      "hits": {
+        "fixedWidth": 5,
+        "fixedPos": 2,
+        "vh100": 1,
+        "overflowHidden": 16,
+        "smallFont": 135,
+        "hoverOnly": 10
+      }
+    },
+    {
+      "file": "src/Trainer/UploadDocuments.jsx",
+      "role": "trainer",
+      "lines": 3477,
+      "score": 181,
+      "hits": {
+        "fixedWidth": 10,
+        "fixedPos": 6,
+        "overflowHidden": 12,
+        "smallFont": 113,
+        "hoverOnly": 14
+      }
+    },
+    {
+      "file": "src/Trainer/VideoList.jsx",
+      "role": "trainer",
+      "lines": 6025,
+      "score": 178,
+      "hits": {
+        "fixedWidth": 6,
+        "fixedPos": 4,
+        "overflowHidden": 16,
+        "smallFont": 132,
+        "hoverOnly": 4
+      }
+    },
+    {
+      "file": "src/Trainer/UploadVideos.jsx",
+      "role": "trainer",
+      "lines": 6329,
+      "score": 174,
+      "hits": {
+        "fixedWidth": 7,
+        "fixedPos": 4,
+        "overflowHidden": 22,
+        "smallFont": 111,
+        "hoverOnly": 12
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/ResumeBuilderLanding.jsx",
+      "role": "shared",
+      "lines": 962,
+      "score": 162,
+      "hits": {
+        "fixedWidth": 22,
+        "fixedGrid": 8,
+        "fixedPos": 1,
+        "vh100": 1,
+        "overflowHidden": 5,
+        "smallFont": 57,
+        "hoverOnly": 6
+      }
+    },
+    {
+      "file": "src/legacy-pages/Student/OnboardingShowcase.jsx",
+      "role": "student",
+      "lines": 1363,
+      "score": 154,
+      "hits": {
+        "fixedWidth": 38,
+        "fixedGrid": 8,
+        "fixedPos": 5,
+        "jsWidth": 3
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/platforms.jsx",
+      "role": "shared",
+      "lines": 4002,
+      "score": 152,
+      "hits": {
+        "fixedWidth": 38,
+        "fixedGrid": 10,
+        "fixedPos": 2,
+        "vh100": 2
+      }
+    },
+    {
+      "file": "src/Admin/OrgReports.jsx",
+      "role": "admin",
+      "lines": 2657,
+      "score": 142,
+      "hits": {
+        "fixedWidth": 9,
+        "fixedGrid": 4,
+        "vh100": 1,
+        "overflowHidden": 13,
+        "smallFont": 83,
+        "hoverOnly": 5
+      }
+    },
+    {
+      "file": "src/Admin/AccessControlPage.jsx",
+      "role": "admin",
+      "lines": 3474,
+      "score": 141,
+      "hits": {
+        "fixedWidth": 10,
+        "fixedPos": 8,
+        "vh100": 1,
+        "jsWidth": 3,
+        "overflowHidden": 6,
+        "smallFont": 80,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/ILMORAGulf.jsx",
+      "role": "shared",
+      "lines": 1203,
+      "score": 139,
+      "hits": {
+        "fixedWidth": 13,
+        "fixedPos": 1,
+        "vh100": 2,
+        "overflowHidden": 16,
+        "smallFont": 53,
+        "hoverOnly": 25
+      }
+    },
+    {
+      "file": "src/Trainer/Trainerfeedback.jsx",
+      "role": "trainer",
+      "lines": 1283,
+      "score": 125,
+      "hits": {
+        "fixedWidth": 10,
+        "fixedPos": 2,
+        "vh100": 1,
+        "jsWidth": 2,
+        "overflowHidden": 12,
+        "smallFont": 72,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/StudyPlanLanding.jsx",
+      "role": "shared",
+      "lines": 1109,
+      "score": 120,
+      "hits": {
+        "fixedWidth": 10,
+        "fixedGrid": 2,
+        "fixedPos": 1,
+        "vh100": 1,
+        "overflowHidden": 16,
+        "smallFont": 64
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/IlmoraTalk.jsx",
+      "role": "shared",
+      "lines": 954,
+      "score": 119,
+      "hits": {
+        "fixedWidth": 11,
+        "fixedPos": 1,
+        "vh100": 2,
+        "overflowHidden": 12,
+        "smallFont": 53,
+        "hoverOnly": 15
+      }
+    },
+    {
+      "file": "src/SuperAdmin/settings/SendEmail.jsx",
+      "role": "superadmin",
+      "lines": 830,
+      "score": 119,
+      "hits": {
+        "fixedWidth": 2,
+        "fixedPos": 1,
+        "vh100": 3,
+        "overflowHidden": 11,
+        "smallFont": 88,
+        "hoverOnly": 6
+      }
+    },
+    {
+      "file": "src/Admin/OrganisationOverview.jsx",
+      "role": "admin",
+      "lines": 3921,
+      "score": 117,
+      "hits": {
+        "fixedWidth": 8,
+        "fixedGrid": 4,
+        "fixedPos": 1,
+        "vh100": 3,
+        "jsWidth": 2,
+        "overflowHidden": 10,
+        "smallFont": 57,
+        "hoverOnly": 2
+      }
+    },
+    {
+      "file": "src/Trainer/ai-companion/AiMeetings.jsx",
+      "role": "trainer",
+      "lines": 3252,
+      "score": 117,
+      "hits": {
+        "fixedWidth": 2,
+        "fixedGrid": 4,
+        "overflowHidden": 8,
+        "smallFont": 67,
+        "hoverOnly": 24
+      }
+    },
+    {
+      "file": "src/Admin/DepartmentList.jsx",
+      "role": "admin",
+      "lines": 3991,
+      "score": 116,
+      "hits": {
+        "fixedWidth": 8,
+        "fixedPos": 2,
+        "vh100": 2,
+        "overflowHidden": 8,
+        "smallFont": 76
+      }
+    },
+    {
+      "file": "src/Admin/Admincourseuploadform.jsx",
+      "role": "admin",
+      "lines": 1378,
+      "score": 115,
+      "hits": {
+        "fixedWidth": 6,
+        "vh100": 3,
+        "overflowHidden": 11,
+        "smallFont": 80
+      }
+    },
+    {
+      "file": "src/legacy-pages/Company/HelpCenter.jsx",
+      "role": "shared",
+      "lines": 1475,
+      "score": 115,
+      "hits": {
+        "fixedWidth": 25,
+        "fixedGrid": 8,
+        "fixedPos": 1,
+        "vh100": 1,
+        "overflowHidden": 6,
+        "smallFont": 1,
+        "hoverOnly": 5
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/iq-test.jsx",
+      "role": "shared",
+      "lines": 5472,
+      "score": 114,
+      "hits": {
+        "fixedWidth": 30,
+        "fixedGrid": 2,
+        "fixedPos": 2,
+        "jsWidth": 7
+      }
+    },
+    {
+      "file": "src/SuperAdmin/admin-control/SuperAdminAttendance.jsx",
+      "role": "superadmin",
+      "lines": 2708,
+      "score": 113,
+      "hits": {
+        "fixedWidth": 8,
+        "fixedGrid": 5,
+        "fixedPos": 2,
+        "vh100": 2,
+        "overflowHidden": 7,
+        "smallFont": 59
+      }
+    },
+    {
+      "file": "src/Trainer/WhiteboardPanel.jsx",
+      "role": "trainer",
+      "lines": 7550,
+      "score": 113,
+      "hits": {
+        "fixedWidth": 2,
+        "fixedGrid": 2,
+        "fixedPos": 5,
+        "vh100": 2,
+        "overflowHidden": 13,
+        "smallFont": 59,
+        "hoverOnly": 15
+      }
+    },
+    {
+      "file": "src/SuperAdmin/admin-control/SuperAdminFeedback.jsx",
+      "role": "superadmin",
+      "lines": 3656,
+      "score": 112,
+      "hits": {
+        "fixedWidth": 1,
+        "fixedPos": 2,
+        "vh100": 2,
+        "overflowHidden": 8,
+        "smallFont": 93
+      }
+    },
+    {
+      "file": "src/Student/Assessments.jsx",
+      "role": "student",
+      "lines": 1391,
+      "score": 111,
+      "hits": {
+        "fixedWidth": 6,
+        "fixedGrid": 3,
+        "vh100": 1,
+        "overflowHidden": 13,
+        "smallFont": 62,
+        "hoverOnly": 7
+      }
+    },
+    {
+      "file": "src/Trainer/StudentReports.jsx",
+      "role": "trainer",
+      "lines": 1274,
+      "score": 111,
+      "hits": {
+        "fixedWidth": 10,
+        "fixedGrid": 8,
+        "vh100": 2,
+        "overflowHidden": 11,
+        "smallFont": 40,
+        "hoverOnly": 2
+      }
+    },
+    {
+      "file": "src/Admin/Branches.jsx",
+      "role": "admin",
+      "lines": 3609,
+      "score": 108,
+      "hits": {
+        "fixedWidth": 8,
+        "fixedPos": 2,
+        "vh100": 2,
+        "overflowHidden": 8,
+        "smallFont": 68
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerCompilerPage.jsx",
+      "role": "trainer",
+      "lines": 2322,
+      "score": 98,
+      "hits": {
+        "fixedWidth": 14,
+        "fixedPos": 1,
+        "vh100": 1,
+        "overflowHidden": 2,
+        "smallFont": 50
+      }
+    },
+    {
+      "file": "src/SuperAdmin/components/layout/TopGlobalCompanies.jsx",
+      "role": "superadmin",
+      "lines": 3666,
+      "score": 97,
+      "hits": {
+        "fixedWidth": 3,
+        "fixedPos": 4,
+        "vh100": 1,
+        "overflowHidden": 15,
+        "smallFont": 51,
+        "hoverOnly": 12
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/ToraCXAgenticCX.jsx",
+      "role": "shared",
+      "lines": 568,
+      "score": 96,
+      "hits": {
+        "fixedWidth": 18,
+        "fixedGrid": 14
+      }
+    },
+    {
+      "file": "src/Admin/AdminLiveSessions.jsx",
+      "role": "admin",
+      "lines": 1443,
+      "score": 94,
+      "hits": {
+        "fixedWidth": 13,
+        "fixedGrid": 4,
+        "vh100": 3,
+        "jsWidth": 1,
+        "overflowHidden": 4,
+        "smallFont": 31
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/components/IlmDemoNavbar.jsx",
+      "role": "shared",
+      "lines": 1641,
+      "score": 93,
+      "hits": {
+        "fixedWidth": 23,
+        "fixedGrid": 4,
+        "fixedPos": 4,
+        "vh100": 1,
+        "overflowHidden": 1,
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/batch-control/BatchDetailsPage.jsx",
+      "role": "superadmin",
+      "lines": 913,
+      "score": 91,
+      "hits": {
+        "fixedGrid": 2,
+        "overflowHidden": 9,
+        "smallFont": 74,
+        "hoverOnly": 2
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/Schoolclass.jsx",
+      "role": "shared",
+      "lines": 2678,
+      "score": 90,
+      "hits": {
+        "fixedWidth": 13,
+        "fixedGrid": 16,
+        "smallFont": 3
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/Aicampanion.jsx",
+      "role": "shared",
+      "lines": 1924,
+      "score": 89,
+      "hits": {
+        "fixedWidth": 9,
+        "fixedGrid": 1,
+        "vh100": 1,
+        "overflowHidden": 7,
+        "smallFont": 50
+      }
+    },
+    {
+      "file": "src/Student/SkillMap.jsx",
+      "role": "student",
+      "lines": 2315,
+      "score": 87,
+      "hits": {
+        "fixedWidth": 10,
+        "fixedPos": 3,
+        "vh100": 8,
+        "smallFont": 35
+      }
+    },
+    {
+      "file": "src/Trainer/ai-companion/AiWorkflowCreate.jsx",
+      "role": "trainer",
+      "lines": 2433,
+      "score": 87,
+      "hits": {
+        "fixedWidth": 9,
+        "overflowHidden": 4,
+        "smallFont": 47,
+        "hoverOnly": 9
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/LMSHomepage.jsx",
+      "role": "shared",
+      "lines": 3971,
+      "score": 86,
+      "hits": {
+        "fixedWidth": 2,
+        "jsWidth": 4,
+        "overflowHidden": 16,
+        "smallFont": 52,
+        "hoverOnly": 4
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/StudyAbroad.jsx",
+      "role": "shared",
+      "lines": 933,
+      "score": 83,
+      "hits": {
+        "fixedWidth": 5,
+        "fixedGrid": 2,
+        "fixedPos": 2,
+        "vh100": 1,
+        "overflowHidden": 5,
+        "smallFont": 41,
+        "hoverOnly": 10
+      }
+    },
+    {
+      "file": "src/Student/DashboardPage.jsx",
+      "role": "student",
+      "lines": 1213,
+      "score": 81,
+      "hits": {
+        "fixedWidth": 1,
+        "fixedGrid": 2,
+        "overflowHidden": 13,
+        "smallFont": 56,
+        "hoverOnly": 3
+      }
+    },
+    {
+      "file": "src/Student/StudentNotebook.jsx",
+      "role": "student",
+      "lines": 4962,
+      "score": 81,
+      "hits": {
+        "fixedWidth": 7,
+        "fixedGrid": 2,
+        "fixedPos": 1,
+        "vh100": 2,
+        "jsWidth": 2,
+        "overflowHidden": 6,
+        "smallFont": 36,
+        "hoverOnly": 2
+      }
+    },
+    {
+      "file": "src/Trainer/CreateQuiz.jsx",
+      "role": "trainer",
+      "lines": 1367,
+      "score": 79,
+      "hits": {
+        "fixedWidth": 1,
+        "overflowHidden": 6,
+        "smallFont": 67,
+        "hoverOnly": 3
+      }
+    },
+    {
+      "file": "src/legacy-pages/About/AboutTexoraSkills.jsx",
+      "role": "shared",
+      "lines": 852,
+      "score": 78,
+      "hits": {
+        "fixedWidth": 19,
+        "fixedGrid": 3,
+        "overflowHidden": 2,
+        "smallFont": 10
+      }
+    },
+    {
+      "file": "src/Trainer/CreateAssignments.jsx",
+      "role": "trainer",
+      "lines": 1816,
+      "score": 78,
+      "hits": {
+        "fixedWidth": 1,
+        "fixedGrid": 3,
+        "overflowHidden": 13,
+        "smallFont": 53
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/WatchNow.jsx",
+      "role": "shared",
+      "lines": 3128,
+      "score": 77,
+      "hits": {
+        "fixedWidth": 2,
+        "fixedPos": 2,
+        "jsWidth": 4,
+        "overflowHidden": 12,
+        "smallFont": 45,
+        "hoverOnly": 2
+      }
+    },
+    {
+      "file": "src/Admin/AdminAttendance.jsx",
+      "role": "admin",
+      "lines": 1702,
+      "score": 75,
+      "hits": {
+        "fixedWidth": 4,
+        "vh100": 1,
+        "jsWidth": 2,
+        "overflowHidden": 3,
+        "smallFont": 52,
+        "hoverOnly": 2
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerCourseManagement.jsx",
+      "role": "trainer",
+      "lines": 2013,
+      "score": 75,
+      "hits": {
+        "fixedWidth": 5,
+        "fixedGrid": 5,
+        "vh100": 3,
+        "jsWidth": 1,
+        "overflowHidden": 2,
+        "smallFont": 35
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/Ilmora-workshops.jsx",
+      "role": "shared",
+      "lines": 2101,
+      "score": 73,
+      "hits": {
+        "fixedWidth": 14,
+        "fixedPos": 3,
+        "jsWidth": 6,
+        "overflowHidden": 1,
+        "smallFont": 12
+      }
+    },
+    {
+      "file": "src/Admin/AllCourses.jsx",
+      "role": "admin",
+      "lines": 1423,
+      "score": 70,
+      "hits": {
+        "fixedWidth": 5,
+        "fixedPos": 2,
+        "vh100": 1,
+        "jsWidth": 3,
+        "overflowHidden": 4,
+        "smallFont": 39
+      }
+    },
+    {
+      "file": "src/Admin/AllUsers.jsx",
+      "role": "admin",
+      "lines": 2075,
+      "score": 70,
+      "hits": {
+        "fixedWidth": 4,
+        "fixedPos": 1,
+        "vh100": 2,
+        "overflowHidden": 5,
+        "smallFont": 47
+      }
+    },
+    {
+      "file": "src/Student/MyQuizHistory.jsx",
+      "role": "student",
+      "lines": 1364,
+      "score": 69,
+      "hits": {
+        "fixedWidth": 1,
+        "vh100": 5,
+        "overflowHidden": 13,
+        "smallFont": 40,
+        "hoverOnly": 3
+      }
+    },
+    {
+      "file": "src/Trainer/BatchReports.jsx",
+      "role": "trainer",
+      "lines": 586,
+      "score": 69,
+      "hits": {
+        "fixedWidth": 5,
+        "fixedGrid": 5,
+        "overflowHidden": 7,
+        "smallFont": 32
+      }
+    },
+    {
+      "file": "src/Trainer/StartLiveSession.jsx",
+      "role": "trainer",
+      "lines": 1303,
+      "score": 69,
+      "hits": {
+        "fixedGrid": 2,
+        "fixedPos": 2,
+        "vh100": 1,
+        "overflowHidden": 9,
+        "smallFont": 44,
+        "hoverOnly": 4
+      }
+    },
+    {
+      "file": "src/SuperAdmin/admin-control/OrganizationPage.jsx",
+      "role": "superadmin",
+      "lines": 1819,
+      "score": 67,
+      "hits": {
+        "fixedWidth": 2,
+        "fixedPos": 2,
+        "vh100": 1,
+        "overflowHidden": 4,
+        "smallFont": 50,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Trainer/ai-companion/AiInPersonNotes.jsx",
+      "role": "trainer",
+      "lines": 2609,
+      "score": 66,
+      "hits": {
+        "fixedWidth": 4,
+        "overflowHidden": 4,
+        "smallFont": 50
+      }
+    },
+    {
+      "file": "src/Admin/AdminSkillDashboard.jsx",
+      "role": "admin",
+      "lines": 767,
+      "score": 65,
+      "hits": {
+        "fixedWidth": 3,
+        "vh100": 1,
+        "overflowHidden": 4,
+        "smallFont": 50
+      }
+    },
+    {
+      "file": "src/legacy-pages/Company/Pricing.jsx",
+      "role": "shared",
+      "lines": 877,
+      "score": 64,
+      "hits": {
+        "fixedWidth": 13,
+        "fixedGrid": 2,
+        "fixedPos": 1,
+        "vh100": 1,
+        "overflowHidden": 1,
+        "smallFont": 10,
+        "hoverOnly": 4
+      }
+    },
+    {
+      "file": "src/Trainer/Attendance.jsx",
+      "role": "trainer",
+      "lines": 2536,
+      "score": 63,
+      "hits": {
+        "fixedWidth": 5,
+        "fixedGrid": 2,
+        "vh100": 1,
+        "jsWidth": 2,
+        "overflowHidden": 6,
+        "smallFont": 30
+      }
+    },
+    {
+      "file": "src/Student/Attendance.jsx",
+      "role": "student",
+      "lines": 1159,
+      "score": 62,
+      "hits": {
+        "fixedWidth": 4,
+        "fixedGrid": 2,
+        "tableNoScroll": 2,
+        "vh100": 3,
+        "jsWidth": 2,
+        "overflowHidden": 3,
+        "smallFont": 23
+      }
+    },
+    {
+      "file": "src/Trainer/ai-companion/AiChatPanel.jsx",
+      "role": "trainer",
+      "lines": 1743,
+      "score": 61,
+      "hits": {
+        "fixedWidth": 7,
+        "fixedGrid": 1,
+        "overflowHidden": 2,
+        "smallFont": 32,
+        "hoverOnly": 3
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/Personalitydevelopment.jsx",
+      "role": "shared",
+      "lines": 712,
+      "score": 60,
+      "hits": {
+        "fixedWidth": 16,
+        "fixedGrid": 1,
+        "fixedPos": 1,
+        "vh100": 1,
+        "jsWidth": 2,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerCourseModules.jsx",
+      "role": "trainer",
+      "lines": 1833,
+      "score": 60,
+      "hits": {
+        "fixedWidth": 2,
+        "fixedPos": 2,
+        "vh100": 2,
+        "overflowHidden": 8,
+        "smallFont": 36,
+        "hoverOnly": 2
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerStudyPlanPage.jsx",
+      "role": "trainer",
+      "lines": 1782,
+      "score": 59,
+      "hits": {
+        "fixedWidth": 8,
+        "fixedPos": 1,
+        "vh100": 1,
+        "overflowHidden": 3,
+        "smallFont": 28
+      }
+    },
+    {
+      "file": "src/legacy-pages/Company/Careers.jsx",
+      "role": "shared",
+      "lines": 1034,
+      "score": 55,
+      "hits": {
+        "fixedWidth": 10,
+        "fixedGrid": 3,
+        "vh100": 1,
+        "overflowHidden": 2,
+        "smallFont": 12
+      }
+    },
+    {
+      "file": "src/Admin/AdminRecordedVideos.jsx",
+      "role": "admin",
+      "lines": 615,
+      "score": 54,
+      "hits": {
+        "fixedWidth": 10,
+        "fixedPos": 2,
+        "vh100": 1,
+        "jsWidth": 1,
+        "overflowHidden": 4,
+        "smallFont": 12
+      }
+    },
+    {
+      "file": "src/Admin/OrgSettings.jsx",
+      "role": "admin",
+      "lines": 614,
+      "score": 54,
+      "hits": {
+        "fixedWidth": 3,
+        "vh100": 1,
+        "overflowHidden": 5,
+        "smallFont": 38
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/hr-hub.jsx",
+      "role": "shared",
+      "lines": 767,
+      "score": 54,
+      "hits": {
+        "fixedWidth": 14,
+        "fixedGrid": 4
+      }
+    },
+    {
+      "file": "src/Student/StudentCompilerPage.jsx",
+      "role": "student",
+      "lines": 2055,
+      "score": 53,
+      "hits": {
+        "fixedWidth": 10,
+        "fixedPos": 3,
+        "vh100": 2,
+        "jsWidth": 1,
+        "overflowHidden": 3,
+        "smallFont": 8
+      }
+    },
+    {
+      "file": "src/Student/Studentfeedback.jsx",
+      "role": "student",
+      "lines": 567,
+      "score": 53,
+      "hits": {
+        "fixedWidth": 2,
+        "fixedGrid": 1,
+        "fixedPos": 2,
+        "vh100": 4,
+        "overflowHidden": 1,
+        "smallFont": 30,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerSkillMap.jsx",
+      "role": "trainer",
+      "lines": 1262,
+      "score": 53,
+      "hits": {
+        "fixedWidth": 2,
+        "vh100": 3,
+        "overflowHidden": 4,
+        "smallFont": 36,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/ilmorameet.jsx",
+      "role": "shared",
+      "lines": 1609,
+      "score": 52,
+      "hits": {
+        "fixedWidth": 13,
+        "fixedGrid": 2,
+        "jsWidth": 3,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/dashboard/SuperAdminDashboard.jsx",
+      "role": "superadmin",
+      "lines": 709,
+      "score": 52,
+      "hits": {
+        "fixedWidth": 4,
+        "fixedGrid": 3,
+        "overflowHidden": 3,
+        "smallFont": 27,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Admin/Categories.jsx",
+      "role": "admin",
+      "lines": 562,
+      "score": 51,
+      "hits": {
+        "fixedWidth": 9,
+        "fixedGrid": 6,
+        "fixedPos": 1,
+        "vh100": 1,
+        "jsWidth": 1
+      }
+    },
+    {
+      "file": "src/Admin/CertificatesAdmin.jsx",
+      "role": "admin",
+      "lines": 1020,
+      "score": 51,
+      "hits": {
+        "fixedWidth": 6,
+        "vh100": 3,
+        "jsWidth": 1,
+        "overflowHidden": 3,
+        "smallFont": 22
+      }
+    },
+    {
+      "file": "src/legacy-pages/Company/TermsOfService.jsx",
+      "role": "shared",
+      "lines": 1210,
+      "score": 51,
+      "hits": {
+        "fixedWidth": 8,
+        "fixedGrid": 1,
+        "vh100": 1,
+        "overflowHidden": 4,
+        "smallFont": 18
+      }
+    },
+    {
+      "file": "src/layouts/DashboardLayout.jsx",
+      "role": "shared",
+      "lines": 1025,
+      "score": 50,
+      "hits": {
+        "fixedWidth": 11,
+        "fixedPos": 2,
+        "vh100": 1,
+        "overflowHidden": 2,
+        "smallFont": 6,
+        "hoverOnly": 3
+      }
+    },
+    {
+      "file": "src/SuperAdmin/sales-management/SalesManagement.jsx",
+      "role": "superadmin",
+      "lines": 2215,
+      "score": 50,
+      "hits": {
+        "fixedWidth": 10,
+        "fixedPos": 8,
+        "vh100": 2
+      }
+    },
+    {
+      "file": "src/legacy-pages/common/ProfileDetailsForm.jsx",
+      "role": "shared",
+      "lines": 1069,
+      "score": 49,
+      "hits": {
+        "fixedWidth": 9,
+        "fixedPos": 1,
+        "overflowHidden": 3,
+        "smallFont": 16,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/public/IlmoraMeeting/src/components/IlmoraMeeting/MeetingRoom.jsx",
+      "role": "shared",
+      "lines": 2416,
+      "score": 49,
+      "hits": {
+        "fixedWidth": 14,
+        "fixedPos": 2,
+        "smallFont": 3
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerLiveClasses/pages/StartLiveThreePanel.jsx",
+      "role": "trainer",
+      "lines": 2155,
+      "score": 49,
+      "hits": {
+        "overflowHidden": 2,
+        "smallFont": 46,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/Company/ContactUs.jsx",
+      "role": "shared",
+      "lines": 882,
+      "score": 48,
+      "hits": {
+        "fixedWidth": 8,
+        "fixedGrid": 1,
+        "vh100": 1,
+        "overflowHidden": 1,
+        "smallFont": 18
+      }
+    },
+    {
+      "file": "src/SuperAdmin/cms-management/pages/MarketingBanner.jsx",
+      "role": "superadmin",
+      "lines": 1008,
+      "score": 48,
+      "hits": {
+        "fixedWidth": 4,
+        "fixedPos": 2,
+        "overflowHidden": 2,
+        "smallFont": 30
+      }
+    },
+    {
+      "file": "src/SuperAdmin/student-control/StudentDetailsPage.jsx",
+      "role": "superadmin",
+      "lines": 414,
+      "score": 48,
+      "hits": {
+        "fixedGrid": 5,
+        "overflowHidden": 2,
+        "smallFont": 31
+      }
+    },
+    {
+      "file": "src/components/design-system/layouts/PageContainer.jsx",
+      "role": "shared",
+      "lines": 168,
+      "score": 47,
+      "hits": {
+        "fixedWidth": 7,
+        "fixedGrid": 8,
+        "vh100": 1
+      }
+    },
+    {
+      "file": "src/design-system/layouts/PageContainer.jsx",
+      "role": "shared",
+      "lines": 175,
+      "score": 47,
+      "hits": {
+        "fixedWidth": 7,
+        "fixedGrid": 8,
+        "vh100": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/Company/PrivacyPolicy.jsx",
+      "role": "shared",
+      "lines": 1171,
+      "score": 47,
+      "hits": {
+        "fixedWidth": 8,
+        "fixedGrid": 1,
+        "vh100": 1,
+        "overflowHidden": 3,
+        "smallFont": 15
+      }
+    },
+    {
+      "file": "src/SuperAdmin/featured-programs/pages/AdminWatchNowUpload.jsx",
+      "role": "superadmin",
+      "lines": 1833,
+      "score": 47,
+      "hits": {
+        "fixedWidth": 1,
+        "fixedPos": 1,
+        "vh100": 1,
+        "overflowHidden": 8,
+        "smallFont": 32
+      }
+    },
+    {
+      "file": "src/Admin/AdminBatches.jsx",
+      "role": "admin",
+      "lines": 1420,
+      "score": 46,
+      "hits": {
+        "fixedWidth": 3,
+        "vh100": 2,
+        "overflowHidden": 4,
+        "smallFont": 29
+      }
+    },
+    {
+      "file": "src/Student/videolecctures.jsx",
+      "role": "student",
+      "lines": 1151,
+      "score": 46,
+      "hits": {
+        "fixedWidth": 3,
+        "overflowHidden": 5,
+        "smallFont": 31,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/trainer-control/TrainerDetailsPage.jsx",
+      "role": "superadmin",
+      "lines": 398,
+      "score": 46,
+      "hits": {
+        "fixedGrid": 2,
+        "overflowHidden": 4,
+        "smallFont": 34,
+        "hoverOnly": 2
+      }
+    },
+    {
+      "file": "src/legacy-pages/IlmDemoProfilePage.jsx",
+      "role": "shared",
+      "lines": 5154,
+      "score": 45,
+      "hits": {
+        "fixedWidth": 2,
+        "fixedPos": 2,
+        "vh100": 2,
+        "overflowHidden": 5,
+        "smallFont": 26
+      }
+    },
+    {
+      "file": "src/SuperAdmin/admin-control/OrganizationAdminDetailsPage.jsx",
+      "role": "superadmin",
+      "lines": 417,
+      "score": 45,
+      "hits": {
+        "fixedGrid": 1,
+        "overflowHidden": 2,
+        "smallFont": 37,
+        "hoverOnly": 3
+      }
+    },
+    {
+      "file": "src/SuperAdmin/trainer-control/TrainerControlPage.jsx",
+      "role": "superadmin",
+      "lines": 648,
+      "score": 45,
+      "hits": {
+        "fixedWidth": 1,
+        "fixedPos": 1,
+        "overflowHidden": 2,
+        "smallFont": 35,
+        "hoverOnly": 3
+      }
+    },
+    {
+      "file": "src/Student/certificates.jsx",
+      "role": "student",
+      "lines": 1040,
+      "score": 41,
+      "hits": {
+        "fixedWidth": 6,
+        "vh100": 3,
+        "jsWidth": 1,
+        "overflowHidden": 3,
+        "smallFont": 9,
+        "hoverOnly": 3
+      }
+    },
+    {
+      "file": "src/SuperAdmin/student-control/StudentControlPage.jsx",
+      "role": "superadmin",
+      "lines": 592,
+      "score": 41,
+      "hits": {
+        "fixedWidth": 1,
+        "fixedPos": 1,
+        "overflowHidden": 3,
+        "smallFont": 30,
+        "hoverOnly": 3
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/SignupModal.jsx",
+      "role": "shared",
+      "lines": 2142,
+      "score": 40,
+      "hits": {
+        "fixedWidth": 2,
+        "fixedPos": 2,
+        "overflowHidden": 2,
+        "smallFont": 28
+      }
+    },
+    {
+      "file": "src/Student/StudentCourseView.jsx",
+      "role": "student",
+      "lines": 768,
+      "score": 40,
+      "hits": {
+        "fixedWidth": 1,
+        "vh100": 1,
+        "overflowHidden": 2,
+        "smallFont": 33
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/Whiteboard.jsx",
+      "role": "shared",
+      "lines": 1853,
+      "score": 39,
+      "hits": {
+        "fixedWidth": 12,
+        "fixedGrid": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/admin-control/AdminControlPage.jsx",
+      "role": "superadmin",
+      "lines": 1030,
+      "score": 39,
+      "hits": {
+        "fixedWidth": 1,
+        "fixedPos": 1,
+        "overflowHidden": 2,
+        "smallFont": 28,
+        "hoverOnly": 4
+      }
+    },
+    {
+      "file": "src/SuperAdmin/components/layout/SuperAdminNavbar.jsx",
+      "role": "superadmin",
+      "lines": 1267,
+      "score": 39,
+      "hits": {
+        "fixedWidth": 4,
+        "fixedPos": 2,
+        "overflowHidden": 1,
+        "smallFont": 22
+      }
+    },
+    {
+      "file": "src/Trainer/PerformanceAnalysis.jsx",
+      "role": "trainer",
+      "lines": 759,
+      "score": 39,
+      "hits": {
+        "fixedWidth": 4,
+        "vh100": 1,
+        "jsWidth": 1,
+        "overflowHidden": 3,
+        "smallFont": 18,
+        "hoverOnly": 2
+      }
+    },
+    {
+      "file": "src/Trainer/EditRecordedClass.jsx",
+      "role": "trainer",
+      "lines": 1023,
+      "score": 38,
+      "hits": {
+        "fixedWidth": 1,
+        "vh100": 3,
+        "overflowHidden": 2,
+        "smallFont": 27
+      }
+    },
+    {
+      "file": "src/Student/Documents.jsx",
+      "role": "student",
+      "lines": 601,
+      "score": 37,
+      "hits": {
+        "fixedWidth": 2,
+        "tableNoScroll": 2,
+        "fixedPos": 1,
+        "overflowHidden": 9,
+        "smallFont": 9,
+        "hoverOnly": 3
+      }
+    },
+    {
+      "file": "src/Trainer/UploadRecordedVideo.jsx",
+      "role": "trainer",
+      "lines": 1160,
+      "score": 37,
+      "hits": {
+        "fixedWidth": 2,
+        "vh100": 2,
+        "overflowHidden": 4,
+        "smallFont": 21,
+        "hoverOnly": 2
+      }
+    },
+    {
+      "file": "src/Admin/AdminFiles.jsx",
+      "role": "admin",
+      "lines": 1043,
+      "score": 36,
+      "hits": {
+        "fixedWidth": 3,
+        "tableNoScroll": 1,
+        "vh100": 1,
+        "jsWidth": 1,
+        "overflowHidden": 2,
+        "smallFont": 17
+      }
+    },
+    {
+      "file": "src/SuperAdmin/cms-management/pages/PlatformOverview.jsx",
+      "role": "superadmin",
+      "lines": 1308,
+      "score": 36,
+      "hits": {
+        "overflowHidden": 2,
+        "smallFont": 33,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Student/StudentAssignments.jsx",
+      "role": "student",
+      "lines": 1260,
+      "score": 35,
+      "hits": {
+        "fixedWidth": 3,
+        "fixedPos": 2,
+        "vh100": 1,
+        "jsWidth": 1,
+        "overflowHidden": 4,
+        "smallFont": 13,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerLiveClasses/index.jsx",
+      "role": "trainer",
+      "lines": 360,
+      "score": 35,
+      "hits": {
+        "fixedWidth": 8,
+        "fixedGrid": 2,
+        "vh100": 2,
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/NotificationsPage.jsx",
+      "role": "shared",
+      "lines": 1144,
+      "score": 34,
+      "hits": {
+        "fixedWidth": 2,
+        "fixedPos": 2,
+        "jsWidth": 2,
+        "overflowHidden": 4,
+        "smallFont": 10,
+        "hoverOnly": 6
+      }
+    },
+    {
+      "file": "src/Student/AssignmentDetail.jsx",
+      "role": "student",
+      "lines": 741,
+      "score": 34,
+      "hits": {
+        "fixedPos": 2,
+        "overflowHidden": 6,
+        "smallFont": 24
+      }
+    },
+    {
+      "file": "src/Student/AttemptQuiz.jsx",
+      "role": "student",
+      "lines": 543,
+      "score": 34,
+      "hits": {
+        "fixedWidth": 1,
+        "overflowHidden": 6,
+        "smallFont": 23,
+        "hoverOnly": 2
+      }
+    },
+    {
+      "file": "src/Student/ChatWidgetButton.jsx",
+      "role": "student",
+      "lines": 142,
+      "score": 34,
+      "hits": {
+        "fixedWidth": 6,
+        "fixedPos": 4,
+        "vh100": 4
+      }
+    },
+    {
+      "file": "src/Student/LiveClasses.jsx",
+      "role": "student",
+      "lines": 898,
+      "score": 34,
+      "hits": {
+        "fixedWidth": 6,
+        "fixedGrid": 3,
+        "jsWidth": 1,
+        "smallFont": 5
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/CodingLabLanding.jsx",
+      "role": "shared",
+      "lines": 1055,
+      "score": 33,
+      "hits": {
+        "overflowHidden": 10,
+        "smallFont": 23
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/Storyline.jsx",
+      "role": "shared",
+      "lines": 743,
+      "score": 33,
+      "hits": {
+        "fixedWidth": 10,
+        "fixedGrid": 1
+      }
+    },
+    {
+      "file": "src/Trainer/ai-companion/AiContextResourceModal.jsx",
+      "role": "trainer",
+      "lines": 691,
+      "score": 33,
+      "hits": {
+        "fixedWidth": 2,
+        "fixedPos": 2,
+        "overflowHidden": 3,
+        "smallFont": 16,
+        "hoverOnly": 4
+      }
+    },
+    {
+      "file": "src/Trainer/Batches.jsx",
+      "role": "trainer",
+      "lines": 520,
+      "score": 33,
+      "hits": {
+        "fixedWidth": 6,
+        "vh100": 1,
+        "overflowHidden": 2,
+        "smallFont": 11
+      }
+    },
+    {
+      "file": "src/Student/RecordedClasses.jsx",
+      "role": "student",
+      "lines": 822,
+      "score": 30,
+      "hits": {
+        "fixedWidth": 4,
+        "vh100": 1,
+        "jsWidth": 1,
+        "overflowHidden": 3,
+        "smallFont": 10,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/admin-control/NewOrganizationPage.jsx",
+      "role": "superadmin",
+      "lines": 921,
+      "score": 30,
+      "hits": {
+        "fixedWidth": 1,
+        "overflowHidden": 2,
+        "smallFont": 25
+      }
+    },
+    {
+      "file": "src/Trainer/ai-companion/AiHelpMeWrite.jsx",
+      "role": "trainer",
+      "lines": 912,
+      "score": 30,
+      "hits": {
+        "fixedWidth": 1,
+        "overflowHidden": 3,
+        "smallFont": 17,
+        "hoverOnly": 7
+      }
+    },
+    {
+      "file": "src/Trainer/ai-companion/AiMyWorkflows.jsx",
+      "role": "trainer",
+      "lines": 832,
+      "score": 30,
+      "hits": {
+        "overflowHidden": 5,
+        "smallFont": 18,
+        "hoverOnly": 7
+      }
+    },
+    {
+      "file": "src/Admin/AdminDashboard.jsx",
+      "role": "admin",
+      "lines": 778,
+      "score": 29,
+      "hits": {
+        "fixedWidth": 1,
+        "fixedGrid": 2,
+        "overflowHidden": 1,
+        "smallFont": 19
+      }
+    },
+    {
+      "file": "src/Student/StudentLiveSessions.jsx",
+      "role": "student",
+      "lines": 439,
+      "score": 29,
+      "hits": {
+        "fixedWidth": 1,
+        "vh100": 2,
+        "overflowHidden": 4,
+        "smallFont": 17,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Trainer/LiveAttendanceReport.jsx",
+      "role": "trainer",
+      "lines": 247,
+      "score": 29,
+      "hits": {
+        "fixedWidth": 2,
+        "vh100": 1,
+        "overflowHidden": 5,
+        "smallFont": 13,
+        "hoverOnly": 3
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/components/WatchNow/index.jsx",
+      "role": "shared",
+      "lines": 946,
+      "score": 28,
+      "hits": {
+        "fixedWidth": 1,
+        "fixedPos": 1,
+        "jsWidth": 2,
+        "overflowHidden": 4,
+        "smallFont": 14,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/public/PublicBooking.jsx",
+      "role": "shared",
+      "lines": 510,
+      "score": 28,
+      "hits": {
+        "fixedWidth": 1,
+        "vh100": 3,
+        "smallFont": 19
+      }
+    },
+    {
+      "file": "src/SuperAdmin/settings/AuditLogs.jsx",
+      "role": "superadmin",
+      "lines": 194,
+      "score": 28,
+      "hits": {
+        "fixedWidth": 1,
+        "fixedGrid": 2,
+        "overflowHidden": 1,
+        "smallFont": 17,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerLiveClasses/pages/PanelEditRecording.jsx",
+      "role": "trainer",
+      "lines": 796,
+      "score": 28,
+      "hits": {
+        "overflowHidden": 1,
+        "smallFont": 27
+      }
+    },
+    {
+      "file": "src/SuperAdmin/cms-management/renderer/CMSRenderer.jsx",
+      "role": "superadmin",
+      "lines": 620,
+      "score": 27,
+      "hits": {
+        "overflowHidden": 1,
+        "smallFont": 26
+      }
+    },
+    {
+      "file": "src/Trainer/Assessments.jsx",
+      "role": "trainer",
+      "lines": 835,
+      "score": 27,
+      "hits": {
+        "fixedWidth": 5,
+        "fixedGrid": 2,
+        "vh100": 1,
+        "jsWidth": 1,
+        "overflowHidden": 1,
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/Trainer/Dashboard.jsx",
+      "role": "trainer",
+      "lines": 740,
+      "score": 27,
+      "hits": {
+        "fixedGrid": 2,
+        "overflowHidden": 1,
+        "smallFont": 19,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Trainer/LiveSessionHistory.jsx",
+      "role": "trainer",
+      "lines": 767,
+      "score": 27,
+      "hits": {
+        "fixedWidth": 2,
+        "vh100": 1,
+        "overflowHidden": 2,
+        "smallFont": 15,
+        "hoverOnly": 2
+      }
+    },
+    {
+      "file": "src/Admin/CreateBatchModal.jsx",
+      "role": "admin",
+      "lines": 579,
+      "score": 26,
+      "hits": {
+        "fixedWidth": 2,
+        "fixedPos": 6,
+        "smallFont": 8
+      }
+    },
+    {
+      "file": "src/components/IlmDemoSidebar.jsx",
+      "role": "shared",
+      "lines": 1324,
+      "score": 26,
+      "hits": {
+        "fixedWidth": 3,
+        "fixedPos": 3,
+        "vh100": 1,
+        "jsWidth": 2,
+        "overflowHidden": 3,
+        "hoverOnly": 2
+      }
+    },
+    {
+      "file": "src/Student/StudentStudyPlanPage.jsx",
+      "role": "student",
+      "lines": 1644,
+      "score": 26,
+      "hits": {
+        "fixedWidth": 5,
+        "fixedPos": 1,
+        "vh100": 4,
+        "overflowHidden": 1
+      }
+    },
+    {
+      "file": "src/Trainer/RecordedClassList.jsx",
+      "role": "trainer",
+      "lines": 782,
+      "score": 26,
+      "hits": {
+        "fixedWidth": 1,
+        "vh100": 1,
+        "overflowHidden": 6,
+        "smallFont": 13,
+        "hoverOnly": 2
+      }
+    },
+    {
+      "file": "src/Trainer/trainerTheme.jsx",
+      "role": "trainer",
+      "lines": 419,
+      "score": 26,
+      "hits": {
+        "fixedWidth": 3,
+        "vh100": 1,
+        "overflowHidden": 1,
+        "smallFont": 13,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Admin/AdminAssessmentSystem.jsx",
+      "role": "admin",
+      "lines": 2052,
+      "score": 25,
+      "hits": {
+        "fixedWidth": 2,
+        "smallFont": 18,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Admin/AdminVideos.jsx",
+      "role": "admin",
+      "lines": 653,
+      "score": 24,
+      "hits": {
+        "fixedWidth": 2,
+        "overflowHidden": 2,
+        "smallFont": 16
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/CourseDetailsPage.jsx",
+      "role": "shared",
+      "lines": 1290,
+      "score": 24,
+      "hits": {
+        "fixedPos": 1,
+        "overflowHidden": 11,
+        "smallFont": 11
+      }
+    },
+    {
+      "file": "src/Trainer/DoubtsChatModal.jsx",
+      "role": "trainer",
+      "lines": 488,
+      "score": 24,
+      "hits": {
+        "fixedWidth": 5,
+        "fixedPos": 2,
+        "jsWidth": 2,
+        "overflowHidden": 1
+      }
+    },
+    {
+      "file": "src/Trainer/MyQuizzes.jsx",
+      "role": "trainer",
+      "lines": 339,
+      "score": 24,
+      "hits": {
+        "fixedWidth": 1,
+        "tableNoScroll": 1,
+        "fixedPos": 1,
+        "overflowHidden": 2,
+        "smallFont": 13
+      }
+    },
+    {
+      "file": "src/Admin/UsageAnalytics.jsx",
+      "role": "admin",
+      "lines": 442,
+      "score": 23,
+      "hits": {
+        "fixedWidth": 2,
+        "vh100": 1,
+        "jsWidth": 1,
+        "overflowHidden": 3,
+        "smallFont": 10
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerBatchesPage.jsx",
+      "role": "trainer",
+      "lines": 604,
+      "score": 23,
+      "hits": {
+        "fixedWidth": 2,
+        "overflowHidden": 4,
+        "smallFont": 13
+      }
+    },
+    {
+      "file": "src/legacy-pages/ProfilePage.jsx",
+      "role": "shared",
+      "lines": 4005,
+      "score": 22,
+      "hits": {
+        "fixedWidth": 1,
+        "fixedPos": 1,
+        "overflowHidden": 8,
+        "smallFont": 9
+      }
+    },
+    {
+      "file": "src/Trainer/MyAssignments.jsx",
+      "role": "trainer",
+      "lines": 496,
+      "score": 22,
+      "hits": {
+        "fixedWidth": 2,
+        "vh100": 1,
+        "overflowHidden": 2,
+        "smallFont": 12
+      }
+    },
+    {
+      "file": "src/Trainer/DoubtsManagement.jsx",
+      "role": "trainer",
+      "lines": 851,
+      "score": 21,
+      "hits": {
+        "fixedWidth": 4,
+        "vh100": 1,
+        "jsWidth": 2,
+        "overflowHidden": 3
+      }
+    },
+    {
+      "file": "src/components/TopNavbar.jsx",
+      "role": "shared",
+      "lines": 909,
+      "score": 20,
+      "hits": {
+        "fixedWidth": 2,
+        "fixedPos": 6,
+        "vh100": 1
+      }
+    },
+    {
+      "file": "src/Trainer/ai-companion/AiCompanionSidebar.jsx",
+      "role": "trainer",
+      "lines": 554,
+      "score": 20,
+      "hits": {
+        "overflowHidden": 2,
+        "smallFont": 10,
+        "hoverOnly": 8
+      }
+    },
+    {
+      "file": "src/legacy-pages/public/PublicSessionsPage.jsx",
+      "role": "shared",
+      "lines": 457,
+      "score": 19,
+      "hits": {
+        "fixedWidth": 3,
+        "vh100": 1,
+        "overflowHidden": 1,
+        "smallFont": 6,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Student/MyCourses.jsx",
+      "role": "student",
+      "lines": 401,
+      "score": 19,
+      "hits": {
+        "fixedWidth": 1,
+        "overflowHidden": 4,
+        "smallFont": 11,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Trainer/ai-companion/AiWorkflowHome.jsx",
+      "role": "trainer",
+      "lines": 518,
+      "score": 19,
+      "hits": {
+        "overflowHidden": 1,
+        "smallFont": 15,
+        "hoverOnly": 3
+      }
+    },
+    {
+      "file": "src/legacy-pages/Auth/Login.jsx",
+      "role": "shared",
+      "lines": 1181,
+      "score": 18,
+      "hits": {
+        "fixedWidth": 4,
+        "vh100": 2,
+        "smallFont": 2
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/components/Navbar.jsx",
+      "role": "shared",
+      "lines": 1005,
+      "score": 18,
+      "hits": {
+        "overflowHidden": 2,
+        "smallFont": 13,
+        "hoverOnly": 3
+      }
+    },
+    {
+      "file": "src/Trainer/ai-companion/AiActivityLogs.jsx",
+      "role": "trainer",
+      "lines": 509,
+      "score": 18,
+      "hits": {
+        "fixedGrid": 1,
+        "overflowHidden": 1,
+        "smallFont": 12,
+        "hoverOnly": 2
+      }
+    },
+    {
+      "file": "src/Admin/AdminFileList.jsx",
+      "role": "admin",
+      "lines": 675,
+      "score": 17,
+      "hits": {
+        "fixedWidth": 1,
+        "fixedPos": 2,
+        "overflowHidden": 2,
+        "smallFont": 8
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/ProgramPlayer.jsx",
+      "role": "shared",
+      "lines": 1402,
+      "score": 17,
+      "hits": {
+        "overflowHidden": 6,
+        "smallFont": 11
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/Subjects/Class9Subjects.jsx",
+      "role": "shared",
+      "lines": 348,
+      "score": 17,
+      "hits": {
+        "fixedWidth": 2,
+        "fixedGrid": 2,
+        "vh100": 1,
+        "smallFont": 3
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerClassroomPage.jsx",
+      "role": "trainer",
+      "lines": 233,
+      "score": 17,
+      "hits": {
+        "fixedWidth": 1,
+        "overflowHidden": 2,
+        "smallFont": 12
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/components/MobileFullScreenMenu.jsx",
+      "role": "shared",
+      "lines": 796,
+      "score": 16,
+      "hits": {
+        "fixedPos": 1,
+        "vh100": 1,
+        "overflowHidden": 2,
+        "smallFont": 9,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/DigitalMarketingHub.jsx",
+      "role": "shared",
+      "lines": 1323,
+      "score": 16,
+      "hits": {
+        "fixedWidth": 1,
+        "tableNoScroll": 1,
+        "jsWidth": 4,
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/admin-control/SuperAdminCourseManagement.jsx",
+      "role": "superadmin",
+      "lines": 1192,
+      "score": 16,
+      "hits": {
+        "fixedWidth": 2,
+        "vh100": 2,
+        "jsWidth": 2,
+        "smallFont": 2
+      }
+    },
+    {
+      "file": "src/Trainer/ai-companion/AiTemplateGalleryModal.jsx",
+      "role": "trainer",
+      "lines": 358,
+      "score": 16,
+      "hits": {
+        "fixedWidth": 1,
+        "fixedPos": 1,
+        "overflowHidden": 1,
+        "smallFont": 6,
+        "hoverOnly": 4
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/components/Footer.jsx",
+      "role": "shared",
+      "lines": 835,
+      "score": 15,
+      "hits": {
+        "fixedWidth": 1,
+        "tableNoScroll": 1,
+        "fixedPos": 1,
+        "overflowHidden": 1,
+        "smallFont": 4,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Student/StudentEnroll.jsx",
+      "role": "student",
+      "lines": 833,
+      "score": 15,
+      "hits": {
+        "overflowHidden": 15
+      }
+    },
+    {
+      "file": "src/SuperAdmin/cms-management/components/MediaManager.jsx",
+      "role": "superadmin",
+      "lines": 378,
+      "score": 15,
+      "hits": {
+        "fixedWidth": 2,
+        "overflowHidden": 3,
+        "smallFont": 6
+      }
+    },
+    {
+      "file": "src/components/NotificationBell.jsx",
+      "role": "shared",
+      "lines": 374,
+      "score": 14,
+      "hits": {
+        "fixedWidth": 1,
+        "overflowHidden": 2,
+        "smallFont": 7,
+        "hoverOnly": 2
+      }
+    },
+    {
+      "file": "src/components/Sidebar.jsx",
+      "role": "shared",
+      "lines": 989,
+      "score": 14,
+      "hits": {
+        "fixedWidth": 1,
+        "fixedPos": 2,
+        "vh100": 1,
+        "overflowHidden": 3,
+        "hoverOnly": 2
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/Futurism.jsx",
+      "role": "shared",
+      "lines": 1774,
+      "score": 14,
+      "hits": {
+        "fixedWidth": 2,
+        "jsWidth": 2,
+        "smallFont": 4
+      }
+    },
+    {
+      "file": "src/SuperAdmin/common/ResizableSlidePanel.jsx",
+      "role": "superadmin",
+      "lines": 390,
+      "score": 14,
+      "hits": {
+        "fixedPos": 1,
+        "vh100": 1,
+        "jsWidth": 1,
+        "smallFont": 8
+      }
+    },
+    {
+      "file": "src/SuperAdmin/components/layout/SuperAdminLayout.jsx",
+      "role": "superadmin",
+      "lines": 130,
+      "score": 14,
+      "hits": {
+        "fixedWidth": 2,
+        "vh100": 4
+      }
+    },
+    {
+      "file": "src/components/skill/SkillCard.jsx",
+      "role": "shared",
+      "lines": 186,
+      "score": 13,
+      "hits": {
+        "overflowHidden": 2,
+        "smallFont": 10,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/CoursePlayer.jsx",
+      "role": "shared",
+      "lines": 844,
+      "score": 13,
+      "hits": {
+        "fixedPos": 1,
+        "overflowHidden": 5,
+        "smallFont": 6
+      }
+    },
+    {
+      "file": "src/legacy-pages/public/PublicBookingConfirmation.jsx",
+      "role": "shared",
+      "lines": 334,
+      "score": 13,
+      "hits": {
+        "fixedWidth": 1,
+        "vh100": 2,
+        "smallFont": 6
+      }
+    },
+    {
+      "file": "src/Admin/AdminMeeting/pages/workspace/TaskOrbit.jsx",
+      "role": "admin",
+      "lines": 401,
+      "score": 12,
+      "hits": {
+        "fixedWidth": 1,
+        "fixedPos": 1,
+        "smallFont": 7
+      }
+    },
+    {
+      "file": "src/components/skill/WeakSkillsSection.jsx",
+      "role": "shared",
+      "lines": 153,
+      "score": 12,
+      "hits": {
+        "overflowHidden": 1,
+        "smallFont": 11
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/AllCourses.jsx",
+      "role": "shared",
+      "lines": 539,
+      "score": 12,
+      "hits": {
+        "fixedWidth": 1,
+        "overflowHidden": 1,
+        "smallFont": 8
+      }
+    },
+    {
+      "file": "src/legacy-pages/public/IlmoraMeeting/src/components/IlmoraMeeting/components/PreJoinScreen.jsx",
+      "role": "shared",
+      "lines": 444,
+      "score": 12,
+      "hits": {
+        "fixedWidth": 4
+      }
+    },
+    {
+      "file": "src/Student/StudentMeeting/pages/workspace/TaskOrbit.jsx",
+      "role": "student",
+      "lines": 401,
+      "score": 12,
+      "hits": {
+        "fixedWidth": 1,
+        "fixedPos": 1,
+        "smallFont": 7
+      }
+    },
+    {
+      "file": "src/SuperAdmin/meetings/SuperAdminMeeting/pages/workspace/TaskOrbit.jsx",
+      "role": "superadmin",
+      "lines": 401,
+      "score": 12,
+      "hits": {
+        "fixedWidth": 1,
+        "fixedPos": 1,
+        "smallFont": 7
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerMeeting/pages/workspace/TaskOrbit.jsx",
+      "role": "trainer",
+      "lines": 401,
+      "score": 12,
+      "hits": {
+        "fixedWidth": 1,
+        "fixedPos": 1,
+        "smallFont": 7
+      }
+    },
+    {
+      "file": "src/Admin/AdminVideoList.jsx",
+      "role": "admin",
+      "lines": 471,
+      "score": 11,
+      "hits": {
+        "overflowHidden": 2,
+        "smallFont": 9
+      }
+    },
+    {
+      "file": "src/components/live/FloatingMeetingWidget.jsx",
+      "role": "shared",
+      "lines": 106,
+      "score": 11,
+      "hits": {
+        "fixedPos": 1,
+        "jsWidth": 2,
+        "overflowHidden": 1,
+        "smallFont": 4
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/Subjects/Class9AI.jsx",
+      "role": "shared",
+      "lines": 621,
+      "score": 11,
+      "hits": {
+        "fixedWidth": 3,
+        "vh100": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/Subjects/Class9Math.jsx",
+      "role": "shared",
+      "lines": 584,
+      "score": 11,
+      "hits": {
+        "fixedWidth": 3,
+        "vh100": 1
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerLiveClasses/components/AttendeeRow.jsx",
+      "role": "trainer",
+      "lines": 129,
+      "score": 11,
+      "hits": {
+        "overflowHidden": 2,
+        "smallFont": 8,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerLiveClasses/components/MiniCalendar.jsx",
+      "role": "trainer",
+      "lines": 292,
+      "score": 11,
+      "hits": {
+        "fixedGrid": 2,
+        "smallFont": 4,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerLiveClasses/components/RecordedVideoCard.jsx",
+      "role": "trainer",
+      "lines": 203,
+      "score": 11,
+      "hits": {
+        "overflowHidden": 4,
+        "smallFont": 6,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerLiveClasses/components/SessionRow.jsx",
+      "role": "trainer",
+      "lines": 299,
+      "score": 11,
+      "hits": {
+        "overflowHidden": 1,
+        "smallFont": 9,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Admin/AdminMeeting/pages/workspace/InstantMeeting.jsx",
+      "role": "admin",
+      "lines": 473,
+      "score": 10,
+      "hits": {
+        "fixedWidth": 1,
+        "fixedPos": 1,
+        "smallFont": 5
+      }
+    },
+    {
+      "file": "src/components/skill/CareerRoadmap.jsx",
+      "role": "shared",
+      "lines": 143,
+      "score": 10,
+      "hits": {
+        "overflowHidden": 1,
+        "smallFont": 9
+      }
+    },
+    {
+      "file": "src/components/skill/SkillIntelligenceSection.jsx",
+      "role": "shared",
+      "lines": 167,
+      "score": 10,
+      "hits": {
+        "overflowHidden": 1,
+        "smallFont": 9
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/ForgotPasswordModal.jsx",
+      "role": "shared",
+      "lines": 185,
+      "score": 10,
+      "hits": {
+        "fixedWidth": 1,
+        "fixedPos": 1,
+        "smallFont": 5
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/hr-hubExtras.jsx",
+      "role": "shared",
+      "lines": 884,
+      "score": 10,
+      "hits": {
+        "tableNoScroll": 2,
+        "jsWidth": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/public/PublicJoinSession.jsx",
+      "role": "shared",
+      "lines": 220,
+      "score": 10,
+      "hits": {
+        "fixedWidth": 1,
+        "vh100": 3,
+        "overflowHidden": 1
+      }
+    },
+    {
+      "file": "src/Student/StudentMeeting/pages/workspace/InstantMeeting.jsx",
+      "role": "student",
+      "lines": 473,
+      "score": 10,
+      "hits": {
+        "fixedWidth": 1,
+        "fixedPos": 1,
+        "smallFont": 5
+      }
+    },
+    {
+      "file": "src/SuperAdmin/cms-management/components/NavigationManager.jsx",
+      "role": "superadmin",
+      "lines": 326,
+      "score": 10,
+      "hits": {
+        "fixedWidth": 2,
+        "smallFont": 4
+      }
+    },
+    {
+      "file": "src/SuperAdmin/meetings/SuperAdminMeeting/pages/workspace/InstantMeeting.jsx",
+      "role": "superadmin",
+      "lines": 406,
+      "score": 10,
+      "hits": {
+        "fixedWidth": 1,
+        "fixedPos": 1,
+        "smallFont": 5
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerMeeting/pages/workspace/InstantMeeting.jsx",
+      "role": "trainer",
+      "lines": 473,
+      "score": 10,
+      "hits": {
+        "fixedWidth": 1,
+        "fixedPos": 1,
+        "smallFont": 5
+      }
+    },
+    {
+      "file": "src/components/plan/UpgradeModal.jsx",
+      "role": "shared",
+      "lines": 664,
+      "score": 9,
+      "hits": {
+        "fixedPos": 1,
+        "overflowHidden": 1,
+        "smallFont": 6
+      }
+    },
+    {
+      "file": "src/SuperAdmin/components/layout/navigation/BreadcrumbNavigation.jsx",
+      "role": "superadmin",
+      "lines": 129,
+      "score": 9,
+      "hits": {
+        "overflowHidden": 3,
+        "smallFont": 3,
+        "hoverOnly": 3
+      }
+    },
+    {
+      "file": "src/SuperAdmin/featured-programs/components/CategoryManagement.jsx",
+      "role": "superadmin",
+      "lines": 210,
+      "score": 9,
+      "hits": {
+        "tableNoScroll": 1,
+        "fixedPos": 2,
+        "overflowHidden": 1
+      }
+    },
+    {
+      "file": "src/Admin/BatchStudentsPage.jsx",
+      "role": "admin",
+      "lines": 719,
+      "score": 8,
+      "hits": {
+        "overflowHidden": 6,
+        "smallFont": 2
+      }
+    },
+    {
+      "file": "src/Admin/BatchTrainerOverviewPage.jsx",
+      "role": "admin",
+      "lines": 580,
+      "score": 8,
+      "hits": {
+        "overflowHidden": 4,
+        "smallFont": 4
+      }
+    },
+    {
+      "file": "src/components/AllCourses/AllCoursesSidebar.jsx",
+      "role": "shared",
+      "lines": 339,
+      "score": 8,
+      "hits": {
+        "vh100": 2,
+        "smallFont": 4
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/components/RelatedLinks.jsx",
+      "role": "shared",
+      "lines": 255,
+      "score": 8,
+      "hits": {
+        "fixedWidth": 2,
+        "jsWidth": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/sections/LoginModal.jsx",
+      "role": "shared",
+      "lines": 348,
+      "score": 8,
+      "hits": {
+        "fixedWidth": 2,
+        "fixedPos": 1
+      }
+    },
+    {
+      "file": "src/Student/Doubts.jsx",
+      "role": "student",
+      "lines": 604,
+      "score": 8,
+      "hits": {
+        "vh100": 2,
+        "jsWidth": 2
+      }
+    },
+    {
+      "file": "src/SuperAdmin/admin-control/SuperAdminAssessmentSystem.jsx",
+      "role": "superadmin",
+      "lines": 2184,
+      "score": 8,
+      "hits": {
+        "overflowHidden": 8
+      }
+    },
+    {
+      "file": "src/SuperAdmin/analytics/AnalyticsDashboard.jsx",
+      "role": "superadmin",
+      "lines": 310,
+      "score": 8,
+      "hits": {
+        "smallFont": 8
+      }
+    },
+    {
+      "file": "src/SuperAdmin/audit-monitoring/AuditOverviewPage.jsx",
+      "role": "superadmin",
+      "lines": 709,
+      "score": 8,
+      "hits": {
+        "overflowHidden": 1,
+        "smallFont": 7
+      }
+    },
+    {
+      "file": "src/SuperAdmin/featured-programs/components/ManualSyllabusBuilder.jsx",
+      "role": "superadmin",
+      "lines": 264,
+      "score": 8,
+      "hits": {
+        "fixedPos": 3,
+        "overflowHidden": 2
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerLiveClasses/components/HistoryRow.jsx",
+      "role": "trainer",
+      "lines": 175,
+      "score": 8,
+      "hits": {
+        "overflowHidden": 1,
+        "smallFont": 6,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerLiveClasses/pages/PanelUploadRecorded.jsx",
+      "role": "trainer",
+      "lines": 454,
+      "score": 8,
+      "hits": {
+        "overflowHidden": 1,
+        "smallFont": 7
+      }
+    },
+    {
+      "file": "src/legacy-pages/Auth/VerifyEmail.jsx",
+      "role": "shared",
+      "lines": 467,
+      "score": 7,
+      "hits": {
+        "fixedWidth": 1,
+        "vh100": 1,
+        "jsWidth": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/components/AnnouncementBanner.jsx",
+      "role": "shared",
+      "lines": 244,
+      "score": 7,
+      "hits": {
+        "fixedWidth": 2,
+        "overflowHidden": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/audit-monitoring/GrafanaMetricsPage.jsx",
+      "role": "superadmin",
+      "lines": 653,
+      "score": 7,
+      "hits": {
+        "fixedPos": 1,
+        "smallFont": 5
+      }
+    },
+    {
+      "file": "src/SuperAdmin/featured-programs/pages/FeaturedProgramsList.jsx",
+      "role": "superadmin",
+      "lines": 1125,
+      "score": 7,
+      "hits": {
+        "fixedPos": 1,
+        "overflowHidden": 5
+      }
+    },
+    {
+      "file": "src/components/AllCourses/CourseSection.jsx",
+      "role": "shared",
+      "lines": 164,
+      "score": 6,
+      "hits": {
+        "smallFont": 6
+      }
+    },
+    {
+      "file": "src/components/roadmap-upgraded/StatsPanel.jsx",
+      "role": "shared",
+      "lines": 137,
+      "score": 6,
+      "hits": {
+        "tableNoScroll": 1,
+        "smallFont": 2
+      }
+    },
+    {
+      "file": "src/components/skill/SkillRadarChart.jsx",
+      "role": "shared",
+      "lines": 102,
+      "score": 6,
+      "hits": {
+        "smallFont": 6
+      }
+    },
+    {
+      "file": "src/legacy-pages/Company/FAQ.jsx",
+      "role": "shared",
+      "lines": 879,
+      "score": 6,
+      "hits": {
+        "overflowHidden": 6
+      }
+    },
+    {
+      "file": "src/Student/Settings.jsx",
+      "role": "student",
+      "lines": 369,
+      "score": 6,
+      "hits": {
+        "jsWidth": 1,
+        "overflowHidden": 1,
+        "hoverOnly": 3
+      }
+    },
+    {
+      "file": "src/SuperAdmin/audit-monitoring/AuditLogsPage.jsx",
+      "role": "superadmin",
+      "lines": 1112,
+      "score": 6,
+      "hits": {
+        "overflowHidden": 1,
+        "smallFont": 5
+      }
+    },
+    {
+      "file": "src/SuperAdmin/audit-monitoring/ServiceHealthPage.jsx",
+      "role": "superadmin",
+      "lines": 712,
+      "score": 6,
+      "hits": {
+        "overflowHidden": 1,
+        "smallFont": 5
+      }
+    },
+    {
+      "file": "src/SuperAdmin/meetings/SuperAdminMeeting/pages/workspace/Email.jsx",
+      "role": "superadmin",
+      "lines": 305,
+      "score": 6,
+      "hits": {
+        "fixedGrid": 2
+      }
+    },
+    {
+      "file": "src/Trainer/ai-companion/AiWorkflowTemplates.jsx",
+      "role": "trainer",
+      "lines": 376,
+      "score": 6,
+      "hits": {
+        "smallFont": 5,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Trainer/AiCompanionPanel.jsx",
+      "role": "trainer",
+      "lines": 339,
+      "score": 6,
+      "hits": {
+        "vh100": 2,
+        "overflowHidden": 2
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerLiveClasses/pages/PanelRecordedList.jsx",
+      "role": "trainer",
+      "lines": 317,
+      "score": 6,
+      "hits": {
+        "overflowHidden": 1,
+        "smallFont": 5
+      }
+    },
+    {
+      "file": "src/components/live/LiveKitRoomComponent.jsx",
+      "role": "shared",
+      "lines": 182,
+      "score": 5,
+      "hits": {
+        "fixedPos": 1,
+        "smallFont": 3
+      }
+    },
+    {
+      "file": "src/components/NotificationBanner.jsx",
+      "role": "shared",
+      "lines": 48,
+      "score": 5,
+      "hits": {
+        "fixedPos": 1,
+        "smallFont": 3
+      }
+    },
+    {
+      "file": "src/legacy-pages/public/IlmoraMeeting/src/components/IlmoraMeeting/components/PiPPanel.jsx",
+      "role": "shared",
+      "lines": 132,
+      "score": 5,
+      "hits": {
+        "smallFont": 5
+      }
+    },
+    {
+      "file": "src/legacy-pages/public/PublicSessionComplete.jsx",
+      "role": "shared",
+      "lines": 86,
+      "score": 5,
+      "hits": {
+        "fixedWidth": 1,
+        "vh100": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/audit-monitoring/AlertsPage.jsx",
+      "role": "superadmin",
+      "lines": 629,
+      "score": 5,
+      "hits": {
+        "smallFont": 5
+      }
+    },
+    {
+      "file": "src/SuperAdmin/common/UserTable.jsx",
+      "role": "superadmin",
+      "lines": 293,
+      "score": 5,
+      "hits": {
+        "fixedPos": 1,
+        "overflowHidden": 2,
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/featured-programs/components/MentorDrawer.jsx",
+      "role": "superadmin",
+      "lines": 535,
+      "score": 5,
+      "hits": {
+        "overflowHidden": 3,
+        "smallFont": 1,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/meetings/SuperAdminMeeting/pages/workspace/MeetingReports.jsx",
+      "role": "superadmin",
+      "lines": 817,
+      "score": 5,
+      "hits": {
+        "fixedWidth": 1,
+        "fixedPos": 1
+      }
+    },
+    {
+      "file": "src/Trainer/ai-companion/AiSourceDropdown.jsx",
+      "role": "trainer",
+      "lines": 222,
+      "score": 5,
+      "hits": {
+        "overflowHidden": 1,
+        "smallFont": 3,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerLiveClasses/pages/PanelJoinCall.jsx",
+      "role": "trainer",
+      "lines": 324,
+      "score": 5,
+      "hits": {
+        "smallFont": 5
+      }
+    },
+    {
+      "file": "src/Admin/AdminMeeting/components/modals/WorkspaceModal.jsx",
+      "role": "admin",
+      "lines": 377,
+      "score": 4,
+      "hits": {
+        "jsWidth": 2
+      }
+    },
+    {
+      "file": "src/components/AllCourses/CourseCard.jsx",
+      "role": "shared",
+      "lines": 105,
+      "score": 4,
+      "hits": {
+        "overflowHidden": 1,
+        "smallFont": 3
+      }
+    },
+    {
+      "file": "src/components/design-system/components/StatCard.jsx",
+      "role": "shared",
+      "lines": 162,
+      "score": 4,
+      "hits": {
+        "overflowHidden": 1,
+        "smallFont": 2,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/components/roadmap-upgraded/ArticleModal.jsx",
+      "role": "shared",
+      "lines": 118,
+      "score": 4,
+      "hits": {
+        "fixedPos": 1,
+        "smallFont": 2
+      }
+    },
+    {
+      "file": "src/components/roadmap-upgraded/QuizModal.jsx",
+      "role": "shared",
+      "lines": 141,
+      "score": 4,
+      "hits": {
+        "fixedPos": 1,
+        "smallFont": 2
+      }
+    },
+    {
+      "file": "src/components/roadmap-upgraded/RoadmapUpgradedWizard.jsx",
+      "role": "shared",
+      "lines": 403,
+      "score": 4,
+      "hits": {
+        "fixedWidth": 1,
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/Syllabus.jsx",
+      "role": "shared",
+      "lines": 676,
+      "score": 4,
+      "hits": {
+        "overflowHidden": 4
+      }
+    },
+    {
+      "file": "src/Student/StudentMeeting/components/modals/WorkspaceModal.jsx",
+      "role": "student",
+      "lines": 377,
+      "score": 4,
+      "hits": {
+        "jsWidth": 2
+      }
+    },
+    {
+      "file": "src/SuperAdmin/cms-management/banner-studio/components/BannerSidePanel.jsx",
+      "role": "superadmin",
+      "lines": 792,
+      "score": 4,
+      "hits": {
+        "jsWidth": 1,
+        "smallFont": 2
+      }
+    },
+    {
+      "file": "src/SuperAdmin/featured-programs/components/SyllabusManager.jsx",
+      "role": "superadmin",
+      "lines": 1594,
+      "score": 4,
+      "hits": {
+        "overflowHidden": 3,
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/featured-programs/MentorsManagement.jsx",
+      "role": "superadmin",
+      "lines": 788,
+      "score": 4,
+      "hits": {
+        "fixedPos": 1,
+        "overflowHidden": 2
+      }
+    },
+    {
+      "file": "src/SuperAdmin/featured-programs/pages/AddEditProgram.jsx",
+      "role": "superadmin",
+      "lines": 1217,
+      "score": 4,
+      "hits": {
+        "overflowHidden": 1,
+        "smallFont": 3
+      }
+    },
+    {
+      "file": "src/SuperAdmin/meetings/SuperAdminMeeting/components/modals/WorkspaceModal.jsx",
+      "role": "superadmin",
+      "lines": 377,
+      "score": 4,
+      "hits": {
+        "jsWidth": 2
+      }
+    },
+    {
+      "file": "src/SuperAdmin/meetings/SuperAdminMeeting/pages/workspace/notetracker/NoteTrackerActivity.jsx",
+      "role": "superadmin",
+      "lines": 238,
+      "score": 4,
+      "hits": {
+        "tableNoScroll": 1
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerLiveClasses/pages/PanelAttendanceReport.jsx",
+      "role": "trainer",
+      "lines": 221,
+      "score": 4,
+      "hits": {
+        "overflowHidden": 1,
+        "smallFont": 3
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerMeeting/components/modals/WorkspaceModal.jsx",
+      "role": "trainer",
+      "lines": 377,
+      "score": 4,
+      "hits": {
+        "jsWidth": 2
+      }
+    },
+    {
+      "file": "src/Admin/AdminMeeting/pages/workspace/Email.jsx",
+      "role": "admin",
+      "lines": 217,
+      "score": 3,
+      "hits": {
+        "fixedGrid": 1
+      }
+    },
+    {
+      "file": "src/Admin/AdminMeeting/pages/workspace/Overview.jsx",
+      "role": "admin",
+      "lines": 619,
+      "score": 3,
+      "hits": {
+        "smallFont": 3
+      }
+    },
+    {
+      "file": "src/Admin/AssignTrainerPage.jsx",
+      "role": "admin",
+      "lines": 351,
+      "score": 3,
+      "hits": {
+        "overflowHidden": 2,
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/components/design-system/components/Button.jsx",
+      "role": "shared",
+      "lines": 113,
+      "score": 3,
+      "hits": {
+        "smallFont": 2,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/components/FlashcardViewer.jsx",
+      "role": "shared",
+      "lines": 130,
+      "score": 3,
+      "hits": {
+        "fixedWidth": 1
+      }
+    },
+    {
+      "file": "src/components/plan/UsageBadge.jsx",
+      "role": "shared",
+      "lines": 115,
+      "score": 3,
+      "hits": {
+        "overflowHidden": 1,
+        "smallFont": 2
+      }
+    },
+    {
+      "file": "src/components/roadmap-upgraded/PdfModal.jsx",
+      "role": "shared",
+      "lines": 159,
+      "score": 3,
+      "hits": {
+        "fixedPos": 1,
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/components/roadmap-upgraded/VideoModal.jsx",
+      "role": "shared",
+      "lines": 126,
+      "score": 3,
+      "hits": {
+        "fixedPos": 1,
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/context/LiveMeetingContext.jsx",
+      "role": "shared",
+      "lines": 828,
+      "score": 3,
+      "hits": {
+        "fixedPos": 1,
+        "overflowHidden": 1
+      }
+    },
+    {
+      "file": "src/design-system/components/Button.jsx",
+      "role": "shared",
+      "lines": 113,
+      "score": 3,
+      "hits": {
+        "smallFont": 2,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/design-system/components/StatCard.jsx",
+      "role": "shared",
+      "lines": 172,
+      "score": 3,
+      "hits": {
+        "overflowHidden": 2,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/design-system/responsive/ChartFrame.jsx",
+      "role": "shared",
+      "lines": 33,
+      "score": 3,
+      "hits": {
+        "fixedWidth": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/Auth/ForgotPassword.jsx",
+      "role": "shared",
+      "lines": 124,
+      "score": 3,
+      "hits": {
+        "smallFont": 3
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/components/AuthModals.jsx",
+      "role": "shared",
+      "lines": 413,
+      "score": 3,
+      "hits": {
+        "fixedPos": 1,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/components/PublicLayout.jsx",
+      "role": "shared",
+      "lines": 566,
+      "score": 3,
+      "hits": {
+        "fixedPos": 1,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Student/StudentMeeting/pages/workspace/Email.jsx",
+      "role": "student",
+      "lines": 217,
+      "score": 3,
+      "hits": {
+        "fixedGrid": 1
+      }
+    },
+    {
+      "file": "src/Student/StudentMeeting/pages/workspace/Overview.jsx",
+      "role": "student",
+      "lines": 619,
+      "score": 3,
+      "hits": {
+        "smallFont": 3
+      }
+    },
+    {
+      "file": "src/SuperAdmin/cms-management/banner-studio/components/BannerCard.jsx",
+      "role": "superadmin",
+      "lines": 159,
+      "score": 3,
+      "hits": {
+        "smallFont": 3
+      }
+    },
+    {
+      "file": "src/SuperAdmin/cms-management/banner-studio/components/BuilderSection.jsx",
+      "role": "superadmin",
+      "lines": 439,
+      "score": 3,
+      "hits": {
+        "smallFont": 3
+      }
+    },
+    {
+      "file": "src/SuperAdmin/cms-management/components/MarketingBannerStrip.jsx",
+      "role": "superadmin",
+      "lines": 147,
+      "score": 3,
+      "hits": {
+        "fixedWidth": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/cms-management/pages/AdminHubCMS.jsx",
+      "role": "superadmin",
+      "lines": 326,
+      "score": 3,
+      "hits": {
+        "smallFont": 3
+      }
+    },
+    {
+      "file": "src/SuperAdmin/featured-programs/components/MentorTable.jsx",
+      "role": "superadmin",
+      "lines": 229,
+      "score": 3,
+      "hits": {
+        "overflowHidden": 2,
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/meetings/SuperAdminMeeting/pages/workspace/notetracker/NtApiError.jsx",
+      "role": "superadmin",
+      "lines": 91,
+      "score": 3,
+      "hits": {
+        "fixedWidth": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/meetings/SuperAdminMeeting/pages/workspace/notetracker/NtErrorNotice.jsx",
+      "role": "superadmin",
+      "lines": 152,
+      "score": 3,
+      "hits": {
+        "fixedWidth": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/meetings/SuperAdminMeeting/pages/workspace/notetracker/ntForms.jsx",
+      "role": "superadmin",
+      "lines": 419,
+      "score": 3,
+      "hits": {
+        "fixedWidth": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/meetings/SuperAdminMeeting/pages/workspace/Overview.jsx",
+      "role": "superadmin",
+      "lines": 619,
+      "score": 3,
+      "hits": {
+        "smallFont": 3
+      }
+    },
+    {
+      "file": "src/Trainer/ai-companion/AiModeCards.jsx",
+      "role": "trainer",
+      "lines": 368,
+      "score": 3,
+      "hits": {
+        "smallFont": 2,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerLiveClasses/components/HeroBanner.jsx",
+      "role": "trainer",
+      "lines": 105,
+      "score": 3,
+      "hits": {
+        "overflowHidden": 1,
+        "smallFont": 2
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerLiveClasses/components/ThreePanelLayout.jsx",
+      "role": "trainer",
+      "lines": 190,
+      "score": 3,
+      "hits": {
+        "fixedPos": 1,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerLiveClasses/pages/PanelLiveDashboard.jsx",
+      "role": "trainer",
+      "lines": 407,
+      "score": 3,
+      "hits": {
+        "smallFont": 3
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerLiveClasses/pages/PanelLiveHistory.jsx",
+      "role": "trainer",
+      "lines": 218,
+      "score": 3,
+      "hits": {
+        "overflowHidden": 1,
+        "smallFont": 2
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerMeeting/pages/workspace/Email.jsx",
+      "role": "trainer",
+      "lines": 217,
+      "score": 3,
+      "hits": {
+        "fixedGrid": 1
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerMeeting/pages/workspace/Overview.jsx",
+      "role": "trainer",
+      "lines": 619,
+      "score": 3,
+      "hits": {
+        "smallFont": 3
+      }
+    },
+    {
+      "file": "src/Admin/AdminMeeting/pages/workspace/CalendarSync.jsx",
+      "role": "admin",
+      "lines": 170,
+      "score": 2,
+      "hits": {
+        "smallFont": 2
+      }
+    },
+    {
+      "file": "src/components/live/CallRoom.jsx",
+      "role": "shared",
+      "lines": 210,
+      "score": 2,
+      "hits": {
+        "overflowHidden": 2
+      }
+    },
+    {
+      "file": "src/components/ui/ErrorBoundary.jsx",
+      "role": "shared",
+      "lines": 46,
+      "score": 2,
+      "hits": {
+        "vh100": 1
+      }
+    },
+    {
+      "file": "src/components/ui/sheet.jsx",
+      "role": "shared",
+      "lines": 111,
+      "score": 2,
+      "hits": {
+        "fixedPos": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/common/EditProfile.jsx",
+      "role": "shared",
+      "lines": 380,
+      "score": 2,
+      "hits": {
+        "overflowHidden": 2
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/sections/DuringMeetingSection.jsx",
+      "role": "shared",
+      "lines": 341,
+      "score": 2,
+      "hits": {
+        "smallFont": 2
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/Toracxpage.jsx",
+      "role": "shared",
+      "lines": 54,
+      "score": 2,
+      "hits": {
+        "jsWidth": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/public/IlmoraMeeting/src/components/IlmoraMeeting/components/AudioPermissionAlert.jsx",
+      "role": "shared",
+      "lines": 60,
+      "score": 2,
+      "hits": {
+        "smallFont": 2
+      }
+    },
+    {
+      "file": "src/legacy-pages/public/IlmoraMeeting/src/components/IlmoraMeeting/components/Btn.jsx",
+      "role": "shared",
+      "lines": 95,
+      "score": 2,
+      "hits": {
+        "smallFont": 1,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/public/IlmoraMeeting/src/components/IlmoraMeeting/components/StripOverflow.jsx",
+      "role": "shared",
+      "lines": 24,
+      "score": 2,
+      "hits": {
+        "smallFont": 2
+      }
+    },
+    {
+      "file": "src/legacy-pages/public/IlmoraMeeting/src/components/IlmoraMeeting/components/WaitingRoomPanel.jsx",
+      "role": "shared",
+      "lines": 103,
+      "score": 2,
+      "hits": {
+        "smallFont": 2
+      }
+    },
+    {
+      "file": "src/Student/StudentMeeting/pages/workspace/CalendarSync.jsx",
+      "role": "student",
+      "lines": 170,
+      "score": 2,
+      "hits": {
+        "smallFont": 2
+      }
+    },
+    {
+      "file": "src/SuperAdmin/cms-management/pages/StudentHubCMS.jsx",
+      "role": "superadmin",
+      "lines": 486,
+      "score": 2,
+      "hits": {
+        "smallFont": 2
+      }
+    },
+    {
+      "file": "src/SuperAdmin/cms-management/pages/TrainerHubCMS.jsx",
+      "role": "superadmin",
+      "lines": 306,
+      "score": 2,
+      "hits": {
+        "smallFont": 2
+      }
+    },
+    {
+      "file": "src/SuperAdmin/common/ConfirmDialog.jsx",
+      "role": "superadmin",
+      "lines": 60,
+      "score": 2,
+      "hits": {
+        "fixedPos": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/common/UserPanel.jsx",
+      "role": "superadmin",
+      "lines": 192,
+      "score": 2,
+      "hits": {
+        "smallFont": 2
+      }
+    },
+    {
+      "file": "src/SuperAdmin/featured-programs/components/ImageUploadField.jsx",
+      "role": "superadmin",
+      "lines": 263,
+      "score": 2,
+      "hits": {
+        "overflowHidden": 2
+      }
+    },
+    {
+      "file": "src/SuperAdmin/featured-programs/components/ProgramBasicInfo.jsx",
+      "role": "superadmin",
+      "lines": 453,
+      "score": 2,
+      "hits": {
+        "overflowHidden": 2
+      }
+    },
+    {
+      "file": "src/SuperAdmin/featured-programs/components/SyllabusPreview.jsx",
+      "role": "superadmin",
+      "lines": 231,
+      "score": 2,
+      "hits": {
+        "overflowHidden": 2
+      }
+    },
+    {
+      "file": "src/SuperAdmin/featured-programs/components/SyllabusZipUpload.jsx",
+      "role": "superadmin",
+      "lines": 633,
+      "score": 2,
+      "hits": {
+        "overflowHidden": 2
+      }
+    },
+    {
+      "file": "src/SuperAdmin/meetings/SuperAdminMeeting/pages/workspace/CalendarSync.jsx",
+      "role": "superadmin",
+      "lines": 170,
+      "score": 2,
+      "hits": {
+        "smallFont": 2
+      }
+    },
+    {
+      "file": "src/SuperAdmin/meetings/SuperAdminMeeting/pages/workspace/notetracker/NoteTrackerAsk.jsx",
+      "role": "superadmin",
+      "lines": 760,
+      "score": 2,
+      "hits": {
+        "overflowHidden": 1,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/meetings/SuperAdminMeeting/pages/workspace/notetracker/NtModal.jsx",
+      "role": "superadmin",
+      "lines": 198,
+      "score": 2,
+      "hits": {
+        "fixedPos": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/student-control/StudentAnalytics.jsx",
+      "role": "superadmin",
+      "lines": 232,
+      "score": 2,
+      "hits": {
+        "smallFont": 2
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerFiles.jsx",
+      "role": "trainer",
+      "lines": 213,
+      "score": 2,
+      "hits": {
+        "fixedPos": 1
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerLiveClasses/components/ActionBtn.jsx",
+      "role": "trainer",
+      "lines": 30,
+      "score": 2,
+      "hits": {
+        "smallFont": 1,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerLiveClasses/components/CallActionBtn.jsx",
+      "role": "trainer",
+      "lines": 59,
+      "score": 2,
+      "hits": {
+        "smallFont": 1,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerLiveClasses/components/HeroBtn.jsx",
+      "role": "trainer",
+      "lines": 33,
+      "score": 2,
+      "hits": {
+        "smallFont": 1,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerLiveClasses/components/UploadSubmitBtn.jsx",
+      "role": "trainer",
+      "lines": 68,
+      "score": 2,
+      "hits": {
+        "smallFont": 1,
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerMeeting/pages/workspace/CalendarSync.jsx",
+      "role": "trainer",
+      "lines": 170,
+      "score": 2,
+      "hits": {
+        "smallFont": 2
+      }
+    },
+    {
+      "file": "src/Admin/AdminMeeting/components/WorkspaceSidebar.jsx",
+      "role": "admin",
+      "lines": 121,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/Admin/AdminMeeting/pages/workspace/BookingsList.jsx",
+      "role": "admin",
+      "lines": 202,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/Admin/AdminMeeting/pages/workspace/Calendar.jsx",
+      "role": "admin",
+      "lines": 260,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/components/design-system/components/Badge.jsx",
+      "role": "shared",
+      "lines": 47,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/components/design-system/components/Panel.jsx",
+      "role": "shared",
+      "lines": 73,
+      "score": 1,
+      "hits": {
+        "overflowHidden": 1
+      }
+    },
+    {
+      "file": "src/components/LmsLogo.jsx",
+      "role": "shared",
+      "lines": 34,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/components/roadmap-upgraded/MentorPanel.jsx",
+      "role": "shared",
+      "lines": 131,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/components/ui/avatar.jsx",
+      "role": "shared",
+      "lines": 36,
+      "score": 1,
+      "hits": {
+        "overflowHidden": 1
+      }
+    },
+    {
+      "file": "src/components/ui/dropdown-menu.jsx",
+      "role": "shared",
+      "lines": 159,
+      "score": 1,
+      "hits": {
+        "overflowHidden": 1
+      }
+    },
+    {
+      "file": "src/design-system/components/Badge.jsx",
+      "role": "shared",
+      "lines": 47,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/design-system/components/Panel.jsx",
+      "role": "shared",
+      "lines": 73,
+      "score": 1,
+      "hits": {
+        "overflowHidden": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/booking/BookingConfirmed.jsx",
+      "role": "shared",
+      "lines": 194,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/components/TexoraFloatingWidget.jsx",
+      "role": "shared",
+      "lines": 361,
+      "score": 1,
+      "hits": {
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/LifeSkillsShared.jsx",
+      "role": "shared",
+      "lines": 1018,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/sections/BeforeMeetingSection.jsx",
+      "role": "shared",
+      "lines": 219,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/sections/dashboard-demo/DemoCalendar.jsx",
+      "role": "shared",
+      "lines": 113,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/legacy-pages/Landing/sections/dashboard-demo/DemoSharedWithMe.jsx",
+      "role": "shared",
+      "lines": 54,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/Student/StudentMeeting/components/WorkspaceSidebar.jsx",
+      "role": "student",
+      "lines": 138,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/Student/StudentMeeting/pages/workspace/BookingsList.jsx",
+      "role": "student",
+      "lines": 202,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/Student/StudentMeeting/pages/workspace/Calendar.jsx",
+      "role": "student",
+      "lines": 260,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/audit-monitoring/AuditSection.jsx",
+      "role": "superadmin",
+      "lines": 148,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/cms-management/banner-studio/components/AIStudioSection.jsx",
+      "role": "superadmin",
+      "lines": 302,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/cms-management/banner-studio/components/AnalyticsSection.jsx",
+      "role": "superadmin",
+      "lines": 174,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/cms-management/components/ComponentEditor.jsx",
+      "role": "superadmin",
+      "lines": 132,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/cms-management/components/PageEditor.jsx",
+      "role": "superadmin",
+      "lines": 87,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/featured-programs/components/ProgramAbout.jsx",
+      "role": "superadmin",
+      "lines": 108,
+      "score": 1,
+      "hits": {
+        "overflowHidden": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/featured-programs/components/ProgramDetails.jsx",
+      "role": "superadmin",
+      "lines": 170,
+      "score": 1,
+      "hits": {
+        "overflowHidden": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/featured-programs/components/ProgramFaqs.jsx",
+      "role": "superadmin",
+      "lines": 377,
+      "score": 1,
+      "hits": {
+        "overflowHidden": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/featured-programs/components/SyllabusUpload.jsx",
+      "role": "superadmin",
+      "lines": 158,
+      "score": 1,
+      "hits": {
+        "overflowHidden": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/meetings/SuperAdminMeeting/components/WorkspaceSidebar.jsx",
+      "role": "superadmin",
+      "lines": 165,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/meetings/SuperAdminMeeting/pages/workspace/BookingsList.jsx",
+      "role": "superadmin",
+      "lines": 202,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/meetings/SuperAdminMeeting/pages/workspace/Calendar.jsx",
+      "role": "superadmin",
+      "lines": 260,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/meetings/SuperAdminMeeting/pages/workspace/notetracker/NoteTrackerMeetings.jsx",
+      "role": "superadmin",
+      "lines": 396,
+      "score": 1,
+      "hits": {
+        "overflowHidden": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/meetings/SuperAdminMeeting/pages/workspace/notetracker/NoteTrackerResources.jsx",
+      "role": "superadmin",
+      "lines": 464,
+      "score": 1,
+      "hits": {
+        "overflowHidden": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/meetings/SuperAdminMeeting/pages/workspace/notetracker/NtModeCards.jsx",
+      "role": "superadmin",
+      "lines": 139,
+      "score": 1,
+      "hits": {
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/meetings/SuperAdminMeeting/pages/workspace/notetracker/NtResourcePicker.jsx",
+      "role": "superadmin",
+      "lines": 362,
+      "score": 1,
+      "hits": {
+        "overflowHidden": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/meetings/SuperAdminMeeting/pages/workspace/notetracker/NtSessionPicker.jsx",
+      "role": "superadmin",
+      "lines": 297,
+      "score": 1,
+      "hits": {
+        "hoverOnly": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/meetings/SuperAdminMeeting/pages/workspace/notetracker/NtWorkflowBuilder.jsx",
+      "role": "superadmin",
+      "lines": 362,
+      "score": 1,
+      "hits": {
+        "overflowHidden": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/profile/SuperAdminProfile.jsx",
+      "role": "superadmin",
+      "lines": 563,
+      "score": 1,
+      "hits": {
+        "overflowHidden": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/settings/GlobalSettings.jsx",
+      "role": "superadmin",
+      "lines": 488,
+      "score": 1,
+      "hits": {
+        "overflowHidden": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/settings/SecuritySettings.jsx",
+      "role": "superadmin",
+      "lines": 286,
+      "score": 1,
+      "hits": {
+        "overflowHidden": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/student-control/StudentReports.jsx",
+      "role": "superadmin",
+      "lines": 243,
+      "score": 1,
+      "hits": {
+        "overflowHidden": 1
+      }
+    },
+    {
+      "file": "src/SuperAdmin/trainer-control/TrainerReports.jsx",
+      "role": "superadmin",
+      "lines": 222,
+      "score": 1,
+      "hits": {
+        "overflowHidden": 1
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerLiveClasses/components/CompactLabel.jsx",
+      "role": "trainer",
+      "lines": 23,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerLiveClasses/components/CopyLinkBtn.jsx",
+      "role": "trainer",
+      "lines": 48,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerLiveClasses/components/PanelSectionHeader.jsx",
+      "role": "trainer",
+      "lines": 45,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerMeeting/components/WorkspaceSidebar.jsx",
+      "role": "trainer",
+      "lines": 121,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerMeeting/pages/workspace/BookingsList.jsx",
+      "role": "trainer",
+      "lines": 202,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    },
+    {
+      "file": "src/Trainer/TrainerMeeting/pages/workspace/Calendar.jsx",
+      "role": "trainer",
+      "lines": 260,
+      "score": 1,
+      "hits": {
+        "smallFont": 1
+      }
+    }
+  ]
+}
