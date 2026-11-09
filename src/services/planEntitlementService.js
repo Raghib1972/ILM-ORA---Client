@@ -7,7 +7,7 @@ import axios from "axios";
 // is correct as-is. If auth-service / payment-wallet-service sit behind
 // different hosts, just change the two baseURLs below.
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9000/api";
+  process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 const api = axios.create({ baseURL: API_BASE_URL });
 

@@ -4,7 +4,7 @@
 import axios from "axios";
 
 const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9000/api";
+  process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 const TEXORA_BASE = `${API_BASE}/v1/texorameetings`;
 

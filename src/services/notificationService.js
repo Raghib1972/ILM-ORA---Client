@@ -5,12 +5,9 @@ import { Client } from "@stomp/stompjs";
 
 // ✅ Matches your authService API_BASE_URL pattern
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9000/api";
+  process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 const WS_URL =
-  (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9000").replace(
-    "/api",
-    "",
-  ) + "/ws";
+  (process.env.NEXT_PUBLIC_WS_BASE_URL || "wss://ilmora.texora.ai") + "/ws";
 // ✅ ADD THIS FOR PUBLIC APIs: newsletter + contact form
 const publicHeaders = () => ({
   "Content-Type": "application/json",

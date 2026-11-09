@@ -5,7 +5,7 @@ import axios from "axios";
 import auth from "../auth"; // ✅ use existing auth.js
 
 const BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9000/api";
+  process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 // 🔐 Token only from auth (NO localStorage direct access)
 const getAuthHeader = () => {

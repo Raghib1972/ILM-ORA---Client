@@ -21,7 +21,7 @@
 // import videoService from "../services/videoService"; // adjust path as needed
 // import fileService from "../services/fileService"; // adjust path as needed
 
-// const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:9000/api";
+// const API = import.meta.env.VITE_API_BASE_URL || "/api";
 
 // const authHeader = () => ({
 //   Authorization: `Bearer ${localStorage.getItem("lms_token")}`,
@@ -979,7 +979,7 @@ import {
   StatCard,
 } from "@/design-system";
 
-const API = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9000/api";
+const API = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 const FF = FONT_FAMILY;
 
 const authHeader = () => ({ Authorization: `Bearer ${localStorage.getItem("lms_token")}` });

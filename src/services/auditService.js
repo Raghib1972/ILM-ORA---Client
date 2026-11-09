@@ -23,7 +23,7 @@ import axios from "axios";
 
 // ── Base config (same convention as roadmapService.js) ────────────────────
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9000/api";
+  process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 // AuditController root → /api/audit
 const AUDIT_BASE = `${API_BASE_URL}/audit`;

@@ -577,7 +577,7 @@ const LiveSessionControls = () => {
           try {
             const freshToken = getFreshAuthToken();
             const res = await fetch(
-              `${process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9000/api"}/live-sessions/${id}`,
+              `${process.env.NEXT_PUBLIC_API_BASE_URL || "/api"}/live-sessions/${id}`,
               {
                 headers: freshToken
                   ? { Authorization: `Bearer ${freshToken}` }
@@ -4156,7 +4156,7 @@ export default LiveSessionControls;
 //           try {
 //             const freshToken = getFreshAuthToken();
 //             const res = await fetch(
-//               `${import.meta.env.VITE_API_BASE_URL || "http://localhost:9000/api"}/live-sessions/${id}`,
+//               `${import.meta.env.VITE_API_BASE_URL || "/api"}/live-sessions/${id}`,
 //               {
 //                 headers: freshToken
 //                   ? { Authorization: `Bearer ${freshToken}` }

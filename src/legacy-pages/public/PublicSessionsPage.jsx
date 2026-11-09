@@ -16,7 +16,7 @@ import {
   Zap,
 } from "lucide-react";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9000/api";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 const PublicSessionsPage = () => {
   const navigate = useNavigate();

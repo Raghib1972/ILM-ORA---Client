@@ -1,4 +1,4 @@
-const API = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9000/api";
+const API = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 export const SITE_URL = "https://ilmora.texora.ai";
 
 // Inn naamo se course slug nahi banega (existing routes se clash na ho)

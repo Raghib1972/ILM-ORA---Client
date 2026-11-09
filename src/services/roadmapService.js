@@ -34,7 +34,7 @@ import axios from "axios";
 
 // --- Base config (same convention as the rest of the app) -----------------
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9000/api";
+  process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 // RoadmapUpgradedController root -> /api/roadmap-upgraded
 const ROADMAP_UPGRADED = `${API_BASE_URL}/roadmap-upgraded`;

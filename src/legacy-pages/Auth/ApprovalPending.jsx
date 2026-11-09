@@ -7,7 +7,7 @@ import { useNavigate, useSearchParams } from "@/lib/routerCompat";
 import axios from "axios";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9000";
+  "";
 
 export default function ApprovalPending() {
   const navigate = useNavigate();

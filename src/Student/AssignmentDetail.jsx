@@ -36,7 +36,7 @@ import {
 } from "@/design-system";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9000/api";
+  process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 /* ─── Only the animation keyframes the popup viewer needs.
    Colors/typography/spacing all come from `T` inline — this is not

@@ -14,7 +14,7 @@
 //   Play,
 // } from "lucide-react";
 
-// const API = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9000/api";
+// const API = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 // /* ════════════════════════════════════════════════════════════════
 //    LiveClasses — dashboard-style page matching the reference design.
@@ -597,7 +597,7 @@ import {
 // breakpoint.
 import { T, StatCard, PageContainer, FONT_FAMILY, FONT_WEIGHT, FONT_SIZE, LETTER_SPACING, LINE_HEIGHT } from "@/design-system";
 
-const API = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9000/api";
+const API = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 const twoColGridStyle = `
   .lc-two-col { display: grid; grid-template-columns: 1fr; gap: 24px; }

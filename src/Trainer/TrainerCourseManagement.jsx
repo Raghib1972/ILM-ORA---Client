@@ -23,7 +23,7 @@
 // import { useNavigate } from "@/lib/routerCompat";
 // import { getTrainerBatches } from "@/services/batchService";
 
-// const API = import.meta.env.VITE_API_BASE_URL || "http://localhost:9000/api";
+// const API = import.meta.env.VITE_API_BASE_URL || "/api";
 
 // const STYLES = `
 // @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
@@ -1045,7 +1045,7 @@ import {
   StatCard,
 } from "@/design-system";
 
-const API = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9000/api";
+const API = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 const FF = FONT_FAMILY;
 
 const getAuthTokenUserId = () => {

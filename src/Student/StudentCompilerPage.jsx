@@ -48,7 +48,7 @@ const codeFilesAPI = {
     API.default
       ? API.default.get?.("/students/profile")
       : fetch(
-          (process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9000/api") +
+          (process.env.NEXT_PUBLIC_API_BASE_URL || "/api") +
             "/students/profile",
           {
             headers: {

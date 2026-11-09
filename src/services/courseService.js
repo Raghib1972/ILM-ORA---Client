@@ -2,7 +2,7 @@
 
 import axios from "axios";
 
-const API = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9000/api";
+const API = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 const authHeader = () => ({
   Authorization: `Bearer ${localStorage.getItem("lms_token")}`,

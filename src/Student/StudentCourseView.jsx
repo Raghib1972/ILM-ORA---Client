@@ -21,7 +21,7 @@ import videoService from "../services/videoService";
 // source of truth for every page — no page-local CSS injection here.
 import { T, StatCard, PageContainer, CLAUDE_ACCENT } from "@/design-system";
 
-const API = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9000/api";
+const API = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 const authHeader = () => ({
   Authorization: `Bearer ${localStorage.getItem("lms_token")}`,

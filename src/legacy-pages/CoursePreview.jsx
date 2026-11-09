@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "@/lib/routerCompat";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-const API = "http://localhost:9000";
+const API = "";
 
 export default function CoursePreview() {
   const { id } = useParams();

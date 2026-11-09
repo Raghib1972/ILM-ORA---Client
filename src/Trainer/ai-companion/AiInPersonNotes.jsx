@@ -17,7 +17,7 @@
 // import axios from "axios";
 
 // // ── Inline API helpers (avoid circular import issues) ─────────────────────────
-// const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9000/api";
+// const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 // const authHeaders = () => {
 //   const token = localStorage.getItem("lms_token");
@@ -1199,7 +1199,7 @@ import axios from "axios";
 
 // ── Inline API helpers (avoid circular import issues) ─────────────────────────
 const API_BASE =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9000/api";
+  process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 const authHeaders = () => {
   const token = localStorage.getItem("lms_token");

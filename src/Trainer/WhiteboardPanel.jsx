@@ -90,7 +90,7 @@ import { parsePlanError } from "../services/planErrorHandler";
 import UpgradeModal from "../components/plan/UpgradeModal";
 
 const WS_URL =
-  (process.env.NEXT_PUBLIC_WS_BASE_URL || "ws://localhost:9000") + "/live-chat";
+  (process.env.NEXT_PUBLIC_WS_BASE_URL || "wss://ilmora.texora.ai") + "/live-chat";
 
 // ── CURSOR HELPERS ─────────────────────────────────────────────────────────
 const PEN_CURSOR =

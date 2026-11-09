@@ -18,7 +18,7 @@ const VAPID_KEY =
   "BB1p9_1NaGuEmy7ukpNsQZuxU2pLRo7wXGghduqCEO6gA-GVKuYXvoFbFYSLtwcUM53AsNOgEqvsWU5woKQ2yWY";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9000/api";
+  process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 let messaging;
 // getMessaging() needs serviceWorker/Notification browser APIs that don't

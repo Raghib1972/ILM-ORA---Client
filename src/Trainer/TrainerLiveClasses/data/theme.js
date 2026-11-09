@@ -334,7 +334,7 @@ export const NAV_TABS = [
 ];
 
 export const wsUrl =
-  (process.env.NEXT_PUBLIC_WS_BASE_URL || "ws://localhost:9000") + "/live-chat";
+  (process.env.NEXT_PUBLIC_WS_BASE_URL || "wss://ilmora.texora.ai") + "/live-chat";
 
 export const statusConfig = {
   present: { label: "On Time", icon: CheckCircle2, color: "#34d399" },

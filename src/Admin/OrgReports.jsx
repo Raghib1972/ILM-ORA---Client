@@ -194,7 +194,7 @@
 // }
 
 // const authH = () => ({ Authorization: `Bearer ${localStorage.getItem("lms_token")}` });
-// const API_BASE = import.meta.env.VITE_API_BASE_URL || "http://localhost:9000/api";
+// const API_BASE = import.meta.env.VITE_API_BASE_URL || "/api";
 
 // async function fetchFilesForBatch(batchId) {
 //   try {
@@ -1583,7 +1583,7 @@ function toArr(res) {
 }
 
 const authH = () => ({ Authorization: `Bearer ${localStorage.getItem("lms_token")}` });
-const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:9000/api";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
 
 async function fetchFilesForBatch(batchId) {
   try {

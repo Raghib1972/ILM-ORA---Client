@@ -326,7 +326,7 @@ const isDark = () =>
   document.documentElement.classList.contains("dark") ||
   document.documentElement.getAttribute("data-theme") === "dark";
 
-const API_GATEWAY = "http://localhost:9000";
+const API_GATEWAY = "";
 
 const templates = [
   { id: 1, name: "Completion Certificate", grad: "linear-gradient(135deg,#6d28d9,#4338ca)", font: "Serif", theme: "#7C3AED", linkedCourses: 4, type: "COMPLETION" },
