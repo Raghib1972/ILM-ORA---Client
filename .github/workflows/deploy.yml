@@ -1,3 +1,4 @@
+
 name: Deploy Next.js Frontend to EC2
 
 on:
@@ -5,27 +6,117 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ilmora-production
+  cancel-in-progress: false
+
 jobs:
-  deploy:
+  build:
+    name: Build Next.js on GitHub
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Deploy and Build on EC2
-        uses: appleboy/ssh-action@master
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Build Next.js
+        run: npm run build
+        env:
+          NEXT_PUBLIC_TORACX_API_KEY: ${{ secrets.NEXT_PUBLIC_TORACX_API_KEY }}
+
+      - name: Verify Build
+        run: |
+          test -f .next/BUILD_ID
+          echo "Next.js production build verified"
+
+      - name: Package Build
+        run: |
+          tar -czf deploy.tar.gz .next public
+
+      - name: Upload Build to EC2
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.NEXTJS_EC2_HOST }}
+          username: ${{ secrets.NEXTJS_EC2_USER }}
+          key: ${{ secrets.NEXTJS_EC2_SSH_KEY }}
+          port: 22
+          source: "deploy.tar.gz"
+          target: "/home/ec2-user/ILM-ORA---Client"
+
+      - name: Deploy Build on EC2
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.NEXTJS_EC2_HOST }}
           username: ${{ secrets.NEXTJS_EC2_USER }}
           key: ${{ secrets.NEXTJS_EC2_SSH_KEY }}
           port: 22
           timeout: 30s
-          command_timeout: 15m
+          command_timeout: 10m
           script: |
+            set -e
             cd /home/ec2-user/ILM-ORA---Client
-            git pull origin main
-            npm install
-            export NODE_OPTIONS="--max-old-space-size=3072"
-            npm run build
-            pm2 restart ilmora-nextjs
+
+            echo "Preparing deployment..."
+
+            rm -rf .deploy-staging
+            mkdir -p .deploy-staging
+
+            tar -xzf deploy.tar.gz -C .deploy-staging
+
+            test -f .deploy-staging/.next/BUILD_ID
+
+            echo "Build verified. Activating..."
+
+            rm -rf .next-previous
+
+            if [ -d .next ]; then
+              mv .next .next-previous
+            fi
+
+            mv .deploy-staging/.next .next
+
+            if [ -d .deploy-staging/public ]; then
+              cp -a .deploy-staging/public/. public/
+            fi
+
+            if ! pm2 restart ilmora-nextjs --update-env; then
+              echo "Restart failed. Rolling back..."
+
+              rm -rf .next
+              if [ -d .next-previous ]; then
+                mv .next-previous .next
+              fi
+
+              pm2 restart ilmora-nextjs
+              exit 1
+            fi
+
+            sleep 5
+
+            if ! curl -fsS --max-time 20 http://127.0.0.1:3000/ -o /dev/null; then
+              echo "Health check failed. Rolling back..."
+
+              rm -rf .next
+              if [ -d .next-previous ]; then
+                mv .next-previous .next
+              fi
+
+              pm2 restart ilmora-nextjs
+              exit 1
+            fi
+
+            rm -rf .next-previous
+            rm -rf .deploy-staging deploy.tar.gz
+
+            pm2 save
+
+            echo "ILM ORA deployment successful!"
