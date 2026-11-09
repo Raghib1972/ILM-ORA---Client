@@ -495,7 +495,7 @@ export default function Pricing({ theme, toggleTheme, setShowLoginModal }) {
     localStorage.setItem("selectedPlan", plan.id);
     showToast(`"${plan.name}" selected!`);
 
-    // If we arrived here with a returnTo (e.g. from /ilm-demo), always
+    // If we arrived here with a returnTo (e.g. from /onboarding), always
     // send the user back there after saving the plan — never dead-end
     // them into the login modal or a redirect to "/".
     if (returnTo) {

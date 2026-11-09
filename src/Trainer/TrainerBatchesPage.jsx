@@ -428,7 +428,7 @@ const TrainerBatchesPage = () => {
   const toggle = (id) => setExpanded((p) => ({ ...p, [id]: !p[id] }));
 
   // ── ROUTING FIX ──────────────────────────────────────────────────────
-  // Stays inside the /ilm-demo shell — sets ?section=/trainer/batches/:id/students
+  // Stays inside the /onboarding shell — sets ?section=/trainer/batches/:id/students
   // instead of navigate()-ing to the real standalone route. This is the
   // exact same mechanism every other sidebar item (Batch Management,
   // Reports & Analytics, etc.) already uses.

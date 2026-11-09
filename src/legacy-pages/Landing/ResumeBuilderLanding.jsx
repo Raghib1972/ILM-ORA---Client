@@ -315,7 +315,7 @@ function LoginModal({ show, onClose, theme, navigate }) {
           name: dec.name, email: dec.email, role: "student", isNewUser: true,
         }));
         onClose();
-        navigate("/ilm-demo", { replace: true });
+        navigate("/onboarding", { replace: true });
       } else {
         const role = (resp?.role || "STUDENT").toUpperCase();
         localStorage.setItem("role", role);
@@ -333,7 +333,7 @@ function LoginModal({ show, onClose, theme, navigate }) {
           name: dec.name, email: dec.email, role: "student", isNewUser: true,
         }));
         onClose();
-        navigate("/ilm-demo", { replace: true });
+        navigate("/onboarding", { replace: true });
       } catch (_) {
         alert("Google login failed. Please try again.");
       }

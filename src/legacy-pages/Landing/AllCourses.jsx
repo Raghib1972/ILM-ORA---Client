@@ -394,7 +394,7 @@ export default function AllCourses({ theme, toggleTheme, setShowLoginModal, embe
  
   return (
     <div className={`w-full max-w-full max-lg:overflow-x-hidden ${isDark ? "bg-[#141414]" : "bg-gray-50"}`}>
-      {/* Skip this page's own Navbar when embedded inside /ilm-demo —
+      {/* Skip this page's own Navbar when embedded inside /onboarding —
           that shell already has its own navbar right above this. */}
       {!embedded && (
         <Navbar theme={theme} toggleTheme={toggleTheme} setShowLoginModal={setShowLoginModal} />

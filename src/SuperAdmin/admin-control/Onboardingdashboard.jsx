@@ -5540,6 +5540,21 @@ const ROLE_CONFIG = {
   },
 };
 
+const PRODUCT_BADGE = {
+  workspace: {
+    label: "Workspace",
+    color: "#2563eb",
+    bg: "rgba(37,99,235,0.1)",
+    Icon: Layers,
+  },
+  calendar: {
+    label: "Calendar",
+    color: "#0d9488",
+    bg: "rgba(13,148,136,0.1)",
+    Icon: Calendar,
+  },
+};
+
 const STATUS_CONFIG = {
   Completed: { bg: "#d1fae5", color: "#065f46", dot: "#10b981" },
   "In Progress": { bg: "#fef3c7", color: "#92400e", dot: "#f59e0b" },
@@ -5599,7 +5614,15 @@ function mapRoleLabel(backendRole) {
       return "Student";
   }
 }
+function mapProductKey(answers) {
+  const p = (answers?.product?.[0] || "").toString().toLowerCase();
+  return p === "workspace" || p === "calendar" ? p : null;
+}
 
+function mapProductLabel(answers) {
+  const k = mapProductKey(answers);
+  return k === "workspace" ? "Workspace" : k === "calendar" ? "Calendar" : null;
+}
 function formatDate(isoStr) {
   if (!isoStr) return "—";
   try {
@@ -5651,7 +5674,8 @@ function mapBackendUser(user) {
           ? "Pending"
           : "In Progress",
     onboardingComplete: isOnboardingComplete(answers),
-    role: mapRoleLabel(user.role),
+   role: mapProductLabel(answers) || mapRoleLabel(user.role),
+    productKey: mapProductKey(answers),
     roleKey,
     subscription: "Free",
     active: !user.blocked,
@@ -6903,7 +6927,10 @@ const ProfileDetailsCard = ({ email, color, roleKey }) => {
 const UserView = ({ user, onEdit, onDelete, onToggle }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const sd = generateStepData(user, user.roleKey);
-  const cfg = ROLE_CONFIG[user.roleKey] || ROLE_CONFIG.student;
+  const cfg =
+    (user.productKey && PRODUCT_BADGE[user.productKey]) ||
+    ROLE_CONFIG[user.roleKey] ||
+    ROLE_CONFIG.student;
   const color = cfg.color;
   const panels = [
     Step1Panel,
@@ -8695,7 +8722,7 @@ export default function OnboardingManagement() {
                 [
                   filterRole,
                   setFilterRole,
-                  ["All Roles", "Student", "Trainer", "Admin", "Business"],
+                  ["All Roles", "Student", "Trainer", "Admin", "Business", "Workspace", "Calendar"],
                 ],
                 [
                   filterStatus,
@@ -8795,7 +8822,9 @@ export default function OnboardingManagement() {
                   )}
                   {paged.map((user, idx) => {
                     const cfg =
-                      ROLE_CONFIG[user.roleKey] || ROLE_CONFIG.student;
+                      (user.productKey && PRODUCT_BADGE[user.productKey]) ||
+                      ROLE_CONFIG[user.roleKey] ||
+                      ROLE_CONFIG.student;
                     const ss =
                       STATUS_CONFIG[user.status] || STATUS_CONFIG.Pending;
                     const sub =
@@ -8803,6 +8832,7 @@ export default function OnboardingManagement() {
                     const isAct = activeUser?.id === user.id && panelOpen;
                     const firstInterest =
                       user.onboardingAnswers?.["interest"]?.[0] ||
+                      user.onboardingAnswers?.["product"]?.[0] ||
                       user.onboardingAnswers?.["role"]?.[0] ||
                       "—";
                     return (

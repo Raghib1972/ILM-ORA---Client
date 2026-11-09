@@ -334,7 +334,7 @@ const MyCourses = () => {
                         </div>
                       )}
                       <button
-                        onClick={() => navigate(`/ilm-demo?section=${encodeURIComponent(`/student/course/${course.id}`)}`)}
+                        onClick={() => navigate(`/onboarding?section=${encodeURIComponent(`/student/course/${course.id}`)}`)}
                         style={{
                           width: "100%",
                           padding: "10px",

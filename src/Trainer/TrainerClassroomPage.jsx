@@ -54,7 +54,7 @@ const TrainerClassroomPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // ── ROUTING FIX ──────────────────────────────────────────────────────
-  // This page now opens as an /ilm-demo *section*
+  // This page now opens as an /onboarding *section*
   // (?section=/trainer/batches/:id/students), not a standalone route,
   // so batchId comes from the section value, not useParams().
   const section = searchParams.get("section") || "";

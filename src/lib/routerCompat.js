@@ -21,7 +21,7 @@ export function useNavigate() {
       return router.back();
     }
     // Dashboard routes (/student, /trainer, /admin, /business, /superadmin,
-    // /ilm-demo) live in the separate React app, not this Next.js app's
+    // /onboarding) live in the separate React app, not this Next.js app's
     // route tree — a client-side push would 404 here. Do a real browser
     // navigation instead, same destination URL as before.
     if (isDashboardPath(to)) {

@@ -583,7 +583,7 @@ const IlmDemoSidebar = ({
 
   const currentRole = localStorage.getItem("role");
   const showRoleDropdown = false;
-  const currentRolePath = "/ilm-demo";
+  const currentRolePath = "/onboarding";
 
   const [userName, setUserName] = React.useState(
     localStorage.getItem("userName") || "User",

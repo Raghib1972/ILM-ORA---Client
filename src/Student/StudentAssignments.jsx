@@ -974,7 +974,7 @@ export default function StudentAssignments() {
       setTimeout(() => setLockedMsg(null), 3000);
       return;
     }
-    navigate(`/ilm-demo?section=${encodeURIComponent(`/student/assignments/${a.id}`)}`);
+    navigate(`/onboarding?section=${encodeURIComponent(`/student/assignments/${a.id}`)}`);
   };
 
   /* ── Loading ── */

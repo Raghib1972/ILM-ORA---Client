@@ -22,8 +22,10 @@ import BookingPages from "./workspace/BookingPages";
 import Integrations from "./workspace/Integrations";
 import WorkspaceSettings from "./workspace/WorkspaceSettings";
 
-export default function WorkspaceApp() {
-  const [tab, setTab] = useState("overview");
+export default function WorkspaceApp({ mode = "workspace" }) {
+  const isCalendry = mode === "calendar";
+  // Calendry user ka landing tab Booking Pages hai, Overview nahi
+  const [tab, setTab] = useState(isCalendry ? "booking-pages" : "overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // ── Theme detection (same concept as Dashboard.jsx) ──────────────────────
@@ -124,8 +126,12 @@ export default function WorkspaceApp() {
         return <Integrations onNavigate={handleNavigate} />;
       case "workspace-settings":
         return <WorkspaceSettings />;
-      default:
-        return <Overview onNavigate={handleNavigate} />;
+            default:
+        return isCalendry ? (
+          <BookingPages />
+        ) : (
+          <Overview onNavigate={handleNavigate} />
+        );
     }
   };
 
@@ -141,7 +147,8 @@ export default function WorkspaceApp() {
           <Menu size={18} />
           <span>Menu</span>
         </button>
-        <WorkspaceSidebar
+                <WorkspaceSidebar
+          mode={mode}
           active={tab}
           onSelect={handleNavigate}
           isOpen={sidebarOpen}

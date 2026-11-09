@@ -71,7 +71,7 @@ export default function LinkedinCallback() {
             profileCompleted: false,
           }),
         );
-        router.replace("/ilm-demo");
+        router.replace("/onboarding");
       } catch (err) {
         const message =
           err?.response?.data?.message ||

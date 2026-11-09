@@ -17,6 +17,7 @@ export default function robots() {
         "/approval-pending",
         "/apply-admin",
         "/ilm-demo",
+        "/onboarding",
 
         "/workspace/",
         "/ilmorameet/",

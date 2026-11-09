@@ -491,8 +491,13 @@ const businessMenus = [
     ],
   },
 ];
+const productMenus = [
+  { key: "workspace", name: "Workspace", path: "/student/workspace", icon: Video },
+    { key: "calendar", name: "Calendry", path: "/student/calendar", icon: CalendarDays },
+];
 
 const roleConfig = {
+  product: { label: "Workspace" },
   student: { label: "Student" },
   trainer: { label: "Trainer" },
   admin: { label: "Admin" },
@@ -504,6 +509,7 @@ const roleConfig = {
 // goToFeature with it) clears the ?section= param and goes back to the
 // ILM ORA demo landing/overview instead of showing a section page.
 const ROLE_HOME_PATH = {
+  product: "/student/workspace",
   student: "/student",
   trainer: "/trainer",
   admin: "/admin",
@@ -555,7 +561,8 @@ const SECTION_INDEX = buildSectionIndex();
 const IlmDemoSidebar = ({
   sidebarMode: sidebarModeProp,
   setSidebarMode: setSidebarModeProp,
-  roleOverride,
+    roleOverride,
+  productKey = null, // "workspace" | "calendar" — product-only user
   onNavigate, // Steps 7-10 gate from IlmOraDemoPage: checks profileCompleted before navigating
   activeSection = null, // NEW: which "path" is currently shown in IlmOraDemoPage's content
   // area (via ?section=). We no longer do a real router navigate() when
@@ -597,11 +604,17 @@ const IlmDemoSidebar = ({
     // a different hiring/CRM-style role and doesn't match the
     // ROLE_CONFIG.business features on IlmOraDemoPage — those already use
     // /admin/... routes).
-    else if (roleOverride === "business") {
+     else if (roleOverride === "business") {
       menus = adminMenus;
+        } else if (roleOverride === "product") {
+      // sirf wahi item dikhao jo user ne choose kiya (Workspace YA Calendar)
+      menus = productKey
+        ? productMenus.filter((m) => m.key === productKey)
+        : productMenus; // roleKey stays "product"
     } else {
       menus = studentMenus;
       roleKey = "student";
+    
     }
   } else if (isSuperAdmin) {
     menus = adminMenus;
@@ -618,7 +631,10 @@ const IlmDemoSidebar = ({
   }
 
   const role = roleConfig[roleKey] || roleConfig.student;
-  const portalLabel = `${role.label.toUpperCase()} PORTAL`;
+    const portalLabel =
+    roleKey === "product" && productKey === "calendar"
+      ? "CALENDRY PORTAL"
+      : `${role.label.toUpperCase()} PORTAL`;
 
   const sidebarStorageKey = `sidebarMode:ilmdemo:${roleKey}`;
 
@@ -792,7 +808,7 @@ const IlmDemoSidebar = ({
 
   const currentRole = localStorage.getItem("role");
   const showRoleDropdown = false;
-  const currentRolePath = "/ilm-demo";
+  const currentRolePath = "/onboarding";
 
   const [userName, setUserName] = React.useState(
     localStorage.getItem("userName") || "User",

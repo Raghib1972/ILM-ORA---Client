@@ -414,7 +414,7 @@ const TopNavbar = ({ isDark, roleOverride, rightSlot }) => {
   let menus = studentMenus,
     roleKey = "student";
   if (roleOverride) {
-    // Explicit override — used on /ilm-demo where the path itself
+    // Explicit override — used on /onboarding where the path itself
     // gives no role signal. Real dashboard routes never pass this.
     // roleKey = roleOverride;
     // if (roleOverride === "trainer") menus = trainerMenus;

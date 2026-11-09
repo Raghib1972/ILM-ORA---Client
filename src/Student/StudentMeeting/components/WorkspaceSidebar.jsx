@@ -54,16 +54,33 @@ export const WORKSPACE_TABS = [
   },
 ];
 
-export default function WorkspaceSidebar({ active, onSelect, isOpen = false, onClose }) {
+// Calendry product mein sirf ye 4 tabs dikhte hain
+const CALENDRY_TAB_IDS = ["booking-pages", "calendar", "calendar-sync", "availability"];
+
+const CALENDRY_TABS = WORKSPACE_TABS.map((g) => ({
+  ...g,
+  items: g.items.filter((i) => CALENDRY_TAB_IDS.includes(i.id)),
+})).filter((g) => g.items.length > 0);
+
+export default function WorkspaceSidebar({
+  active,
+  onSelect,
+  isOpen = false,
+  onClose,
+  mode = "workspace",
+}) {
   const [collapsed, setCollapsed] = useState(false);
+  const isCalendry = mode === "calendar";
+  const tabs = isCalendry ? CALENDRY_TABS : WORKSPACE_TABS;
+  const headLabel = isCalendry ? "Calendry" : "Workspace";
 
   return (
     <aside className={`ws-sidebar ${isOpen ? "is-open" : ""} ${collapsed ? "is-collapsed" : ""}`}>
       <div className="ws-sidebar-head">
         {!collapsed && (
           <span className="ws-sidebar-head-label">
-            <LayoutGrid size={16} color="var(--brand)" />
-            Workspace
+                       <LayoutGrid size={16} color="var(--brand)" />
+            {headLabel}
           </span>
         )}
         <button
@@ -84,7 +101,7 @@ export default function WorkspaceSidebar({ active, onSelect, isOpen = false, onC
           <X size={16} />
         </button>
       </div>
-      {WORKSPACE_TABS.map((group) => (
+            {tabs.map((group) => (
         <div className="ws-group" key={group.group}>
           {!collapsed && <div className="ws-group-label">{group.group}</div>}
           {group.items.map((item) => (

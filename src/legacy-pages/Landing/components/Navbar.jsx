@@ -631,7 +631,7 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
   // user. It now reads the SAME real session source IlmOraDemoPage.jsx
   // already uses (localStorage["lms_token"] / localStorage["lms_user"]),
   // so the same authenticated session is detected everywhere, including
-  // after navigating away from /ilm-demo to a public page.
+  // after navigating away from /onboarding to a public page.
   useEffect(() => {
     const token = localStorage.getItem("lms_token");
     const rawUser = localStorage.getItem("lms_user");
@@ -648,7 +648,7 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
     // closed before role selection finished) — sessionStorage clears on
     // session end but localStorage["lms_user"] doesn't, so this flag can
     // outlive the real session. Without this check, a public page loaded
-    // first (before /ilm-demo ever mounts and cleans it up) would trust
+    // first (before /onboarding ever mounts and cleans it up) would trust
     // the stale flag and show the avatar for a user who never logged in.
     const hasGoogleCred = !!sessionStorage.getItem("ilmora_google_credential");
     if (!token && parsedUser?.isNewUser === true && !hasGoogleCred) {
@@ -668,7 +668,7 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
   // IlmOraDemoPage.jsx already normalizes role strings with — copied
   // here as a pure function (no shared/duplicate STATE, just the same
   // string-mapping logic) so "Go to Dashboard" below sends the user to
-  // the correct role dashboard, same as it does on /ilm-demo.
+  // the correct role dashboard, same as it does on /onboarding.
   const normalizeAppRole = (raw) => {
     const r = (raw || "").toString().trim().toUpperCase();
     if (["TENANT_ADMIN", "ADMIN", "BUSINESS", "MANAGER", "PARTNERSHIP"].includes(r))

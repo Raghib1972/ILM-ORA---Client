@@ -46,6 +46,17 @@ export const reprocessTaskOrbitSession = (id, mode, onlyFailed = false) =>
     params: { mode, onlyFailed },
   });
 
+/**
+ * POST /sessions/{id}/summary-hindi  (Hindi version of the overall summary)
+ * The first call makes one model call and can take a while; later calls return the stored copy.
+ */
+const HINDI_TIMEOUT_MS = 180000;
+export const getTaskOrbitSummaryHindi = (id) =>
+  axios.post(`${BASE}/sessions/${id}/summary-hindi`, null, {
+    ...getAuthHeader(),
+    timeout: HINDI_TIMEOUT_MS,
+  });
+
 /** Turn an axios error into { code, message } using the backend's {error,message} body. */
 export const taskOrbitErrorInfo = (err) => {
   const data = err?.response?.data;

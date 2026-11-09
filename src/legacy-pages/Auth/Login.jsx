@@ -22,7 +22,7 @@
 //         navigate("/superadmin", { replace: true });
 //         break;
 //       default:
-//         navigate("/ilm-demo", { replace: true });
+//         navigate("/onboarding", { replace: true });
 //     }
 //   };
 //   /* ─── FCM helper ─────────────────────────────────── */
@@ -141,7 +141,7 @@
 //         "lms_user",
 //         JSON.stringify({ name: dec.name, email: dec.email, isNewUser: true }),
 //       );
-//       navigate("/ilm-demo", { replace: true });
+//       navigate("/onboarding", { replace: true });
 //     } catch (err) {
 //       console.error("Google login error:", err);
 //       alert(err?.response?.data?.message || err?.message || "Login failed");
@@ -720,7 +720,7 @@ const TexoraLogin = () => {
         "lms_user",
         JSON.stringify({ name: dec.name, email: dec.email, isNewUser: true }),
       );
-      navigate("/ilm-demo", { replace: true });
+      navigate("/onboarding", { replace: true });
     } catch (err) {
       console.error("Google login error:", err);
       alert(err?.response?.data?.message || err?.message || "Login failed");

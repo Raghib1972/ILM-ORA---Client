@@ -22,6 +22,7 @@ import {
   getTaskOrbitSessionStatus,
   getTaskOrbitTranscript,
   reprocessTaskOrbitSession,
+  getTaskOrbitSummaryHindi,
   taskOrbitErrorInfo,
 } from "../../../../../services/taskOrbitReportService";
 
@@ -57,7 +58,17 @@ const fmtDuration = (sec) => {
   return `${Math.floor(m / 60)}h ${m % 60}m`;
 };
 
+// "Visit 1: 10:30 am to 12:00 pm". An open visit has no leave time: "still in room".
+const visitLine = (v, i) =>
+  `Visit ${i + 1}: ${fmtTime(v?.joinedAtUtc)}${
+    v?.stillInRoom ? ", still in room" : ` to ${fmtTime(v?.leftAtUtc)}`
+  }`;
+
 const FINAL = new Set(["DONE", "FAILED"]);
+
+// Text of the pill on the overall summary card (it shows / hides the Hindi lines).
+const HINDI_SHOW_LABEL = "Show original";
+const HINDI_HIDE_LABEL = "Hide original";
 
 const STATUS_LABEL = {
   OPEN: "In progress",
@@ -116,8 +127,19 @@ function ParticipantCard({ p, onTranscript }) {
             {p.email} · joined {fmtTime(p.firstJoinedAtUtc)} · left{" "}
             {fmtTime(p.lastLeftAtUtc)} · present {fmtDuration(p.presentSeconds)}
           </div>
+          {Array.isArray(p.visits) && p.visits.length >= 2 && (
+            <div className="mr-person-visits">
+              {p.visits.map((v, i) => (
+                <div key={i}>{visitLine(v, i)}</div>
+              ))}
+            </div>
+          )}
         </div>
-        {p.joinedNoSpeech ? (
+        {p.audioUnclear ? (
+          <Badge tone="amber">
+            <AlertTriangle size={11} /> Audio unclear
+          </Badge>
+        ) : p.joinedNoSpeech ? (
           <Badge tone="gray">
             <MicOff size={11} /> Joined, no speech
           </Badge>
@@ -131,6 +153,11 @@ function ParticipantCard({ p, onTranscript }) {
 
       {open && (
         <div className="mr-person-body">
+          {p.audioUnclear && (
+            <p className="mr-muted">
+              Audio unclear, could not be transcribed.
+            </p>
+          )}
           {p.joinedNoSpeech && <p className="mr-muted">Joined, no speech.</p>}
           {r?.status === "FAILED" && (
             <p className="mr-error-text">
@@ -177,17 +204,82 @@ function ParticipantCard({ p, onTranscript }) {
   );
 }
 
-// ───────────── transcript modal ─────────────
-// The transcript is shown in English. originalText (what was actually spoken, e.g. Hindi / Urdu / Telugu) is
-// null for sessions made before the translation step, and equal to text for lines that were already English.
-const hasOriginal = (s) =>
-  !!s.originalText &&
-  s.originalText.trim() !== "" &&
-  s.originalText.trim() !== (s.text || "").trim();
+// ───────────── overall summary card ─────────────
+// Same markup as before, plus the pill (top right) and the Hindi lines (shown only when hindiShow is true).
+function OverallSummary({ summary, hindi, hindiShow, hindiLoading, onToggle }) {
+  const keyUpdates = Array.isArray(summary.key_updates)
+    ? summary.key_updates
+    : [];
+  // Hindi lines are matched by position; they are used only when the count fits
+  const hiUpdates =
+    hindiShow &&
+    hindi &&
+    Array.isArray(hindi.keyUpdates) &&
+    hindi.keyUpdates.length === keyUpdates.length
+      ? hindi.keyUpdates
+      : null;
+  return (
+    <div className="mr-overall">
+      <div className="mr-overall-head">
+        <h3>Overall summary</h3>
+        <button
+          type="button"
+          className={`mr-pill ${hindiShow ? "is-active" : ""}`}
+          disabled={hindiLoading}
+          aria-busy={hindiLoading}
+          onClick={onToggle}
+        >
+          {hindiLoading
+            ? "Loading…"
+            : hindiShow
+              ? HINDI_HIDE_LABEL
+              : HINDI_SHOW_LABEL}
+        </button>
+      </div>
+      {summary.overview && <p className="mr-summary-text">{summary.overview}</p>}
+      {hindiShow && hindi?.overviewHi && (
+        <p className="mr-summary-text mr-hi" lang="hi">
+          {hindi.overviewHi}
+        </p>
+      )}
+      {keyUpdates.length > 0 && (
+        <div className="mr-block">
+          <div className="mr-block-title">Key updates</div>
+          <ul>
+            {keyUpdates.map((k, i) => (
+              <li key={i}>
+                <b>{k.person}:</b> {k.update}
+                {hiUpdates && hiUpdates[i]?.updateHi && (
+                  <div className="mr-hi" lang="hi">
+                    {hiUpdates[i].updateHi}
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <BulletList title="Common blockers" items={summary.common_blockers} />
+      {Array.isArray(summary.action_items) && summary.action_items.length > 0 && (
+        <div className="mr-block">
+          <div className="mr-block-title">Action items</div>
+          <ul>
+            {summary.action_items.map((a, i) => (
+              <li key={i}>
+                <b>{a.owner}:</b> {a.item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <BulletList title="Decisions" items={summary.decisions} />
+    </div>
+  );
+}
 
+// ───────────── transcript modal ─────────────
 function TranscriptModal({ sessionId, person, onClose }) {
   const [items, setItems] = useState([]);
-  const [showOriginal, setShowOriginal] = useState(false);
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -216,44 +308,25 @@ function TranscriptModal({ sessionId, person, onClose }) {
     load(0);
   }, [load]);
 
-  const anyOriginal = items.some(hasOriginal);
-
   return (
     <div className="mr-modal-scrim" onMouseDown={onClose}>
       <div className="mr-modal" onMouseDown={(e) => e.stopPropagation()}>
         <div className="mr-modal-head">
           <h3>Transcript — {person.displayName}</h3>
-          <div className="mr-modal-actions">
-            {anyOriginal && (
-              <button
-                type="button"
-                className="mr-toggle"
-                aria-pressed={showOriginal}
-                onClick={() => setShowOriginal((v) => !v)}
-              >
-                {showOriginal ? "Hide original" : "Show original"}
-              </button>
-            )}
-            <button
-              type="button"
-              className="icon-btn"
-              onClick={onClose}
-              aria-label="Close"
-            >
-              <X size={16} />
-            </button>
-          </div>
+          <button
+            type="button"
+            className="icon-btn"
+            onClick={onClose}
+            aria-label="Close"
+          >
+            <X size={16} />
+          </button>
         </div>
         <div className="mr-modal-body">
           {items.map((s) => (
             <div className="mr-seg" key={s.id}>
               <span className="mr-seg-time">{s.timeIst}</span>
-              <span className="mr-seg-body">
-                <span className="mr-seg-text">{s.text}</span>
-                {showOriginal && hasOriginal(s) && (
-                  <span className="mr-seg-orig">{s.originalText}</span>
-                )}
-              </span>
+              <span className="mr-seg-text">{s.text}</span>
             </div>
           ))}
           {!loading && !error && items.length === 0 && (
@@ -293,6 +366,16 @@ export default function MeetingReports() {
   const [detailError, setDetailError] = useState("");
   const [transcriptFor, setTranscriptFor] = useState(null);
   const [busy, setBusy] = useState(false);
+
+  // Hindi version of the overall summary (kept in state, one result per summary)
+  const [hindiData, setHindiData] = useState(null);
+  const [hindiShow, setHindiShow] = useState(false);
+  const [hindiLoading, setHindiLoading] = useState(false);
+  const hindiKey = detail
+    ? `${detail.id}|${detail.reportGeneratedAtUtc || ""}`
+    : "";
+  const hindiKeyRef = useRef("");
+  hindiKeyRef.current = hindiKey;
 
   const handleFatal = useCallback((e) => {
     const info = taskOrbitErrorInfo(e);
@@ -380,6 +463,43 @@ export default function MeetingReports() {
     }, 8000);
     return () => clearInterval(pollRef.current);
   }, [selectedId, detail, loadDetail, loadSessions]);
+
+  // another session, or a rewritten summary: the stored Hindi text no longer fits
+  useEffect(() => {
+    setHindiData(null);
+    setHindiShow(false);
+    setHindiLoading(false);
+  }, [hindiKey]);
+
+  const toggleHindi = async () => {
+    if (!detail || hindiLoading) return;
+    if (hindiShow) {
+      setHindiShow(false);
+      return;
+    }
+    if (hindiData) {
+      setHindiShow(true);
+      return;
+    }
+    const key = hindiKey;
+    setHindiLoading(true);
+    try {
+      const res = await getTaskOrbitSummaryHindi(detail.id);
+      if (hindiKeyRef.current !== key) return; // the user moved on meanwhile
+      setHindiData(res.data);
+      setHindiShow(true);
+    } catch (e) {
+      if (hindiKeyRef.current !== key) return;
+      const timedOut = e?.code === "ECONNABORTED" || e?.code === "ETIMEDOUT";
+      showToast(
+        timedOut
+          ? "The Hindi version is taking too long. Please try again."
+          : taskOrbitErrorInfo(e).message,
+      );
+    } finally {
+      if (hindiKeyRef.current === key) setHindiLoading(false);
+    }
+  };
 
   const doReprocess = async (mode, onlyFailed = false) => {
     if (!detail) return;
@@ -529,7 +649,8 @@ export default function MeetingReports() {
                 {fmtDateLabel(date)}, {fmtTime(detail.startedAtUtc)} –{" "}
                 {detail.endedAtUtc ? fmtTime(detail.endedAtUtc) : "ongoing"}{" "}
                 (IST) · {detail.participantCount} joined · {detail.speakerCount}{" "}
-                spoke · {detail.noSpeechCount} joined with no speech
+                spoke · {detail.audioUnclearCount || 0} audio unclear ·{" "}
+                {detail.noSpeechCount} joined with no speech
               </p>
 
               {(detail.partialResult || failedPersons > 0) && (
@@ -569,46 +690,13 @@ export default function MeetingReports() {
 
               {/* overall summary */}
               {detail.summary && (
-                <div className="mr-overall">
-                  <h3>Overall summary</h3>
-                  {detail.summary.overview && (
-                    <p className="mr-summary-text">{detail.summary.overview}</p>
-                  )}
-                  {Array.isArray(detail.summary.key_updates) &&
-                    detail.summary.key_updates.length > 0 && (
-                      <div className="mr-block">
-                        <div className="mr-block-title">Key updates</div>
-                        <ul>
-                          {detail.summary.key_updates.map((k, i) => (
-                            <li key={i}>
-                              <b>{k.person}:</b> {k.update}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  <BulletList
-                    title="Common blockers"
-                    items={detail.summary.common_blockers}
-                  />
-                  {Array.isArray(detail.summary.action_items) &&
-                    detail.summary.action_items.length > 0 && (
-                      <div className="mr-block">
-                        <div className="mr-block-title">Action items</div>
-                        <ul>
-                          {detail.summary.action_items.map((a, i) => (
-                            <li key={i}>
-                              <b>{a.owner}:</b> {a.item}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  <BulletList
-                    title="Decisions"
-                    items={detail.summary.decisions}
-                  />
-                </div>
+                <OverallSummary
+                  summary={detail.summary}
+                  hindi={hindiData}
+                  hindiShow={hindiShow}
+                  hindiLoading={hindiLoading}
+                  onToggle={toggleHindi}
+                />
               )}
 
               {/* people */}
@@ -698,6 +786,13 @@ const MR_CSS = `
 .mr-overall{border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin:12px 0}
 .mr-overall h3,.mr-h3{font-size:14px;font-weight:800;margin:0 0 6px}
 .mr-h3{margin-top:14px}
+.mr-overall-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px}
+.mr-overall-head h3{margin:0}
+.mr-pill{border:1px solid var(--border);background:var(--card);color:var(--text);border-radius:999px;padding:4px 10px;font-size:11.5px;cursor:pointer;display:inline-flex;gap:6px;align-items:center;white-space:nowrap}
+.mr-pill:hover:not(:disabled){border-color:var(--brand);color:var(--brand)}
+.mr-pill.is-active{border-color:var(--brand);color:var(--brand);font-weight:700}
+.mr-pill:disabled{opacity:.6;cursor:default}
+.mr-hi{font-size:13px;line-height:1.6;color:var(--text);opacity:.85;border-left:2px solid var(--tone-purple-soft);padding-left:8px;margin:4px 0 8px}
 .mr-summary-text{font-size:13px;line-height:1.55;margin:4px 0 8px;white-space:pre-wrap}
 .mr-block{margin:8px 0}
 .mr-block-title{font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
@@ -706,6 +801,7 @@ const MR_CSS = `
 .mr-person-head{display:flex;align-items:center;gap:10px;width:100%;background:transparent;border:0;color:var(--text);padding:10px 12px;cursor:pointer;text-align:left}
 .mr-person-main{flex:1;min-width:0}
 .mr-person-name{font-size:13.5px;font-weight:700}
+.mr-person-visits{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.5}
 .mr-person-meta{font-size:11px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mr-person-body{padding:4px 14px 12px 36px;border-top:1px solid var(--border)}
 .mr-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
@@ -717,9 +813,4 @@ const MR_CSS = `
 .mr-seg{display:flex;gap:10px;padding:5px 0;font-size:13px;line-height:1.5}
 .mr-seg-time{color:var(--brand);font-weight:700;min-width:64px;flex-shrink:0}
 .mr-seg-text{white-space:pre-wrap}
-.mr-seg-body{display:flex;flex-direction:column;gap:2px;min-width:0}
-.mr-seg-orig{white-space:pre-wrap;color:var(--muted);font-size:12px;line-height:1.45;border-left:2px solid var(--border);padding-left:8px}
-.mr-modal-actions{display:flex;align-items:center;gap:8px}
-.mr-toggle{border:1px solid var(--border);background:var(--card);color:var(--muted);border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:700;cursor:pointer}
-.mr-toggle[aria-pressed="true"]{border-color:var(--brand);color:var(--brand);background:var(--tone-purple-soft)}
 `;

@@ -14,7 +14,7 @@
 // // any of them.
 // //
 // // Reads (GET) are never touched. Only mutating methods are intercepted,
-// // and only while demo mode is actually active (i.e. while /ilm-demo is
+// // and only while demo mode is actually active (i.e. while /onboarding is
 // // mounted — see setDemoModeActive() calls in IlmOraDemoPage.jsx).
 // // ═══════════════════════════════════════════════════════════════════════
 
@@ -140,7 +140,7 @@
 // ═══════════════════════════════════════════════════════════════════════
 // ILM DEMO — GLOBAL WRITE GUARD  [DEPRECATED / NO LONGER WIRED UP]
 //
-// /ilm-demo is now the single real dashboard route — reached only after
+// /onboarding is now the single real dashboard route — reached only after
 // genuine authentication (onboarding completion, or email/password
 // register/login) — so there is no more read-only "sandbox" state to
 // enforce, and IlmOraDemoPage.jsx no longer imports or calls anything
@@ -160,7 +160,7 @@
 // any of them.
 //
 // Reads (GET) are never touched. Only mutating methods are intercepted,
-// and only while demo mode is actually active (i.e. while /ilm-demo is
+// and only while demo mode is actually active (i.e. while /onboarding is
 // mounted — see setDemoModeActive() calls in IlmOraDemoPage.jsx).
 // ═══════════════════════════════════════════════════════════════════════
 

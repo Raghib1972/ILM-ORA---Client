@@ -125,7 +125,7 @@ const seoConfig = {
   "/apply-admin": { title: "Admin Application | ILM ORA", description: "Admin application form.", noindex: true },
 
   // Demo/internal — noindex
-  "/ilm-demo": { title: "ILM ORA Demo", description: "ILM ORA product demo.", noindex: true },
+  "/onboarding": { title: "ILM ORA Demo", description: "ILM ORA product demo.", noindex: true },
   "/public/sessions": { title: "Live Sessions | ILM ORA", description: "Browse upcoming live sessions on ILM ORA.", noindex: true },
 };
 

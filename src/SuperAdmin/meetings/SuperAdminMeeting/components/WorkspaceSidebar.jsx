@@ -20,6 +20,12 @@ import {
   Menu,
   FileText,
   ClipboardList,
+  MessageCircle,
+  StickyNote,
+  Paperclip,
+  GitBranch,
+  CheckSquare,
+  Activity,
 } from "lucide-react";
 
 export const WORKSPACE_TABS = [
@@ -35,12 +41,6 @@ export const WORKSPACE_TABS = [
         badge: "New",
       },
       { id: "instant-meeting", label: "Instant Meeting", icon: Video },
-      {
-  id: "task-orbit",
-  label: "Task Orbit",
-  icon: Video,
-  badge: "New",
-},
       { id: "calendar", label: "Calendar", icon: CalendarIcon },
       { id: "calendar-sync", label: "Calendar Sync", icon: RefreshCw },
       { id: "summaries", label: "Summaries", icon: FileText },
@@ -51,6 +51,18 @@ export const WORKSPACE_TABS = [
         badge: "New",
       },
       { id: "email", label: "Email", icon: Mail },
+    ],
+  },
+  {
+    group: "Note Tracker",
+    items: [
+      { id: "nt-ask", label: "Ask", icon: MessageCircle },
+      { id: "nt-meetings", label: "Meetings", icon: Video },
+      { id: "nt-notes", label: "Notes", icon: StickyNote },
+      { id: "nt-resources", label: "Resources", icon: Paperclip },
+      { id: "nt-workflows", label: "Workflows", icon: GitBranch },
+      { id: "nt-tasks", label: "Tasks", icon: CheckSquare },
+      { id: "nt-activity", label: "Activity", icon: Activity },
     ],
   },
   {

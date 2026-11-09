@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Migration foundation only — no redirects/rewrites introduced.
+  // Migration foundation only â€” no redirects/rewrites introduced.
   // Existing route URLs are preserved exactly via the app/ folder structure.
   reactStrictMode: true,
   poweredByHeader: false,
@@ -36,24 +36,25 @@ const nextConfig = {
       { source: "/ilmora-talk", destination: "/talk", permanent: true },
       { source: "/platforms", destination: "/career", permanent: true },
             { source: "/school-class/:path*", destination: "/board/:path*", permanent: true },
+      { source: "/ilm-demo", destination: "/onboarding", permanent: true },
     ];
   },
 
-  // Role dashboards: browser me URL /student, /trainer, /admin, /business
-  // dikhta hai, lekin content /ilm-demo (image-2 wala shell) ka render hota hai.
+   // Role dashboards: browser me URL /student, /trainer, /admin, /business
+  // dikhta hai, lekin content /onboarding (shell) ka render hota hai.
   // beforeFiles zaroori hai taaki app/student/page.jsx pehle match na ho.
   async rewrites() {
     return {
       beforeFiles: [
-               { source: "/student", destination: "/ilm-demo" },
-        { source: "/trainer", destination: "/ilm-demo" },
-        { source: "/admin", destination: "/ilm-demo" },
-        { source: "/business", destination: "/ilm-demo" },
+        { source: "/student", destination: "/onboarding" },
+        { source: "/trainer", destination: "/onboarding" },
+        { source: "/admin", destination: "/onboarding" },
+        { source: "/business", destination: "/onboarding" },
         // /admin/workspace, /student/roadmap etc. bhi isi shell me khulenge
         // (login pages ko chhod kar, jaise /admin/login)
         {
           source: "/:role(student|trainer|admin|business)/:path((?!login).+)",
-          destination: "/ilm-demo",
+          destination: "/onboarding",
         },
       ],
     };
@@ -61,7 +62,7 @@ const nextConfig = {
 
   // Decouples "does the production build succeed" from "is the code
   // lint-clean" so each can be reported independently (see Day 2 report).
-  // `next lint` is still run separately to surface real findings — most
+  // `next lint` is still run separately to surface real findings â€” most
   // are react/no-unescaped-entities on text that was copied verbatim from
   // the existing app, which never ran this lint rule under Vite.
   eslint: {

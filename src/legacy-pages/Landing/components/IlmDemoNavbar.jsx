@@ -325,7 +325,7 @@ function LoginModal({ onClose, onGoogleSuccess }) {
     const r = (role || "").toUpperCase();
     switch (r) {
       case "SUPER_ADMIN": navigate("/superadmin", { replace: true }); break;
-      default: navigate("/ilm-demo", { replace: true });
+      default: navigate("/onboarding", { replace: true });
     }
   };
 
@@ -790,7 +790,7 @@ const userEmail =
   const goToProfile = (opts = {}) => {
     const { withReturn = false } = opts;
     const path = `/${userRole}/profile`;
-    navigate(withReturn ? `${path}?returnTo=/ilm-demo` : path);
+    navigate(withReturn ? `${path}?returnTo=/onboarding` : path);
   };
 
   const handleProfileModalComplete = () => {
@@ -802,7 +802,7 @@ const userEmail =
   //   setShowPlanModal(false);
   //   addToast({ type: "info", title: "Choose a Plan", desc: "Please select a subscription plan to continue." });
   //   // Same-tab navigation so plan selection stays part of the ilm-demo flow.
-  //   navigate("/pricing?returnTo=/ilm-demo");
+  //   navigate("/pricing?returnTo=/onboarding");
   // };
   const handleViewPlans = () => {
     setShowPlanModal(false);

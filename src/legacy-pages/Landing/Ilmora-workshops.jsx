@@ -2086,7 +2086,7 @@ export default function IlmoraWorkshops({ theme: themeProp, toggleTheme: toggleP
     setLocalTheme(n);
     try { window.localStorage.setItem('theme', n); } catch {}
   });
-  const openLogin = setShowLoginModal ?? (() => { window.location.href = '/ilm-demo'; });
+  const openLogin = setShowLoginModal ?? (() => { window.location.href = '/onboarding'; });
   const scrollTo = scrollToSection ?? ((id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
 
     if (embedded) return <WorkshopsApp openLogin={openLogin} />;

@@ -39,7 +39,7 @@ api.interceptors.response.use(
   (error) => {
     if (error?.response?.status === 401) {
       localStorage.removeItem("lms_token");
-      const publicPaths = ["/", "/login", "/register", "/forgot-password"];
+            const publicPaths = ["/", "/login", "/register", "/forgot-password", "/workspace", "/calendry"];
       if (!publicPaths.includes(window.location.pathname)) {
         window.location.href = "/";
       }
@@ -337,8 +337,16 @@ const authService = {
     return localStorage.getItem("role");
   },
 
-  saveOnboarding({ role, onboardingAnswers }) {
+    saveOnboarding({ role, onboardingAnswers }) {
     return api.patch("/auth/me/onboarding", { role, onboardingAnswers });
+  },
+
+  // Product (workspace | calendar) — backend se
+  getMyProduct() {
+    return api.get("/auth/me/product").then((res) => res.data);
+  },
+  setMyProduct(product) {
+    return api.patch("/auth/me/product", { product }).then((res) => res.data);
   },
   // ================= ADMIN ORG PROFILE BY EMAIL =================
   // Used by the onboarding dashboard's ProfileDetailsCard for admin/business

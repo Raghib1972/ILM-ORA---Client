@@ -268,9 +268,9 @@ const Dashboard = () => {
   const location = useLocation();
   const [, setSearchParams] = useSearchParams();
 
-  // Jab yeh component /ilm-demo ke andar embed hokar render ho raha ho
+  // Jab yeh component /onboarding ke andar embed hokar render ho raha ho
   // (IlmOraDemoPage se), tab card click par real route pe navigate() karne
-  // se poora /ilm-demo shell chhoot jaata — isliye wahan sirf ?section=
+  // se poora /onboarding shell chhoot jaata — isliye wahan sirf ?section=
   // update karo (sidebar ka goToSection() jo karta hai wahi). Baaki har
   // jagah (real /trainer/dashboard route par) normal navigate() hi chalta hai.
   //
@@ -280,7 +280,7 @@ const Dashboard = () => {
   // yeh ?tab= query param bhi set/forward karta hai. Target page ko is
   // param ko read karke apna initial active-tab decide karna hoga.
   const goTo = (route, tab) => {
-    if (location.pathname === "/ilm-demo") {
+    if (location.pathname === "/onboarding") {
       setSearchParams(
         (prev) => {
           const next = new URLSearchParams(prev);

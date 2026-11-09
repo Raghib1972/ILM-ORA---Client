@@ -4,7 +4,7 @@
    navMenuData.js — single source of truth for the "ILM ORA Feature"
    (Hub) and "Product" nav dropdown CONTENT, shared by:
      - Navbar.jsx            (public navbar)
-     - IlmOraDemoPage.jsx    (ILM Demo navbar, /ilm-demo)
+     - IlmOraDemoPage.jsx    (ILM Demo navbar, /onboarding)
 
    IMPORTANT: this file exports DATA ONLY — key, icon name, title,
    description. It intentionally does NOT export routes, colors, or

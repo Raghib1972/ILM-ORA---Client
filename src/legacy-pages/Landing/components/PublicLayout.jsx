@@ -9,7 +9,7 @@ import AnnouncementBanner from "./AnnouncementBanner";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 import RelatedLinks, { SITE_LINKS, relatedLinksColors } from "./RelatedLinks";
-
+import { rememberProductFromPath, applyRememberedProduct } from "@/utils/productContext";
 /* ── Same login popup the LMS homepage uses ──────────────────────────
    NOTE: SignupModal / ForgotPasswordModal live next to LMSHomepage.jsx
    (one level above /components), same for auth + services. If your
@@ -71,12 +71,14 @@ export function PublicAuthModals() {
   const [showModalPw, setShowModalPw] = useState(false);
 
   useEffect(() => {
-    const onLogin = () => {
+     const onLogin = () => {
+      rememberProductFromPath();
       setShowSignupModal(false);
       setShowForgotModal(false);
       setShowLoginModal(true);
     };
     const onSignup = () => {
+      rememberProductFromPath();
       setShowLoginModal(false);
       setShowForgotModal(false);
       setShowSignupModal(true);
@@ -105,13 +107,14 @@ export function PublicAuthModals() {
   }, [showLoginModal]);
 
   /* Same role redirect as LMSHomepage / Login.jsx / OAuth callbacks */
-  const redirectByRole = (role) => {
+    const redirectByRole = (role, email) => {
+    applyRememberedProduct(email, role);
     switch ((role || "").toUpperCase()) {
       case "SUPER_ADMIN":
         navigate("/superadmin", { replace: true });
         break;
       default:
-        navigate("/ilm-demo", { replace: true });
+        navigate("/onboarding", { replace: true });
     }
   };
 
@@ -126,9 +129,9 @@ export function PublicAuthModals() {
       });
       if (ok) {
         const role = (auth.getCurrentRole() || "STUDENT").toUpperCase();
-        localStorage.setItem("role", role);
+                localStorage.setItem("role", role);
         setShowLoginModal(false);
-        redirectByRole(role);
+        redirectByRole(role, modalEmail);
       } else {
         alert("Login failed! Check your credentials.");
       }
@@ -176,8 +179,8 @@ export function PublicAuthModals() {
             organizationId: check.organizationId || null,
           }),
         );
-        setShowLoginModal(false);
-        redirectByRole(role);
+               setShowLoginModal(false);
+        redirectByRole(role, check.email || dec.email);
         return;
       }
 
@@ -202,7 +205,7 @@ export function PublicAuthModals() {
       );
 
       setShowLoginModal(false);
-      navigate("/ilm-demo", { replace: true });
+      navigate("/onboarding", { replace: true });
     } catch (err) {
       const message =
         err?.response?.data?.message ||

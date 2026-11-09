@@ -352,7 +352,7 @@ const AttemptQuiz = () => {
               Check your results in <strong>My Quiz History</strong>.
             </p>
             <button
-              onClick={() => navigate(`/ilm-demo?section=${encodeURIComponent("/student/assessments")}`)}
+              onClick={() => navigate(`/onboarding?section=${encodeURIComponent("/student/assessments")}`)}
               style={{ padding:"11px 28px", borderRadius:12, background:"linear-gradient(135deg,#34d399,#059669)", border:"none", cursor:"pointer", color:"#fff", fontSize:12, fontWeight:FONT_WEIGHT.bold, fontFamily:FONT_FAMILY, letterSpacing:"0.05em", display:"inline-flex", alignItems:"center", gap:8, boxShadow:"0 4px 20px rgba(52,211,153,0.3)" }}
             >
               <ChevronRight size={14}/> Back to Assessments

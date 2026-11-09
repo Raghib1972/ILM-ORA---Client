@@ -1105,7 +1105,7 @@ const QuizRow = ({ item, index, t, navigate, isSubmitted, isLocked, prevDifficul
               ))}
             </div>
             <button
-              onClick={(e) => { e.stopPropagation(); navigate(`/ilm-demo?section=${encodeURIComponent(`/student/quiz/${item.id}`)}`); }}
+              onClick={(e) => { e.stopPropagation(); navigate(`/onboarding?section=${encodeURIComponent(`/student/quiz/${item.id}`)}`); }}
               style={{ width:"100%", padding:"12px", borderRadius:12, background:`linear-gradient(135deg,${accentColor},${gradientEnd})`, border:"none", cursor:"pointer", color:"#fff", fontSize:12, fontWeight:FONT_WEIGHT.bold, fontFamily:FONT_FAMILY, letterSpacing:"0.05em", display:"flex", alignItems:"center", justifyContent:"center", gap:8, boxShadow:`0 4px 20px ${accentColor}30`, transition:"transform 0.15s,box-shadow 0.15s" }}
               onMouseEnter={(e) => { e.currentTarget.style.transform="translateY(-1px)"; e.currentTarget.style.boxShadow=`0 8px 28px ${accentColor}40`; }}
               onMouseLeave={(e) => { e.currentTarget.style.transform="translateY(0)"; e.currentTarget.style.boxShadow=`0 4px 20px ${accentColor}30`; }}

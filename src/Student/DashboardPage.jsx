@@ -661,7 +661,7 @@ const CoursesTab = ({ courses, progressMap, loading, t }) => {
                     </div>
                   )}
                   <button
-                    onClick={() => navigate(`/ilm-demo?section=${encodeURIComponent(`/student/course/${course.id}`)}`)}
+                    onClick={() => navigate(`/onboarding?section=${encodeURIComponent(`/student/course/${course.id}`)}`)}
                     style={{
                       width: "100%", padding: "10px", borderRadius: 12,
                       background: pct >= 100 ? status.bg : t.text,

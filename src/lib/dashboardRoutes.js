@@ -8,14 +8,14 @@
 // must be a real browser navigation instead, exactly like clicking a link
 // to another site — see useNavigate() in routerCompat.js.
 //
-// "/ilm-demo" is included because that's the actual post-login landing
+// "/onboarding" is included because that's the actual post-login landing
 // page the existing app sends every role except SUPER_ADMIN to today (see
 // Login.jsx) — not a per-role dashboard route directly. Preserved as-is.
 export const DASHBOARD_PATH_PREFIXES = [
   // "/student" removed — migrated into this Next.js app's own route tree
   // under app/student/ (Task 4).
-  // "/ilm-demo" removed — migrated into this Next.js app's own route tree
-  // under app/ilm-demo/ (ilm-demo pages + sidebar migration).
+  // "/onboarding" removed — migrated into this Next.js app's own route tree
+  // under app/onboarding/ (ilm-demo pages + sidebar migration).
   // "/trainer" removed — migrated into this Next.js app's own route tree
   // under app/trainer/ (Task 5).
   // "/admin" removed — migrated into this Next.js app's own route tree

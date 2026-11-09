@@ -9,7 +9,7 @@ export default function GithubCallback() {
   const ran = useRef(false);
 
     const redirectByRole = (role) => {
-    router.replace(getRoleHomeRoute(role));
+   router.replace(consumeProductRoute(role, getRoleHomeRoute(role)));
   };
 
   useEffect(() => {
@@ -77,7 +77,7 @@ export default function GithubCallback() {
             profileCompleted: false,
           }),
         );
-        router.replace("/ilm-demo");
+        router.replace("/onboarding");
       } catch (err) {
         const message =
           err?.response?.data?.message ||

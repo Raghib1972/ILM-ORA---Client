@@ -7,5 +7,5 @@ export function getRoleHomeRoute(role) {
     return "/admin";
   if (r === "TRAINER") return "/trainer";
   if (r === "STUDENT") return "/student";
-  return "/ilm-demo"; // role unknown (onboarding pending)
+  return "/onboarding"; // role unknown (onboarding pending)
 }

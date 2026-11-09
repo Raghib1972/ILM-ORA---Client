@@ -10,6 +10,13 @@ import Events from "./workspace/Events";
 import InstantMeeting from "./workspace/InstantMeeting";
 import Summaries from "./workspace/Summaries";
 import MeetingReports from "./workspace/MeetingReports";
+import NoteTrackerAsk from "./workspace/notetracker/NoteTrackerAsk";
+import NoteTrackerMeetings from "./workspace/notetracker/NoteTrackerMeetings";
+import NoteTrackerNotes from "./workspace/notetracker/NoteTrackerNotes";
+import NoteTrackerResources from "./workspace/notetracker/NoteTrackerResources";
+import NoteTrackerWorkflows from "./workspace/notetracker/NoteTrackerWorkflows";
+import NoteTrackerTasks from "./workspace/notetracker/NoteTrackerTasks";
+import NoteTrackerActivity from "./workspace/notetracker/NoteTrackerActivity";
 import Calendar from "./workspace/Calendar";
 import CalendarSync from "./workspace/CalendarSync";
 import Email from "./workspace/Email";
@@ -21,10 +28,14 @@ import Availability from "./workspace/Availability";
 import BookingPages from "./workspace/BookingPages";
 import Integrations from "./workspace/Integrations";
 import WorkspaceSettings from "./workspace/WorkspaceSettings";
-import TaskOrbit from "./workspace/TaskOrbit";
+
 export default function WorkspaceApp() {
   const [tab, setTab] = useState("overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  // Session handed from Note Tracker > Meetings to Note Tracker > Ask
+  const [ntSession, setNtSession] = useState(null);
+  // Note handed from Ask / Workflows ("Open in Notes", "Open note") to Note Tracker > Notes
+  const [ntNoteId, setNtNoteId] = useState(null);
 
   // ── Theme detection (same concept as Dashboard.jsx) ──────────────────────
   // The actual Light/Dark theme toggle lives in the host app (App.jsx),
@@ -58,6 +69,20 @@ export default function WorkspaceApp() {
   // desktop layout never sets this state to true).
   const handleNavigate = (id) => {
     setTab(id);
+    setSidebarOpen(false);
+    setNtNoteId(null); // a normal menu click never re-opens an old note
+  };
+
+  // "Ask about this meeting" (Note Tracker > Meetings) -> open Ask with that session
+  const openNtAsk = (session) => {
+    setNtSession(session);
+    handleNavigate("nt-ask");
+  };
+
+  // "Open in Notes" (Ask) / "Open note" (a workflow run) -> Notes, with that note open
+  const openNtNote = (noteId) => {
+    setNtNoteId(noteId);
+    setTab("nt-notes");
     setSidebarOpen(false);
   };
 
@@ -100,12 +125,40 @@ export default function WorkspaceApp() {
         return <BookingPages />;
       case "instant-meeting":
         return <InstantMeeting />;
-        case "task-orbit":
-        return <TaskOrbit />;
       case "summaries":
         return <Summaries />;
       case "meeting-reports":
         return <MeetingReports />;
+      case "nt-ask":
+        return (
+          <NoteTrackerAsk
+            key={ntSession?.sessionId || "none"}
+            initialSession={ntSession}
+            onOpenNotes={openNtNote}
+          />
+        );
+      case "nt-meetings":
+        return <NoteTrackerMeetings onAskAboutMeeting={openNtAsk} />;
+      case "nt-notes":
+        return (
+          <NoteTrackerNotes
+            key={ntNoteId || "none"}
+            initialNoteId={ntNoteId}
+          />
+        );
+      case "nt-resources":
+        return <NoteTrackerResources />;
+      case "nt-workflows":
+        return (
+          <NoteTrackerWorkflows
+            onOpenNote={openNtNote}
+            onOpenTasks={() => handleNavigate("nt-tasks")}
+          />
+        );
+      case "nt-tasks":
+        return <NoteTrackerTasks />;
+      case "nt-activity":
+        return <NoteTrackerActivity />;
       case "calendar":
         return <Calendar />;
       case "calendar-sync":
