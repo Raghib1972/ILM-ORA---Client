@@ -8,3 +8,5 @@ node_modules/
 *.bak
 .env.production
 responsive-report.json
+
+token.txt
