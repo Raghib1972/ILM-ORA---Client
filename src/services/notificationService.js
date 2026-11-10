@@ -3,11 +3,21 @@
 import SockJS from "sockjs-client/dist/sockjs.min.js";
 import { Client } from "@stomp/stompjs";
 
-// ✅ Matches your authService API_BASE_URL pattern
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "/api";
-const WS_URL =
-  (process.env.NEXT_PUBLIC_WS_BASE_URL || "wss://ilmora.texora.ai") + "/ws";
+// API Gateway URL
+const API_BASE_URL = (
+  process.env.NEXT_PUBLIC_API_BASE_URL || "/api"
+).replace(/\/+$/, "");
+
+// SockJS requires HTTP/HTTPS, not WS/WSS
+const WS_BASE_URL = (
+  process.env.NEXT_PUBLIC_WS_BASE_URL ||
+  (typeof window !== "undefined" ? window.location.origin : "")
+)
+  .replace(/^wss:/i, "https:")
+  .replace(/^ws:/i, "http:")
+  .replace(/\/+$/, "");
+
+const WS_URL = `${WS_BASE_URL}/ws`;
 // ✅ ADD THIS FOR PUBLIC APIs: newsletter + contact form
 const publicHeaders = () => ({
   "Content-Type": "application/json",
@@ -224,66 +234,144 @@ export const submitContactForm = async ({
 //  WEBSOCKET
 // ─────────────────────────────────────────────────────────────
 
+// let stompClient = null;
+
+// export const connectWebSocket = ({ userEmail, userRole, onMessage }) => {
+//   if (stompClient?.active) return;
+
+//   console.log("🔌 Connecting WebSocket to:", WS_URL);
+
+//   stompClient = new Client({
+//     webSocketFactory: () => new SockJS(WS_URL),
+//     connectHeaders: {
+//       Authorization: `Bearer ${getToken()}`,
+//     },
+//     reconnectDelay: 10000,
+
+//     onConnect: () => {
+//       console.log("✅ WebSocket connected");
+
+//       // Personal notifications
+//       if (userEmail) {
+//         stompClient.subscribe(
+//           `/topic/notifications/user/${userEmail}`,
+//           (msg) => {
+//             try {
+//               onMessage(JSON.parse(msg.body));
+//             } catch (e) {
+//               console.error("Parse error:", e);
+//             }
+//           },
+//         );
+//         console.log("📬 Subscribed to user:", userEmail);
+//       }
+
+//       // Role-based notifications
+//       if (userRole) {
+//         stompClient.subscribe(
+//           `/topic/notifications/role/${userRole.toUpperCase()}`,
+//           (msg) => {
+//             try {
+//               onMessage(JSON.parse(msg.body));
+//             } catch (e) {
+//               console.error("Parse error:", e);
+//             }
+//           },
+//         );
+//         console.log("📢 Subscribed to role:", userRole);
+//       }
+//     },
+
+//     onDisconnect: () => console.log("🔌 WebSocket disconnected"),
+//     onStompError: (f) => console.error("❌ STOMP error:", f.headers?.message),
+//     onWebSocketError: (e) => console.error("❌ WS error:", e),
+//   });
+
+//   stompClient.activate();
+// };
+
+// export const disconnectWebSocket = () => {
+//   if (stompClient?.active) {
+//     stompClient.deactivate();
+//     stompClient = null;
+//     console.log("🔌 WebSocket manually disconnected");
+//   }
+// };
+
+
 let stompClient = null;
 
 export const connectWebSocket = ({ userEmail, userRole, onMessage }) => {
   if (stompClient?.active) return;
 
-  console.log("🔌 Connecting WebSocket to:", WS_URL);
+  console.log("🔌 Connecting SockJS to:", WS_URL);
 
   stompClient = new Client({
     webSocketFactory: () => new SockJS(WS_URL),
+
     connectHeaders: {
       Authorization: `Bearer ${getToken()}`,
     },
+
     reconnectDelay: 10000,
 
     onConnect: () => {
-      console.log("✅ WebSocket connected");
+      console.log("✅ Notification STOMP connected");
 
-      // Personal notifications
       if (userEmail) {
         stompClient.subscribe(
           `/topic/notifications/user/${userEmail}`,
           (msg) => {
             try {
               onMessage(JSON.parse(msg.body));
-            } catch (e) {
-              console.error("Parse error:", e);
+            } catch (error) {
+              console.error("Notification parse error:", error);
             }
           },
         );
-        console.log("📬 Subscribed to user:", userEmail);
       }
 
-      // Role-based notifications
       if (userRole) {
         stompClient.subscribe(
           `/topic/notifications/role/${userRole.toUpperCase()}`,
           (msg) => {
             try {
               onMessage(JSON.parse(msg.body));
-            } catch (e) {
-              console.error("Parse error:", e);
+            } catch (error) {
+              console.error("Notification parse error:", error);
             }
           },
         );
-        console.log("📢 Subscribed to role:", userRole);
       }
     },
 
-    onDisconnect: () => console.log("🔌 WebSocket disconnected"),
-    onStompError: (f) => console.error("❌ STOMP error:", f.headers?.message),
-    onWebSocketError: (e) => console.error("❌ WS error:", e),
+    onDisconnect: () => {
+      console.log("🔌 Notification STOMP disconnected");
+    },
+
+    onStompError: (frame) => {
+      console.error(
+        "❌ STOMP error:",
+        frame.headers?.message,
+        frame.body,
+      );
+    },
+
+    onWebSocketError: (error) => {
+      console.error("❌ SockJS transport error:", error);
+    },
   });
 
   stompClient.activate();
 };
 
-export const disconnectWebSocket = () => {
-  if (stompClient?.active) {
-    stompClient.deactivate();
+export const disconnectWebSocket = async () => {
+  if (stompClient) {
+    const client = stompClient;
     stompClient = null;
-    console.log("🔌 WebSocket manually disconnected");
+
+    await client.deactivate();
+
+    console.log("🔌 Notification connection closed");
   }
 };
