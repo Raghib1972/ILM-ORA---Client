@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import PageHead from "../../components/PageHead";
 import { useToast } from "../../components/Toast";
+import PlanCheckPanel from "./PlanCheckPanel";
 import {
   getTaskOrbitDays,
   getTaskOrbitSessions,
@@ -697,6 +698,11 @@ export default function MeetingReports() {
                   hindiLoading={hindiLoading}
                   onToggle={toggleHindi}
                 />
+              )}
+
+              {/* evening plan check (read-only, saved by the e-mail feature) */}
+              {detail.label === "Evening" && detail.status === "DONE" && (
+                <PlanCheckPanel date={date} />
               )}
 
               {/* people */}

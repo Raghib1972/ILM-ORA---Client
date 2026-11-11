@@ -47,7 +47,7 @@ const ROLE_BUSINESS_PARTNERSHIP = { key: "business_partnership", label: "Busines
 
 const PRODUCTS = [
   // LMS
-  { key: "lms",          group: "LMS",          label: "LMS",               roles: [ROLE_STUDENT, ROLE_TRAINER, ROLE_BUSINESS_PARTNERSHIP] },
+  { key: "lms",          group: "LMS",          label: "LMS",               roles: [] },
   // PRODUCT
   { key: "workshop",     group: "PRODUCT",      label: "ILM ORA Workshop",  roles: [] },
   { key: "workspace",    group: "PRODUCT",      label: "ILM ORA Workspace", roles: [] },
@@ -59,6 +59,10 @@ const PRODUCTS = [
   // SIS
   { key: "sis",          group: "SIS",          label: "SIS",               roles: [] },
 ];
+// Products that are available right now. Everything else is locked ("Coming soon").
+const ENABLED_PRODUCTS = ["lms"];
+const isLocked = (productKey) => !ENABLED_PRODUCTS.includes(productKey);
+
 // true only for products that have roles to choose (e.g. LMS)
 const needsRoles = (productKey) =>
   (PRODUCTS.find((p) => p.key === productKey)?.roles || []).length > 0;
@@ -393,9 +397,8 @@ const NewOrganizationPage = () => {
   // const handleSubmit = async () => {
       const toggleProduct = (pKey) => {
     setForm((prev) => {
-      const next = { ...prev.products };
-      if (next[pKey]) delete next[pKey];
-      else next[pKey] = [];
+      // Single select: only one product at a time
+      const next = prev.products[pKey] ? {} : { [pKey]: [] };
       return { ...prev, products: next };
     });
     setErrors((prev) => ({ ...prev, products: "" }));
@@ -765,7 +768,7 @@ const NewOrganizationPage = () => {
               </span>
             </div>
             <div style={{ fontSize: 12, color: txtSub, marginTop: -6, marginBottom: 18, lineHeight: 1.5 }}>
-              Turn on the products this organization can use. For LMS, also choose which roles are allowed.
+                           Turn on the product this organization can use.
             </div>
 
             {(() => {
@@ -817,14 +820,17 @@ const NewOrganizationPage = () => {
                         <div style={{ display: "grid", gridTemplateColumns: g.cols, gap: 10 }}>
                           {items.map((p) => {
                             const selected = !!form.products[p.key];
+                            const locked = isLocked(p.key);
                             const roles = form.products[p.key] || [];
                             const [ca, cb] = avatarColor(p.label);
                             return (
-                              <div
+                                                            <div
                                 key={p.key}
-                                onClick={() => toggleProduct(p.key)}
+                                onClick={() => { if (!locked) toggleProduct(p.key); }}
                                 style={{
-                                  cursor: "pointer", borderRadius: 12, padding: "14px 16px",
+                                  cursor: locked ? "not-allowed" : "pointer",
+                                  opacity: locked ? 0.55 : 1,
+                                  borderRadius: 12, padding: "14px 16px",
                                   border: `1.5px solid ${selected ? "#6366f1" : inputBdr}`,
                                   background: selected ? "rgba(99,102,241,0.07)" : inputBg,
                                   boxShadow: selected ? "0 2px 12px rgba(99,102,241,0.18)" : "none",
@@ -845,7 +851,16 @@ const NewOrganizationPage = () => {
                                     <div style={{ fontSize: 13, fontWeight: 700, color: txtMain }}>{p.label}</div>
                                     <div style={{ fontSize: 11, color: txtSub, marginTop: 2, lineHeight: 1.35 }}>{DESC[p.key]}</div>
                                   </div>
-                                  <Switch on={selected} />
+                                                                    {locked ? (
+                                    <span style={{
+                                      fontSize: 10, fontWeight: 700, padding: "3px 9px", borderRadius: 999,
+                                      background: "rgba(148,163,184,0.18)", color: txtSub, whiteSpace: "nowrap",
+                                    }}>
+                                      Coming soon
+                                    </span>
+                                  ) : (
+                                    <Switch on={selected} />
+                                  )}
                                 </div>
 
                                 {selected && p.roles.length > 0 && (

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import axios from "axios";
 
@@ -57,6 +57,16 @@ export const getTaskOrbitSummaryHindi = (id) =>
     timeout: HINDI_TIMEOUT_MS,
   });
 
+/**
+ * GET /comparison?date=yyyy-MM-dd  (evening plan check of one IST day, read-only copy of what the e-mails used)
+ * Answers { date, available, team, people }. available=false when nothing was saved for that day.
+ */
+export const getTaskOrbitDayComparison = (date) =>
+  axios.get(`${BASE}/comparison`, {
+    ...getAuthHeader(),
+    params: { date },
+  });
+
 /** Turn an axios error into { code, message } using the backend's {error,message} body. */
 export const taskOrbitErrorInfo = (err) => {
   const data = err?.response?.data;
@@ -66,3 +76,4 @@ export const taskOrbitErrorInfo = (err) => {
     message: data?.message || err?.message || "Something went wrong",
   };
 };
+
