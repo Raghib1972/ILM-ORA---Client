@@ -166,8 +166,14 @@ const TrainerSections = {
 /* ─── Admin ("Business & Partnership") sidebar items ─────────────────── */
 const AdminSections = {
   "/admin": RoleHome.admin,
-  "/admin/workspace": lazy(() =>
+  // "/admin/workspace": lazy(() =>
+  //   import("../../Admin/AdminMeetings.jsx"),
+  // ),
+    "/admin/workspace": lazy(() =>
     import("../../Admin/AdminMeetings.jsx"),
+  ),
+  "/admin/calendar": lazy(() =>
+    import("./CalendryProduct.jsx"),
   ),
   "/admin/organisation-overview": lazy(() =>
     import("../../Admin/OrganisationOverview"),

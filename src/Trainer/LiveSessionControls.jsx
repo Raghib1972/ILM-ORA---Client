@@ -857,6 +857,7 @@ const LiveSessionControls = () => {
     try {
       const pip = await window.documentPictureInPicture.requestWindow({
         width: 360,
+        maxWidth: "100%",
         height: 260,
       });
 
@@ -1319,7 +1320,7 @@ const LiveSessionControls = () => {
       video.autoplay = true;
       video.playsInline = true;
       video.muted = true;
-      video.style.cssText = "width:100vw;height:100vh;object-fit:contain;background:#000;display:block;";
+      video.style.cssText = "width:100vw;height: 100vh; height: 100dvh;object-fit:contain;background:#000;display:block;";
       video.srcObject = stream;
       w.document.body.appendChild(video);
     } catch (e) {
@@ -2148,7 +2149,7 @@ const LiveSessionControls = () => {
             <div
               onClick={(e) => e.stopPropagation()}
               style={{
-                width: 380, maxHeight: "70vh", overflowY: "auto",
+                width: 380, maxHeight: "70dvh", overflowY: "auto",
                 background: "#181A20", border: "1px solid rgba(255,255,255,0.08)",
                 borderRadius: 16, padding: 0,
               }}
@@ -2397,7 +2398,7 @@ const pipCtrlBtnStyle = (danger) => ({
 });
 
 const PipPanel = ({ tile, timer, micOn, camOn, onToggleMic, onToggleCam, onReturn }) => (
-  <div style={{ width: "100%", height: "100vh", display: "flex", flexDirection: "column", background: "#0F1117", fontFamily: "'Inter',sans-serif" }}>
+  <div style={{ width: "100%", height: "100dvh", display: "flex", flexDirection: "column", background: "#0F1117", fontFamily: "'Inter',sans-serif" }}>
     <div style={{ flex: 1, position: "relative", minHeight: 0 }}>
       {tile ? (
         <VideoTile tile={tile} device="phone" />
@@ -2604,6 +2605,7 @@ const S = {
     boxShadow: "0 12px 36px rgba(239,68,68,0.4)",
     animation: "slideIn 0.35s ease",
     minWidth: 300,
+    maxWidth: "calc(100vw - 24px)",
   },
   topBar: {
     flexShrink: 0,
@@ -3061,6 +3063,7 @@ const S = {
   filmstripTile: {
     flexShrink: 0,
     width: 128,
+    maxWidth: "100%",
     height: 128,
     borderRadius: 12,
     overflow: "hidden",
@@ -3256,6 +3259,7 @@ const S = {
     bottom: 16,
     right: 16,
     width: 320,
+    maxWidth: "calc(100vw - 24px)",
     maxHeight: 420,
     background: "rgba(15,17,22,.92)",
     backdropFilter: "blur(14px)",
@@ -3267,7 +3271,7 @@ const S = {
     zIndex: 25,
     animation: "chatFade .2s ease",
   },
-  floatingChatCompact: { left: 8, right: 8, width: "auto", bottom: 8, maxHeight: "50vh" },
+  floatingChatCompact: { left: 8, right: 8, width: "auto", bottom: 8, maxHeight: "50dvh" },
   chatHead: {
     flexShrink: 0,
     display: "flex",

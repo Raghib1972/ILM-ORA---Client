@@ -231,7 +231,7 @@ const EditRecordedClass = () => {
     return (
       <div
         style={{
-          minHeight: "100vh",
+          minHeight: "100dvh",
           background: t.pageBg,
           display: "flex",
           alignItems: "center",
@@ -257,7 +257,7 @@ const EditRecordedClass = () => {
     return (
       <div
         style={{
-          minHeight: "100vh",
+          minHeight: "100dvh",
           background: t.pageBg,
           display: "flex",
           alignItems: "center",
@@ -308,7 +308,7 @@ const EditRecordedClass = () => {
 
       <div
         style={{
-          minHeight: "100vh",
+          minHeight: "100dvh",
           background: t.pageBg,
           color: t.text,
           fontFamily: "'Poppins',sans-serif",
@@ -482,7 +482,9 @@ const EditRecordedClass = () => {
             </div>
           )}
 
+          <style>{`@media (max-width: 900px) { .erc-grid { grid-template-columns: minmax(0, 1fr) !important; } }`}</style>
           <div
+            className="erc-grid"
             style={{
               display: "grid",
               gridTemplateColumns: "1fr 300px",

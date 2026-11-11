@@ -10,7 +10,8 @@ const GlobalAuthModals = dynamic(() => import("@/components/GlobalAuthModals"), 
 // (e.g. the homepage) render their own Navbar/Footer directly, others
 // wrap themselves in PublicLayout internally. Rendering shared chrome at
 // this route-group level would double it up. See Day 2 report.
-export default function PublicRouteGroupLayout({ children }) {
+
+  export default function PublicRouteGroupLayout({ children }) {
   return (
     <PublicShellProvider>
       {children}

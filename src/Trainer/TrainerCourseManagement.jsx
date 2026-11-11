@@ -1114,8 +1114,8 @@ const LOCAL_STYLES = `
   .tcm-p1-list{display:flex;flex-wrap:wrap;gap:6px;padding:10px;}
   .tcm-p1-list .tcm-cat-btn{width:auto;flex:0 0 auto;}
   .tcm-resize{display:none;}
-  .tcm-p2-grid{max-height:70vh;}
-  .tcm-p3{width:100% !important;max-height:80vh;}
+  .tcm-p2-grid{max-height: 70vh; max-height: 70dvh;}
+  .tcm-p3{width:100% !important;max-height: 80vh; max-height: 80dvh;}
 }
 
 /* ── iPad / iPad Mini ── */
@@ -1586,7 +1586,7 @@ const TrainerCourseManagement = () => {
           border: `1px solid ${t.border}`,
           borderRadius: RADIUS.standardCard,
           boxShadow: t.shadow,
-          height: "calc(100vh - 340px)",
+          height: "calc(100dvh - 340px)",
           minHeight: 420,
           marginBottom: 20,
         }}

@@ -1252,7 +1252,7 @@ export default function StudentAssignments() {
 /* Small shared helper for the status tag pills */
 function tagStyle(bg, color, border) {
   return {
-    display: "inline-flex", alignItems: "center", gap: 5, padding: "4px 10px",
+    display: "inline-flex", alignItems: "center", gap: 5, padding: "4px 10px", whiteSpace: "nowrap",
     borderRadius: 8, fontSize: 11, fontWeight: 700, letterSpacing: "0.04em",
     background: bg, color, border: `1px solid ${border}`, fontFamily: "'Poppins',sans-serif",
   };

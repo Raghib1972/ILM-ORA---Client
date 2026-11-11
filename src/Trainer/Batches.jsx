@@ -165,7 +165,7 @@ const Batches = () => {
     return (
       <>
         <style>{pageStyles()}</style>
-        <div style={{ minHeight: "100vh", background: t.pageBg, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ minHeight: "100dvh", background: t.pageBg, display: "flex", alignItems: "center", justifyContent: "center" }}>
           <Loader t={t} text="Loading batches..." />
         </div>
       </>

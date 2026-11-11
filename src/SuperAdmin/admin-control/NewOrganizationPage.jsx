@@ -36,8 +36,32 @@ const PLAN_LIMITS = {
 // Same durations the payment flow offers (PlanDurationLimits: 1, 6, 12 months)
 const EXPIRY_CHOICES = [1, 6, 12];
 
+// const EMAIL_RE = /\S+@\S+\.\S+/;
 const EMAIL_RE = /\S+@\S+\.\S+/;
 
+// Product catalogue (placeholder - confirm names/roles before release).
+// Later this can be fetched from backend Product Management API.
+const ROLE_STUDENT     = { key: "student",     label: "Student" };
+const ROLE_TRAINER     = { key: "trainer",     label: "Trainer" };
+const ROLE_BUSINESS_PARTNERSHIP = { key: "business_partnership", label: "Business & Partnership" };
+
+const PRODUCTS = [
+  // LMS
+  { key: "lms",          group: "LMS",          label: "LMS",               roles: [ROLE_STUDENT, ROLE_TRAINER, ROLE_BUSINESS_PARTNERSHIP] },
+  // PRODUCT
+  { key: "workshop",     group: "PRODUCT",      label: "ILM ORA Workshop",  roles: [] },
+  { key: "workspace",    group: "PRODUCT",      label: "ILM ORA Workspace", roles: [] },
+  { key: "calendry",     group: "PRODUCT",      label: "ILM ORA Calendry",  roles: [] },
+  // CORPORATE
+  { key: "corporate",    group: "CORPORATE",    label: "Corporate",         roles: [] },
+  // EDUCATE TECH
+  { key: "educate_tech", group: "EDUCATE TECH", label: "Educate Tech",      roles: [] },
+  // SIS
+  { key: "sis",          group: "SIS",          label: "SIS",               roles: [] },
+];
+// true only for products that have roles to choose (e.g. LMS)
+const needsRoles = (productKey) =>
+  (PRODUCTS.find((p) => p.key === productKey)?.roles || []).length > 0;
 const INDUSTRIES = [
   "Education",
   "Technology",
@@ -158,8 +182,12 @@ const INITIAL_FORM = {
   plan:         DEFAULT_PLAN,
   status:       "active",
   planExpiry:   "",
+//   maxStudents:  PLAN_LIMITS[DEFAULT_PLAN].students,
+//   maxTrainers:  PLAN_LIMITS[DEFAULT_PLAN].trainers,
+// };
   maxStudents:  PLAN_LIMITS[DEFAULT_PLAN].students,
   maxTrainers:  PLAN_LIMITS[DEFAULT_PLAN].trainers,
+  products:     {},   // { lms: ["student","trainer"], workspace: ["trainer"] }
 };
 
 // -----------------------------------------------------------------------------
@@ -241,7 +269,10 @@ const NewOrganizationPage = () => {
   const [errors,      setErrors]      = useState({});
   const [loading,     setLoading]     = useState(false);
   const [success,     setSuccess]     = useState(false);
-  const [inviteSent,  setInviteSent]  = useState(true);
+  // const [inviteSent,  setInviteSent]  = useState(true);
+    const [inviteSent,  setInviteSent]  = useState(true);
+  const [inviteInfo,  setInviteInfo]  = useState(null); // { organizationCode, inviteLink, inviteStatus }
+  const [copied,      setCopied]      = useState("");
   const [submitError, setSubmitError] = useState("");
 
   const isTrial = form.plan === "trial";
@@ -309,6 +340,13 @@ const NewOrganizationPage = () => {
         e.planExpiry = "Expiry date must be in the future";
     }
 
+    // if (Number(form.maxStudents) < 1) e.maxStudents = "Must be at least 1";
+        const pKeys = Object.keys(form.products);
+    if (pKeys.length === 0)
+      e.products = "Select at least one product";
+        else if (pKeys.some((k) => needsRoles(k) && form.products[k].length === 0))
+      e.products = "Select at least one role for every selected product that has roles";
+
     if (Number(form.maxStudents) < 1) e.maxStudents = "Must be at least 1";
     if (Number(form.maxTrainers) < 1) e.maxTrainers = "Must be at least 1";
     return e;
@@ -352,6 +390,36 @@ const NewOrganizationPage = () => {
     });
   };
 
+  // const handleSubmit = async () => {
+      const toggleProduct = (pKey) => {
+    setForm((prev) => {
+      const next = { ...prev.products };
+      if (next[pKey]) delete next[pKey];
+      else next[pKey] = [];
+      return { ...prev, products: next };
+    });
+    setErrors((prev) => ({ ...prev, products: "" }));
+  };
+
+  const toggleRole = (pKey, rKey) => {
+    setForm((prev) => {
+      const cur = prev.products[pKey] || [];
+      const roles = cur.includes(rKey) ? cur.filter((r) => r !== rKey) : [...cur, rKey];
+      return { ...prev, products: { ...prev.products, [pKey]: roles } };
+    });
+    setErrors((prev) => ({ ...prev, products: "" }));
+  };
+
+  const copyText = async (text, which) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(which);
+      setTimeout(() => setCopied(""), 1800);
+    } catch (err) {
+      console.error("Copy failed", err);
+    }
+  };
+
   const handleSubmit = async () => {
     const e = validate();
     if (Object.keys(e).length > 0) {
@@ -380,16 +448,40 @@ const NewOrganizationPage = () => {
         // Only send a limit if it differs from the plan default (custom limit)
         maxStudents:  students !== planDefaults.students ? students : null,
         maxTrainers:  trainers !== planDefaults.trainers ? trainers : null,
-        adminName:    form.adminName.trim(),
+      //   adminName:    form.adminName.trim(),
+      //   adminEmail:   form.adminEmail.trim(),
+      // };
+              adminName:    form.adminName.trim(),
         adminEmail:   form.adminEmail.trim(),
+        // [{ product: "lms", roles: ["student","trainer"] }, ...]
+        products: Object.entries(form.products).map(([product, roles]) => ({
+          product,
+          roles,
+        })),
       };
 
       const res = await authService.createOrganizationWithAdmin(payload);
 
-      const sent = res?.inviteEmailSent !== false;
+      // const sent = res?.inviteEmailSent !== false;
+      // setInviteSent(sent);
+      // setSuccess(true);
+      // if (sent) {
+      //   setTimeout(() => navigate("/superadmin/organizations"), 1800);
+      // }
+            const sent = res?.inviteEmailSent !== false;
       setInviteSent(sent);
+
+      // Generated by backend only. Frontend never creates tokens.
+      const code   = res?.organizationCode || res?.inviteCode || null;
+      const link   = res?.inviteLink || null;
+      const status = res?.inviteStatus || (code ? "ACTIVE" : null);
+      if (code || link) {
+        setInviteInfo({ organizationCode: code, inviteLink: link, inviteStatus: status });
+      }
+
       setSuccess(true);
-      if (sent) {
+      // Auto-redirect only when there is no code/link to copy
+      if (sent && !code && !link) {
         setTimeout(() => navigate("/superadmin/organizations"), 1800);
       }
     } catch (err) {
@@ -413,18 +505,78 @@ const NewOrganizationPage = () => {
   // -- Avatar preview colors --
   const [avatarA, avatarB] = avatarColor(form.name);
 
+  // // -- Success state --
+  // if (success) {
+    // -- Invite code / link card (shown on success screen) --
+  const inviteCard = inviteInfo ? (
+    <div style={{
+      width: "100%", maxWidth: 520, textAlign: "left", marginTop: 8,
+      background: cardBg, border: `1px solid ${cardBdr}`, borderRadius: 12, padding: "16px 18px",
+      display: "flex", flexDirection: "column", gap: 12,
+    }}>
+      <div style={{ fontSize: 11, fontWeight: 700, color: txtSub, letterSpacing: "0.08em", textTransform: "uppercase" }}>
+        Organization Invite {inviteInfo.inviteStatus ? `- ${inviteInfo.inviteStatus}` : ""}
+      </div>
+
+      {[
+        { label: "Organization Code", val: inviteInfo.organizationCode, key: "code", mono: true },
+        { label: "Invite Link",       val: inviteInfo.inviteLink,       key: "link", mono: false },
+      ].filter((r) => r.val).map((r) => (
+        <div key={r.key} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ fontSize: 11, color: txtSub, marginBottom: 3 }}>{r.label}</div>
+            <div style={{
+              fontSize: 13, fontWeight: 600, color: txtMain,
+              fontFamily: r.mono ? "monospace" : "inherit",
+              overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+            }}>
+              {r.val}
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => copyText(r.val, r.key)}
+            style={{
+              padding: "6px 12px", borderRadius: 7, fontSize: 11, fontWeight: 700,
+              border: "1px solid #6366f140", background: "#6366f10d", color: "#6366f1", cursor: "pointer",
+            }}
+          >
+            {copied === r.key ? "Copied" : r.key === "code" ? "Copy Code" : "Copy Link"}
+          </button>
+        </div>
+      ))}
+    </div>
+  ) : null;
+
   // -- Success state --
   if (success) {
     return (
       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", padding: "80px 40px", gap: 14, textAlign: "center" }}>
         <Icon name={inviteSent ? "check" : "alert"} size={56} color={inviteSent ? "#10b981" : "#d97706"} />
-        <div style={{ fontSize: 18, fontWeight: 800, color: txtMain }}>Organization created</div>
+        {/* <div style={{ fontSize: 18, fontWeight: 800, color: txtMain }}>Organization created</div> */}
+                <div style={{ fontSize: 18, fontWeight: 800, color: txtMain }}>Organization created</div>
+        {inviteCard}
         {inviteSent ? (
           <>
             <div style={{ fontSize: 13, color: txtSub }}>
               A set-password email was sent to {form.adminEmail.trim()}.
             </div>
-            <div style={{ fontSize: 12, color: txtSub }}>Redirecting to organizations list...</div>
+            {/* <div style={{ fontSize: 12, color: txtSub }}>Redirecting to organizations list...</div> */}
+                        {!inviteInfo && (
+              <div style={{ fontSize: 12, color: txtSub }}>Redirecting to organizations list...</div>
+            )}
+            {inviteInfo && (
+              <button
+                onClick={() => navigate("/superadmin/organizations")}
+                style={{
+                  marginTop: 6, padding: "9px 22px", borderRadius: 8, fontSize: 13, fontWeight: 700,
+                  background: "linear-gradient(135deg, #6366f1, #8b5cf6)", color: "#fff",
+                  border: "none", cursor: "pointer",
+                }}
+              >
+                Go to organizations
+              </button>
+            )}
           </>
         ) : (
           <>
@@ -598,6 +750,160 @@ const NewOrganizationPage = () => {
                 />
               </Field>
             </div>
+          </div>
+
+                {/* Products & Roles */}
+          <div style={{ background: cardBg, border: `1px solid ${errors.products ? "#ef4444" : cardBdr}`, borderRadius: 14, padding: "22px 24px" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 10, flexWrap: "wrap" }}>
+              <SectionHeader icon="clipboard" title="Products & Roles" txtMain={txtMain} />
+              <span style={{
+                fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 999, marginBottom: 16,
+                background: Object.keys(form.products).length > 0 ? "rgba(16,185,129,0.12)" : "rgba(148,163,184,0.15)",
+                color: Object.keys(form.products).length > 0 ? "#059669" : txtSub,
+              }}>
+                {Object.keys(form.products).length} selected
+              </span>
+            </div>
+            <div style={{ fontSize: 12, color: txtSub, marginTop: -6, marginBottom: 18, lineHeight: 1.5 }}>
+              Turn on the products this organization can use. For LMS, also choose which roles are allowed.
+            </div>
+
+            {(() => {
+              const GROUPS = [
+                { key: "LMS",          title: "LMS",          cols: "1fr" },
+                { key: "PRODUCT",      title: "Product",      cols: "repeat(3, 1fr)" },
+                { key: "CORPORATE",    title: "Corporate",    cols: "1fr" },
+                { key: "EDUCATE TECH", title: "Educate Tech", cols: "1fr" },
+                { key: "SIS",          title: "SIS",          cols: "1fr" },
+              ];
+              const DESC = {
+                lms: "Courses, batches, assessments, attendance and more",
+                workshop: "Run and manage workshops",
+                workspace: "Team workspace and collaboration",
+                calendry: "Scheduling and bookings",
+                corporate: "Corporate training and programs",
+                educate_tech: "Corporate education platform",
+                sis: "Student information system",
+              };
+
+              const Switch = ({ on }) => (
+                <span style={{
+                  width: 34, height: 18, borderRadius: 999, flexShrink: 0, position: "relative",
+                  background: on ? "#6366f1" : (dark ? "rgba(255,255,255,0.15)" : "#cbd5e1"),
+                  transition: "background 0.15s", display: "inline-block",
+                }}>
+                  <span style={{
+                    position: "absolute", top: 2, left: on ? 18 : 2, width: 14, height: 14,
+                    borderRadius: "50%", background: "#fff", transition: "left 0.15s",
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.3)",
+                  }} />
+                </span>
+              );
+
+              return (
+                <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                  {GROUPS.map((g) => {
+                    const items = PRODUCTS.filter((p) => p.group === g.key);
+                    if (items.length === 0) return null;
+                    return (
+                      <div key={g.key}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                          <span style={{ fontSize: 10, fontWeight: 800, letterSpacing: "0.1em", color: txtSub, textTransform: "uppercase" }}>
+                            {g.title}
+                          </span>
+                          <span style={{ flex: 1, height: 1, background: divClr }} />
+                        </div>
+
+                        <div style={{ display: "grid", gridTemplateColumns: g.cols, gap: 10 }}>
+                          {items.map((p) => {
+                            const selected = !!form.products[p.key];
+                            const roles = form.products[p.key] || [];
+                            const [ca, cb] = avatarColor(p.label);
+                            return (
+                              <div
+                                key={p.key}
+                                onClick={() => toggleProduct(p.key)}
+                                style={{
+                                  cursor: "pointer", borderRadius: 12, padding: "14px 16px",
+                                  border: `1.5px solid ${selected ? "#6366f1" : inputBdr}`,
+                                  background: selected ? "rgba(99,102,241,0.07)" : inputBg,
+                                  boxShadow: selected ? "0 2px 12px rgba(99,102,241,0.18)" : "none",
+                                  transition: "all 0.15s",
+                                }}
+                              >
+                                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                                  <div style={{
+                                    width: 38, height: 38, borderRadius: 10, flexShrink: 0,
+                                    background: selected ? `linear-gradient(135deg,${ca},${cb})` : (dark ? "rgba(255,255,255,0.08)" : "#e5e7eb"),
+                                    color: selected ? "#fff" : txtSub,
+                                    display: "flex", alignItems: "center", justifyContent: "center",
+                                    fontSize: 14, fontWeight: 800,
+                                  }}>
+                                    {initials(p.label)}
+                                  </div>
+                                  <div style={{ flex: 1, minWidth: 0 }}>
+                                    <div style={{ fontSize: 13, fontWeight: 700, color: txtMain }}>{p.label}</div>
+                                    <div style={{ fontSize: 11, color: txtSub, marginTop: 2, lineHeight: 1.35 }}>{DESC[p.key]}</div>
+                                  </div>
+                                  <Switch on={selected} />
+                                </div>
+
+                                {selected && p.roles.length > 0 && (
+                                  <div
+                                    onClick={(e) => e.stopPropagation()}
+                                    style={{ marginTop: 14, paddingTop: 12, borderTop: `1px dashed ${dark ? "rgba(255,255,255,0.12)" : "#c7d2fe"}` }}
+                                  >
+                                    <div style={{ fontSize: 10, fontWeight: 700, color: txtSub, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 }}>
+                                      Allowed roles
+                                    </div>
+                                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                                      {p.roles.map((r) => {
+                                        const on = roles.includes(r.key);
+                                        return (
+                                          <button
+                                            key={r.key}
+                                            type="button"
+                                            onClick={() => toggleRole(p.key, r.key)}
+                                            style={{
+                                              display: "inline-flex", alignItems: "center", gap: 6,
+                                              padding: "6px 14px", borderRadius: 999, fontSize: 12, fontWeight: 700,
+                                              border: `1.5px solid ${on ? "#6366f1" : inputBdr}`,
+                                              background: on ? "#6366f1" : "transparent",
+                                              color: on ? "#fff" : txtSub, cursor: "pointer",
+                                              transition: "all 0.15s",
+                                            }}
+                                          >
+                                            {on && (
+                                              <svg width={11} height={11} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={3.5} strokeLinecap="round" strokeLinejoin="round">
+                                                <polyline points="20 6 9 17 4 12" />
+                                              </svg>
+                                            )}
+                                            {r.label}
+                                          </button>
+                                        );
+                                      })}
+                                    </div>
+                                    {roles.length === 0 && (
+                                      <div style={{ fontSize: 11, color: "#d97706", marginTop: 8 }}>
+                                        Select at least one role.
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              );
+            })()}
+
+            {errors.products && (
+              <div style={{ fontSize: 11, color: "#ef4444", marginTop: 12 }}>{errors.products}</div>
+            )}
           </div>
 
           {/* Plan & Status */}
@@ -879,7 +1185,9 @@ const NewOrganizationPage = () => {
                 { label: "Admin email",        done: EMAIL_RE.test(form.adminEmail) },
                 { label: "Plan selected",      done: !!form.plan },
                 { label: "Status selected",    done: !!form.status },
-                { label: "Plan expiry",        done: isTrial || (!!form.planExpiry && !expiryLiveError) },
+                // { label: "Plan expiry",        done: isTrial || (!!form.planExpiry && !expiryLiveError) },
+                                { label: "Plan expiry",        done: isTrial || (!!form.planExpiry && !expiryLiveError) },
+                              { label: "Products & roles",   done: Object.keys(form.products).length > 0 && Object.keys(form.products).every((k) => !needsRoles(k) || form.products[k].length > 0) },
               ].map(({ label, done }) => (
                 <div key={label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
                   <div style={{

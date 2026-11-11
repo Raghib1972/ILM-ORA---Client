@@ -933,7 +933,7 @@ export default function MyQuizHistory() {
   if (loading) {
     return (
       <div style={{
-        minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center",
+        minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center",
         background: isDark ? "#0a0a0a" : "#f1f5f9",
       }}>
         <div style={{ textAlign: "center" }}>
@@ -1075,7 +1075,7 @@ export default function MyQuizHistory() {
             border: `1px solid ${t.splitBorder}`,
             background: t.splitBg,
             boxShadow: t.shadow,
-            height: "calc(100vh - 340px)",
+            height: "calc(100dvh - 340px)",
             minHeight: 400,
           }}
         >
@@ -1106,7 +1106,8 @@ export default function MyQuizHistory() {
             </div>
 
             {/* Table header */}
-            <div style={{
+            <style>{`@media (max-width: 640px) { .qh-row { padding-left: 14px !important; padding-right: 14px !important; gap: 6px !important; grid-template-columns: minmax(0, 1fr) auto auto auto !important; } .qh-row > :nth-child(2) { min-width: 64px !important; } .qh-row > :nth-child(3) { min-width: 0 !important; } .qh-row > :nth-child(4) { min-width: 0 !important; } }`}</style>
+            <div className="qh-row" style={{
               display: "grid", gridTemplateColumns: "1fr auto auto auto",
               gap: 8, padding: "10px 22px",
               background: t.tableHeaderBg,
@@ -1131,6 +1132,7 @@ export default function MyQuizHistory() {
                 return (
                   <div
                     key={idx}
+                    className="qh-row"
                     style={{
                       display: "grid", gridTemplateColumns: "1fr auto auto auto",
                       gap: 8, alignItems: "center",

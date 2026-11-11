@@ -98,7 +98,7 @@ export default function TrainerFiles() {
       return (
         <iframe
           src={url}
-          className="w-full h-[75vh] rounded-xl"
+          className="w-full h-[75dvh] rounded-xl"
           title="preview"
         />
       );
@@ -112,7 +112,7 @@ export default function TrainerFiles() {
         <img
           src={url}
           alt="preview"
-          className="max-h-[75vh] mx-auto rounded-xl"
+          className="max-h-[75dvh] mx-auto rounded-xl"
         />
       );
 
@@ -125,7 +125,7 @@ export default function TrainerFiles() {
       return (
         <iframe
           title="office-preview"
-          className="w-full h-[75vh]"
+          className="w-full h-[75dvh]"
           src={`https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`}
         />
       );

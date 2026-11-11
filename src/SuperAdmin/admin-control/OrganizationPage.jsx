@@ -40,6 +40,54 @@ const PLAN_CONFIG = {
   enterprise: { label: "Enterprise", bg: "#dbeafe", color: "#1d4ed8" },
 };
 
+// Product catalogue (keep same as NewOrganizationPage)
+const CATALOGUE = [
+  { key: "lms", label: "LMS", roles: [
+    { key: "student", label: "Student" },
+    { key: "trainer", label: "Trainer" },
+    { key: "business_partnership", label: "Business & Partnership" },
+  ] },
+  { key: "workshop", label: "ILM ORA Workshop", roles: [] },
+  { key: "workspace", label: "ILM ORA Workspace", roles: [] },
+  { key: "calendry", label: "ILM ORA Calendry", roles: [] },
+  { key: "sis", label: "SIS", roles: [] },
+  { key: "educate_tech", label: "Educate Tech", roles: [] },
+];
+const productLabel = (k) => CATALOGUE.find((p) => p.key === k)?.label || k;
+const roleLabel = (pk, rk) =>
+  CATALOGUE.find((p) => p.key === pk)?.roles.find((r) => r.key === rk)?.label || rk;
+
+// Demo rows: shown ONLY when the real API returns nothing or fails
+const DEMO_ORGS = [
+  {
+    id: "demo-1", isDemo: true, name: "Texora AI", email: "contact@texora.ai",
+    city: "New Delhi", phone: "—", plan: "growth", status: "active",
+    managerName: "Priya Sharma", managerEmail: "priya@texora.ai", ownerId: null,
+    products: [
+      { product: "lms", roles: ["student", "trainer"] },
+      { product: "workspace", roles: [] },
+    ],
+    createdAt: "2026-10-01T10:00:00Z", updatedAt: null,
+  },
+  {
+    id: "demo-2", isDemo: true, name: "Corporate Educate Tech", email: "info@cet.com",
+    city: "Mumbai", phone: "—", plan: "starter", status: "active",
+    managerName: "Rahul Verma", managerEmail: "rahul@cet.com", ownerId: null,
+    products: [
+      { product: "sis", roles: [] },
+      { product: "educate_tech", roles: [] },
+    ],
+    createdAt: "2026-10-15T10:00:00Z", updatedAt: null,
+  },
+  {
+    id: "demo-3", isDemo: true, name: "Demo Academy", email: "hello@demo.edu",
+    city: "Pune", phone: "—", plan: "trial", status: "inactive",
+    managerName: "Anita Rao", managerEmail: "anita@demo.edu", ownerId: null,
+    products: [{ product: "lms", roles: ["student"] }],
+    createdAt: "2026-11-01T10:00:00Z", updatedAt: null,
+  },
+];
+
 // Map backend org shape → UI shape
 function mapOrg(o) {
   return {
@@ -52,7 +100,8 @@ function mapOrg(o) {
     status: (o.status || "active").toLowerCase(),
     managerName: o.managerName || "—",
     managerEmail: o.managerEmail || "—",
-    ownerId: o.ownerId || null,
+        ownerId: o.ownerId || null,
+    products: Array.isArray(o.products) ? o.products : [],
     createdAt: o.createdAt || null,
     updatedAt: o.updatedAt || null,
   };
@@ -156,19 +205,46 @@ const OrgDetailsPanel = ({
   const [editForm, setEditForm] = useState({});
   const [saving, setSaving] = useState(false);
 
-  const [onboardingData, setOnboardingData] = useState(null);
+  // const [onboardingData, setOnboardingData] = useState(null);
+  // const [resending, setResending] = useState(false);
+    const [onboardingData, setOnboardingData] = useState(null);
   const [resending, setResending] = useState(false);
 
-  useEffect(() => {
+  // ── Invite code / link (from backend) ──
+  const [invite, setInvite] = useState(null); // { organizationCode, inviteLink, inviteStatus, expiresAt }
+  const [inviteBusy, setInviteBusy] = useState(false);
+    const [copiedKey, setCopiedKey] = useState("");
+
+  // ── Products edit ──
+  const [prodEditing, setProdEditing] = useState(false);
+  const [prodDraft, setProdDraft] = useState({});
+  const [prodSaving, setProdSaving] = useState(false);
+
+    useEffect(() => {
     if (!org?.id) return;
+    if (org.isDemo) {
+      setInvite({
+        organizationCode: "ILM-DEMO-8X92K",
+        inviteLink: "https://example.com/join/ILM-DEMO-8X92K",
+        inviteStatus: "ACTIVE",
+      });
+      return;
+    }
+    authService
+      .getOrgInvite?.(org.id)
+      .then((d) => setInvite(d || null))
+      .catch(() => setInvite(null));
+  }, [org?.id]);
+    useEffect(() => {
+    if (!org?.id || org.isDemo) return;
     authService
       .getOrgCapacity(org.id)
       .then(setCapacity)
       .catch(() => {});
   }, [org?.id]);
 
-  useEffect(() => {
-    if (!org?.managerEmail) return;
+    useEffect(() => {
+    if (!org?.managerEmail || org.isDemo) return;
     authService
       .getAdminOnboardingByEmail(org.managerEmail)
       .then((data) => {
@@ -197,7 +273,97 @@ const OrgDetailsPanel = ({
     }
   };
 
+   const copyInvite = async (text, key) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedKey(key);
+      setTimeout(() => setCopiedKey(""), 1800);
+    } catch (e) {
+      console.error("Copy failed", e);
+    }
+  };
+
+  const handleRegenerateInvite = async () => {
+    if (!window.confirm("Regenerate code/link? The old link will stop working.")) return;
+    setInviteBusy(true);
+    try {
+      const d = await authService.regenerateOrgInvite(org.id);
+      setInvite(d || null);
+    } catch (e) {
+      alert("Failed to regenerate. Please try again.");
+    } finally {
+      setInviteBusy(false);
+    }
+  };
+
+  const handleRevokeInvite = async () => {
+    if (!window.confirm("Deactivate this invite link? New users will not be able to join with it.")) return;
+    setInviteBusy(true);
+    try {
+      const d = await authService.revokeOrgInvite(org.id);
+      setInvite(d || null);
+    } catch (e) {
+      alert("Failed to deactivate. Please try again.");
+    } finally {
+      setInviteBusy(false);
+    }
+  };
+
+    const startProdEdit = () => {
+    const d = {};
+    (org.products || []).forEach((p) => {
+      d[p.product] = p.roles || [];
+    });
+    setProdDraft(d);
+    setProdEditing(true);
+  };
+
+  const toggleProdDraft = (k) =>
+    setProdDraft((prev) => {
+      const n = { ...prev };
+      if (n[k]) delete n[k];
+      else n[k] = [];
+      return n;
+    });
+
+  const toggleProdRole = (k, r) =>
+    setProdDraft((prev) => {
+      const cur = prev[k] || [];
+      return {
+        ...prev,
+        [k]: cur.includes(r) ? cur.filter((x) => x !== r) : [...cur, r],
+      };
+    });
+
+  const saveProducts = async () => {
+    const keys = Object.keys(prodDraft);
+    const invalid = keys.some(
+      (k) =>
+        (CATALOGUE.find((p) => p.key === k)?.roles || []).length > 0 &&
+        prodDraft[k].length === 0,
+    );
+    if (keys.length === 0 || invalid) {
+      alert("Select at least one product, and at least one role for products with roles.");
+      return;
+    }
+    setProdSaving(true);
+    try {
+      await authService.updateOrgProducts(
+        org.id,
+        keys.map((product) => ({ product, roles: prodDraft[product] })),
+      );
+      setProdEditing(false);
+      onClose();
+      window.location.reload();
+    } catch (e) {
+      alert("Failed to save products. Please try again.");
+    } finally {
+      setProdSaving(false);
+    }
+  };
+
   const panelBg = dark ? "#0f1117" : "#fff";
+
   const txtMain = dark ? "#f1f5f9" : "#0f172a";
   const txtSub = dark ? "#64748b" : "#94a3b8";
   const divClr = dark ? "rgba(255,255,255,0.06)" : "#f1f5f9";
@@ -386,7 +552,97 @@ const OrgDetailsPanel = ({
             {resending ? "Sending..." : "Resend invite"}
           </button>
         </div>
+                {/* ── Organization Code & Invite Link ── */}
+        <div
+          style={{
+            background: dark ? "rgba(255,255,255,0.03)" : "#f8fafc",
+            border: `1px solid ${dark ? "rgba(255,255,255,0.06)" : "#e5e7eb"}`,
+            borderRadius: 10,
+            padding: "12px 14px",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: txtMain, textTransform: "uppercase", letterSpacing: "0.07em" }}>
+              Organization Code & Invite Link
+            </div>
+            {invite?.inviteStatus && (
+              <span
+                style={{
+                  fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 99,
+                  background: String(invite.inviteStatus).toUpperCase() === "ACTIVE" ? "#dcfce7" : "#fee2e2",
+                  color: String(invite.inviteStatus).toUpperCase() === "ACTIVE" ? "#16a34a" : "#dc2626",
+                }}
+              >
+                {String(invite.inviteStatus).toUpperCase()}
+              </span>
+            )}
+          </div>
 
+          {invite && (invite.organizationCode || invite.inviteLink) ? (
+            <>
+              {[
+                { label: "Code", val: invite.organizationCode, key: "code", mono: true },
+                { label: "Link", val: invite.inviteLink, key: "link", mono: false },
+              ].filter((r) => r.val).map((r) => (
+                <div key={r.key} style={{ display: "flex", alignItems: "center", gap: 8, padding: "7px 0", borderBottom: `1px solid ${divClr}` }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 10, color: txtSub, marginBottom: 2 }}>{r.label}</div>
+                    <div style={{
+                      fontSize: 12, fontWeight: 600, color: txtMain,
+                      fontFamily: r.mono ? "monospace" : "inherit",
+                      overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+                    }}>
+                      {r.val}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => copyInvite(r.val, r.key)}
+                    style={{
+                      fontSize: 10, fontWeight: 700, padding: "4px 9px", borderRadius: 6,
+                      border: "1px solid #6366f140", background: "#6366f10d", color: "#6366f1", cursor: "pointer",
+                    }}
+                  >
+                    {copiedKey === r.key ? "Copied" : "Copy"}
+                  </button>
+                </div>
+              ))}
+              {invite.expiresAt && (
+                <div style={{ fontSize: 11, color: txtSub, marginTop: 8 }}>
+                  Expires: {formatDate(invite.expiresAt)}
+                </div>
+              )}
+              <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+                <button
+                  onClick={handleRegenerateInvite}
+                  disabled={inviteBusy}
+                  style={{
+                    flex: 1, padding: "6px 0", borderRadius: 7, fontSize: 11, fontWeight: 700,
+                    border: "1px solid #6366f140", background: "#6366f10d", color: "#6366f1",
+                    cursor: inviteBusy ? "not-allowed" : "pointer", opacity: inviteBusy ? 0.6 : 1,
+                  }}
+                >
+                  Regenerate
+                </button>
+                <button
+                  onClick={handleRevokeInvite}
+                  disabled={inviteBusy || String(invite.inviteStatus).toUpperCase() !== "ACTIVE"}
+                  style={{
+                    flex: 1, padding: "6px 0", borderRadius: 7, fontSize: 11, fontWeight: 700,
+                    border: "none", background: "#fee2e2", color: "#dc2626",
+                    cursor: inviteBusy ? "not-allowed" : "pointer",
+                    opacity: inviteBusy || String(invite.inviteStatus).toUpperCase() !== "ACTIVE" ? 0.5 : 1,
+                  }}
+                >
+                  Deactivate
+                </button>
+              </div>
+            </>
+          ) : (
+            <div style={{ fontSize: 12, color: "#94a3b8", padding: "4px 0" }}>
+              No invite code generated yet.
+            </div>
+          )}
+        </div>
         {/* ── Organization Details ── */}
         <div
           style={{
@@ -789,6 +1045,96 @@ const OrgDetailsPanel = ({
                 </div>
               )}
             </>
+          )}
+        </div>
+
+                {/* ── Products & Roles ── */}
+        <div
+          style={{
+            background: dark ? "rgba(255,255,255,0.03)" : "#f8fafc",
+            border: `1px solid ${dark ? "rgba(255,255,255,0.06)" : "#e5e7eb"}`,
+            borderRadius: 10,
+            padding: "12px 14px",
+          }}
+        >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: txtMain, textTransform: "uppercase", letterSpacing: "0.07em" }}>
+              Products & Roles
+            </div>
+            {!prodEditing ? (
+              <button
+                onClick={startProdEdit}
+                style={{ fontSize: 11, fontWeight: 700, padding: "4px 10px", borderRadius: 6, border: "1px solid #6366f140", background: "#6366f110", color: "#6366f1", cursor: "pointer" }}
+              >
+                Edit
+              </button>
+            ) : (
+              <div style={{ display: "flex", gap: 5 }}>
+                <button
+                  onClick={() => setProdEditing(false)}
+                  style={{ fontSize: 11, fontWeight: 700, padding: "4px 9px", borderRadius: 6, border: "1px solid #e2e8f0", background: "#fff", color: "#64748b", cursor: "pointer" }}
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={saveProducts}
+                  disabled={prodSaving}
+                  style={{ fontSize: 11, fontWeight: 700, padding: "4px 10px", borderRadius: 6, border: "none", background: "#6366f1", color: "#fff", cursor: "pointer", opacity: prodSaving ? 0.6 : 1 }}
+                >
+                  {prodSaving ? "Saving…" : "Save"}
+                </button>
+              </div>
+            )}
+          </div>
+
+          {!prodEditing ? (
+            (org.products || []).length === 0 ? (
+              <div style={{ fontSize: 12, color: "#94a3b8" }}>No products assigned yet.</div>
+            ) : (
+              (org.products || []).map((p) => (
+                <div key={p.product} style={{ padding: "7px 0", borderBottom: `1px solid ${divClr}` }}>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: txtMain }}>{productLabel(p.product)}</div>
+                  {(p.roles || []).length > 0 && (
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginTop: 4 }}>
+                      {p.roles.map((r) => (
+                        <span key={r} style={{ fontSize: 10, fontWeight: 600, padding: "2px 8px", borderRadius: 20, background: "#6366f115", color: "#6366f1", border: "1px solid #6366f130" }}>
+                          {roleLabel(p.product, r)}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))
+            )
+          ) : (
+            CATALOGUE.map((p) => {
+              const sel = !!prodDraft[p.key];
+              return (
+                <div key={p.key} style={{ padding: "7px 0", borderBottom: `1px solid ${divClr}` }}>
+                  <label style={{ display: "flex", alignItems: "center", gap: 8, cursor: "pointer", fontSize: 12, fontWeight: 700, color: txtMain }}>
+                    <input type="checkbox" checked={sel} onChange={() => toggleProdDraft(p.key)} />
+                    {p.label}
+                  </label>
+                  {sel && p.roles.length > 0 && (
+                    <div style={{ display: "flex", flexWrap: "wrap", gap: 5, marginTop: 6, paddingLeft: 22 }}>
+                      {p.roles.map((r) => {
+                        const on = (prodDraft[p.key] || []).includes(r.key);
+                        return (
+                          <button
+                            key={r.key}
+                            type="button"
+                            onClick={() => toggleProdRole(p.key, r.key)}
+                            style={{ fontSize: 10, fontWeight: 700, padding: "3px 9px", borderRadius: 999, border: `1px solid ${on ? "#6366f1" : "#e2e8f0"}`, background: on ? "#6366f115" : "transparent", color: on ? "#6366f1" : "#94a3b8", cursor: "pointer" }}
+                          >
+                            {r.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })
           )}
         </div>
 
@@ -1271,13 +1617,14 @@ const OrganizationPage = () => {
     setLoading(true);
     authService
       .getAllOrganizations()
-      .then((data) => {
-        setOrganizations((data || []).map(mapOrg));
+            .then((data) => {
+        const real = (data || []).map(mapOrg);
+        setOrganizations(real.length > 0 ? real : DEMO_ORGS);
         setLoading(false);
       })
       .catch((err) => {
         console.error("Failed to load organizations:", err);
-        setApiError("Failed to load organizations. Please try again.");
+        setOrganizations(DEMO_ORGS); // fallback so UI can be demoed
         setLoading(false);
       });
   }, []);
@@ -1300,7 +1647,15 @@ const OrganizationPage = () => {
 
   // ── Status toggle ──
   const handleStatusToggle = async (org) => {
-    const next = org.status === "active" ? "inactive" : "active";
+        const next = org.status === "active" ? "inactive" : "active";
+    if (org.isDemo) {
+      setOrganizations((prev) =>
+        prev.map((o) => (o.id === org.id ? { ...o, status: next } : o)),
+      );
+      if (selectedOrg?.id === org.id)
+        setSelectedOrg((v) => (v ? { ...v, status: next } : v));
+      return;
+    }
     setActionLoading(true);
     try {
       await authService.updateOrganizationStatus(org.id, next);
@@ -1319,7 +1674,13 @@ const OrganizationPage = () => {
 
   // ── Delete ──
   const confirmDeleteOrg = async () => {
-    if (!confirmDelete) return;
+       if (!confirmDelete) return;
+    if (confirmDelete.isDemo) {
+      setOrganizations((prev) => prev.filter((o) => o.id !== confirmDelete.id));
+      if (selectedOrg?.id === confirmDelete.id) setSelectedOrg(null);
+      setConfirmDelete(null);
+      return;
+    }
     setActionLoading(true);
     try {
       await authService.deleteOrganizationById(confirmDelete.id);
@@ -1476,6 +1837,18 @@ const OrganizationPage = () => {
           New Organization
         </button>
       </div>
+
+            {organizations.some((o) => o.isDemo) && (
+        <div
+          style={{
+            marginBottom: 16, padding: "9px 14px", borderRadius: 10, fontSize: 12,
+            fontWeight: 600, background: "#fef9c3", color: "#a16207",
+            border: "1px solid #fde68a",
+          }}
+        >
+          Demo data: no real organizations were returned by the API.
+        </div>
+      )}
 
       {/* ── Stat pills ── */}
       <div

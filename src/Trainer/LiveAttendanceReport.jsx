@@ -98,7 +98,7 @@ const LiveAttendanceReport = () => {
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
       `}</style>
 
-      <div style={{ minHeight: "100vh", background: t.pageBg, color: t.text, fontFamily: "'Poppins',sans-serif", transition: "background 0.3s,color 0.3s" }}>
+      <div style={{ minHeight: "100dvh", background: t.pageBg, color: t.text, fontFamily: "'Poppins',sans-serif", transition: "background 0.3s,color 0.3s" }}>
         <div style={{ position: "relative", zIndex: 1, padding: 24, maxWidth: 1300, margin: "0 auto", paddingBottom: 52 }}>
 
           {/* ═══ HERO ═══ */}

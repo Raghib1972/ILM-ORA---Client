@@ -979,16 +979,25 @@ const pct = Number.isFinite(pctNum) ? pctNum.toFixed(1) : "0.0";
       </div>
  
       {/* ═══ SPLIT PANELS (table + resizable summary) ═══ */}
+      <style>{`
+        @media (max-width: 767px) {
+          .sa-split { flex-direction: column !important; height: auto !important; min-height: 0 !important; overflow: visible !important; }
+          .sa-split-left { width: 100% !important; min-width: 0 !important; max-height: 480px; }
+          .sa-split-handle { display: none !important; }
+          .sa-split-right { width: 100% !important; min-width: 0 !important; overflow: visible !important; border-top: 1px solid var(--sa-split-border, rgba(128,128,128,0.25)); }
+        }
+      `}</style>
       <div
         ref={containerRef}
+        className="sa-split"
         style={{
           display: "flex", borderRadius: 20, border: `1px solid ${t.border}`,
           background: t.cardBg, boxShadow: t.shadowHov, overflow: "hidden",
-          height: "calc(100vh - 360px)", minHeight: 380,
+          height: "calc(100dvh - 360px)", minHeight: 380,
         }}
       >
         {/* Table panel */}
-        <div style={{ width: `${leftWidth}%`, display: "flex", flexDirection: "column", overflow: "hidden", minWidth: "30%" }}>
+        <div className="sa-split-left" style={{ width: `${leftWidth}%`, display: "flex", flexDirection: "column", overflow: "hidden", minWidth: "30%" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "14px 20px", borderBottom: `1px solid ${t.border}`, flexShrink: 0, background: t.recentItemBg }}>
             <BarChart3 size={15} style={{ color: t.textSub }} />
             <span style={{ fontSize: 13, fontWeight: FONT_WEIGHT.bold, color: t.text, fontFamily: FONT_FAMILY }}>Attendance History</span>
@@ -1028,7 +1037,7 @@ const pct = Number.isFinite(pctNum) ? pctNum.toFixed(1) : "0.0";
             )}
           </div>
  
-          <div style={{ flex: 1, overflowY: "auto" }}>
+          <div style={{ flex: 1, overflowY: "auto", overflowX: "auto", WebkitOverflowScrolling: "touch" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13 }}>
               <thead>
                 <tr>
@@ -1077,6 +1086,7 @@ const pct = Number.isFinite(pctNum) ? pctNum.toFixed(1) : "0.0";
  
         {/* Drag handle */}
         <div
+          className="sa-split-handle"
           onMouseDown={onMouseDown}
           style={{ flexShrink: 0, width: 12, display: "flex", alignItems: "center", justifyContent: "center", cursor: "col-resize", background: t.recentItemBg, borderLeft: `1px solid ${t.border}`, borderRight: `1px solid ${t.border}`, position: "relative" }}
         >
@@ -1092,7 +1102,7 @@ const pct = Number.isFinite(pctNum) ? pctNum.toFixed(1) : "0.0";
         </div>
  
         {/* Summary panel */}
-        <div style={{ flex: 1, minWidth: "20%", display: "flex", flexDirection: "column", overflowY: "auto" }}>
+        <div className="sa-split-right" style={{ flex: 1, minWidth: "20%", display: "flex", flexDirection: "column", overflowY: "auto" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "14px 20px", borderBottom: `1px solid ${t.border}`, flexShrink: 0, background: t.recentItemBg }}>
             <TrendingUp size={15} style={{ color: t.textSub }} />
             <span style={{ fontSize: 13, fontWeight: FONT_WEIGHT.bold, color: t.text, fontFamily: FONT_FAMILY }}>Summary</span>

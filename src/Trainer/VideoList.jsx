@@ -5161,7 +5161,7 @@ const EditModal = ({ video, t, onClose, onSaved }) => {
           borderRadius: RADIUS.standardCard,
           width: "100%",
           maxWidth: 520,
-          maxHeight: "90vh",
+          maxHeight: "90dvh",
           overflowY: "auto",
           padding: 24,
           position: "relative",

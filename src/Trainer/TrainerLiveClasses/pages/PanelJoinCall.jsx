@@ -134,6 +134,7 @@ export default function PanelJoinCall({ t, isDark, navigate }) {
             style={{
               position: "relative",
               width: 120,
+              maxWidth: "calc(100vw - 24px)",
               height: 120,
               display: "flex",
               alignItems: "center",
@@ -229,6 +230,7 @@ export default function PanelJoinCall({ t, isDark, navigate }) {
           <div
             style={{
               width: 120,
+              maxWidth: "100%",
               height: 120,
               borderRadius: "50%",
               border: "1.5px solid rgba(99,102,241,0.2)",

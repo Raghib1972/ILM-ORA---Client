@@ -1059,18 +1059,18 @@ const QuizRow = ({ item, index, t, navigate, isSubmitted, isLocked, prevDifficul
           <p style={{ margin:"2px 0 0", fontSize:10, color:t.textMuted, fontFamily:FONT_FAMILY, display:"flex", alignItems:"center", gap:6 }}>
             Quiz ID: {item.id}
             {item.difficulty && (
-              <span style={{ padding:"1px 7px", borderRadius:999, background:`${accentColor}18`, color:accentColor, fontSize:9, fontWeight:FONT_WEIGHT.bold, border:`1px solid ${accentColor}30` }}>
+              <span style={{ whiteSpace: "nowrap", padding:"1px 7px", borderRadius:999, background:`${accentColor}18`, color:accentColor, fontSize:9, fontWeight:FONT_WEIGHT.bold, border:`1px solid ${accentColor}30` }}>
                 {item.difficulty}
               </span>
             )}
             {item.timeLimit && (
-              <span style={{ padding:"1px 7px", borderRadius:999, background:"rgba(34,211,238,0.1)", color:"#22d3ee", fontSize:9, fontWeight:FONT_WEIGHT.bold, border:"1px solid rgba(34,211,238,0.25)" }}>
+              <span style={{ whiteSpace: "nowrap", padding:"1px 7px", borderRadius:999, background:"rgba(34,211,238,0.1)", color:"#22d3ee", fontSize:9, fontWeight:FONT_WEIGHT.bold, border:"1px solid rgba(34,211,238,0.25)" }}>
                 ⏱ {item.timeLimit} min
               </span>
             )}
           </p>
         </div>
-        <span style={{ fontSize:9, fontWeight:FONT_WEIGHT.bold, letterSpacing:"0.1em", textTransform:"uppercase", padding:"4px 12px", borderRadius:999, background: isLocked?"rgba(100,116,139,0.12)":isSubmitted?"rgba(52,211,153,0.12)":"rgba(251,146,60,0.12)", color:accentColor, border:`1px solid ${accentColor}4D`, fontFamily:FONT_FAMILY, flexShrink:0, display:"flex", alignItems:"center", gap:5 }}>
+        <span style={{ whiteSpace: "nowrap", fontSize:9, fontWeight:FONT_WEIGHT.bold, letterSpacing:"0.1em", textTransform:"uppercase", padding:"4px 12px", borderRadius:999, background: isLocked?"rgba(100,116,139,0.12)":isSubmitted?"rgba(52,211,153,0.12)":"rgba(251,146,60,0.12)", color:accentColor, border:`1px solid ${accentColor}4D`, fontFamily:FONT_FAMILY, flexShrink:0, display:"flex", alignItems:"center", gap:5 }}>
           {isLocked ? "🔒 Locked" : isSubmitted ? <><CheckCircle2 size={9}/> Submitted</> : "Pending"}
         </span>
         {!isLocked && (
@@ -1296,7 +1296,7 @@ const Assessments = () => {
               </span>
             </div>
           </div>
-          <span style={{ fontSize:9, fontWeight:FONT_WEIGHT.bold, letterSpacing:"0.1em", padding:"4px 12px", borderRadius:999, textTransform:"uppercase", background:t.pillBg, border:`1px solid ${t.pillBorder}`, color:t.pillText, fontFamily:FONT_FAMILY }}>
+          <span style={{ whiteSpace: "nowrap", fontSize:9, fontWeight:FONT_WEIGHT.bold, letterSpacing:"0.1em", padding:"4px 12px", borderRadius:999, textTransform:"uppercase", background:t.pillBg, border:`1px solid ${t.pillBorder}`, color:t.pillText, fontFamily:FONT_FAMILY }}>
             {filtered.length} items
           </span>
         </div>

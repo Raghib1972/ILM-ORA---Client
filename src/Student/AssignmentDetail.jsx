@@ -88,8 +88,8 @@ function DocViewer({ file, objectUrl, onClose, t }) {
   };
 
   const sizeStyle = {
-    small:  { width: "min(600px, 95vw)", height: "min(500px, 85vh)" },
-    medium: { width: "min(820px, 95vw)", height: "min(680px, 88vh)" },
+    small:  { width: "min(600px, 95vw)", height: "min(500px, 85dvh)" },
+    medium: { width: "min(820px, 95vw)", height: "min(680px, 88dvh)" },
     full:   { position: "fixed", inset: 12, width: "auto", height: "auto" },
   }[size];
 

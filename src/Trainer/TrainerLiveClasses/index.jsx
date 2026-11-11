@@ -185,7 +185,7 @@ const TrainerLiveClasses = () => {
 
       <div
         style={{
-          minHeight: "100vh",
+          minHeight: "100dvh",
           background: t.pageBg,
           color: t.text,
           fontFamily: FONT_FAMILY,
@@ -279,7 +279,7 @@ const TrainerLiveClasses = () => {
             /* StartLive gets the full 3-panel layout */
             <div
               style={{
-                height: isMobile || isTablet ? "auto" : "calc(100vh - 140px)",
+                height: isMobile || isTablet ? "auto" : "calc(100dvh - 140px)",
               }}
             >
               <StartLiveThreePanel

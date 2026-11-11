@@ -110,7 +110,7 @@ const QuestionPanel = ({ q, qIndex, index, total, answers, onAnswer, t, isDark }
             Question {index+1} of {total} · {q.options?.length ?? 0} options
           </p>
         </div>
-        <span style={{ fontSize:9, fontWeight:FONT_WEIGHT.bold, letterSpacing:"0.1em", textTransform:"uppercase", padding:"4px 12px", borderRadius:999, background: answered ? "rgba(52,211,153,0.12)" : "rgba(251,146,60,0.12)", color: answered ? "#34d399" : ACCENT, border:`1px solid ${answered ? "rgba(52,211,153,0.3)" : "rgba(251,146,60,0.3)"}`, fontFamily:FONT_FAMILY, flexShrink:0 }}>
+        <span style={{ whiteSpace: "nowrap", fontSize:9, fontWeight:FONT_WEIGHT.bold, letterSpacing:"0.1em", textTransform:"uppercase", padding:"4px 12px", borderRadius:999, background: answered ? "rgba(52,211,153,0.12)" : "rgba(251,146,60,0.12)", color: answered ? "#34d399" : ACCENT, border:`1px solid ${answered ? "rgba(52,211,153,0.3)" : "rgba(251,146,60,0.3)"}`, fontFamily:FONT_FAMILY, flexShrink:0 }}>
           {answered ? "Answered" : "Pending"}
         </span>
         <div style={{ width:28, height:28, borderRadius:8, flexShrink:0, display:"flex", alignItems:"center", justifyContent:"center", background: open ? `${ACCENT}18` : t.actBg, border:`1px solid ${open ? ACCENT+"30" : t.actBorder}`, transition:"all 0.2s" }}>
@@ -323,7 +323,7 @@ const AttemptQuiz = () => {
   if (loading) {
     return (
       <PageContainer mode={isDark ? "dark" : "light"} pageBg={t.pageBg} textColor={t.text}>
-        <div style={{ display:"flex", alignItems:"center", justifyContent:"center", minHeight:"60vh" }}>
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"center", minHeight:"60dvh" }}>
           <div style={{ textAlign:"center" }}>
             <div style={{ width:48, height:48, borderRadius:14, background:"rgba(251,146,60,0.12)", border:"1px solid rgba(251,146,60,0.3)", display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 14px" }}>
               <FileText size={22} color={ACCENT}/>
@@ -339,7 +339,7 @@ const AttemptQuiz = () => {
   if (alreadyAttempted) {
     return (
       <PageContainer mode={isDark ? "dark" : "light"} pageBg={t.pageBg} textColor={t.text}>
-        <div style={{ display:"flex", alignItems:"center", justifyContent:"center", minHeight:"60vh" }}>
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"center", minHeight:"60dvh" }}>
           <div style={{ background:t.cardBg, border:`1px solid ${t.border}`, borderRadius:24, padding:"48px 56px", textAlign:"center", maxWidth:420, boxShadow:t.shadow }}>
             <div style={{ width:64, height:64, borderRadius:20, background:"rgba(52,211,153,0.12)", border:"1px solid rgba(52,211,153,0.3)", display:"flex", alignItems:"center", justifyContent:"center", margin:"0 auto 20px" }}>
               <CheckCircle size={30} color="#34d399"/>
@@ -366,7 +366,7 @@ const AttemptQuiz = () => {
   if (!quiz) {
     return (
       <PageContainer mode={isDark ? "dark" : "light"} pageBg={t.pageBg} textColor={t.text}>
-        <div style={{ display:"flex", alignItems:"center", justifyContent:"center", minHeight:"60vh" }}>
+        <div style={{ display:"flex", alignItems:"center", justifyContent:"center", minHeight:"60dvh" }}>
           <p style={{ color:t.textSub, fontSize:13, fontFamily:FONT_FAMILY }}>Quiz not found</p>
         </div>
       </PageContainer>
@@ -400,17 +400,17 @@ const AttemptQuiz = () => {
             </p>
             <div style={{ display:"flex", gap:8, marginTop:10, flexWrap:"wrap" }}>
               {quiz.difficulty && (
-                <span style={{ fontSize:10, fontWeight:FONT_WEIGHT.bold, padding:"3px 10px", borderRadius:999, background:"rgba(167,139,250,0.12)", color:"#a78bfa", border:"1px solid rgba(167,139,250,0.3)", fontFamily:FONT_FAMILY }}>
+                <span style={{ whiteSpace: "nowrap", fontSize:10, fontWeight:FONT_WEIGHT.bold, padding:"3px 10px", borderRadius:999, background:"rgba(167,139,250,0.12)", color:"#a78bfa", border:"1px solid rgba(167,139,250,0.3)", fontFamily:FONT_FAMILY }}>
                   {quiz.difficulty}
                 </span>
               )}
               {quiz.category && (
-                <span style={{ fontSize:10, fontWeight:FONT_WEIGHT.bold, padding:"3px 10px", borderRadius:999, background:"rgba(251,146,60,0.12)", color:ACCENT, border:"1px solid rgba(251,146,60,0.3)", fontFamily:FONT_FAMILY }}>
+                <span style={{ whiteSpace: "nowrap", fontSize:10, fontWeight:FONT_WEIGHT.bold, padding:"3px 10px", borderRadius:999, background:"rgba(251,146,60,0.12)", color:ACCENT, border:"1px solid rgba(251,146,60,0.3)", fontFamily:FONT_FAMILY }}>
                   {quiz.category}
                 </span>
               )}
               {quiz.totalMarks && (
-                <span style={{ fontSize:10, fontWeight:FONT_WEIGHT.bold, padding:"3px 10px", borderRadius:999, background:"rgba(34,211,238,0.12)", color:"#22d3ee", border:"1px solid rgba(34,211,238,0.3)", fontFamily:FONT_FAMILY }}>
+                <span style={{ whiteSpace: "nowrap", fontSize:10, fontWeight:FONT_WEIGHT.bold, padding:"3px 10px", borderRadius:999, background:"rgba(34,211,238,0.12)", color:"#22d3ee", border:"1px solid rgba(34,211,238,0.3)", fontFamily:FONT_FAMILY }}>
                   {quiz.totalMarks} marks
                 </span>
               )}
@@ -481,7 +481,7 @@ const AttemptQuiz = () => {
               <span style={{ fontFamily:FONT_FAMILY, fontSize:10, color:t.textMuted }}>Click any question to expand and answer</span>
             </div>
           </div>
-          <span style={{ fontSize:9, fontWeight:FONT_WEIGHT.bold, letterSpacing:"0.1em", padding:"4px 12px", borderRadius:999, textTransform:"uppercase", background:t.pillBg, border:`1px solid ${t.pillBorder}`, color:t.pillText, fontFamily:FONT_FAMILY }}>
+          <span style={{ whiteSpace: "nowrap", fontSize:9, fontWeight:FONT_WEIGHT.bold, letterSpacing:"0.1em", padding:"4px 12px", borderRadius:999, textTransform:"uppercase", background:t.pillBg, border:`1px solid ${t.pillBorder}`, color:t.pillText, fontFamily:FONT_FAMILY }}>
             {totalQuestions} questions
           </span>
         </div>

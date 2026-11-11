@@ -2389,6 +2389,7 @@ const RICH_EDITOR_STYLES = `
   box-shadow: 0 4px 24px rgba(0,0,0,0.18);
   padding: 12px 14px;
   min-width: 280px;
+  max-width: calc(100vw - 24px);
 }
 .ud-note-editor-wrap {
   border-radius: 6px;
@@ -2610,6 +2611,7 @@ const RichDescriptionEditor = ({ value, onChange, placeholder = "Tell viewers ab
                 boxShadow: "0 4px 24px rgba(0,0,0,0.18)",
                 padding: "12px 14px",
                 minWidth: 280,
+                maxWidth: "calc(100vw - 24px)",
                 top: "100%",
                 left: 0,
                 border: `1px solid ${c.cardBorder}`,
@@ -2709,7 +2711,7 @@ const FilePreviewModal = ({ doc, onClose, isDark, c }) => {
 
   return (
     <div onClick={handleBackdrop} style={{ position: "fixed", inset: 0, zIndex: 99999, background: c.modalOverlay, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
-      <div style={{ background: c.modalBg, borderRadius: 14, width: "92vw", maxWidth: 900, height: "88vh", display: "flex", flexDirection: "column", border: `1px solid ${c.cardBorder}`, boxShadow: "0 24px 64px rgba(0,0,0,0.45)", overflow: "hidden", fontFamily: FF }}>
+      <div style={{ background: c.modalBg, borderRadius: 14, width: "92vw", maxWidth: 900, height: "88dvh", display: "flex", flexDirection: "column", border: `1px solid ${c.cardBorder}`, boxShadow: "0 24px 64px rgba(0,0,0,0.45)", overflow: "hidden", fontFamily: FF }}>
         {/* header */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 20px", borderBottom: `1px solid ${c.cardBorder}`, flexShrink: 0 }}>
           <div>
@@ -2845,7 +2847,7 @@ const EditModal = ({ doc, batches, courses, c, isDark, onClose, onSaved }) => {
 
   return (
     <div onClick={handleBackdrop} style={{ position: "fixed", inset: 0, zIndex: 99999, background: c.modalOverlay, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 }}>
-      <div style={{ background: c.modalBg, borderRadius: 18, width: "100%", maxWidth: 520, maxHeight: "90vh", overflowY: "auto", padding: 24, border: `1px solid ${c.cardBorder}`, boxShadow: "0 24px 64px rgba(0,0,0,0.4)", fontFamily: FF }}>
+      <div style={{ background: c.modalBg, borderRadius: 18, width: "100%", maxWidth: 520, maxHeight: "90dvh", overflowY: "auto", padding: 24, border: `1px solid ${c.cardBorder}`, boxShadow: "0 24px 64px rgba(0,0,0,0.4)", fontFamily: FF }}>
         {/* header */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
           <div>
@@ -3109,9 +3111,9 @@ const DocCard = ({ doc, onDelete, onUpdated, onEdit, onView, batches, isDark, c 
 
       {/* pills */}
       <div style={{ display: "flex", flexWrap: "wrap", gap: 5 }}>
-        {doc.category && <span style={{ fontSize: 10, fontWeight: 600, padding: "2px 8px", borderRadius: 20, background: "rgba(6,95,212,0.1)", color: "#065fd4", fontFamily: FF }}>{doc.category}</span>}
-        {doc.batchId  && <span style={{ fontSize: 10, fontWeight: 600, padding: "2px 8px", borderRadius: 20, background: isDark ? "rgba(34,211,238,0.08)" : "rgba(34,211,238,0.06)", color: "#0891b2", fontFamily: FF }}>Batch {doc.batchId}</span>}
-        {doc.status && !isDraft && <span style={{ fontSize: 10, fontWeight: 600, padding: "2px 8px", borderRadius: 20, background: "rgba(34,197,94,0.1)", color: "#16a34a", fontFamily: FF }}>published</span>}
+        {doc.category && <span style={{ whiteSpace: "nowrap", fontSize: 10, fontWeight: 600, padding: "2px 8px", borderRadius: 20, background: "rgba(6,95,212,0.1)", color: "#065fd4", fontFamily: FF }}>{doc.category}</span>}
+        {doc.batchId  && <span style={{ whiteSpace: "nowrap", fontSize: 10, fontWeight: 600, padding: "2px 8px", borderRadius: 20, background: isDark ? "rgba(34,211,238,0.08)" : "rgba(34,211,238,0.06)", color: "#0891b2", fontFamily: FF }}>Batch {doc.batchId}</span>}
+        {doc.status && !isDraft && <span style={{ whiteSpace: "nowrap", fontSize: 10, fontWeight: 600, padding: "2px 8px", borderRadius: 20, background: "rgba(34,197,94,0.1)", color: "#16a34a", fontFamily: FF }}>published</span>}
       </div>
 
       {doc.description && (
@@ -3367,7 +3369,8 @@ const UploadDocuments = () => {
         </div>
 
         {/* fields grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 14, marginBottom: 14 }}>
+        <style>{`@media (max-width: 900px) { .ud-fields { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } .ud-fields > * { grid-column: auto !important; } } @media (max-width: 520px) { .ud-fields { grid-template-columns: minmax(0, 1fr) !important; } }`}</style>
+        <div className="ud-fields" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 14, marginBottom: 14 }}>
           <div style={{ gridColumn: "1 / 2" }}>
             <label style={lbl(c)}>DOCUMENT TITLE</label>
             <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Enter document title" style={inp(c)}

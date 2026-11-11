@@ -3471,7 +3471,7 @@ const Modal = ({ title, onClose, children, c }) => (
         style={{
           padding: "18px 24px 22px",
           overflowY: "auto",
-          maxHeight: "80vh",
+          maxHeight: "80dvh",
         }}
       >
         {children}
@@ -6170,10 +6170,14 @@ const UploadVideosResponsiveStyles = () => (
     }
     @media (max-width: 640px) {
       .uv-form-grid-2 { grid-template-columns: 1fr !important; }
-      .uv-tab-bar { padding: 6px; }
-      .uv-tab-bar button { flex: 1 1 100% !important; }
+      .uv-tab-bar { padding: 6px; display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px !important; }
+      .uv-tab-bar button { flex: none !important; min-width: 0 !important; padding: 9px 6px !important; font-size: 11.5px !important; white-space: normal !important; line-height: 1.25; text-align: center; }
       .uv-step-content { padding: 18px !important; }
-      .uv-step-progress { padding: 0 4px; justify-content: flex-start !important; }
+      .uv-step-progress { padding: 0 !important; overflow-x: visible !important; justify-content: space-between !important; }
+      .uv-step-progress > div { flex: 1 1 0 !important; min-width: 0; justify-content: center; }
+      .uv-step-progress > div > div:first-child { min-width: 0 !important; width: 100%; }
+      .uv-step-progress > div > div:first-child > span { font-size: 10.5px !important; white-space: normal !important; text-align: center; line-height: 1.2; }
+      .uv-step-progress > div > div:nth-child(2) { display: none !important; }
     }
     @media (max-width: 480px) {
       .uv-two-col { gap: 20px !important; }

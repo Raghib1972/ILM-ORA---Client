@@ -304,6 +304,7 @@ export default function AiActivityLogs({ isDark }) {
       {/* Stats row */}
       {logs.length > 0 && (
         <div
+          className="ail-stats"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(3, 1fr)",
@@ -311,6 +312,7 @@ export default function AiActivityLogs({ isDark }) {
             marginBottom: 24,
           }}
         >
+          <style>{`@media (max-width: 520px) { .ail-stats { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; } .ail-stats > :last-child:nth-child(even) { grid-column: 1 / -1; } }`}</style>
           {[
             {
               label: "Total",

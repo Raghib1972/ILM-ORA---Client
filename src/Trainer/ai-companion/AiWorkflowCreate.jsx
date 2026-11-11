@@ -803,6 +803,7 @@ function NodeConfigPanel({ node, isDark, onSave, onClose }) {
         top: 0,
         right: 0,
         width: 320,
+        maxWidth: "calc(100vw - 24px)",
         height: "100%",
         background: bg,
         borderLeft: `1px solid ${border}`,
@@ -1026,6 +1027,7 @@ function NodeLibraryPanel({ isDark, onAddNode, recentNodes }) {
     <div
       style={{
         width: 240,
+        maxWidth: "100%",
         minWidth: 240,
         height: "100%",
         background: bg,

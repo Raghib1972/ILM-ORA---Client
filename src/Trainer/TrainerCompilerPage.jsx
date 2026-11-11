@@ -221,7 +221,7 @@ const RESPONSIVE_CSS = `
   .clab-fieldRow > select { flex: 1 1 200px; min-width: 160px; }
   .clab-fieldRow > button { flex-shrink: 0; }
 
-  .clab-modal { max-height: 90vh; overflow-y: auto; }
+  .clab-modal { max-height: 90vh; max-height: 90dvh; overflow-y: auto; }
 
   /* ═════════════════════════════════════════════════
      BREAKPOINT MAP (mobile-first cascade, widest → narrowest)
@@ -326,8 +326,8 @@ const RESPONSIVE_CSS = `
     }
     .clab-rowActions { justify-content: flex-start !important; flex-wrap: wrap; }
 
-    .clab-pageTitle { font-size: 20px !important; gap: 10px !important; justify-content: space-between !important; flex-wrap: nowrap !important; }
-    .clab-pageTitle button { margin-left: 0 !important; flex-shrink: 0; }
+    .clab-pageTitle { font-size: 20px !important; gap: 10px !important; justify-content: flex-start !important; text-align: left; flex-wrap: nowrap !important; }
+    .clab-pageTitle button { margin-left: auto !important; flex-shrink: 0; }
 
     .clab-assignRow { flex-direction: column !important; align-items: flex-start !important; gap: 10px !important; }
     .clab-assignRow button { width: 100%; }
@@ -369,7 +369,7 @@ const RESPONSIVE_CSS = `
   /* ── Landscape orientation on short-height devices (phones rotated) ── */
   @media (max-height: 480px) and (orientation: landscape) {
     .clab-header { min-height: 46px !important; }
-    .clab-modal { max-height: 85vh !important; }
+    .clab-modal { max-height: 85dvh !important; }
   }
 `;
 
@@ -1861,7 +1861,7 @@ export default function TrainerCompilerPage() {
 function buildStyles(palette) {
   return {
     root: {
-      minHeight: "100vh",
+      minHeight: "100dvh",
       background: palette.pageBg,
       color: palette.text,
       fontFamily: "'JetBrains Mono','Fira Code',monospace",

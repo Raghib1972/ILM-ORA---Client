@@ -128,7 +128,7 @@ const STYLES = `
 
   .sc-root {
     font-family: ${FONT_FAMILY};
-    min-height: 100vh;
+    min-height: 100vh; min-height: 100dvh;
     background: var(--bg);
     color: var(--text);
     display: flex;
@@ -402,7 +402,7 @@ const STYLES = `
   .sc-empty-text { color: var(--text-muted); font-size: 15px; font-weight: 600; }
 
   .sc-loading-screen {
-    min-height: 100vh;
+    min-height: 100vh; min-height: 100dvh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -436,7 +436,7 @@ const STYLES = `
   }
 
   .sc-problem-panel {
-    width: 380px;
+    width: 380px; max-width: 100%;
     flex-shrink: 0;
     border-right: 1px solid var(--border);
     overflow-y: auto;
@@ -589,7 +589,7 @@ const STYLES = `
     border-radius: ${RADIUS.pill}px;
     padding: 4px 14px; font-size: 11px; font-weight: 700; margin-bottom: 10px;
   }
-  .sc-exec-time { color: var(--text-muted); font-size: 12px; display: flex; align-items: center; gap: 4px; }
+  .sc-exec-time { white-space: nowrap; color: var(--text-muted); font-size: 12px; display: flex; align-items: center; gap: 4px; }
 
   .sc-output-pre {
     margin: 0; font-size: 13px; color: var(--text); line-height: 1.6;
@@ -606,7 +606,7 @@ const STYLES = `
     margin-bottom: 14px; flex-wrap: wrap;
   }
   .sc-verdict-big { font-size: 16px; font-weight: 900; display: flex; align-items: center; gap: 6px; }
-  .sc-score-chip {
+  .sc-score-chip { white-space: nowrap;
     background: rgba(var(--accent2-rgb),0.10); color: var(--accent2);
     border: 1px solid rgba(var(--accent2-rgb),0.25);
     border-radius: ${RADIUS.pill}px; padding: 4px 14px; font-size: 12px; font-weight: 700;
@@ -869,7 +869,7 @@ const STYLES = `
 
   /* Laptops / small desktops */
   @media (max-width: 1200px) {
-    .sc-problem-panel { width: 320px; }
+    .sc-problem-panel { width: 320px; max-width: 100%; }
   }
 
   /* Tablets (iPad, iPad mini landscape) */

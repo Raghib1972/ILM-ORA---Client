@@ -318,7 +318,7 @@ const STYLES = `
    so the card reads as a widget sitting on top of the page, not a flat full-bleed layout.
    height:100% so this same component can be used as a full page OR dropped inside a
    fixed-size floating launcher panel (see ChatWidgetButton). The parent container decides
-   the actual height - as a full route give its wrapper height:calc(100vh - 64px). */
+   the actual height - as a full route give its wrapper height:calc(100dvh - 64px). */
 .dq-float-wrap{width:100%;height:100%;box-sizing:border-box;
   padding:18px;background:var(--bg);display:flex;}
 

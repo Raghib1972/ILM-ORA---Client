@@ -99,7 +99,7 @@ const GLOBAL_STYLE = `
     .rb-hide-mobile { display: none !important; }
     .rb-show-mobile { display: flex !important; }
     .rb-editor-layout { flex-direction: column !important; }
-    .rb-editor-left  { width: 100% !important; border-right: none !important; border-bottom: 1px solid var(--rb-border) !important; max-height: 55vh; }
+    .rb-editor-left  { width: 100% !important; border-right: none !important; border-bottom: 1px solid var(--rb-border) !important; max-height: 55vh; max-height: 55dvh; }
     .rb-editor-right { min-height: 400px; }
     .rb-preview-canvas { padding: 16px !important; align-items: flex-start !important; }
     .rb-topbar { padding: 0 12px !important; height: auto !important; min-height: 56px; flex-wrap: wrap; gap: 6px; padding-top: 8px !important; padding-bottom: 8px !important; }
@@ -115,7 +115,7 @@ const GLOBAL_STYLE = `
     .rb-template-gallery-grid { grid-template-columns: repeat(2, 1fr) !important; }
     .rb-resumes-grid { grid-template-columns: 1fr 1fr !important; }
     .rb-howto-grid { grid-template-columns: 1fr !important; }
-    .rb-dropdown { min-width: 240px !important; }
+    .rb-dropdown { min-width: 240px !important; max-width: calc(100vw - 24px) !important; }
     .rb-modal-inner { width: 95vw !important; padding: 20px !important; }
     .rb-score-row { flex-direction: column !important; align-items: flex-start !important; }
   }
@@ -131,6 +131,7 @@ const GLOBAL_STYLE = `
     .rb-nav-items { display: none !important; }
     .rb-tpl-gallery-grid-5 { grid-template-columns: repeat(2,1fr) !important; }
     .rb-ai-step-grid { grid-template-columns: repeat(3,1fr) !important; }
+    .rb-editor-left [style*="grid-template-columns: 1fr 1fr"], .rb-modal-inner [style*="grid-template-columns: 1fr 1fr"] { grid-template-columns: minmax(0, 1fr) !important; }
   }
 `;
 
@@ -1829,7 +1830,8 @@ function ResumeScoreModal({ resume, onClose }) {
           borderRadius: 18,
           padding: 28,
           width: 520,
-          maxHeight: "88vh",
+          maxWidth: "100%",
+          maxHeight: "88dvh",
           overflowY: "auto",
           border: `1px solid ${C.border}`,
           boxShadow: C.shadow,
@@ -1896,6 +1898,7 @@ function ResumeScoreModal({ resume, onClose }) {
             style={{
               position: "relative",
               width: 110,
+              maxWidth: "100%",
               height: 110,
               flexShrink: 0,
             }}
@@ -2040,6 +2043,7 @@ function ResumeScoreModal({ resume, onClose }) {
                     <span
                       style={{
                         fontSize: 11,
+                        whiteSpace: "nowrap",
                         fontWeight: FONT_WEIGHT.bold,
                         color: filled ? C.green : partial ? "#f59e0b" : C.red,
                       }}
@@ -2174,6 +2178,7 @@ function ATSScoreUploadModal({ userId, onClose }) {
           borderRadius: 18,
           padding: 28,
           width: 460,
+          maxWidth: "100%",
           border: `1px solid ${C.border}`,
           boxShadow: C.shadow,
         }}
@@ -2472,7 +2477,8 @@ function AIWritingAssistantModal({ resume, onApply, onClose, userId }) {
           borderRadius: 18,
           padding: 28,
           width: 540,
-          maxHeight: "88vh",
+          maxWidth: "100%",
+          maxHeight: "88dvh",
           overflowY: "auto",
           border: `1px solid ${C.border}`,
           boxShadow: C.shadow,
@@ -2751,7 +2757,7 @@ function HomePage({ onCreateResume, resumes, onFeatureClick }) {
 
   return (
     <div
-      style={{ fontFamily: FONT_FAMILY, background: C.bg, minHeight: "100vh" }}
+      style={{ fontFamily: FONT_FAMILY, background: C.bg, minHeight: "100dvh" }}
     >
       {/* Hero */}
       <div
@@ -3501,6 +3507,7 @@ function SaveNameModal({ defaultName, onConfirm, onCancel }) {
           borderRadius: 16,
           padding: "30px 32px",
           width: 400,
+          maxWidth: "100%",
           border: `1px solid ${C.border}`,
           boxShadow: C.shadow,
         }}
@@ -3716,8 +3723,9 @@ function AIGenerateModal({ userId, onClose, onApply, onLimitError }) {
           borderRadius: 20,
           padding: "30px 34px",
           width: 520,
+          maxWidth: "100%",
           boxShadow: C.shadow,
-          maxHeight: "92vh",
+          maxHeight: "92dvh",
           overflowY: "auto",
           border: `1px solid ${C.border}`,
         }}
@@ -4203,7 +4211,8 @@ function LinkedInScrapeModal({ userId, onClose, onApply, onLimitError }) {
           background: C.card,
           borderRadius: 20,
           width: 540,
-          maxHeight: "92vh",
+          maxWidth: "100%",
+          maxHeight: "92dvh",
           overflowY: "auto",
           border: `1px solid ${C.border}`,
           boxShadow: C.shadow,
@@ -4752,6 +4761,7 @@ function PDFUploadModal({ userId, onClose, onApply, onLimitError }) {
           borderRadius: 18,
           padding: 28,
           width: 460,
+          maxWidth: "100%",
           border: `1px solid ${C.border}`,
           boxShadow: C.shadow,
         }}
@@ -4932,7 +4942,8 @@ function ATSTipsPanel({ userId, resume, onClose }) {
           borderRadius: 18,
           padding: 28,
           width: 520,
-          maxHeight: "85vh",
+          maxWidth: "100%",
+          maxHeight: "85dvh",
           overflowY: "auto",
           border: `1px solid ${C.border}`,
           boxShadow: C.shadow,
@@ -6570,7 +6581,7 @@ function TemplateGallery({
   const [hoveredId, setHoveredId] = useState(null);
   return (
     <div
-      style={{ minHeight: "100vh", background: C.bg, fontFamily: FONT_FAMILY }}
+      style={{ minHeight: "100dvh", background: C.bg, fontFamily: FONT_FAMILY }}
     >
       {/* Header */}
       <div
@@ -6912,7 +6923,7 @@ function HowToCreate({ onManual, onAI, onPDF, onLinkedIn }) {
   ];
   return (
     <div
-      style={{ minHeight: "100vh", background: C.bg, fontFamily: FONT_FAMILY }}
+      style={{ minHeight: "100dvh", background: C.bg, fontFamily: FONT_FAMILY }}
     >
       <div
         style={{
@@ -7390,7 +7401,7 @@ export default function ResumeBuilder({ theme, toggleTheme }) {
               color: C.muted,
               fontFamily: FONT_FAMILY,
               background: C.bg,
-              minHeight: "80vh",
+              minHeight: "80dvh",
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
@@ -7471,7 +7482,7 @@ export default function ResumeBuilder({ theme, toggleTheme }) {
         {globalStyleTag}
         <div
           style={{
-            minHeight: "100vh",
+            minHeight: "100dvh",
             background: C.bg,
             fontFamily: FONT_FAMILY,
             display: "flex",
@@ -7571,6 +7582,7 @@ export default function ResumeBuilder({ theme, toggleTheme }) {
                   background: "transparent",
                   color: C.text,
                   width: 170,
+                  maxWidth: "100%",
                   fontFamily: "inherit",
                 }}
                 placeholder="Resume name…"
@@ -7679,6 +7691,7 @@ export default function ResumeBuilder({ theme, toggleTheme }) {
               className="rb-editor-left"
               style={{
                 width: 385,
+                maxWidth: "100%",
                 background: C.card,
                 borderRight: `1px solid ${C.border}`,
                 display: "flex",
@@ -7872,6 +7885,7 @@ export default function ResumeBuilder({ theme, toggleTheme }) {
                     transform: `scale(${previewScale})`,
                     transformOrigin: "top center",
                     width: 794,
+                    maxWidth: "100%",
                     flexShrink: 0,
                     transition: "transform 0.2s ease",
                   }}

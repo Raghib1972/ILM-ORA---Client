@@ -1541,7 +1541,7 @@ export default function TrainerCourseModules() {
           border: `1px solid ${t.border}`,
           borderRadius: RADIUS.standardCard,
           boxShadow: t.shadow,
-          height: "calc(100vh - 340px)",
+          height: "calc(100dvh - 340px)",
           minHeight: 420,
         }}
       >

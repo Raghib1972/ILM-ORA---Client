@@ -2500,6 +2500,7 @@ function CommentPopup({
         top: position.y,
         zIndex: 600,
         width: 260,
+        maxWidth: "calc(100vw - 24px)",
         background: isDark ? "#1e293b" : "#fff",
         border: `1px solid ${isDark ? "rgba(255,255,255,0.12)" : "#e2e8f0"}`,
         borderRadius: 12,
@@ -2679,6 +2680,7 @@ function EquationPopup({ position, element, onSave, onCancel, isDark }) {
         top: position.y,
         zIndex: 600,
         width: 300,
+        maxWidth: "calc(100vw - 24px)",
         background: isDark ? "#1e293b" : "#fff",
         border: `1px solid ${isDark ? "rgba(255,255,255,0.12)" : "#e2e8f0"}`,
         borderRadius: 12,
@@ -4559,6 +4561,7 @@ function CanvasWhiteboard({
             top: 60,
             zIndex: 300,
             width: 290,
+            maxWidth: "calc(100vw - 24px)",
             maxHeight: "calc(100% - 130px)",
             overflowY: "auto",
             background: isDark ? "#1e293b" : "#ffffff",
@@ -4756,6 +4759,7 @@ function CanvasWhiteboard({
             bottom: 60,
             zIndex: 300,
             width: 200,
+            maxWidth: "calc(100vw - 24px)",
             background: isDark ? "#1e293b" : "#fff",
             border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "#e2e8f0"}`,
             borderRadius: 12,
@@ -4863,6 +4867,7 @@ function CanvasWhiteboard({
             transform: "translateY(-50%)",
             zIndex: 300,
             width: 220,
+            maxWidth: "calc(100vw - 24px)",
             maxHeight: 400,
             overflowY: "auto",
             background: isDark ? "#1e293b" : "#fff",
@@ -6005,7 +6010,7 @@ function TemplatesModal({ isDark, onClose, onSelect }) {
       <div
         style={{
           width: "min(900px,96vw)",
-          height: "min(620px,94vh)",
+          height: "min(620px,94dvh)",
           background: isDark ? "#0f172a" : "#fff",
           borderRadius: 20,
           border: `1px solid ${isDark ? "rgba(255,255,255,0.1)" : "#e2e8f0"}`,
@@ -6055,6 +6060,7 @@ function TemplatesModal({ isDark, onClose, onSelect }) {
           <div
             style={{
               width: 190,
+              maxWidth: "100%",
               borderRight: `1px solid ${isDark ? "rgba(255,255,255,0.08)" : "#e2e8f0"}`,
               overflowY: "auto",
               padding: "12px 8px",
@@ -6686,7 +6692,7 @@ export default function WhiteboardPanel({ t, isDark, sessionId }) {
         style={{
           display: "flex",
           flexDirection: "column",
-          height: "calc(100vh - 120px)",
+          height: "calc(100dvh - 120px)",
           minHeight: 560,
           position: "relative",
           background: isDark ? "#0f172a" : T.light.pageBg,
@@ -6896,7 +6902,7 @@ export default function WhiteboardPanel({ t, isDark, sessionId }) {
     <div
       style={{
         display: "flex",
-        height: "calc(100vh - 120px)",
+        height: "calc(100dvh - 120px)",
         minHeight: 560,
         background: isDark ? "#0a0f1e" : T.light.pageBg,
         overflow: "hidden",

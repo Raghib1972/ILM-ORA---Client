@@ -798,34 +798,781 @@ const CSS = `#ilm-onboarding{--or:#F97316;--gr:#16A34A;--bg:#fff;--bg2:#F8FAFC;-
 #ilm-onboarding .whon{flex:none;z-index:1;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--or);color:#fff;font-size:.72rem;font-weight:800}
 #ilm-onboarding .whos b{display:block;font-size:.82rem;line-height:1.25;color:var(--tx)}
 #ilm-onboarding .whos small{display:block;font-size:.74rem;line-height:1.3;color:var(--mu)}
+
+
+/* Welcome greeting */
+#ilm-onboarding .welcome-section {
+  margin: 20px 0 18px;
+}
+
+#ilm-onboarding .welcome-section .gpill {
+  display: inline-flex;
+  margin-bottom: 10px;
+}
+
+#ilm-onboarding .welcome-section h1 {
+  font-size: clamp(24px, 2.5vw, 32px);
+  line-height: 1.2;
+  font-weight: 800;
+  margin: 0 0 6px;
+  color: var(--tx);
+}
+
+#ilm-onboarding .welcome-section .lead {
+  font-size: 13px;
+  margin: 0;
+  color: var(--mu);
+}
+
+/* Equal Individual and Organization panels */
+#ilm-onboarding .experience-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  align-items: stretch;
+  margin-top: 18px;
+}
+
+#ilm-onboarding .experience-panel {
+  min-width: 0;
+  height: 100%;
+  border-radius: 16px;
+}
+
+#ilm-onboarding .experience-heading {
+  min-height: 78px;
+  padding: 14px 16px;
+}
+
+#ilm-onboarding .individual-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  padding: 12px;
+}
+
+#ilm-onboarding .experience-group {
+  min-width: 0;
+  min-height: 140px;
+  padding: 10px;
+}
+
+#ilm-onboarding .experience-group-title {
+  min-height: 46px;
+  margin-bottom: 8px;
+}
+
+#ilm-onboarding .experience-group-title strong {
+  font-size: 14px;
+}
+
+#ilm-onboarding .experience-group-title small {
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+#ilm-onboarding .experience-subcard {
+  min-width: 0;
+  min-height: 64px;
+  height: 64px;
+  font-size: 11px;
+  padding: 6px 3px;
+}
+
+#ilm-onboarding .experience-subcard span {
+  font-size: 18px;
+}
+
+/* Organization image and inputs */
+#ilm-onboarding .organization-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  padding: 14px;
+  align-items: center;
+}
+
+#ilm-onboarding .organization-image-wrap {
+  min-width: 0;
+  width: 100%;
+}
+
+#ilm-onboarding .organization-image {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+#ilm-onboarding .organization-join h3 {
+  font-size: 14px;
+}
+
+#ilm-onboarding .organization-join p {
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+#ilm-onboarding .organization-input {
+  min-height: 42px;
+}
+
+#ilm-onboarding .organization-input input {
+  font-size: 12px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+  #ilm-onboarding .experience-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  #ilm-onboarding .individual-grid {
+    grid-template-columns: 1fr;
+  }
+
+  #ilm-onboarding .organization-content {
+    grid-template-columns: 1fr;
+  }
+
+  #ilm-onboarding .organization-image {
+    height: 170px;
+  }
+}
+
+#ilm-onboarding .experience-panel {
+  background:var(--bg);
+  border:1px solid var(--bd);
+  border-radius:20px;
+  overflow:hidden;
+  box-shadow:var(--sh);
+}
+#ilm-onboarding .experience-heading {
+  display:flex;
+  align-items:center;
+  gap:14px;
+  padding:18px;
+}
+#ilm-onboarding .individual-heading {
+  background:#dcfce7;
+  color:#166534;
+}
+#ilm-onboarding .organization-heading {
+  background:#ffedd5;
+  color:#c2410c;
+}
+#ilm-onboarding .experience-heading-icon {
+  font-size:32px;
+}
+#ilm-onboarding .experience-heading h2 {
+  font-size:1.5rem;
+  color:#0f172a;
+}
+#ilm-onboarding .experience-heading p {
+  color:#475569;
+  font-size:.85rem;
+}
+#ilm-onboarding .individual-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  padding:14px;
+}
+#ilm-onboarding .experience-group {
+  border:1px solid var(--bd);
+  border-radius:15px;
+  padding:12px;
+  min-width:0;
+}
+#ilm-onboarding .lms-group {background:#f0fdf4;border-color:#bbf7d0}
+#ilm-onboarding .corporate-group {background:#fff7ed;border-color:#fed7aa}
+#ilm-onboarding .sis-group {background:#faf5ff;border-color:#e9d5ff}
+#ilm-onboarding .product-group {background:#eff6ff;border-color:#bfdbfe}
+#ilm-onboarding .educate-group {background:#ecfeff;border-color:#a5f3fc}
+#ilm-onboarding .experience-group-title {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  width:100%;
+  border:0;
+  background:transparent;
+  color:#0f172a;
+  text-align:left;
+  font:inherit;
+  margin-bottom:12px;
+}
+#ilm-onboarding .experience-group-title strong {
+  display:block;
+  font-size:1rem;
+}
+#ilm-onboarding .experience-group-title small {
+  display:block;
+  color:#475569;
+  font-size:.73rem;
+  line-height:1.35;
+}
+#ilm-onboarding .experience-subcards {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:7px;
+}
+#ilm-onboarding .experience-subcard {
+  min-width:0;
+  min-height:66px;
+  padding:8px 4px;
+  border:1px solid rgba(255,255,255,.9);
+  border-radius:12px;
+  background:#fff;
+  color:#0f172a;
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:5px;
+  text-align:center;
+  font-size:.72rem;
+  box-shadow:0 2px 8px rgba(15,23,42,.06);
+}
+#ilm-onboarding .experience-subcard:hover {
+  border-color:var(--or);
+  transform:translateY(-2px);
+}
+#ilm-onboarding .experience-subcard span {font-size:21px}
+#ilm-onboarding .coming-soon {
+  margin-left:auto;
+  white-space:nowrap;
+  background:#ffedd5;
+  color:#c2410c;
+  border-radius:30px;
+  padding:5px 8px;
+  font-size:.65rem;
+  font-weight:700;
+}
+#ilm-onboarding .organization-content {
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:14px;
+  padding:16px;
+  align-items:center;
+}
+#ilm-onboarding .organization-join h3 {
+  font-size:1rem;
+  margin-bottom:6px;
+}
+#ilm-onboarding .organization-join p {
+  font-size:.8rem;
+  color:var(--mu);
+  margin-bottom:14px;
+}
+#ilm-onboarding .organization-input {
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:6px;
+  margin-top:10px;
+  border:1px solid var(--bd);
+  border-radius:12px;
+  background:var(--bg);
+}
+#ilm-onboarding .organization-input input {
+  min-width:0;
+  flex:1;
+  border:0;
+  outline:0;
+  background:transparent;
+  color:var(--tx);
+  font:inherit;
+  font-size:.8rem;
+}
+#ilm-onboarding .organization-input button {
+  width:36px;
+  height:36px;
+  border:0;
+  border-radius:9px;
+  background:#16a34a;
+  color:#fff;
+  cursor:pointer;
+  font-size:20px;
+}
+#ilm-onboarding .organization-image {
+  display:block;
+  width:100%;
+  height:210px;
+  object-fit:cover;
+  border-radius:14px;
+}
+@media(max-width:900px) {
+  #ilm-onboarding .experience-layout {grid-template-columns:1fr}
+}
+@media(max-width:560px) {
+  #ilm-onboarding .individual-grid {grid-template-columns:1fr}
+  #ilm-onboarding .organization-content {grid-template-columns:1fr}
+  #ilm-onboarding .organization-image {height:170px}
+}
+
+/* ===== FINAL: compact spacing + all-device responsive ===== */
+#ilm-onboarding section{padding:16px 0}
+#ilm-onboarding section .sh,#ilm-onboarding #products .sh{margin-bottom:12px}
+#ilm-onboarding header.hero2{padding:10px 0 4px!important}
+#ilm-onboarding .welcome-section{margin:6px 0 10px}
+#ilm-onboarding .welcome-section .gpill{margin:0 0 8px!important}
+
+/* Hero panels */
+#ilm-onboarding .experience-layout{margin-top:10px;gap:12px}
+#ilm-onboarding .experience-panel,#ilm-onboarding .organization-content>*,#ilm-onboarding .experience-group{min-width:0}
+#ilm-onboarding .experience-heading{min-height:0;padding:12px 14px;gap:12px}
+#ilm-onboarding .experience-heading h2{font-size:1.25rem;line-height:1.2}
+#ilm-onboarding .experience-heading-icon{font-size:26px;line-height:1}
+#ilm-onboarding .individual-grid{gap:10px;padding:10px;align-items:start}
+#ilm-onboarding .experience-group{min-height:0;padding:10px}
+#ilm-onboarding .experience-group-title{min-height:0;margin-bottom:10px}
+#ilm-onboarding .experience-group-title:last-child{margin-bottom:0}
+#ilm-onboarding .lms-group,#ilm-onboarding .product-group,#ilm-onboarding .educate-group{grid-column:1/-1}
+#ilm-onboarding .product-group .experience-subcards{grid-template-columns:repeat(2,minmax(0,1fr))}
+#ilm-onboarding .experience-subcard{height:auto;min-height:68px;padding:8px 6px;font-size:.74rem;line-height:1.25;overflow-wrap:anywhere}
+#ilm-onboarding .coming-soon{flex:none}
+
+/* Organization panel fills height, no empty gap */
+#ilm-onboarding .organization-panel{display:flex;flex-direction:column}
+#ilm-onboarding .organization-content{flex:1;padding:12px;gap:12px;align-items:stretch}
+#ilm-onboarding .organization-join{display:flex;flex-direction:column;justify-content:center}
+#ilm-onboarding .organization-join p{margin-bottom:8px}
+#ilm-onboarding .organization-input{margin-top:8px}
+#ilm-onboarding .organization-image-wrap{display:flex}
+#ilm-onboarding .organization-image{height:100%;min-height:180px;max-height:320px}
+
+/* Stats full width */
+#ilm-onboarding .hero2 .stats{max-width:none!important;width:100%;margin:10px 0 0!important;padding:4px 0!important}
+
+/* Product cards */
+#ilm-onboarding .pgr{margin-bottom:12px}
+#ilm-onboarding .pgr:last-child{margin-bottom:0}
+#ilm-onboarding .pgh{margin:0 0 8px;padding-bottom:6px}
+#ilm-onboarding .pgd{gap:10px}
+#ilm-onboarding .card.pc{grid-template-columns:48px 1fr}
+#ilm-onboarding .card.pc .ic{width:48px;height:48px}
+#ilm-onboarding .card.pc .ic .ui-ico{width:24px;height:24px}
+
+/* Features selector (5 buttons) */
+#ilm-onboarding #features .seg{display:inline-flex;flex-wrap:wrap;justify-content:center;max-width:100%}
+
+/* Laptop / Mac large */
+@media(min-width:1600px){
+  #ilm-onboarding .experience-subcard{min-height:76px;font-size:.8rem}
+}
+
+/* iPad landscape / iPad Pro / small laptop */
+@media(max-width:1024px){
+  #ilm-onboarding .experience-layout{grid-template-columns:1fr}
+  #ilm-onboarding .organization-image{max-height:240px}
+}
+
+/* iPad portrait / iPad mini / tablets / big phones */
+@media(min-width:561px) and (max-width:900px){
+  #ilm-onboarding .pgd.c3,#ilm-onboarding .pgd.c2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #ilm-onboarding .pgd.c3>.card:last-child:nth-child(odd){grid-column:1/-1}
+  #ilm-onboarding .g3{grid-template-columns:repeat(2,minmax(0,1fr))}
+  #ilm-onboarding .g3>.card:last-child:nth-child(odd){grid-column:1/-1}
+}
+
+/* Phones (iPhone / Pixel / Galaxy) */
+@media(max-width:640px){
+  #ilm-onboarding section{padding:12px 0}
+  #ilm-onboarding .individual-grid{grid-template-columns:1fr}
+  #ilm-onboarding .lms-group,#ilm-onboarding .product-group,#ilm-onboarding .educate-group{grid-column:auto}
+  #ilm-onboarding .organization-content{grid-template-columns:1fr}
+  #ilm-onboarding .organization-image-wrap{display:block}
+  #ilm-onboarding .organization-image{height:170px;min-height:150px}
+  #ilm-onboarding .hero2 .stats{grid-template-columns:repeat(2,1fr)}
+  #ilm-onboarding .hero2 .st{border-right:0;border-bottom:1px solid var(--bd)}
+  #ilm-onboarding .hero2 .st:nth-child(odd){border-right:1px solid var(--bd)}
+  #ilm-onboarding .hero2 .st:nth-last-child(-n+2){border-bottom:0}
+  #ilm-onboarding #features .seg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));width:100%}
+  #ilm-onboarding #features .seg button{padding:10px 6px;font-size:.84rem;white-space:nowrap}
+}
+
+/* Small phones */
+@media(max-width:480px){
+  #ilm-onboarding .w{padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px))}
+  #ilm-onboarding .experience-heading h2{font-size:1.1rem}
+  #ilm-onboarding .experience-heading p{font-size:.78rem}
+    #ilm-onboarding .experience-subcards{gap:6px}
+}
+
+/* greeting pill */
+#ilm-onboarding .gpill .gico{display:grid;place-items:center;color:var(--or)}
+#ilm-onboarding .gpill .gico .ui-ico{width:18px;height:18px}
+#ilm-onboarding .gpill .gtime{color:var(--mu);font-weight:600;font-size:.85rem}
+
+/* heading icon tiles */
+#ilm-onboarding .experience-heading-icon{display:grid;place-items:center;width:48px;height:48px;border-radius:14px;background:#fff;box-shadow:0 2px 8px rgba(15,23,42,.1);font-size:0}
+#ilm-onboarding .individual-heading .experience-heading-icon{color:#16a34a}
+#ilm-onboarding .organization-heading .experience-heading-icon{color:#ea580c}
+
+/* group icon tile */
+#ilm-onboarding .xgi2{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:11px;color:var(--c);background:color-mix(in srgb,var(--c) 14%,#fff)}
+
+/* sub cards with real icons */
+#ilm-onboarding .experience-subcard .xi{display:grid;place-items:center;width:38px;height:38px;border-radius:11px;font-size:0;color:var(--c);background:color-mix(in srgb,var(--c) 14%,#fff)}
+#ilm-onboarding .experience-subcard:hover{border-color:var(--c)}
+#ilm-onboarding .coming-soon{display:inline-flex;align-items:center;gap:4px}
+
+/* up / down arrow */
+#ilm-onboarding button.experience-group-title{cursor:pointer;width:100%}
+#ilm-onboarding .xchev{margin-left:auto;flex:none;display:grid;place-items:center;width:30px;height:30px;border-radius:50%;background:#fff;color:#0f172a;box-shadow:0 1px 4px rgba(15,23,42,.12);transition:transform .25s}
+#ilm-onboarding .experience-group:not(.collapsed) .xchev{transform:rotate(180deg)}
+#ilm-onboarding .experience-group.collapsed .xchev{transform:none}
+#ilm-onboarding .experience-group.collapsed .experience-subcards{display:none}
+#ilm-onboarding .experience-group.collapsed .experience-group-title{margin-bottom:0}
+
+/* organization: image nahi, single column */
+#ilm-onboarding .organization-content{grid-template-columns:1fr!important;align-items:center}
+#ilm-onboarding .organization-join{width:100%;max-width:560px;margin:0 auto}
+#ilm-onboarding .organization-join h3{display:flex;align-items:center;gap:8px}
+#ilm-onboarding .organization-input .oi{display:grid;place-items:center;color:var(--mu);padding-left:6px}
+#ilm-onboarding .organization-input button{display:grid;place-items:center;padding:0}
+/* ===== Hero banner: full width + compact ===== */
+#ilm-onboarding header.hero2>.w{max-width:none;padding-left:12px;padding-right:12px}
+
+#ilm-onboarding .hero-banner{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,380px);
+  align-items:center;
+  gap:12px;
+  width:100%;
+  margin:0 0 10px;
+  padding:8px 10px 8px 18px;
+  border-radius:16px;
+  overflow:hidden;
+  background:
+    radial-gradient(320px 140px at 95% 0%,color-mix(in srgb,var(--or) 14%,transparent),transparent 70%),
+    var(--bg);
+  border:1px solid var(--bd);
+  box-shadow:var(--sh);
+}
+#ilm-onboarding .hero-banner .hb-text{
+  min-width:0;display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:0
+}
+#ilm-onboarding .hero-banner .gpill{
+  margin:0 0 6px!important;padding:4px 12px!important;font-size:.8rem!important
+}
+#ilm-onboarding header.hero2 .hero-banner h1{
+  font-size:clamp(1.35rem,2.2vw,1.9rem)!important;
+  line-height:1.15!important;letter-spacing:-.5px!important;
+  margin:0 0 2px!important;padding:0!important;text-align:left
+}
+#ilm-onboarding header.hero2 .hero-banner .lead{
+  font-size:.88rem!important;margin:0 0 6px!important;padding:0!important;
+  max-width:none;text-align:left
+}
+#ilm-onboarding .hb-chips{display:flex;flex-wrap:wrap;gap:6px}
+#ilm-onboarding .hb-chips span{
+  font-size:.72rem;font-weight:600;padding:3px 10px;border-radius:999px;
+  background:var(--bg2);border:1px solid var(--bd);color:var(--tx)
+}
+#ilm-onboarding .hb-chips span:before{content:"";display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--or);margin-right:6px;vertical-align:1px}
+#ilm-onboarding .hb-chips span:nth-child(even):before{background:var(--gr)}
+
+#ilm-onboarding .hb-laptop{width:100%;margin:0;justify-self:end;display:flex;justify-content:flex-end;align-items:center}
+#ilm-onboarding .hb-laptop img{display:block;width:100%;max-width:380px;height:130px;object-fit:contain;object-position:right center}
+
+@media(max-width:900px){
+  #ilm-onboarding .hero-banner{grid-template-columns:1fr;padding:12px 14px}
+  #ilm-onboarding .hb-laptop{justify-content:center}
+  #ilm-onboarding .hb-laptop img{max-width:300px;height:110px;object-position:center}
+}
+@media(max-width:480px){#ilm-onboarding .hb-laptop{display:none}}
+/* ===== Organization panel: khali gap hatao ===== */
+#ilm-onboarding .organization-content{align-items:start!important;align-content:start;flex:none}
+#ilm-onboarding .organization-join{margin:0 auto}
+#ilm-onboarding .org-steps{display:grid;gap:8px;margin-top:16px;padding-top:14px;border-top:1px dashed var(--bd)}
+#ilm-onboarding .org-steps div{display:flex;gap:10px;align-items:center;font-size:.8rem;color:var(--mu)}
+#ilm-onboarding .org-steps b{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--or);color:#fff;font-size:.7rem}
+
+/* banner text: sab ek hi left line par + pill cut fix */
+#ilm-onboarding .hero-banner{overflow:visible!important}
+#ilm-onboarding .hero-banner .hb-text{
+  align-items:flex-start!important;justify-content:center;gap:4px;
+  min-width:0;width:100%
+}
+#ilm-onboarding .hero-banner .hb-text>*{
+  margin-left:0!important;margin-right:0!important;
+  padding-left:0!important;padding-right:0!important;
+  text-indent:0!important;transform:none!important;
+  align-self:flex-start!important;text-align:left!important;
+  max-width:100%
+}
+#ilm-onboarding .hero-banner .gpill{
+  width:auto!important;
+  max-width:100%;
+  flex-wrap:nowrap;
+  white-space:nowrap;
+  padding:6px 14px!important;
+  margin:0 0 8px 0!important;
+  overflow:hidden;
+}
+#ilm-onboarding .hero-banner .gpill>span{min-width:0}
+#ilm-onboarding .hero-banner .gpill .gtime{
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0
+}
+#ilm-onboarding .hero-banner h1{
+  display:block;margin:0 0 4px 0!important;padding:0!important;
+  text-align:left!important;line-height:1.15!important
+}
+#ilm-onboarding .hero-banner h1 span{
+  margin:0!important;padding:0!important;display:inline;text-indent:0!important
+}
+#ilm-onboarding .hero-banner .lead{
+  margin:0!important;padding:0!important;text-align:left!important
+}
+  /* ===== Individual / Organization panel toggle ===== */
+#ilm-onboarding button.panel-toggle{
+  width:100%;border:0;cursor:pointer;font:inherit;text-align:left;
+  display:flex;align-items:center;gap:12px
+}
+#ilm-onboarding .panel-toggle .panel-chev{margin-left:auto}
+#ilm-onboarding .experience-panel:not(.panel-collapsed) .panel-chev{transform:rotate(180deg)}
+#ilm-onboarding .experience-panel.panel-collapsed .panel-chev{transform:none}
+#ilm-onboarding .experience-panel.panel-collapsed .panel-body{display:none!important}
+
+/* Corporate / SIS / Educate: coming soon badge + chevron dono ek line mein */
+#ilm-onboarding .experience-group .experience-group-title .coming-soon{margin-left:auto}
+#ilm-onboarding .experience-group .experience-group-title .coming-soon + .xchev{margin-left:8px}
+#ilm-onboarding .corporate-group .experience-subcards,
+#ilm-onboarding .sis-group .experience-subcards,
+#ilm-onboarding .educate-group .experience-subcards{grid-template-columns:1fr}
+/* Hero groups: LMS → Product → Corporate → SIS → Educate Tech, each on its own line */
+#ilm-onboarding .individual-grid .lms-group{order:1;grid-column:1/-1}
+#ilm-onboarding .individual-grid .product-group{order:2;grid-column:1/-1}
+#ilm-onboarding .individual-grid .corporate-group{order:3;grid-column:1/-1}
+#ilm-onboarding .individual-grid .sis-group{order:4;grid-column:1/-1}
+#ilm-onboarding .individual-grid .educate-group{order:5;grid-column:1/-1}
+/* Individual / Organization headings: green & cream shade hata diya, plain theme background */
+#ilm-onboarding .individual-heading,
+#ilm-onboarding .organization-heading{background:var(--bg);color:var(--tx)}
+#ilm-onboarding .experience-heading h2{color:var(--tx)}
+#ilm-onboarding .experience-heading p{color:var(--mu)}
+#ilm-onboarding .experience-heading-icon{background:var(--bg2);box-shadow:none;border:1px solid var(--bd)}
+#ilm-onboarding .experience-panel:not(.panel-collapsed) .experience-heading{border-bottom:1px solid var(--bd)}
+
+/* ek panel khulne par doosra khali white box na bane (stretch band) */
+#ilm-onboarding .experience-layout{align-items:start}
+#ilm-onboarding .experience-panel{height:auto}
+/* Group boxes: no colour shade, plain theme background */
+#ilm-onboarding .lms-group,
+#ilm-onboarding .corporate-group,
+#ilm-onboarding .sis-group,
+#ilm-onboarding .product-group,
+#ilm-onboarding .educate-group{background:var(--bg);border-color:var(--bd)}
+#ilm-onboarding .experience-group-title,
+#ilm-onboarding .experience-group-title strong{color:var(--tx)}
+#ilm-onboarding .experience-group-title small{color:var(--mu)}
+#ilm-onboarding .xgi2{background:var(--bg2)}
+#ilm-onboarding .experience-subcard .xi{background:var(--bg2)}
+#ilm-onboarding .experience-subcard{background:var(--bg2);border-color:var(--bd)}
+#ilm-onboarding .xchev{background:var(--bg2);color:var(--tx);border:1px solid var(--bd)}
+
+/* locked note (Corporate / SIS / Educate Tech) */
+#ilm-onboarding .locked-note{grid-column:1/-1;display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;border:1px dashed var(--bd);border-radius:12px;background:var(--bg2);color:var(--mu);font-size:.8rem;font-weight:600;cursor:not-allowed;user-select:none}
+#ilm-onboarding .locked-note .ui-ico{color:#B45309;width:16px;height:16px}
+
+/* Hero banner: heading ek line, subheading ek line */
+#ilm-onboarding .hero-banner .hb-text h1,
+#ilm-onboarding header.hero2 .hero-banner h1{
+  white-space:nowrap!important;
+  font-size:clamp(1.3rem,2.4vw,1.9rem)!important;
+}
+#ilm-onboarding .hero-banner .lead,
+#ilm-onboarding header.hero2 .hero-banner .lead{
+  white-space:nowrap!important;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  max-width:100%!important;
+}
+@media(max-width:700px){
+  #ilm-onboarding .hero-banner .hb-text h1,
+  #ilm-onboarding header.hero2 .hero-banner h1{white-space:normal!important}
+  #ilm-onboarding .hero-banner .lead{white-space:normal!important}
+}
 `;
 
 
-
+const ic = (p, s = 20) => `<svg class="ui-ico" viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+const ICP = {
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/>',
+  grad:'<path d="m22 10-10-5-10 5 10 5 10-5Z"/><path d="M6 12v5c4 3 8 3 12 0v-5M22 10v6"/>',
+  users:'<path d="M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M20 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+  present:'<rect x="3" y="3" width="18" height="12" rx="2"/><path d="M12 15v3M8 21l4-3 4 3"/>',
+  hand:'<path d="m11 17 2 2a2 2 0 0 0 3-3l-1-1M7 14l-2 2a2 2 0 0 0 3 3l2-2M8 8l3-3a3 3 0 0 1 4 0l1 1M3 9l4-4 4 4-4 4zM21 9l-4-4-4 4 4 4z"/>',
+  build:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 21V9h6v12M7 7h.01M17 7h.01M7 11h.01M17 11h.01"/>',
+  school:'<path d="m3 9 9-6 9 6"/><path d="M5 9v11h14V9M9 20v-6h6v6"/>',
+  layers:'<path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/>',
+  cal:'<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  brief:'<rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M3 13h18"/>',
+  book:'<path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V3H6.5A2.5 2.5 0 0 0 4 5.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/>',
+  lock:'<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',
+  link:'<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>',
+  mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+  go:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  chev:'<path d="m6 9 6 6 6-6"/>'
+};
 
 const HTML = `
 <nav><div class="w"><a class="logo" href="#top"><b>ILM</b> <i>ORA</i></a>
 <div class="nl"><a href="https://ilmora.texora.ai/all-courses">All Courses</a><a href="#features">ILM ORA Feature</a><a href="#products">Product</a><a href="https://ilmora.texora.ai/workshops">Workshops</a><a href="https://ilmora.texora.ai/career">Career Tracks</a></div>
 <button class="btn ib" id="th" aria-label="Toggle theme"><svg class="ui-ico" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/></svg></button><a class="btn p" href="https://ilmora.texora.ai/login"><svg class="ui-ico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"/></svg> Get Started</a><button class="btn ib" id="mb" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mm"><svg class="ui-ico menu-icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button></div><div id="sp"></div><div class="mm" id="mm"><a href="https://ilmora.texora.ai/all-courses">All Courses</a><a href="#products">ILM ORA Feature</a><a href="#features">Product</a><a href="https://ilmora.texora.ai/workshops">Workshops</a><a href="https://ilmora.texora.ai/career">Career Tracks</a><a class="mgs" href="https://ilmora.texora.ai/login"><svg class="ui-ico" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8L12 3Z"/></svg> Get Started</a></div></nav>
-
 <header class="hero hero2" id="top"><div class="w">
-<div class="h2g">
-<div class="h2l">
-<div class="gpill" id="gp"></div>
-<h1 id="h1t"><span class="o">Learn, teach</span> <span class="g">and manage.</span></h1>
-<p class="lead" id="lead"></p>
-<div class="seg" role="group" aria-label="Choose experience"><button data-r="individual" aria-pressed="true">LMS</button><button data-r="product" aria-pressed="false">Product</button><button data-r="corporate" aria-pressed="false">Corporate</button><button data-r="edutech" aria-pressed="false">Educate Tech</button><button data-r="sis" aria-pressed="false">SIS</button></div>
-<div class="stats"><div class="st rv" style="--i:0"><b data-n="500" data-d="0" data-s="+">500+</b><span>Early Learners</span><i class="bar" style="--w:85%"></i></div><div class="st rv" style="--i:1"><b data-n="15" data-d="0" data-s="+">15+</b><span>Expert Mentors</span><i class="bar" style="--w:55%"></i></div><div class="st rv" style="--i:2"><b data-n="20" data-d="0" data-s="+">20+</b><span>Courses Live</span><i class="bar" style="--w:65%"></i></div><div class="st rv" style="--i:3"><b data-n="4.9" data-d="1" data-s="★">4.9★</b><span>Average Rating</span><i class="bar" style="--w:98%"></i></div></div>
-<div class="who" id="who"></div>
+<div class="welcome-section hero-banner">
+  <div class="hb-text">
+    <div class="gpill" id="gp"></div>
+    <h1 id="h1t"><span class="o">Learn,</span> teach and manage.</h1>
+    <p class="lead" id="lead">Courses, live classes, assessments and AI tools in one place.</p>
+  </div>
+  <div class="hb-laptop" aria-hidden="true">
+    <img src="/onboarding-media/hero.webp" alt="" loading="eager" decoding="async" />
+  </div>
 </div>
-<div class="h2r"><h2>Choose Your <span>Experience</span></h2><p>Pick a module to open your dashboard.</p><div class="xg" id="xg"></div></div>
+ <div class="experience-layout">
+    <div class="experience-panel individual-panel panel-collapsed">
+       <button type="button" class="experience-heading individual-heading panel-toggle" data-panel-toggle aria-expanded="false">
+      <div class="experience-heading-icon">${ic(ICP.user, 26)}</div>
+      <div style="flex:1;text-align:left">
+        <h2>Individual</h2>
+        <p>For personal learning, skill growth and professional use.</p>
+      </div>
+      <span class="xchev panel-chev" aria-hidden="true">${ic(ICP.chev, 20)}</span>
+    </button>
+
+    <div class="individual-grid panel-body">
+
+            <div class="experience-group lms-group collapsed">
+        <button class="experience-group-title" type="button" data-collapse aria-expanded="false" style="--c:#16A34A">
+          <span class="xgi2">${ic(ICP.grad, 22)}</span>
+          <span><strong>LMS</strong><small>Learning management for learners, trainers and partners.</small></span>
+          <span class="xchev" aria-hidden="true">${ic(ICP.chev, 20)}</span>
+        </button>
+        <div class="experience-subcards">
+          <button class="experience-subcard" data-xc="0" style="--c:#8B5CF6">
+            <span class="xi">${ic(ICP.users, 22)}</span><strong>Student</strong>
+          </button>
+          <button class="experience-subcard" data-xc="1" style="--c:#22C55E">
+            <span class="xi">${ic(ICP.present, 22)}</span><strong>Trainer</strong>
+          </button>
+          <button class="experience-subcard" data-xc="2" style="--c:#F97316">
+            <span class="xi">${ic(ICP.hand, 22)}</span><strong>Business &amp; Partnership</strong>
+          </button>
+        </div>
+      </div>
+
+            <div class="experience-group corporate-group collapsed">
+        <button class="experience-group-title" type="button" data-collapse aria-expanded="false" style="--c:#F97316">
+          <span class="xgi2">${ic(ICP.build, 22)}</span>
+          <span><strong>Corporate</strong><small>Enterprise learning and workforce development.</small></span>
+          <span class="coming-soon">${ic(ICP.lock, 12)} Coming Soon</span>
+          <span class="xchev" aria-hidden="true">${ic(ICP.chev, 20)}</span>
+        </button>
+                <div class="experience-subcards">
+          <div class="locked-note">${ic(ICP.lock, 16)}<span>Corporate dashboard is locked. Coming soon.</span></div>
+        </div>
+      </div>
+
+            <div class="experience-group sis-group collapsed">
+        <button class="experience-group-title" type="button" data-collapse aria-expanded="false" style="--c:#9333EA">
+          <span class="xgi2">${ic(ICP.school, 22)}</span>
+          <span><strong>SIS</strong><small>School and college management.</small></span>
+          <span class="coming-soon">${ic(ICP.lock, 12)} Coming Soon</span>
+          <span class="xchev" aria-hidden="true">${ic(ICP.chev, 20)}</span>
+        </button>
+                <div class="experience-subcards">
+          <div class="locked-note">${ic(ICP.lock, 16)}<span>SIS dashboard is locked. Coming soon.</span></div>
+        </div>
+      </div>
+
+            <div class="experience-group product-group collapsed">
+        <button class="experience-group-title" type="button" data-collapse aria-expanded="false" style="--c:#2563EB">
+          <span class="xgi2">${ic(ICP.layers, 22)}</span>
+          <span><strong>Product</strong><small>Explore ILM ORA products.</small></span>
+          <span class="xchev" aria-hidden="true">${ic(ICP.chev, 20)}</span>
+        </button>
+        <div class="experience-subcards">
+                   <button class="experience-subcard" data-xc="4" style="--c:#3B82F6">
+            <span class="xi">${ic(ICP.brief, 22)}</span><strong>ILM ORA Workspace</strong>
+          </button>
+          <button class="experience-subcard" data-xc="5" style="--c:#EC4899">
+            <span class="xi">${ic(ICP.cal, 22)}</span><strong>ILM ORA Calendar</strong>
+          </button>
+        </div>
+      </div>
+
+            <div class="experience-group educate-group collapsed">
+        <button class="experience-group-title" type="button" data-collapse aria-expanded="false" style="--c:#0EA5E9">
+          <span class="xgi2">${ic(ICP.book, 22)}</span>
+          <span><strong>Educate Tech</strong><small>Smart learning suite.</small></span>
+          <span class="coming-soon">${ic(ICP.lock, 12)} Coming Soon</span>
+          <span class="xchev" aria-hidden="true">${ic(ICP.chev, 20)}</span>
+        </button>
+               <div class="experience-subcards">
+          <div class="locked-note">${ic(ICP.lock, 16)}<span>Educate Tech dashboard is locked. Coming soon.</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+    <div class="experience-panel organization-panel panel-collapsed">
+        <button type="button" class="experience-heading organization-heading panel-toggle" data-panel-toggle aria-expanded="false">
+      <div class="experience-heading-icon">${ic(ICP.build, 26)}</div>
+      <div style="flex:1;text-align:left">
+        <h2>Organization</h2>
+        <p>For schools, colleges, institutes and companies.</p>
+      </div>
+      <span class="xchev panel-chev" aria-hidden="true">${ic(ICP.chev, 20)}</span>
+    </button>
+
+    <div class="organization-content panel-body">
+      <div class="organization-join">
+        <h3>${ic(ICP.link, 16)} Join Your Organization</h3>
+        <p>Access your organization's ILM ORA workspace using a URL code or invite code.</p>
+
+        <div class="organization-input">
+          <span class="oi">${ic(ICP.link, 18)}</span>
+          <input id="organization-url" type="text" placeholder="Enter Organization URL" />
+          <button type="button" id="verify-organization-url" aria-label="Verify URL">${ic(ICP.go, 18)}</button>
+        </div>
+
+               <div class="organization-input">
+          <span class="oi">${ic(ICP.mail, 18)}</span>
+          <input id="organization-code" type="text" placeholder="Enter Invite Code" />
+          <button type="button" id="verify-organization-code" aria-label="Verify code">${ic(ICP.go, 18)}</button>
+        </div>
+
+        <div class="org-steps">
+          <div><b>1</b>Enter your organization URL or invite code</div>
+          <div><b>2</b>Verify and sign in with your existing login</div>
+          <div><b>3</b>Land directly on your organization dashboard</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div>
+
+<div class="stats">
+  <div class="st rv"><b>500+</b><span>Early Learners</span></div>
+  <div class="st rv"><b>15+</b><span>Expert Mentors</span></div>
+  <div class="st rv"><b>20+</b><span>Courses Live</span></div>
+  <div class="st rv"><b>4.9★</b><span>Average Rating</span></div>
+</div>
+
 <div class="hfw"><div class="frame" id="hf"></div></div>
 </div></header>
 
 <span id="tools"></span><section id="products"><div class="w"><div class="sh rv"><span class="eb"><svg class="ui-ico" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/></svg> Products</span><h2 id="pt"></h2><p id="pp"></p></div><div class="g3" id="pg"></div></div></section>
 
-<section class="alt" id="features"><div class="w"><div class="sh rv"><span class="eb">Live Demo</span><h2>Every feature, mapped to a real module</h2><p>Pick a portal, then click any tab in its sidebar. Every module opens a working, populated screen so you can feel the real product.</p><div class="seg" role="group" aria-label="Demo experience"><button data-r="individual" aria-pressed="true">LMS</button><button data-r="product" aria-pressed="false">Product</button><button data-r="corporate" aria-pressed="false">Corporate</button><button data-r="edutech" aria-pressed="false">Educate Tech</button><button data-r="sis" aria-pressed="false">SIS</button></div></div>
+<section class="alt" id="features"><div class="w"><div class="sh rv"><span class="eb">Live Demo</span><h2>Every feature, mapped to a real module</h2><p>Pick a portal, then click any tab in its sidebar. Every module opens a working, populated screen so you can feel the real product.</p><div class="seg" role="group" aria-label="Demo experience"><button data-r="individual" aria-pressed="true">LMS</button><button data-r="product" aria-pressed="false">Product</button><button data-r="corporate" aria-pressed="false">Corporate</button><button data-r="sis" aria-pressed="false">SIS</button><button data-r="edutech" aria-pressed="false">Educate Tech</button></div></div>
 <div class="tabs" id="tabs" role="tablist"></div><div class="show"><div class="frame rv" id="pv"></div></div></div></section>
 
 <section id="how"><div class="w"><div class="sh rv"><span class="eb">How it works</span><h2>How it works</h2><p id="hp"></p></div><div class="steps rv" id="st"></div></div></section>
@@ -1232,7 +1979,7 @@ individual:{
  ben:[["Everything in one login","No juggling tools for classes, quizzes and reports."],["Built for growth","Roadmaps, skill map and certificates show real progress."],["AI where it helps","Trainer AI Companion and a built-in compiler."]],
  ct:"Start learning or teaching today",cp:"Pick Student, Trainer or Business & Partnership and access classes, assessments, roadmaps, reports and more."},
 corporate:{
-  lead:"Manage people, training and reports from one console.",
+    lead:"People, training and reports from one console.",
  pt:"Your organisation, one console",pp:"Corporate LMS and admin console, plus the public Workspace and Calendar products.",
  prod:[["building","Corporate LMS","Run learning programs across the company with courses, assessments, attendance and certificates.",["Courses, videos, live sessions","Assessments and certificates","Skill analytics and reports"],S],
   ["shield","Admin and Access","Organisation overview, settings, access control and usage analytics.",["Organisation overview and settings","Access Control","Usage analytics"],S],
@@ -1318,7 +2065,7 @@ function cardH(p,n){var u=p[3],t=u?'a':'div';return'<'+t+' class="card pc rv"'+(
 function grp(t,s,l,o,c){return'<div class="pgr"><div class="pgh"><h3>'+t+'</h3><span>– '+s+'</span></div><div class="pgd '+c+'">'+l.map(function(p,i){return cardH(p,o+i)}).join("")+'</div></div>'}
 function render(){var d=D[role],tk=Object.keys(d.tabs);ROOT.dataset.role=role;
  ROOT.querySelectorAll(".seg button").forEach(function(b){b.setAttribute("aria-pressed",b.dataset.r==role)});
- var HT={individual:["Learn,","teach and manage."],product:["Plan, meet","and stay in sync."],corporate:["Train your team,","manage your organisation."],edutech:["Teach smarter,","connect your institute."],sis:["Admit, track","and manage students."]},ht2=HT[role]||HT.individual;
+  var HT={individual:["Learn,","teach and manage."],product:["Plan, meet","and sync."],corporate:["Train teams,","manage orgs."],edutech:["Teach,","connect schools."],sis:["Admit, track","and manage."]},ht2=HT[role]||HT.individual;
   $("h1t").innerHTML='<span class="o">'+ht2[0]+'</span> <span class="g">'+ht2[1]+'</span>';
  var WHO={
   individual:["Who is LMS for?",[["Student","Learners who join courses, live classes and quizzes"],["Trainer","Teachers who run batches, upload content and grade work"],["Business & Partnership","Teams and partners who manage learning at scale"]]],
@@ -1327,7 +2074,7 @@ function render(){var d=D[role],tk=Object.keys(d.tabs);ROOT.dataset.role=role;
   edutech:["Who is Educate Tech for?",[["Schools and institutes","Run smart classes and digital content"],["Teachers","Teach, assess and engage students"],["Parents","Stay connected with progress and updates"]]],
   sis:["Who is SIS for?",[["Admission office","Handle admissions and student records"],["Admin and accounts","Manage attendance, timetable and fees"],["Teachers and parents","View results and report cards"]]]
  },wh=WHO[role]||WHO.individual;
- $("who").innerHTML='<div class="whot">'+wh[0]+'</div><div class="whol">'+wh[1].map(function(s,i){return'<div class="whos"><span class="whon">'+(i+1)+'</span><div><b>'+e(s[0])+'</b><small>'+e(s[1])+'</small></div></div>'}).join("")+'</div>';
+ if($("who"))$("who").innerHTML='<div class="whot">'+wh[0]+'</div><div class="whol">'+wh[1].map(function(s,i){return'<div class="whos"><span class="whon">'+(i+1)+'</span><div><b>'+e(s[0])+'</b><small>'+e(s[1])+'</small></div></div>'}).join("")+'</div>';
  $("lead").textContent=d.lead;$("pt").innerHTML='One platform, <span class="o2">built for every role</span>';$("pp").textContent="Pick the right product for your learning, training, organisation or daily work on the ILM ORA platform.";$("ct").textContent=d.ct;$("cp").textContent=d.cp;$("bt").textContent=role=="individual"?"Why learners and trainers choose it":"Why organisations choose it";
  $("hp").textContent="Four simple steps from first visit to your dashboard.";
 $("pg").innerHTML=grp("For Individuals","Advance, learn and build your career",PI,0,"c3")+grp("For Organisations","Operate ILM ORA at organisation level",PO,3,"c2")+grp("Shared by everyone","Productivity tools for every role",PS,5,"c2");
@@ -1387,7 +2134,7 @@ PT.corp={tag:"CORPORATE PORTAL",side:["Dashboard|/corporate|on","Workspace|/stud
 var CORP={home:"/corporate",items:[["Organisation Overview","/admin/organisation-overview"],["Access Control","/admin/access-control"],["Courses","/admin/courses"],["Assessments","/admin/assessment-system"],["Certificates","/admin/certificates"],["Reports","/admin/reports"],["Usage Analytics","/admin/usage"],["Skill Analytics","/admin/skill-analytics"],["Settings","/admin/settings"],["Branches","","",1],["Departments","","",1],["Employee Directory","","",1]]};
 var WSI="Overview|Events|Booking Pages|Instant Meeting|Calendar Sync|Summaries|Email|My Schedules|Shared with Me|Reminders|Contacts|Availability|Integrations|Workspace Settings".split("|").map(function(n){return[n,"/student/workspace"]});
 ["individual","corporate"].forEach(function(r){var T=D[r].tabs,N={};if(r=="corporate")N.Corporate=CORP;Object.keys(T).forEach(function(k){if(k!="Planned"&&k!="Workspace"&&k!="Calendar")N[k]=T[k]});D[r].tabs=N});
-D.product=Object.assign({},D.individual,{lead:"Workspace and Calendar to plan, meet and stay in sync.",ct:"Bring ILM ORA Workspace and Calendar to your day",cp:"Events, booking pages, instant meetings, AI summaries, email and calendar sync in one place.",tabs:{"Workspace":{home:"/student/workspace",items:WSI},"Calendar":CALT}});
+D.product=Object.assign({},D.individual,{lead:"Workspace and Calendar to plan, meet and sync.",ct:"Bring ILM ORA Workspace and Calendar to your day",cp:"Events, booking pages, instant meetings, AI summaries, email and calendar sync in one place.",tabs:{"Workspace":{home:"/student/workspace",items:WSI},"Calendar":CALT}});
 PT.edutech={tag:"EDUCATE TECH",side:["Dashboard||on",{g:"Academics",c:["Smart Classroom|","Digital Content|","Exams & Results|"]},{g:"Engage",c:["Parent Connect|","Analytics|"]},"Settings|"],
  hd:["Smart learning suite for schools & institutes at a glance",'<span class="pill">0 classes</span><span class="pill">0 teachers</span><span class="pill">All clear ✓</span><span class="pill l">● PREVIEW</span>'],
  body:function(){return stats([["g","Students","Enrolled learners"],["u","Teachers","Active faculty"],["c","Smart Classes","Running now"],["p","Engagement","Across classes","0%"]])+stats([["v","Digital Content","Lessons published"],["f","Assignments","Created"],["q","Exams","Scheduled"],["m","Parent Updates","Sent this month"]])+G(["2fr 2fr 1fr",pn("Smart Classroom","View all",em("c","No classes yet"))+pn("Engagement by Class","THIS MONTH",em("r","No data yet"))+pn("Pending Tasks","",em("t","Nothing pending"))])+G(["2fr 2fr 1fr",pn("Key Reports","INSTITUTE",'<div class="kr"><div>Attendance<b>0%</b></div><div>Avg. Score<b>0%</b></div><div>Completion<b>0%</b></div><div>Active Users<b>0</b></div></div>',"View Full Reports →")+pn("Upcoming Sessions","TODAY",em("k","No sessions scheduled"),"Open Calendar →")+cal()])}};
@@ -1395,8 +2142,8 @@ PT.sis={tag:"SIS · STUDENT INFORMATION SYSTEM",side:["Dashboard||on",{g:"Studen
  hd:["Admissions, records, attendance, fees and results at a glance",'<span class="pill">0 students</span><span class="pill">0 staff</span><span class="pill">All clear ✓</span><span class="pill l">● PREVIEW</span>'],
  body:function(){return stats([["g","Total Students","Enrolled"],["u","Staff","Teaching & non-teaching"],["f","New Admissions","This term"],["p","Attendance","Today","0%"]])+stats([["d","Fees Collected","This month"],["t","Fees Pending","Awaiting payment"],["a","Report Cards","Generated"],["k","Events","This month"]])+G(["2fr 2fr 1fr",pn("Recent Admissions","View all",em("g","No admissions yet"))+pn("Attendance Trend","THIS WEEK",em("r","No data yet"))+pn("Pending Approvals","",em("t","No pending approvals"))])+G(["2fr 2fr 1fr",pn("Key Reports","SCHOOL",'<div class="kr"><div>Attendance<b>0%</b></div><div>Pass Rate<b>0%</b></div><div>Fee Collection<b>0%</b></div><div>Active Students<b>0</b></div></div>',"View Full Reports →")+pn("Today's Timetable","TODAY",em("k","No periods scheduled"),"Open Timetable →")+cal()])}};
 BI.edutech=BI.sis=["compass","chart","robot"];
-D.edutech=Object.assign({},D.individual,{lead:"Smart classrooms, digital content and parent connect for schools and institutes.",ct:"Bring Educate Tech to your institute",cp:"Run smart classes, digital content, exams and parent communication from one place. Preview the Educate Tech dashboard above.",tabs:{"Educate Tech":{home:"",items:[]}}});
-D.sis=Object.assign({},D.individual,{lead:"Student Information System: admissions, records, attendance, fees and results in one place.",ct:"Bring SIS to your school or college",cp:"Manage admissions, student records, attendance, timetable, fees and report cards from one system. Preview the SIS dashboard above.",tabs:{"SIS":{home:"",items:[]}}});
+D.edutech=Object.assign({},D.individual,{ lead:"Smart classrooms, digital content and parent connect.",ct:"Bring Educate Tech to your institute",cp:"Run smart classes, digital content, exams and parent communication from one place. Preview the Educate Tech dashboard above.",tabs:{"Educate Tech":{home:"",items:[]}}});
+D.sis=Object.assign({},D.individual,{ lead:"Admissions, records, attendance, fees and results.",ct:"Bring SIS to your school or college",cp:"Manage admissions, student records, attendance, timetable, fees and report cards from one system. Preview the SIS dashboard above.",tabs:{"SIS":{home:"",items:[]}}});
 var PK={"Student":"student","Trainer":"trainer","Business & Partnership":"admin","Admin":"admin","Corporate":"corp","Educate Tech":"edutech","SIS":"sis"},fwv="overview",hi=0,ht;
 var TOP='<div class="sc-top"><span class="lg"><b>ILM</b> <i>ORA</i></span><nav><span>All Courses</span><span>ILM ORA Feature ⌄</span><span>Product ⌄</span><span>Workshops</span><span>Career Tracks ⌄</span></nav><span class="ic"><u></u><u></u><u></u><em></em></span></div>';
 function lnk(q,c){return'<a class="'+c+'"'+(q[1]?' href="'+B+q[1]+'" target="_blank" rel="noopener"':'')+'>'+q[0]+'</a>'}
@@ -1460,7 +2207,9 @@ function getWelcomeUserName(){
  if(domName){var v=domName.getAttribute("data-user-name")||domName.getAttribute("data-current-user-name")||domName.textContent;if(v&&v.trim())return v.trim()}
  return "there";
 }
-function welcomeGreeting(){var hour=new Date().getHours();if(hour>=5&&hour<12)return "Good morning";if(hour>=12&&hour<17)return "Good afternoon";return "Good evening"}
+function ilmTZ(){try{if(window.__AUTH_USER__&&window.__AUTH_USER__.timeZone)return window.__AUTH_USER__.timeZone;return Intl.DateTimeFormat().resolvedOptions().timeZone||""}catch(e){return ""}}
+function ilmHour(){var h=new Date().getHours(),tz=ilmTZ();try{if(tz){var p=new Intl.DateTimeFormat("en-US",{hour:"numeric",hourCycle:"h23",timeZone:tz}).formatToParts(new Date());for(var i=0;i<p.length;i++){if(p[i].type==="hour"){h=parseInt(p[i].value,10)%24;break}}}}catch(e){}return h}
+function welcomeGreeting(){var hour=ilmHour();if(hour>=5&&hour<12)return "Good morning";if(hour>=12&&hour<17)return "Good afternoon";return "Good evening"}
 function welcomeHero(){var name=escapeWelcomeText(getWelcomeUserName());return '<section class="welcome-hero" aria-label="Personal welcome"><div class="welcome-time"><span aria-hidden="true">👋</span><span class="welcome-greeting">'+welcomeGreeting()+'</span></div><h2 class="welcome-title">Welcome back, <span class="welcome-name">'+name+'</span></h2><p class="welcome-subtitle">Your AI-powered learning hub is ready. Pick up where you left off.</p></section>'}
 function sdash(h,v,inter){if(v=="workspace")return wsdash(h,inter?fwv:"overview",inter);
  var main=v=="dashboard"?welcomeHero()+pgh("STUDENT PORTAL","Your Learning Dashboard","Your classroom & learning overview",'<span class="pill">0 courses</span><span class="pill">0 completed</span>')+PT.student.body():SV[v]();
@@ -1540,7 +2289,9 @@ fx();
 })();
 
 (function(){
-   ICON_PATHS.lock='<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>';
+     ICON_PATHS.lock='<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>';
+   ICON_PATHS.sun='<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
+   ICON_PATHS.moon='<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z"/>';
   var CH=[["graduation","Student","LMS Dashboard","#8B5CF6","Student",0,"Dashboard"],["users","Trainer","Teaching Dashboard","#22C55E","Trainer",0,"Dashboard"],["handshake","Business & Partnership","Growth Dashboard","#F97316","Business & Partnership",0,"Dashboard"],["building","Admin","Enterprise Dashboard","#64748B","",1,"Dashboard"],["grid","ILM ORA Workspace","Team Collaboration","#3B82F6","Workspace",0,"Product"],["calendar","ILM ORA Calendar","Scheduling & Events","#EC4899","Calendar",0,"Product"],["present","Educate Tech","Smart Learning Suite","#0EA5E9","",1,"Dashboard"],["file","SIS","Student Information System","#14B8A6","",1,"Dashboard"]];
  var GR=[["LMS","graduation","#8B5CF6",[0,1,2],"repeat(3,minmax(0,1fr))",0],["Product","layers","#16A34A",[4,5],"repeat(2,minmax(0,1fr))",0],["Corporate","building","#F97316",[3],"1fr auto",1],["Educate Tech","present","#0EA5E9",[6],"1fr auto",1],["SIS","file","#14B8A6",[7],"1fr auto",1]];
  var xg=$("xg");
@@ -1551,10 +2302,20 @@ fx();
    var body=soon?'':'<div class="xrow" style="grid-template-columns:'+g[4]+'">'+g[3].map(function(i){var c=CH[i];return'<button type="button" class="xcd" data-xc="'+i+'" style="--c:'+c[3]+'"><span class="xic">'+svgIcon(c[0])+'</span><span class="xtx"><strong>'+e(c[1])+'</strong><small>'+e(c[2])+'</small></span></button>'}).join("")+'</div>';
    return'<div class="xgp" style="--g:'+g[2]+'">'+head+body+'</div>'}).join("")}
   ROOT.addEventListener("click",function(ev){var t=ev.target.closest("[data-xt]");if(!t)return;var o=t.parentNode.classList.toggle("open");t.setAttribute("aria-expanded",o)});
+    // Live Demo ko sirf switch karta hai, page scroll NAHI karta
+  function focusDemo(r){
+   var hv=ROOT.querySelector('[data-hv="demo"]');if(hv)hv.click();
+   role=r;tab=0;fi=0;hi=0;sv="dashboard";fwv="overview";render();
+  }
+  ROOT.addEventListener("ilm-demo-role",function(ev){focusDemo(ev.detail)});
   ROOT.addEventListener("click",function(ev){
   var b=ev.target.closest("[data-xc]");if(!b||b.disabled)return;
-      var KEYS=["student","trainer","business","corporate","workspace","calendar"];
-  ROOT.dispatchEvent(new CustomEvent("ilm-role",{detail:KEYS[+b.dataset.xc]}));
+  // Corporate / SIS / Educate Tech: real entry nahi, sirf Live Demo preview badlega
+  var lg=b.closest(".corporate-group,.sis-group,.educate-group");
+  if(lg){focusDemo(lg.classList.contains("corporate-group")?"corporate":lg.classList.contains("sis-group")?"sis":"edutech");return}
+  // LMS (Student/Trainer/Business) aur Product (Workspace/Calendar): pehle jaisa hi, real dashboard
+  var KEYS=["student","trainer","business","corporate","workspace","calendar","edutech","sis"];
+  ROOT.dispatchEvent(new CustomEvent("ilm-role",{detail:KEYS[+b.dataset.xc],bubbles:true}));
  });
   function gpName(){
   var n=getWelcomeUserName();
@@ -1565,8 +2326,13 @@ fx();
   if(av&&av.getAttribute("data-user-name"))return av.getAttribute("data-user-name").trim();
   return "";
  }
- function gp(){var h=new Date().getHours(),m=h>=5&&h<12,a=h>=12&&h<17,g=m?"Good Morning":a?"Good Afternoon":"Good Evening",ic=m?"☀️":a?"🌤️":"🌙",n=gpName(),el=$("gp");
-  if(el)el.innerHTML='<span aria-hidden="true">'+ic+'</span><span>'+g+(n?', <b>'+escapeWelcomeText(n)+'</b>':'')+' 👋</span>'}
+    function gp(){var h=ilmHour(),m=h>=5&&h<12,a=h>=12&&h<17,g=m?"Good Morning":a?"Good Afternoon":"Good Evening",n=gpName(),el=$("gp");
+  if(!el)return;
+  var tz=ilmTZ(),tm="",city="";
+  try{tm=new Intl.DateTimeFormat("en-US",{hour:"numeric",minute:"2-digit",timeZone:tz||undefined}).format(new Date())}catch(e){}
+  if(tz)city=tz.split("/").pop().replace(/_/g," ");
+    el.innerHTML='<span class="gico">'+svgIcon(h>=5&&h<17?"sun":"moon")+'</span><span>'+g+(n?', <b>'+escapeWelcomeText(n)+'</b>':'')+'</span>'+(tm?'<span class="gtime">· '+tm+'</span>':'');
+  el.title=tz}
   gp();setTimeout(gp,300);setTimeout(gp,1200);setInterval(gp,60000);ROOT.addEventListener("ilm-name",gp);ROOT.addEventListener("ilm-name",gp);
 })();
 `;
@@ -1648,7 +2414,45 @@ export default function OnboardingLanding({ theme = 'light', onLogin, userName, 
   }, [userName]);
 
   // Login / demo links open the existing login modal instead of leaving the page
-  const handleClick = (e) => {
+      const handleClick = (e) => {
+    // Individual / Organization panel toggle
+    const pt = e.target && e.target.closest ? e.target.closest('[data-panel-toggle]') : null;
+    if (pt) {
+      const panel = pt.closest('.experience-panel');
+      const collapsed = panel.classList.toggle('panel-collapsed');
+      pt.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+      return;
+    }
+        const col = e.target && e.target.closest ? e.target.closest('[data-collapse]') : null;
+    if (col) {
+      const grp = col.closest('.experience-group');
+      const willOpen = grp.classList.contains('collapsed');
+      // pehle dono band karo (accordion)
+      grp.parentElement.querySelectorAll('.experience-group[class*="-group"] > [data-collapse]').forEach((btn) => {
+        btn.closest('.experience-group').classList.add('collapsed');
+        btn.setAttribute('aria-expanded', 'false');
+      });
+      // jis par click hua wo khule (ya wapas band ho agar pehle se khula tha)
+            if (willOpen) {
+        grp.classList.remove('collapsed');
+        col.setAttribute('aria-expanded', 'true');
+        // heading click -> Live Demo us group ke dashboard par switch (scroll nahi)
+        const GROUP_ROLE = {
+          'lms-group': 'individual',
+          'product-group': 'product',
+          'corporate-group': 'corporate',
+          'sis-group': 'sis',
+          'educate-group': 'edutech',
+        };
+        const key = Object.keys(GROUP_ROLE).find((c) => grp.classList.contains(c));
+        if (key && rootRef.current) {
+          rootRef.current.dispatchEvent(
+            new CustomEvent('ilm-demo-role', { detail: GROUP_ROLE[key] })
+          );
+        }
+      }
+      return;
+    }
     const a = e.target && e.target.closest ? e.target.closest('a[href]') : null;
     if (!a) return;
     const href = a.getAttribute('href') || '';

@@ -336,7 +336,7 @@ const ControlBtn = ({ icon, label, active, danger, onClick }) => (
 ───────────────────────────────────────────── */
 const styles = {
   /* LIST PAGE */
-  page: { minHeight: "100vh", background: "#0f1117", padding: "32px 24px", fontFamily: "'Outfit', 'Segoe UI', sans-serif", color: "#e2e8f0" },
+  page: { minHeight: "100dvh", background: "#0f1117", padding: "32px 24px", fontFamily: "'Outfit', 'Segoe UI', sans-serif", color: "#e2e8f0" },
   header: { display: "flex", alignItems: "center", justifyContent: "space-between", background: "linear-gradient(135deg,#1e3a5f,#2d1b69)", borderRadius: 20, padding: "20px 28px", marginBottom: 28, boxShadow: "0 8px 32px rgba(0,0,0,0.4)" },
   headerLeft: { display: "flex", alignItems: "center", gap: 16 },
   headerIcon: { background: "rgba(255,255,255,0.15)", borderRadius: 12, padding: 10, display: "flex" },
@@ -358,7 +358,7 @@ const styles = {
   joinBtn: (live) => ({ marginTop: 4, padding: "10px 0", borderRadius: 12, border: "none", background: live ? "linear-gradient(90deg,#3b82f6,#8b5cf6)" : "#1e293b", color: live ? "#fff" : "#475569", fontWeight: 600, fontSize: 14, cursor: live ? "pointer" : "not-allowed", fontFamily: "inherit", letterSpacing: 0.3 }),
 
   /* LIVE ROOM */
-  liveRoom: { display: "flex", flexDirection: "column", height: "100vh", background: "#0a0c14", fontFamily: "'Outfit','Segoe UI',sans-serif", color: "#e2e8f0", overflow: "hidden" },
+  liveRoom: { display: "flex", flexDirection: "column", height: "100dvh", background: "#0a0c14", fontFamily: "'Outfit','Segoe UI',sans-serif", color: "#e2e8f0", overflow: "hidden" },
   topBar: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 20px", background: "#111827", borderBottom: "1px solid rgba(255,255,255,0.06)" },
   topLeft: { display: "flex", alignItems: "center", gap: 10 },
   liveDot: { width: 10, height: 10, borderRadius: "50%", background: "#ef4444", animation: "pulse 1s infinite" },

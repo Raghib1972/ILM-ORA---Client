@@ -1149,6 +1149,46 @@ const AVATAR_COLORS = [
 ];
 const avatarColor = (name = "") =>
   AVATAR_COLORS[(name.charCodeAt(0) || 0) % AVATAR_COLORS.length];
+
+// Demo data: used ONLY when orgId starts with "demo-" (no API calls are made)
+const DEMO_ORG_DETAILS = {
+  "demo-1": {
+    id: "demo-1", name: "Texora AI", email: "contact@texora.ai",
+    managerName: "Priya Sharma", managerEmail: "priya@texora.ai",
+    plan: "growth", status: "active",
+    products: [
+      { product: "lms", roles: ["student", "trainer"] },
+      { product: "workspace", roles: [] },
+    ],
+    createdAt: "2026-10-01T10:00:00Z", updatedAt: null,
+  },
+  "demo-2": {
+    id: "demo-2", name: "Corporate Educate Tech", email: "info@cet.com",
+    managerName: "Rahul Verma", managerEmail: "rahul@cet.com",
+    plan: "starter", status: "active",
+    products: [
+      { product: "sis", roles: [] },
+      { product: "educate_tech", roles: [] },
+    ],
+    createdAt: "2026-10-15T10:00:00Z", updatedAt: null,
+  },
+  "demo-3": {
+    id: "demo-3", name: "Demo Academy", email: "hello@demo.edu",
+    managerName: "Anita Rao", managerEmail: "anita@demo.edu",
+    plan: "trial", status: "inactive",
+    products: [{ product: "lms", roles: ["student"] }],
+    createdAt: "2026-11-01T10:00:00Z", updatedAt: null,
+  },
+};
+const DEMO_USERS = [
+  { id: "du1", displayName: "Aman Gupta", email: "aman@demo.com", roles: "TRAINER", createdAt: "2026-10-05T10:00:00Z" },
+  { id: "du2", displayName: "Neha Singh", email: "neha@demo.com", roles: "TRAINER", createdAt: "2026-10-06T10:00:00Z" },
+  { id: "du3", displayName: "Rohit Das", email: "rohit@demo.com", roles: "STUDENT", createdAt: "2026-10-08T10:00:00Z" },
+  { id: "du4", displayName: "Sara Khan", email: "sara@demo.com", roles: "STUDENT", createdAt: "2026-10-09T10:00:00Z" },
+  { id: "du5", displayName: "Vikas Jain", email: "vikas@demo.com", roles: "STUDENT", createdAt: "2026-10-10T10:00:00Z" },
+];
+const isDemoId = (id) => typeof id === "string" && id.startsWith("demo-");
+
 const STATUS_CONFIG = {
   active: { label: "Active", dot: "#16a34a", bg: "#dcfce7", color: "#16a34a" },
   inactive: {
@@ -8037,8 +8077,13 @@ const OrganizationDetailsPage = ({ defaultTab }) => {
   const [batchLoading, setBatchLoading] = useState(false);
   const [batchError, setBatchError] = useState(null);
 
-  useEffect(() => {
+   useEffect(() => {
     if (!orgId) return;
+    if (isDemoId(orgId)) {
+      setOrg(DEMO_ORG_DETAILS[orgId] || null);
+      setOrgLoading(false);
+      return;
+    }
     setOrgLoading(true);
     authService
       .getOrganizationById(orgId)
@@ -8053,16 +8098,21 @@ const OrganizationDetailsPage = ({ defaultTab }) => {
       });
   }, [orgId]);
 
-  useEffect(() => {
-    if (!orgId) return;
+   useEffect(() => {
+    if (!orgId || isDemoId(orgId)) return;
     authService
       .getOrgCapacity?.(orgId)
       .then(setCapacity)
       .catch(() => {});
   }, [orgId]);
 
-  useEffect(() => {
+    useEffect(() => {
     if (!orgId) return;
+    if (isDemoId(orgId)) {
+      setUsers(DEMO_USERS);
+      setUsersLoading(false);
+      return;
+    }
     setUsersLoading(true);
     userService
       .getUsersByOrg(orgId)
@@ -8084,8 +8134,8 @@ const OrganizationDetailsPage = ({ defaultTab }) => {
     u.roles?.toUpperCase().includes("STUDENT"),
   );
 
-  useEffect(() => {
-    if (!orgId) return;
+    useEffect(() => {
+    if (!orgId || isDemoId(orgId)) return;
     setBatchLoading(true);
     setBatchError(null);
     Promise.all([
@@ -8403,6 +8453,22 @@ const OrganizationDetailsPage = ({ defaultTab }) => {
                 </span>
               )}
             </div>
+                        {Array.isArray(org.products) && org.products.length > 0 && (
+              <div style={{ display: "flex", gap: 6, marginTop: 10, flexWrap: "wrap" }}>
+                {org.products.map((p) => (
+                  <span
+                    key={p.product}
+                    style={{
+                      fontSize: 11, fontWeight: 700, padding: "3px 10px", borderRadius: 999,
+                      background: "rgba(99,102,241,0.12)", color: "#6366f1",
+                    }}
+                  >
+                    {String(p.product).toUpperCase()}
+                    {(p.roles || []).length > 0 ? ` · ${p.roles.join(", ")}` : ""}
+                  </span>
+                ))}
+              </div>
+            )}
             <div style={{ display: "flex", gap: 12, marginTop: 6 }}>
               <span style={{ fontSize: 11, color: txtSub }}>
                 Created {formatDate(org.createdAt)}
@@ -8541,11 +8607,7 @@ const OrganizationDetailsPage = ({ defaultTab }) => {
           <CoursesTab
             orgId={orgId}
             dark={dark}
-            onLoad={(count) => {
-              setTabs((prev) =>
-                prev.map((t) => (t.key === "courses" ? { ...t, count } : t)),
-              );
-            }}
+                        onLoad={() => {}}
           />
         )}
         {activeTab === "features" && (

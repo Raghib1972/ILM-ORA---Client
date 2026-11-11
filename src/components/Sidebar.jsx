@@ -758,7 +758,9 @@ const IlmDemoSidebar = ({
         .ilm-sb-root[data-mode="icon"] .ilm-sb-nav > div { width: 100%; display: flex; justify-content: center; }
 
         .ilm-sb-backdrop { display: none; }
-        @media (max-width: 768px) {
+              @media (max-width: 767.98px) {
+          /* [Phase 2a] phones: no floating rail/hamburger over page content */
+          .ilm-sb-root:not([data-mode="full"]) { display: none; }
           .ilm-sb-root[data-mode="full"] { z-index: 170; box-shadow: 8px 0 32px rgba(0,0,0,0.25); }
           .ilm-sb-backdrop[data-show="true"] {
             display: block; position: fixed; inset: 0;

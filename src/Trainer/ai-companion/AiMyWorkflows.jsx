@@ -535,13 +535,15 @@ export default function AiMyWorkflows({
             background: tableBg,
             borderRadius: 12,
             border: `1px solid ${border}`,
-            overflow: "hidden",
+            overflowX: "auto",
+            overflowY: "hidden",
           }}
         >
           {/* Table header */}
           <div
             style={{
               display: "grid",
+              minWidth: 680,
               gridTemplateColumns: "2.5fr 1fr 1fr 70px 1fr auto",
               borderBottom: `1px solid ${border}`,
               background: isDark ? "rgba(255,255,255,0.02)" : "#f9fafb",
@@ -582,6 +584,7 @@ export default function AiMyWorkflows({
                 key={workflow.id}
                 style={{
                   display: "grid",
+                  minWidth: 680,
                   gridTemplateColumns: "2.5fr 1fr 1fr 70px 1fr auto",
                   borderBottom: `1px solid ${border}`,
                   padding: "12px 16px",

@@ -242,7 +242,7 @@ export default function MyQuizzes() {
           zIndex: 9999, padding: 16,
         }}>
           <div style={{
-            width: "100%", maxWidth: 720, maxHeight: "90vh",
+            width: "100%", maxWidth: 720, maxHeight: "90dvh",
             background: t.cardBg, border: `1px solid ${t.border}`,
             borderRadius: 24, boxShadow: t.shadowHov,
             display: "flex", flexDirection: "column", overflow: "hidden",
@@ -271,7 +271,7 @@ export default function MyQuizzes() {
               {attempts.length === 0 ? (
                 <EmptyState t={t} icon={Users} text="No attempts yet" />
               ) : (
-                <div style={{ borderRadius: 14, border: `1px solid ${t.border}`, overflow: "hidden" }}>
+                <div style={{ borderRadius: 14, border: `1px solid ${t.border}`, overflowX: "auto", overflowY: "hidden" }}>
                   <table style={{ width: "100%", borderCollapse: "collapse" }}>
                     <thead>
                       <tr style={{ background: t.inputBg }}>

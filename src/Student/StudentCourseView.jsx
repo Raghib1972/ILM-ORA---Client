@@ -449,9 +449,10 @@ export default function StudentCourseView() {
       )}
 
       {/* ═══ BODY GRID ═══ */}
-      <div className="dash-row-grid" style={{ gridTemplateColumns: "1fr 2fr", alignItems: "flex-start" }}>
+      <style>{`@media (max-width: 1023px) { .sx-stack { grid-template-columns: minmax(0, 1fr) !important; } .sx-stack > * { position: static !important; max-height: none !important; } }`}</style>
+      <div className="dash-row-grid sx-stack" style={{ gridTemplateColumns: "1fr 2fr", alignItems: "flex-start" }}>
         {/* LEFT — Modules */}
-        <div style={{ background: t.cardBg, border: `1px solid ${t.border}`, borderRadius: 20, boxShadow: t.shadow, padding: 20, position: "sticky", top: 16, maxHeight: "calc(100vh - 40px)", overflowY: "auto" }}>
+        <div style={{ background: t.cardBg, border: `1px solid ${t.border}`, borderRadius: 20, boxShadow: t.shadow, padding: 20, position: "sticky", top: 16, maxHeight: "calc(100dvh - 40px)", overflowY: "auto" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 8, paddingBottom: 14, borderBottom: `1px solid ${t.border}`, marginBottom: 12 }}>
             <BookOpen size={15} color="#7c3aed" />
             <span style={{ fontSize: 14, fontWeight: 700, color: t.text, fontFamily: "'Poppins',sans-serif" }}>Course Modules</span>
@@ -529,21 +530,21 @@ export default function StudentCourseView() {
                       </div>
 
                       <div style={{ display: "flex", flexWrap: "wrap", gap: 4, marginBottom: 6 }}>
-                        <span style={{ fontSize: 9, fontWeight: 600, padding: "2px 7px", borderRadius: 20, background: `${typeColor}18`, color: typeColor, fontFamily: "'Poppins',sans-serif" }}>
+                        <span style={{ whiteSpace: "nowrap", fontSize: 9, fontWeight: 600, padding: "2px 7px", borderRadius: 20, background: `${typeColor}18`, color: typeColor, fontFamily: "'Poppins',sans-serif" }}>
                           {c.contentType}
                         </span>
                         {isDone && (
-                          <span style={{ fontSize: 9, fontWeight: 600, padding: "2px 7px", borderRadius: 20, background: t.statusCompletedBg, color: t.statusCompletedText, fontFamily: "'Poppins',sans-serif" }}>
+                          <span style={{ whiteSpace: "nowrap", fontSize: 9, fontWeight: 600, padding: "2px 7px", borderRadius: 20, background: t.statusCompletedBg, color: t.statusCompletedText, fontFamily: "'Poppins',sans-serif" }}>
                             ✓ Done
                           </span>
                         )}
                         {!unlocked && isPlanLocked(index) && (
-                          <span style={{ fontSize: 9, fontWeight: 600, padding: "2px 7px", borderRadius: 20, background: t.statusProgressBg, color: t.statusProgressText, display: "inline-flex", alignItems: "center", gap: 3, fontFamily: "'Poppins',sans-serif" }}>
+                          <span style={{ whiteSpace: "nowrap", fontSize: 9, fontWeight: 600, padding: "2px 7px", borderRadius: 20, background: t.statusProgressBg, color: t.statusProgressText, display: "inline-flex", alignItems: "center", gap: 3, fontFamily: "'Poppins',sans-serif" }}>
                             <Lock size={7} /> Upgrade to unlock
                           </span>
                         )}
                         {!unlocked && !isPlanLocked(index) && (
-                          <span style={{ fontSize: 9, fontWeight: 600, padding: "2px 7px", borderRadius: 20, background: t.statusNotStartedBg, color: t.textMuted, display: "inline-flex", alignItems: "center", gap: 3, fontFamily: "'Poppins',sans-serif" }}>
+                          <span style={{ whiteSpace: "nowrap", fontSize: 9, fontWeight: 600, padding: "2px 7px", borderRadius: 20, background: t.statusNotStartedBg, color: t.textMuted, display: "inline-flex", alignItems: "center", gap: 3, fontFamily: "'Poppins',sans-serif" }}>
                             <Lock size={7} /> Complete previous module
                           </span>
                         )}
@@ -613,11 +614,11 @@ export default function StudentCourseView() {
                   <div style={{ flex: 1 }}>
                     <div style={{ fontSize: 14, fontWeight: 700, color: t.text, marginBottom: 5, fontFamily: "'Poppins',sans-serif" }}>{active.title}</div>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 5, alignItems: "center" }}>
-                      <span style={{ fontSize: 9, fontWeight: 600, padding: "2px 7px", borderRadius: 20, background: mediaType === "VIDEO" ? `${VIDEO_COLOR}18` : `${PDF_COLOR}18`, color: mediaType === "VIDEO" ? VIDEO_COLOR : PDF_COLOR, fontFamily: "'Poppins',sans-serif" }}>
+                      <span style={{ whiteSpace: "nowrap", fontSize: 9, fontWeight: 600, padding: "2px 7px", borderRadius: 20, background: mediaType === "VIDEO" ? `${VIDEO_COLOR}18` : `${PDF_COLOR}18`, color: mediaType === "VIDEO" ? VIDEO_COLOR : PDF_COLOR, fontFamily: "'Poppins',sans-serif" }}>
                         {mediaType}
                       </span>
                       {completedIds.includes(active.id) && (
-                        <span style={{ fontSize: 9, fontWeight: 600, padding: "2px 7px", borderRadius: 20, background: t.statusCompletedBg, color: t.statusCompletedText, display: "inline-flex", alignItems: "center", gap: 3, fontFamily: "'Poppins',sans-serif" }}>
+                        <span style={{ whiteSpace: "nowrap", fontSize: 9, fontWeight: 600, padding: "2px 7px", borderRadius: 20, background: t.statusCompletedBg, color: t.statusCompletedText, display: "inline-flex", alignItems: "center", gap: 3, fontFamily: "'Poppins',sans-serif" }}>
                           <CheckCircle size={9} /> Completed
                         </span>
                       )}

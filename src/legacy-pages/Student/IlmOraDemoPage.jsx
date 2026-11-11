@@ -943,9 +943,14 @@ const PRODUCT_HOME_PATH = {
 };
 
 // Internal section key (ilmDemoContentRegistry mein isi se component milta hai)
+// const PRODUCT_SECTION_PATH = {
+//   workspace: "/student/workspace",
+//   calendar: "/student/calendar", // registry mein add hoga (files milne ke baad)
+// };
+
 const PRODUCT_SECTION_PATH = {
-  workspace: "/student/workspace",
-  calendar: "/student/calendar", // registry mein add hoga (files milne ke baad)
+  workspace: "/admin/workspace",
+  calendar: "/admin/calendar",
 };
 
 // NEW: Navigation preference only (NOT a permission).
@@ -2436,13 +2441,23 @@ if (!target || target === "/onboarding") return;
     ? PRODUCT_SECTION_PATH[productKeyForContent]
     : null;
 
-  const ContentComponent = useMemo(() => {
+  // const ContentComponent = useMemo(() => {
+  //   if (activeHubKey || isAllCoursesSection) return null;
+  //   const effectiveSection = productSection || activeSection;
+  //   if (effectiveSection) {
+  //     return getSectionComponent(featureRoleKey, effectiveSection) || null;
+  //   }
+  //   return getRoleHomeComponent(featureRoleKey);
+  // }, [
+    const ContentComponent = useMemo(() => {
     if (activeHubKey || isAllCoursesSection) return null;
     const effectiveSection = productSection || activeSection;
+    // Product user (Workspace/Calendar) ko hamesha Admin profile ka content dikhao
+    const contentRoleKey = productSection ? "admin" : featureRoleKey;
     if (effectiveSection) {
-      return getSectionComponent(featureRoleKey, effectiveSection) || null;
+      return getSectionComponent(contentRoleKey, effectiveSection) || null;
     }
-    return getRoleHomeComponent(featureRoleKey);
+    return getRoleHomeComponent(contentRoleKey);
   }, [
     activeSection,
     activeHubKey,
@@ -4050,7 +4065,7 @@ const renderMegaTrigger = (key) => {
          <div className="d-nav-right">
   {/* Notification Bell */}
   {isLoggedIn && (
-    <NotificationBell roleOverride={featureRoleKey} />
+       <NotificationBell roleOverride={isProductUser ? "admin" : featureRoleKey} />
   )}
 
         <NavbarSearch theme={theme} />
@@ -4507,8 +4522,8 @@ const renderMegaTrigger = (key) => {
               overflowX: "hidden",
             }}
           >
-            <IlmDemoProfilePage
-              roleOverride={featureRoleKey}
+              <IlmDemoProfilePage
+              roleOverride={isProductUser ? "admin" : featureRoleKey}
               onProfileComplete={handleProfileCompleted}
               scrollTarget={profileScrollTarget}
             />

@@ -1232,7 +1232,7 @@ function getStyles(t, isDark) {
 
   return {
     root: {
-      minHeight: "100vh",
+      minHeight: "100dvh",
       width: "100%",
       background: t.pageBg,
       color: t.text,

@@ -280,7 +280,7 @@ const STYLES = `
 
   .sp-root {
     font-family: var(--sp-font);
-    min-height: 100vh;
+    min-height: 100vh; min-height: 100dvh;
     background: var(--sp-bg);
     color: var(--sp-text);
     transition: background 0.3s, color 0.3s;
@@ -301,7 +301,7 @@ const STYLES = `
   }
 
   .sp-loading-screen {
-    min-height: 100vh; display: flex; flex-direction: column;
+    min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
     align-items: center; justify-content: center; gap: 16px;
     background: var(--sp-bg); font-family: var(--sp-font);
   }
@@ -418,7 +418,7 @@ const STYLES = `
   .sp-progress-track { height: 4px; background: var(--sp-icon-bg); border-radius: 4px; overflow: hidden; }
   .sp-progress-fill { height: 100%; border-radius: 4px; background: var(--sp-accent1); transition: width 0.8s cubic-bezier(0.4,0,0.2,1); }
   .sp-progress-label-row { display: flex; justify-content: space-between; margin-top: 5px; }
-  .sp-progress-label { font-size: var(--sp-fs-sm); color: var(--sp-text-muted); font-weight: var(--sp-fw-med); }
+  .sp-progress-label { white-space: nowrap; font-size: var(--sp-fs-sm); color: var(--sp-text-muted); font-weight: var(--sp-fw-med); }
 
   .sp-plan-footer { padding: 10px 20px; border-top: 1px solid var(--sp-border); background: var(--sp-card); display: flex; align-items: center; justify-content: space-between; }
   .sp-plan-footer-status { font-size: var(--sp-fs-md); color: var(--sp-text-muted); font-weight: var(--sp-fw-med); }
@@ -434,7 +434,7 @@ const STYLES = `
   .sp-empty-sub { font-size: var(--sp-fs-lg); color: var(--sp-text-muted); }
 
   .sp-error-screen {
-    flex: 1; min-height: 100vh; display: flex; flex-direction: column;
+    flex: 1; min-height: 100vh; min-height: 100dvh; display: flex; flex-direction: column;
     align-items: center; justify-content: center; gap: 16px; background: var(--sp-bg);
     font-family: var(--sp-font);
   }
@@ -503,7 +503,7 @@ const STYLES = `
   .sp-section-eyebrow { font-size: var(--sp-fs-xs); font-weight: var(--sp-fw-bold); color: var(--sp-chip-text); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px; }
   .sp-section-title { font-size: var(--sp-fs-xl); font-weight: var(--sp-fw-bold); color: var(--sp-text); }
   .sp-section-desc { font-size: var(--sp-fs-md); color: var(--sp-text-muted); margin-top: 2px; }
-  .sp-section-done { font-size: var(--sp-fs-md); font-weight: var(--sp-fw-bold); color: var(--sp-text-muted); }
+  .sp-section-done { white-space: nowrap; font-size: var(--sp-fs-md); font-weight: var(--sp-fw-bold); color: var(--sp-text-muted); }
   .sp-section-done-label { font-size: var(--sp-fs-xs); color: var(--sp-text-muted); font-weight: var(--sp-fw-med); }
   .sp-chevron-wrap {
     width: 26px; height: 26px; border-radius: var(--sp-radius-xs); background: var(--sp-chip-bg);
@@ -569,7 +569,7 @@ const STYLES = `
   .sp-btn-mark-done { background: rgba(var(--sp-accent3-rgb),0.14); color: var(--sp-accent3); border-color: rgba(var(--sp-accent3-rgb),0.3); }
 
   /* ── Compiler view ── */
-  .sp-compiler-root { height: 100vh; background: var(--sp-bg); display: flex; flex-direction: column; font-family: var(--sp-font); overflow: hidden; }
+  .sp-compiler-root { height: 100vh; height: 100dvh; background: var(--sp-bg); display: flex; flex-direction: column; font-family: var(--sp-font); overflow: hidden; }
 
   .sp-run-overlay {
     position: fixed; inset: 0; background: var(--sp-overlay); backdrop-filter: blur(10px);
@@ -609,7 +609,7 @@ const STYLES = `
 
   .sp-editor-layout { flex: 1; display: flex; overflow: hidden; }
 
-  .sp-problem-panel { width: 370px; flex-shrink: 0; border-right: 1px solid var(--sp-border); overflow-y: auto; background: var(--sp-bg); }
+  .sp-problem-panel { width: 370px; max-width: 100%; flex-shrink: 0; border-right: 1px solid var(--sp-border); overflow-y: auto; background: var(--sp-bg); }
   .sp-problem-detail { padding: 24px 22px 56px; }
   .sp-problem-detail-title { font-size: var(--sp-fs-2xl); font-weight: var(--sp-fw-x); color: var(--sp-text); line-height: 1.3; margin-bottom: 12px; }
   .sp-problem-tags-row { display: flex; gap: 8px; align-items: center; margin-bottom: 22px; flex-wrap: wrap; }
@@ -676,7 +676,7 @@ const STYLES = `
   }
   .sp-output-tab.active { background: rgba(var(--sp-accent1-rgb),0.10); border-color: rgba(var(--sp-accent1-rgb),0.25); color: var(--sp-accent1); }
   .sp-output-tab-meta { margin-left: auto; display: flex; align-items: center; gap: 8px; }
-  .sp-output-tab-count { font-size: var(--sp-fs-sm); font-weight: var(--sp-fw-bold); color: var(--sp-text-muted); }
+  .sp-output-tab-count { white-space: nowrap; font-size: var(--sp-fs-sm); font-weight: var(--sp-fw-bold); color: var(--sp-text-muted); }
   .sp-output-content { flex: 1; overflow-y: auto; padding: 12px 16px; }
   .sp-output-empty { color: var(--sp-text-muted); opacity: 0.7; font-size: var(--sp-fs-md); padding-top: 10px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 7px; }
   .sp-output-empty strong { color: var(--sp-text); font-weight: var(--sp-fw-semi); }
@@ -689,7 +689,7 @@ const STYLES = `
   .sp-output-pre { font-size: var(--sp-fs-md); color: var(--sp-text-muted); line-height: 1.6; white-space: pre-wrap; word-break: break-all; font-family: var(--sp-font-mono); margin: 0; }
 
   .sp-judge-header { display: flex; gap: 10px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
-  .sp-score-chip {
+  .sp-score-chip { white-space: nowrap;
     font-size: var(--sp-fs-sm); background: rgba(var(--sp-accent2-rgb),0.10); color: var(--sp-accent2);
     border: 1px solid rgba(var(--sp-accent2-rgb),0.22); border-radius: var(--sp-radius-xs); padding: 2px 9px;
     font-weight: var(--sp-fw-bold); display: flex; align-items: center; gap: 4px;
@@ -708,7 +708,7 @@ const STYLES = `
 
   @media (max-width: 860px) {
     .sp-editor-layout { flex-direction: column; }
-    .sp-problem-panel { width: 100%; border-right: none; border-bottom: 1px solid var(--sp-border); max-height: 40vh; }
+    .sp-problem-panel { width: 100%; border-right: none; border-bottom: 1px solid var(--sp-border); max-height: 40vh; max-height: 40dvh; }
     .sp-main { padding: 24px 18px; }
     .sp-detail-body { padding: 24px 18px 0; max-width: 100%; }
   }

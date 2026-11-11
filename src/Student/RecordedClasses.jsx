@@ -715,7 +715,8 @@ const RecordedClasses = () => {
       </div>
 
       {/* ═══ MAIN ROW — playlist + player, same card recipe & spacing as the dashboard row grid ═══ */}
-      <div className="dash-row-grid" style={{ gridTemplateColumns: "300px 1fr", marginBottom: 14 }}>
+      <style>{`@media (max-width: 1023px) { .sx-stack { grid-template-columns: minmax(0, 1fr) !important; } .sx-stack > * { position: static !important; max-height: none !important; } }`}</style>
+      <div className="dash-row-grid sx-stack" style={{ gridTemplateColumns: "300px 1fr", marginBottom: 14 }}>
 
         {/* Playlist */}
         <div style={{ ...card, overflow: "hidden" }}>

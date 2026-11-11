@@ -279,7 +279,7 @@ const DoubtsChatModal = ({ doubt, onClose }) => {
           style={{
             width: "100%",
             maxWidth: 520,
-            height: "90vh",
+            height: "90dvh",
             maxHeight: 600,
             display: "flex",
             flexDirection: "column",

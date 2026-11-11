@@ -1943,7 +1943,7 @@ const SkillMap = () => {
     return (
       <div
         style={{
-          minHeight: "100vh",
+          minHeight: "100dvh",
           background: t.pageBg,
           display: "flex",
           alignItems: "center",
@@ -1991,7 +1991,7 @@ const SkillMap = () => {
     return (
       <div
         style={{
-          minHeight: "100vh",
+          minHeight: "100dvh",
           background: t.pageBg,
           display: "flex",
           alignItems: "center",

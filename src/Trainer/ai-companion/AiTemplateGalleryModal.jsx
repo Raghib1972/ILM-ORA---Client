@@ -117,7 +117,7 @@ export default function AiTemplateGalleryModal({
           borderRadius: 16,
           width: "100%",
           maxWidth: 900,
-          maxHeight: "90vh",
+          maxHeight: "90dvh",
           display: "flex",
           flexDirection: "column",
           boxShadow: isDark

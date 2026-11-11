@@ -1102,7 +1102,7 @@
 //                 placeholder="Batch ID (optional)"
 //                 value={histBatchId}
 //                 onChange={(e) => setHistBatchId(e.target.value)}
-//                 style={{ width: 150 }}
+//                 style={{ width:150,maxWidth:"100%" }}
 //               />
 
 //               <select
@@ -2089,6 +2089,7 @@ const Attendance = () => {
       </Hero>
 
       {/* ═══ TAB SWITCHER ═══ */}
+      <style>{`@media (max-width: 640px) { .at-tab { flex: 1 1 0 !important; min-width: 0 !important; flex-direction: column !important; gap: 4px !important; padding: 10px 4px !important; font-size: 11px !important; line-height: 1.2; text-align: center; } }`}</style>
       <SectionCard t={t} style={{ padding: 6, marginBottom: 20, display: "flex", gap: 8, flexWrap: "wrap" }}>
         {TABS.map((tab) => {
           const Icon = tab.icon;
@@ -2096,6 +2097,7 @@ const Attendance = () => {
           return (
             <button
               key={tab.key}
+              className="at-tab"
               onClick={() => setActiveTab(tab.key)}
               style={{
                 flex: "1 1 160px",

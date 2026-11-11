@@ -1022,8 +1022,35 @@ export const SHOWCASE_CSS = `
 #ilm-onboarding .gd-fab{position:fixed;left:18px;bottom:18px;z-index:9000;display:inline-flex;align-items:center;gap:8px;padding:8px 14px 8px 8px;border-radius:999px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-weight:600;font-size:.78rem;font-family:inherit;cursor:pointer;box-shadow:0 10px 24px -12px rgba(0,0,0,.45)}
 #ilm-onboarding .gd-fab span{width:22px;height:22px;display:grid;place-items:center;border-radius:50%;background:var(--or);color:#fff;font-size:.8rem}
 #ilm-onboarding .gd-fab:hover{border-color:var(--or)}
+
 @media(prefers-reduced-motion:reduce){#ilm-onboarding .gd-ring{animation:none}}
+
+/* ===== Live Demo: group selector (LMS / Product / Corporate / SIS / Educate Tech) ===== */
+#ilm-onboarding #features .sh{display:block!important;margin:0!important;text-align:left}
+#ilm-onboarding #features .sh>.eb,
+#ilm-onboarding #features .sh>h2,
+#ilm-onboarding #features .sh>p{display:none!important}
+#ilm-onboarding #features .sh .seg{display:flex!important;flex-direction:column;gap:6px;width:100%;margin:0!important;padding:12px!important;background:var(--bg);border:1px solid var(--bd)!important;border-radius:18px!important;box-shadow:var(--sh)}
+#ilm-onboarding #features .sh .seg:before{content:"Choose a module";display:block;font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mu);padding:2px 6px 6px;border-bottom:1px solid var(--bd);margin-bottom:2px}
+#ilm-onboarding #features .sh .seg button{display:flex!important;align-items:center;justify-content:space-between;gap:8px;width:100%;text-align:left;padding:10px 14px!important;font-size:.86rem!important;border-radius:12px!important}
+#ilm-onboarding #features .sh .seg button[data-r=corporate]:after,
+#ilm-onboarding #features .sh .seg button[data-r=sis]:after,
+#ilm-onboarding #features .sh .seg button[data-r=edutech]:after{display:inline-block!important;content:"Coming Soon";font-size:.6rem;font-weight:700;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,#F59E0B 18%,transparent);color:#B45309;opacity:1}
+#ilm-onboarding #features .sh .seg button[aria-pressed=true]:after{background:rgba(255,255,255,.25)!important;color:#fff!important}
+#ilm-onboarding #features .tabs{position:static!important}
+@media(min-width:901px){
+  #ilm-onboarding #features>.w{grid-template-rows:auto 1fr!important}
+  #ilm-onboarding #features .sh{grid-column:1!important;grid-row:1!important}
+  #ilm-onboarding #features .tabs{grid-column:1!important;grid-row:2!important}
+  #ilm-onboarding #features .show{grid-column:2!important;grid-row:1/3!important}
+}
+@media(max-width:900px){
+  #ilm-onboarding #features .sh .seg{flex-direction:row;flex-wrap:wrap}
+  #ilm-onboarding #features .sh .seg:before{width:100%}
+  #ilm-onboarding #features .sh .seg button{width:auto}
+}
 `;
+
 
 const VIEWS = [['demo', 'Live Demo'], ['products', 'Products'], ['how', 'How it works'], ['why', 'Why ILM ORA'], ['faq', 'FAQ']];
 const ANCH = { '#features': 'demo', '#top': 'demo', '#products': 'products', '#how': 'how', '#why': 'why', '#faq': 'faq' };

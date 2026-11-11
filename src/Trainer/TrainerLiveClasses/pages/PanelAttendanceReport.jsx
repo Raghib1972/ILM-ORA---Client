@@ -178,6 +178,7 @@ export default function PanelAttendanceReport({ t, isDark, navigate }) {
               fontWeight: FONT_WEIGHT.medium,
               outline: "none",
               width: 200,
+              maxWidth: "100%",
             }}
           />
         </div>

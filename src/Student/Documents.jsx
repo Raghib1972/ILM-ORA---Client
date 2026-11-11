@@ -551,7 +551,7 @@ const Documents = () => {
       {/* ═══ MODAL ═══ */}
       {preview && (
         <div style={{ position: "fixed", inset: 0, zIndex: 50, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", backdropFilter: "blur(4px)" }}>
-          <div style={{ background: t.cardBg, border: `1px solid ${t.border}`, borderRadius: 20, width: "90vw", height: "90vh", overflow: "hidden", display: "flex", flexDirection: "column", boxShadow: t.shadowHov }}>
+          <div style={{ background: t.cardBg, border: `1px solid ${t.border}`, borderRadius: 20, width: "90vw", height: "90dvh", overflow: "hidden", display: "flex", flexDirection: "column", boxShadow: t.shadowHov }}>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "14px 20px", borderBottom: `1px solid ${t.border}`, flexShrink: 0 }}>
               <p style={{ fontSize: 13, fontWeight: FONT_WEIGHT.bold, color: t.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", margin: 0, fontFamily: FONT_FAMILY }}>{preview.name}</p>
               <button

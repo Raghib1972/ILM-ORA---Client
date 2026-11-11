@@ -239,7 +239,7 @@ export default function StudentFeedback() {
 
   /* ── Guards ── */
   if (ctxLoading) return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: t.pageBg, fontFamily: FONT_FAMILY }}>
+    <div style={{ minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", background: t.pageBg, fontFamily: FONT_FAMILY }}>
       <div style={{ textAlign: "center" }}>
         <div style={{ fontSize: 40, marginBottom: 16, animation: "sfPulse 2s infinite" }}>⏳</div>
         <p style={{ color: t.textMuted, fontSize: 13 }}>Loading your classroom…</p>
@@ -248,7 +248,7 @@ export default function StudentFeedback() {
   );
 
   if (ctxError) return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: t.pageBg, fontFamily: FONT_FAMILY }}>
+    <div style={{ minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", background: t.pageBg, fontFamily: FONT_FAMILY }}>
       <div style={{ padding: "32px 40px", borderRadius: 20, background: t.cardBg, border: `1px solid ${t.border}`, boxShadow: t.shadow, textAlign: "center" }}>
         <p style={{ color: t.overdueText, fontSize: 13, margin: 0 }}>{ctxError}</p>
       </div>
@@ -256,7 +256,7 @@ export default function StudentFeedback() {
   );
 
   if (alreadySubmitted) return (
-    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: t.pageBg, fontFamily: FONT_FAMILY }}>
+    <div style={{ minHeight: "100dvh", display: "flex", alignItems: "center", justifyContent: "center", background: t.pageBg, fontFamily: FONT_FAMILY }}>
       <div style={{ padding: "48px 40px", borderRadius: 24, background: t.cardBg, border: `1px solid ${t.border}`, boxShadow: t.shadow, textAlign: "center", maxWidth: 400, width: "90%" }}>
         <div style={{ width: 56, height: 56, borderRadius: 16, background: t.statusCompletedBg, border: `1px solid ${t.statusCompletedText}40`, display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 16px" }}>
           <CheckCircle size={26} color={t.statusCompletedText} />
@@ -293,7 +293,7 @@ export default function StudentFeedback() {
         input[type=range] { accent-color: ${ACCENT}; }
       `}</style>
 
-      <div style={{ background: t.pageBg, minHeight: "100vh", fontFamily: FONT_FAMILY, transition: "background 0.3s, color 0.3s", color: t.text }}>
+      <div style={{ background: t.pageBg, minHeight: "100dvh", fontFamily: FONT_FAMILY, transition: "background 0.3s, color 0.3s", color: t.text }}>
       <div
   style={{
     width: "100%",

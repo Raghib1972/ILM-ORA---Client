@@ -466,7 +466,7 @@ export default function AiContextResourceModal({
           borderRadius: 16,
           width: "100%",
           maxWidth: 520,
-          maxHeight: "85vh",
+          maxHeight: "85dvh",
           display: "flex",
           flexDirection: "column",
           boxShadow: isDark

@@ -166,7 +166,7 @@ const LiveSessionHistory = () => {
 
       <div
         style={{
-          minHeight: "100vh",
+          minHeight: "100dvh",
           background: t.pageBg,
           color: t.text,
           fontFamily: "'Poppins',sans-serif",
@@ -213,6 +213,7 @@ const LiveSessionHistory = () => {
                 top: "-30%",
                 left: "40%",
                 width: 300,
+                maxWidth: "calc(100vw - 24px)",
                 height: 200,
                 background:
                   "radial-gradient(ellipse,rgba(34,211,238,0.06),transparent 70%)",

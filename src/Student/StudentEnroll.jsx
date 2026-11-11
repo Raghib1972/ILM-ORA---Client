@@ -250,7 +250,7 @@ export default function StudentEnroll() {
         </div>
 
         <div
-          className={`max-w-2xl w-full ${colors.surface} backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/50 p-6 relative z-10 max-h-[95vh] overflow-y-auto`}
+          className={`max-w-2xl w-full ${colors.surface} backdrop-blur-2xl rounded-2xl shadow-2xl border border-white/50 p-6 relative z-10 max-h-[95dvh] overflow-y-auto`}
         >
           <div className="mb-6">
             <div className="flex items-center justify-between mb-4">

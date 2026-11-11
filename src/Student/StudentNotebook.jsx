@@ -133,7 +133,7 @@ const GLOBAL_CSS = `
    /* ── SHELL ── */
   .snblm-root {
     position:relative;
-    height:100%; min-height:100vh;
+    height:100%; min-height: 100vh; min-height: 100dvh;
     background:var(--bg); font-family:var(--font-family);
     display:flex; flex-direction:column; overflow:hidden;
     color:var(--text); transition:background .3s,color .3s;
@@ -317,7 +317,7 @@ const GLOBAL_CSS = `
 
   /* Sources panel */
   .snblm-sources {
-    width:248px; flex-shrink:0;
+    width:248px; max-width: 100%; flex-shrink:0;
     background:var(--surface); display:flex; flex-direction:column;
     overflow:hidden; transition:background .3s;
     border-right:1px solid var(--border);
@@ -601,7 +601,7 @@ const GLOBAL_CSS = `
 
   /* Studio panel */
   .snblm-studio {
-    width:252px; flex-shrink:0; overflow-y:auto;
+    width:252px; max-width: 100%; flex-shrink:0; overflow-y:auto;
     background:var(--surface); display:flex; flex-direction:column;
     transition:background .3s;
   }
@@ -720,7 +720,7 @@ const GLOBAL_CSS = `
   /* ── NOTE EDITOR ── */
   .snblm-note-body { flex:1; display:flex; overflow:hidden; background:var(--bg); }
   .snblm-note-sidebar {
-    width:150px; flex-shrink:0;
+    width:150px; max-width: 100%; flex-shrink:0;
     background:var(--surface); overflow-y:auto;
     padding:8px 0; border-right:1px solid var(--border);
   }
@@ -809,16 +809,16 @@ const GLOBAL_CSS = `
   padding:24px; box-sizing:border-box;
 }
   .snblm-modal {
-  background:var(--modal); border-radius:18px; width:340px;
+  background:var(--modal); border-radius:18px; width:340px; max-width: 100%;
   box-shadow:var(--shadow-hov);
   animation:snblm-pop .2s ease;
   border:1px solid var(--border);
-  max-height:88vh;
+  max-height: 88vh; max-height: 88dvh;
   margin:auto;
   display:flex; flex-direction:column;
   overflow:hidden; /* the modal itself never scrolls — its body does */
 }
-.snblm-modal-wide { width:440px; }
+.snblm-modal-wide { width:440px; max-width: 100%; }
 
 .snblm-modal-scroll {
   overflow-y:auto; padding:24px; flex:1; min-height:0;
@@ -895,7 +895,7 @@ const GLOBAL_CSS = `
 
   /* Studio output */
   .snblm-studio-out {
-    max-height:62vh; overflow-y:auto; padding:16px; border-radius:10px;
+    max-height: 62vh; max-height: 62dvh; overflow-y:auto; padding:16px; border-radius:10px;
     background:var(--surface2); border:1px solid var(--border);
     font-size:13px; line-height:1.8; color:var(--text2);
   }
@@ -928,7 +928,7 @@ const GLOBAL_CSS = `
 
   /* ── LOADING ── */
   .snblm-loading {
-    height:100%; min-height:100vh; display:flex; flex-direction:column;
+    height:100%; min-height: 100vh; min-height: 100dvh; display:flex; flex-direction:column;
     align-items:center; justify-content:center; gap:12px;
     background:var(--bg); font-family:var(--font-family);
   }
@@ -989,6 +989,15 @@ const GLOBAL_CSS = `
 @media (max-width:640px) {
   .snblm-format-grid { grid-template-columns:repeat(2,1fr); gap:10px; }
   .snblm-format-card { min-height:auto; padding:12px; }
+}
+
+/* Phones / small tablets: stack Sources, Chat, Studio instead of 3 side-by-side panes */
+@media (max-width:1023px) {
+  .snblm-lm-body { flex-direction:column; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+  .snblm-sources, .snblm-studio { width:100%; flex-shrink:0; border-right:none; border-bottom:1px solid var(--border); }
+  .snblm-sources { max-height:320px; }
+  .snblm-studio { overflow-y:visible; }
+  .snblm-chat { flex:0 0 auto; height:75dvh; min-height:420px; border-right:none; border-bottom:1px solid var(--border); }
 }
 
   .snblm-length-toggle { display:flex; gap:6px; }
@@ -2587,7 +2596,7 @@ const StudentNotebook = ({ isDark: isDarkProp }) => {
         </div>,
         <>
           <div style={{position:"relative"}}>
-            <div className="snblm-search" style={{width:210}}>
+            <div className="snblm-search" style={{width:210,maxWidth:"100%"}}>
               <Search size={13} color="var(--text3)" strokeWidth={2}/>
               <input placeholder="Search notes…" value={searchQ} onChange={(e)=>setSearchQ(e.target.value)} onFocus={()=>setShowSearch(true)} onBlur={()=>setTimeout(()=>setShowSearch(false),200)}/>
               {searchQ && ( <button onClick={()=>setSearchQ("")} style={{border:"none",background:"transparent",cursor:"pointer",color:"var(--text3)",display:"flex"}}><X size={11}/></button>
@@ -3304,7 +3313,7 @@ const StudentNotebook = ({ isDark: isDarkProp }) => {
                     <p className="snblm-clr-lbl">Choose language</p>
                     <select
                       className="snblm-inp"
-                      style={{ width: 160 }}
+                      style={{ width:160,maxWidth:"100%" }}
                       value={audioModalLanguage}
                       onChange={(e) => setAudioModalLanguage(e.target.value)}
                     >
@@ -3497,7 +3506,7 @@ const StudentNotebook = ({ isDark: isDarkProp }) => {
                     <p className="snblm-clr-lbl">Choose language</p>
                     <select
                       className="snblm-inp"
-                      style={{ width: 160 }}
+                      style={{ width:160,maxWidth:"100%" }}
                       value={videoModalLanguage}
                       onChange={(e) => setVideoModalLanguage(e.target.value)}
                     >
@@ -3839,7 +3848,7 @@ const StudentNotebook = ({ isDark: isDarkProp }) => {
                         <p className="snblm-clr-lbl">Choose language</p>
                         <select
                           className="snblm-inp"
-                          style={{ width: 160 }}
+                          style={{ width:160,maxWidth:"100%" }}
                           value={reportModalLanguage}
                           onChange={(e) =>
                             setReportModalLanguage(e.target.value)
@@ -3963,7 +3972,7 @@ const StudentNotebook = ({ isDark: isDarkProp }) => {
                     <p className="snblm-clr-lbl">Choose language</p>
                     <select
                       className="snblm-inp"
-                      style={{ width: 160 }}
+                      style={{ width:160,maxWidth:"100%" }}
                       value={slideDeckModalLanguage}
                       onChange={(e) =>
                         setSlideDeckModalLanguage(e.target.value)
@@ -4627,7 +4636,7 @@ const StudentNotebook = ({ isDark: isDarkProp }) => {
           <div
             className="snblm-overlay"
             onClick={() => setActiveStudioOutput(null)}>
-          <div className="snblm-modal snblm-modal-wide" style={{width:580}} onClick={(e)=>e.stopPropagation()}>
+          <div className="snblm-modal snblm-modal-wide" style={{width:580,maxWidth:"100%"}} onClick={(e)=>e.stopPropagation()}>
             <div className="snblm-modal-title">
               <div className="snblm-modal-icon">
                 {(()=>{ const item=STUDIO_ITEMS.find(
@@ -4728,7 +4737,7 @@ const StudentNotebook = ({ isDark: isDarkProp }) => {
         </>,
         <>
           <div style={{position:"relative"}}>
-            <div className="snblm-search" style={{width:180}}>
+            <div className="snblm-search" style={{width:180,maxWidth:"100%"}}>
               <Search size={12} color="var(--text3)" strokeWidth={2}/>
               <input placeholder="Search…" value={searchQ} onChange={(e)=>setSearchQ(e.target.value)} onFocus={()=>setShowSearch(true)} onBlur={()=>setTimeout(()=>setShowSearch(false),200)}/>
               {searchQ && ( <button onClick={()=>setSearchQ("")} style={{border:"none",background:"transparent",cursor:"pointer",color:"var(--text3)",display:"flex"}}><X size={10}/></button>

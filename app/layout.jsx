@@ -1,6 +1,7 @@
 import "./globals.css";
 import Script from "next/script";
 import AppProviders from "@/components/AppProviders";
+import TexoraChatLoader from "@/components/TexoraChatLoader";
 // SEO baseline reproduced from the existing index.html — nothing invented.
 // Per-page metadata (title/description/OG/canonical overrides) is layered
 // on top of this in Day 3; this is just the site-wide default.
@@ -138,12 +139,15 @@ export default function RootLayout({ children }) {
       <body>
         <AppProviders>{children}</AppProviders>
 
-        <Script
+{/* Route-based Texora Chat Widget */}
+<TexoraChatLoader />
+
+        {/* <Script
           src="https://widget.toracx.texora.ai/widget.js"
           data-organization-id="6ac8af9e340454bd184149a6"
           data-api-key="tcx_218c724563a294fcaf5867824b5fb3bb32ef8e1f711a7e1341f9267aca25fbfe"
           strategy="lazyOnload"
-        />
+        /> */}
 
         {/* Google Analytics — ILM ORA GA4 */}
         <Script

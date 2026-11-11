@@ -1942,7 +1942,9 @@ export default function AiInPersonNotes({
       )}
 
       {/* ── Main content split ────────────────────────────────────────────────── */}
+      <style>{`@media (max-width: 900px) { .aipn-split { flex-direction: column !important; overflow-y: auto !important; } .aipn-split > * { width: 100% !important; min-width: 0 !important; max-width: 100% !important; flex: 0 0 auto !important; min-height: 440px !important; border-right: none !important; } }`}</style>
       <div
+        className="aipn-split"
         style={{ flex: 1, display: "flex", overflow: "hidden", minHeight: 0 }}
       >
         {/* ── Left: Transcript / Summary panel ─────────────────────────────── */}
@@ -2188,6 +2190,7 @@ export default function AiInPersonNotes({
         <div
           style={{
             width: 340,
+            maxWidth: "100%",
             minWidth: 300,
             display: "flex",
             flexDirection: "column",

@@ -305,8 +305,8 @@ export default function AiCompanionPage({
     <div
       style={{
         display: "flex",
-        height: "calc(100vh - 72px)",
-        minHeight: "calc(100vh - 72px)",
+        height: "calc(100dvh - 72px)",
+        minHeight: "calc(100dvh - 72px)",
         background: bg,
         overflow: "hidden",
         fontFamily: "'Poppins', sans-serif",

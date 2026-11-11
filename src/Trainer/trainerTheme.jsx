@@ -115,7 +115,7 @@ export const PageShell = ({ t, children }) => (
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
     `}</style>
     <div style={{
-      minHeight: "100vh",
+      minHeight: "100dvh",
       background: t.pageBg,
       color: t.text,
       fontFamily: "'Poppins',sans-serif",

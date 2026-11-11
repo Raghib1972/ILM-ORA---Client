@@ -275,7 +275,7 @@ const TrainerSkillMap = () => {
     return (
       <div
         style={{
-          minHeight: "100vh",
+          minHeight: "100dvh",
           background: t.pageBg,
           display: "flex",
           alignItems: "center",
@@ -318,7 +318,7 @@ const TrainerSkillMap = () => {
     return (
       <div
         style={{
-          minHeight: "100vh",
+          minHeight: "100dvh",
           background: t.pageBg,
           display: "flex",
           alignItems: "center",
@@ -379,7 +379,7 @@ const TrainerSkillMap = () => {
       <style>{`@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap'); @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}} .sfade{animation:fadeUp .4s ease both}`}</style>
       <div
         style={{
-          minHeight: "100vh",
+          minHeight: "100dvh",
           background: t.pageBg,
           fontFamily: "'Poppins',sans-serif",
         }}
@@ -809,6 +809,7 @@ const TrainerSkillMap = () => {
                       <span
                         style={{
                           width: 140,
+                          maxWidth: "100%",
                           fontSize: 12,
                           fontWeight: 600,
                           color: t.text,
@@ -1035,6 +1036,7 @@ const TrainerSkillMap = () => {
                             <span
                               style={{
                                 width: 120,
+                                maxWidth: "100%",
                                 fontSize: 11,
                                 fontWeight: 600,
                                 color: t.text,

@@ -227,7 +227,7 @@ export default function BatchReports() {
   if (batchesLoading) return (
     <PageContainer mode={isDark ? "dark" : "light"} pageBg={t.pageBg} textColor={t.text}>
       <style>{styles()}</style>
-      <div style={{ minHeight: "70vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ minHeight: "70dvh", display: "flex", alignItems: "center", justifyContent: "center" }}>
         <Loader t={t} text="Loading..." />
       </div>
     </PageContainer>

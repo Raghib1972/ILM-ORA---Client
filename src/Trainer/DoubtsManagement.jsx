@@ -726,6 +726,7 @@ const DoubtsManagement = () => {
         </div>
 
         <div
+          className="dm-hero-stat"
           style={{
             display: "flex",
             flexDirection: "column",
@@ -734,6 +735,7 @@ const DoubtsManagement = () => {
             flexShrink: 0,
           }}
         >
+          <style>{`@media (max-width: 767px) { .dm-hero-stat { align-items: flex-start !important; } .dm-hero-stat > span { text-align: left !important; } }`}</style>
           <span
             style={{
               fontSize: FONT_SIZE.cardValue,

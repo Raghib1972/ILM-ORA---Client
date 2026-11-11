@@ -96,6 +96,8 @@ const textSecondary = t.textMuted;
           fontSize: 12,
           fontFamily: "'Poppins', sans-serif",
           fontWeight: 500,
+          whiteSpace: "nowrap",
+          flexShrink: 0,
           transition: "all 0.15s",
         }}
       >
@@ -110,6 +112,7 @@ const textSecondary = t.textMuted;
             bottom: "calc(100% + 8px)",
             left: 0,
             width: 220,
+            maxWidth: "calc(100vw - 24px)",
             background: bg,
             border: `1px solid ${border}`,
             borderRadius: 12,

@@ -1212,7 +1212,7 @@ const StartLiveSession = () => {
       `}</style>
 
       <div style={{
-        height: "calc(100vh - 60px)",
+        height: "calc(100dvh - 60px)",
         background: t.pageBg,
         color: t.text,
         fontFamily: "'Poppins',sans-serif",

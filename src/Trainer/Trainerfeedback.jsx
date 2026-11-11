@@ -974,6 +974,23 @@ export default function TrainerFeedback() {
 
         .tf-mid-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
         .tf-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        /* Phones: each feedback row becomes a compact card instead of a clipped 7-column table */
+        @media (max-width: 640px) {
+          .tf-table-wrap { overflow-x: visible; }
+          .tf-table-wrap table { min-width: 0 !important; display: block; }
+          .tf-table-wrap thead { display: none; }
+          .tf-table-wrap tbody { display: flex; flex-direction: column; gap: 10px; padding: 10px 12px 14px; }
+          .tf-table-wrap tr.tf-table-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "mood student status" "rating rating rating" "tags tags tags" "date . view"; gap: 8px 10px; align-items: center; padding: 12px; border: 1px solid rgba(128,128,128,0.22); border-radius: 14px; }
+          .tf-table-wrap tr.tf-table-row > td { display: block; padding: 0 !important; border-bottom: none !important; min-width: 0; }
+          .tf-table-wrap tr.tf-table-row > td:nth-child(1) { grid-area: mood; }
+          .tf-table-wrap tr.tf-table-row > td:nth-child(2) { grid-area: student; }
+          .tf-table-wrap tr.tf-table-row > td:nth-child(2) span { overflow: hidden; text-overflow: ellipsis; }
+          .tf-table-wrap tr.tf-table-row > td:nth-child(3) { grid-area: rating; }
+          .tf-table-wrap tr.tf-table-row > td:nth-child(4) { grid-area: tags; }
+          .tf-table-wrap tr.tf-table-row > td:nth-child(5) { grid-area: status; justify-self: end; }
+          .tf-table-wrap tr.tf-table-row > td:nth-child(6) { grid-area: date; }
+          .tf-table-wrap tr.tf-table-row > td:nth-child(7) { grid-area: view; justify-self: end; }
+        }
         .tf-table-head-row th { white-space: nowrap; }
         .tf-tag-pill { white-space: nowrap; }
         .tf-hero-right { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
@@ -1194,7 +1211,7 @@ export default function TrainerFeedback() {
           <div
             onClick={e => e.stopPropagation()}
             className="tf-modal-overlay-inner"
-            style={{ width: "100%", maxWidth: 540, borderRadius: RADIUS.standardCard, padding: "clamp(18px,4vw,28px)", background: t.cardBg, border: `1px solid ${t.border}`, boxShadow: t.shadow, maxHeight: "90vh", overflowY: "auto" }}
+            style={{ width: "100%", maxWidth: 540, borderRadius: RADIUS.standardCard, padding: "clamp(18px,4vw,28px)", background: t.cardBg, border: `1px solid ${t.border}`, boxShadow: t.shadow, maxHeight: "90dvh", overflowY: "auto" }}
           >
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10, minWidth: 0 }}>

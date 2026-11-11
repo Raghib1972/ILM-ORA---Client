@@ -664,6 +664,7 @@ function PromptInputBox({
                 bottom: "calc(100% + 8px)",
                 left: 0,
                 width: 220,
+                maxWidth: "calc(100vw - 24px)",
                 background: t.cardBg,
                 border: `1px solid ${border}`,
                 borderRadius: 12,
@@ -1077,9 +1078,9 @@ export default function AiChatPanel({
             fontFamily: "'Poppins', sans-serif",
           }}
         >
-          <AlertCircle size={13} />
-          Some modes require a session. Select a meeting/session to unlock all
-          features.
+          <AlertCircle size={13} style={{ flexShrink: 0 }} />
+          <span style={{ flex: 1, minWidth: 0 }}>Some modes require a session. Select a meeting/session to unlock all
+          features.</span>
         </div>
       )}
       {sessionId && (
@@ -1098,8 +1099,8 @@ export default function AiChatPanel({
             fontFamily: "'Poppins', sans-serif",
           }}
         >
-          <Calendar size={13} />
-          <span style={{ flex: 1 }}>
+          <Calendar size={13} style={{ flexShrink: 0 }} />
+          <span style={{ flex: 1, minWidth: 0 }}>
             Session: <strong>{sessionTitle || sessionId}</strong>
           </span>
           <button
@@ -1370,6 +1371,9 @@ export default function AiChatPanel({
               maxWidth: 600,
               display: "flex",
               alignItems: "center",
+              overflowX: "auto",
+              WebkitOverflowScrolling: "touch",
+              scrollbarWidth: "none",
               borderBottom: `1px solid ${border}`,
               marginBottom: 20,
             }}
@@ -1382,6 +1386,8 @@ export default function AiChatPanel({
                   onClick={() => setActiveTab(tab.toLowerCase())}
                   style={{
                     padding: "10px 16px",
+                    flexShrink: 0,
+                    whiteSpace: "nowrap",
                     border: "none",
                     background: "transparent",
                     borderBottom: isActive
@@ -1405,6 +1411,8 @@ export default function AiChatPanel({
               onClick={() => setActiveTab("suggested")}
               style={{
                 padding: "10px 14px",
+                flexShrink: 0,
+                whiteSpace: "nowrap",
                 border: "none",
                 background: "transparent",
                 color: t.text,
@@ -1424,7 +1432,7 @@ export default function AiChatPanel({
             <div
               style={{
                 display: "grid",
-                gridTemplateColumns: "repeat(2, 1fr)",
+                gridTemplateColumns: "repeat(auto-fit, minmax(min(220px, 100%), 1fr))",
                 gap: 12,
               }}
             >

@@ -71,7 +71,7 @@ const VIDEO_COLOR = "#22d3ee"; // same video accent StudentCourseView uses
    scrollbar. Everything else (colors, spacing, cards) is inline + t. ─── */
 const SCOPED_CSS = `
   .vl-body { display: flex; gap: 20px; align-items: flex-start; }
-  .vl-sidebar { width: 340px; flex-shrink: 0; }
+  .vl-sidebar { width: 340px; max-width: 100%; flex-shrink: 0; }
   .vl-main { flex: 1; min-width: 0; }
   .vl-list::-webkit-scrollbar { width: 5px; }
   .vl-list::-webkit-scrollbar-thumb { background: var(--vl-scroll-thumb); border-radius: 4px; }
@@ -81,8 +81,12 @@ const SCOPED_CSS = `
   .vl-transcript::-webkit-scrollbar { width: 5px; }
   .vl-transcript::-webkit-scrollbar-thumb { background: var(--vl-scroll-thumb); border-radius: 4px; }
   @media (max-width: 1024px) {
-    .vl-body { flex-direction: column; }
+    .vl-body { flex-direction: column; align-items: stretch; }
     .vl-sidebar { width: 100%; }
+    .vl-main { width: 100%; flex: 0 0 auto; }
+  }
+  @media (max-width: 640px) {
+    .vl-stats > :last-child:nth-child(odd) { grid-column: 1 / -1; }
   }
 `;
 
@@ -785,7 +789,7 @@ const VideoLectures = () => {
       </div>
 
       {/* ═══ STAT CARDS ═══ */}
-      <div className="stat-grid" style={{ marginBottom: 20 }}>
+      <div className="stat-grid vl-stats" style={{ marginBottom: 20 }}>
         {stats.map((s, i) => (
           <StatCard key={i} stat={s} index={i} loading={false} />
         ))}
@@ -1007,7 +1011,7 @@ const VideoLectures = () => {
                         <button onClick={() => setMuted((m) => !m)} style={{ background: "none", border: "none", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", padding: 2 }}>
                           {muted ? <VolumeX size={17} /> : <Volume2 size={17} />}
                         </button>
-                        <span style={{ fontSize: 12, color: "rgba(255,255,255,0.7)", fontVariantNumeric: "tabular-nums", fontFamily: FONT_FAMILY }}>
+                        <span style={{ whiteSpace: "nowrap", fontSize: 12, color: "rgba(255,255,255,0.7)", fontVariantNumeric: "tabular-nums", fontFamily: FONT_FAMILY }}>
                           {formatTime(currentTime)} / {formatTime(duration)}
                         </span>
                       </div>
@@ -1067,6 +1071,7 @@ const VideoLectures = () => {
                 style={{
                   flex: "0 0 300px",
                   width: 300,
+                  maxWidth: "100%",
                   display: "flex",
                   flexDirection: "column",
                   background: t.cardBg,

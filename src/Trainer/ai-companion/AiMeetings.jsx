@@ -2742,6 +2742,7 @@ export default function AiMeetings({ isDark, onNavigate, onTranscriptStart }) {
         <div
           style={{
             width: 262,
+            maxWidth: "100%",
             minWidth: 262,
             flexShrink: 0,
             borderRight: `1px solid ${border}`,
