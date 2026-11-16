@@ -429,7 +429,7 @@ function LoginModal({ onClose, onGoogleSuccess }) {
         </div>
         <div className="lm-google-wrap">
           <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-            <GoogleLogin onSuccess={handleGoogleSuccess} onError={() => console.error("Google OAuth failed")} theme="outline" size="large" text="continue_with" shape="rectangular" width="372" auto_select={false} cancel_on_tap_outside={true} />
+            <GoogleLogin onSuccess={handleGoogleSuccess} onError={() => console.error("Google OAuth failed")} theme="outline" size="large" text="continue_with" shape="rectangular" width="328" auto_select={false} cancel_on_tap_outside={true} />
           </GoogleOAuthProvider>
         </div>
         <div className="lm-or">
@@ -656,7 +656,29 @@ export default function IlmOraDemoPage() {
     setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 350);
   };
 
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
+   const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  // Profile photo shown in the navbar avatar (synced with AvatarContext via
+  // localStorage + the "ilmora:profile-updated" event).
+  const [avatarSrc, setAvatarSrc] = useState(() => {
+    try { return localStorage.getItem("lms_profile_avatar") || ""; } catch { return ""; }
+  });
+  useEffect(() => {
+    const onProfileUpdate = (e) => {
+      if (e.detail && e.detail.profileImage !== undefined) {
+        setAvatarSrc(e.detail.profileImage || "");
+      }
+    };
+    const onStorage = (e) => {
+      if (e.key === "lms_profile_avatar") setAvatarSrc(e.newValue || "");
+    };
+    window.addEventListener("ilmora:profile-updated", onProfileUpdate);
+    window.addEventListener("storage", onStorage);
+    return () => {
+      window.removeEventListener("ilmora:profile-updated", onProfileUpdate);
+      window.removeEventListener("storage", onStorage);
+    };
+  }, []);
   const userMenuRef = useRef(null);
 
   const [featureMenuOpen, setFeatureMenuOpen] = useState(false);
@@ -997,6 +1019,8 @@ const userEmail =
         .d-user-trigger { display:flex; align-items:center; gap:6px; cursor:pointer; padding:4px 8px 4px 4px; border-radius:999px; transition:0.18s; }
         .d-user-trigger:hover { background:rgba(255,255,255,0.06); }
         .d-user-avatar { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#F97316,#ea580c); display:flex; align-items:center; justify-content:center; font-size:0.9rem; font-weight:800; color:#fff; border:2px solid rgba(249,115,22,.3); flex-shrink:0; user-select:none; }
+        .d-user-avatar { overflow:hidden; }
+        .d-user-avatar-img { width:100%; height:100%; object-fit:cover; display:block; }
         .d-user-arrow { transition:transform .25s; flex-shrink:0; color:#e5e7eb; }
         .d-user-arrow.open { transform:rotate(180deg); }
         .d-user-dropdown { position:absolute; top:calc(100% + 10px); right:0; background:var(--d-dd-bg); border:1px solid var(--d-dd-border); border-radius:14px; min-width:240px; padding:6px 0; box-shadow:var(--d-dd-shadow); opacity:0; transform:translateY(-8px) scale(.97); pointer-events:none; transition:all .2s cubic-bezier(.22,.61,.36,1); z-index:200; }
@@ -1400,7 +1424,13 @@ const userEmail =
   {isLoggedIn ? (
                 <div className="d-user-menu-wrap" ref={userMenuRef}>
                   <div className="d-user-trigger" onClick={() => setUserMenuOpen((o) => !o)}>
-                    <div className="d-user-avatar">{userInitial}</div>
+                    <div className="d-user-avatar">
+  {avatarSrc ? (
+    <img src={avatarSrc} alt={userName || "Profile"} className="d-user-avatar-img" />
+  ) : (
+    userInitial
+  )}
+</div>
                     <ChevronRight
                       size={14}
                       className="d-user-arrow"

@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import authService from "../../services/authService";
 import { getRoleHomeRoute } from "@/utils/roleHomeRedirect";
+import { consumeProductRoute } from "@/utils/productContext";
 export default function GithubCallback() {
   const router = useRouter();
   const ran = useRef(false);
@@ -43,10 +44,12 @@ export default function GithubCallback() {
 
         if (check.isNewUser === false && check.token && check.role) {
           const role = check.role.toUpperCase();
-          localStorage.setItem("lms_token", check.token);
+                    localStorage.setItem("lms_token", check.token);
           localStorage.setItem("role", role);
           if (check.organizationId) {
             localStorage.setItem("organizationId", check.organizationId);
+          } else {
+            localStorage.removeItem("organizationId");
           }
           localStorage.setItem(
             "lms_user",
@@ -57,7 +60,9 @@ export default function GithubCallback() {
                 ? "admin"
                 : role.toLowerCase(),
               isGithubUser: true,
-              profileCompleted: true,
+              // Workspace/Calendar users keep their real profile state;
+              // all other roles behave exactly as before.
+              profileCompleted: check.product ? !!check.profileCompleted : true,
               organizationId: check.organizationId || null,
             }),
           );

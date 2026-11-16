@@ -4,12 +4,13 @@ import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import authService from "../../services/authService";
 import { getRoleHomeRoute } from "@/utils/roleHomeRedirect";
+import { consumeProductRoute } from "@/utils/productContext";
 export default function LinkedinCallback() {
   const router = useRouter();
   const ran = useRef(false);
 
     const redirectByRole = (role) => {
-    router.replace(getRoleHomeRoute(role));
+    router.replace(consumeProductRoute(role, getRoleHomeRoute(role)));
   };
 
   useEffect(() => {
@@ -41,7 +42,9 @@ export default function LinkedinCallback() {
           localStorage.setItem("lms_token", check.token);
           localStorage.setItem("role", role);
           if (check.organizationId) {
-            localStorage.setItem("organizationId", check.organizationId);
+          localStorage.setItem("organizationId", check.organizationId);
+          } else {
+            localStorage.removeItem("organizationId");
           }
           localStorage.setItem(
             "lms_user",

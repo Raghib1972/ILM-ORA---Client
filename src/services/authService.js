@@ -238,12 +238,14 @@ const authService = {
   // register({ name, email, password, role }) {
   //   return api.post("/auth/register", { name, email, password, role });
   // },
-  register({ name, email, password, role }) {
+  register({ name, email, password, role, product }) {
     // noAuth:true guarantees this public signup call never carries a token,
     // no matter what's cached in localStorage.
+    // product (optional): "workspace" | "calendar". Sent only when provided,
+    // so existing LMS registration requests stay unchanged.
     return api.post(
       "/auth/register",
-      { name, email, password, role },
+      { name, email, password, role, ...(product ? { product } : {}) },
       { noAuth: true },
     );
   },
@@ -346,7 +348,14 @@ const authService = {
     return api.get("/auth/me/product").then((res) => res.data);
   },
   setMyProduct(product) {
-    return api.patch("/auth/me/product", { product }).then((res) => res.data);
+    return api.patch("/auth/me/product", { product }).then((res) => {
+      // Backend returns a fresh JWT carrying the "product" claim (only when a
+      // product was actually set). Persist it so later calls send the new token.
+      if (res.data?.token) {
+        authService.saveToken(res.data.token);
+      }
+      return res.data;
+    });
   },
   // ================= ADMIN ORG PROFILE BY EMAIL =================
   // Used by the onboarding dashboard's ProfileDetailsCard for admin/business

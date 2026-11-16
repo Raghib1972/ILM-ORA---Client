@@ -12,6 +12,8 @@ import { GoogleLogin } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import auth from "../../auth";
 import { getAuthProvider } from "@/utils/authProvider";
+import WorkspaceProfilePage from "@/components/product-profiles/WorkspaceProfilePage";
+import CalendarProfilePage from "@/components/product-profiles/CalendarProfilePage";
 // ADDED FROM REACT: GitHub / LinkedIn login support
 import authService from "../../services/authService";
 import {
@@ -601,7 +603,20 @@ function LoginModal({ onClose, onGoogleSuccess, onAuthenticated }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+
+  const googleWrapRef = useRef(null);
+  const [googleWidth, setGoogleWidth] = useState(300);
+  useEffect(() => {
+    const el = googleWrapRef.current;
+    if (!el) return;
+    const update = () =>
+      setGoogleWidth(Math.min(400, Math.max(200, Math.floor(el.clientWidth))));
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
      const redirectByRole = (role) => {
     onClose();
@@ -768,7 +783,7 @@ function LoginModal({ onClose, onGoogleSuccess, onAuthenticated }) {
             </button>
           </p>
         </div>
-        <div className="lm-google-wrap">
+          <div className="lm-google-wrap" ref={googleWrapRef}>
           <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
@@ -777,7 +792,7 @@ function LoginModal({ onClose, onGoogleSuccess, onAuthenticated }) {
               size="large"
               text="continue_with"
               shape="rectangular"
-              width="372"
+              width={googleWidth}
               auto_select={false}
               cancel_on_tap_outside={true}
             />
@@ -2167,7 +2182,29 @@ export default function IlmOraDemoPage() {
     setTimeout(() => setToasts((prev) => prev.filter((t) => t.id !== id)), 350);
   };
 
-  const [userMenuOpen, setUserMenuOpen] = useState(false);
+    const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  // Profile photo for the navbar avatar (synced via localStorage +
+  // the "ilmora:profile-updated" event from AvatarContext).
+  const [avatarSrc, setAvatarSrc] = useState(() => {
+    try { return localStorage.getItem("lms_profile_avatar") || ""; } catch { return ""; }
+  });
+  useEffect(() => {
+    const onProfileUpdate = (e) => {
+      if (e.detail && e.detail.profileImage !== undefined) {
+        setAvatarSrc(e.detail.profileImage || "");
+      }
+    };
+    const onStorage = (e) => {
+      if (e.key === "lms_profile_avatar") setAvatarSrc(e.newValue || "");
+    };
+    window.addEventListener("ilmora:profile-updated", onProfileUpdate);
+    window.addEventListener("storage", onStorage);
+    return () => {
+      window.removeEventListener("ilmora:profile-updated", onProfileUpdate);
+      window.removeEventListener("storage", onStorage);
+    };
+  }, []);
   const userMenuRef = useRef(null);
 
   // "ILM ORA Feature" nav mega-menu — click-toggle, same pattern as the
@@ -2361,10 +2398,10 @@ if (!target || target === "/onboarding") return;
     return "";
   };
 
-  const userRole =
-    normalizeAppRole(savedUser?.role) ||
-    normalizeAppRole(localStorage.getItem("role")) ||
-    "student";
+ const userRole =
+  normalizeAppRole(localStorage.getItem("role")) ||
+  normalizeAppRole(savedUser?.role) ||
+  "student";
   const userInitial = (userName || "U").trim().charAt(0).toUpperCase();
   const featureRoleKey =
     userRole === "admin"
@@ -2593,34 +2630,125 @@ if (!target || target === "/onboarding") return;
     admin: "TENANT_ADMIN",
   };
 
- const handleProductChosen = (productKey) => {
-  localStorage.setItem("role", PRODUCT_USER_BACKEND_ROLE);
+//  const handleProductChosen = (productKey) => {
+//   localStorage.setItem("role", PRODUCT_USER_BACKEND_ROLE);
 
+//   try {
+//     localStorage.setItem(
+//       PRODUCT_PREF_KEY(googleUserInfo?.email || getSavedUser()?.email),
+//       productKey,
+//     );
+//   } catch {}
+
+//   localStorage.setItem(
+//     "lms_user",
+//     JSON.stringify({
+//       ...(getSavedUser() || {}),
+//       name: googleUserInfo?.name || getSavedUser()?.name || "",
+//       email: googleUserInfo?.email || getSavedUser()?.email || "",
+//       role: "student",
+//       product: productKey,
+//       isGoogleUser: !!googleUserInfo,
+//       profileCompleted: false,
+//       isNewUser: false,
+//     }),
+//   );
+
+//   setSelectedRole(productKey);
+//   setShowRolePopup(false);
+//   finalizeOnboarding(null); // no interest step for products
+// };
+
+
+const handleProductChosen = async (productKey) => {
+  if (!["workspace", "calendar"].includes(productKey)) {
+    console.error("Invalid product:", productKey);
+    return;
+  }
+
+  const prevUser = getSavedUser() || {};
+  const email = googleUserInfo?.email || prevUser.email || "";
+
+  // Product selection locally save karo
   try {
     localStorage.setItem(
-      PRODUCT_PREF_KEY(googleUserInfo?.email || getSavedUser()?.email),
-      productKey,
+      PRODUCT_PREF_KEY(email),
+      productKey
     );
-  } catch {}
 
-  localStorage.setItem(
-    "lms_user",
-    JSON.stringify({
-      ...(getSavedUser() || {}),
-      name: googleUserInfo?.name || getSavedUser()?.name || "",
-      email: googleUserInfo?.email || getSavedUser()?.email || "",
-      role: "student",
-      product: productKey,
-      isGoogleUser: !!googleUserInfo,
-      profileCompleted: false,
-      isNewUser: false,
-    }),
-  );
+    localStorage.setItem(
+      "lms_user",
+      JSON.stringify({
+        ...prevUser,
+        name: googleUserInfo?.name || prevUser.name || "",
+        email,
+        role: "student",
+        product: productKey,
+        isGoogleUser: !!googleUserInfo || !!prevUser.isGoogleUser,
+        profileCompleted: false,
+        isNewUser: false,
+      })
+    );
+  } catch (error) {
+    console.error("Product local storage error:", error);
+    return;
+  }
 
   setSelectedRole(productKey);
   setShowRolePopup(false);
-  finalizeOnboarding(null); // no interest step for products
+
+  // Existing provider onboarding flow
+  const hasProviderCredential =
+    !!sessionStorage.getItem("ilmora_google_credential") ||
+    !!sessionStorage.getItem("ilmora_github_code") ||
+    !!sessionStorage.getItem("ilmora_linkedin_code");
+
+  if (hasProviderCredential) {
+    await finalizeOnboarding(null);
+    return;
+  }
+
+  // Existing authenticated user: update product through real backend API
+  if (!localStorage.getItem("lms_token")) {
+    console.error("Authentication token missing. Product update stopped.");
+    return;
+  }
+
+  try {
+    const response = await authService.setMyProduct(productKey);
+
+    if (response?.product !== productKey) {
+      throw new Error("Backend product confirmation mismatch");
+    }
+
+    const updatedUser = {
+      ...(JSON.parse(localStorage.getItem("lms_user") || "{}")),
+      product: response.product,
+    };
+
+    localStorage.setItem("lms_user", JSON.stringify(updatedUser));
+
+    // Backend confirmation ke baad hi dashboard redirect
+    window.history.pushState(
+      null,
+      "",
+      PRODUCT_HOME_PATH[productKey]
+    );
+
+    setProductTick((t) => t + 1);
+
+  } catch (error) {
+    console.error(
+      "Workspace/Calendar product update failed:",
+      error?.response?.data || error
+    );
+
+    alert(
+      "Product update failed. Please try again."
+    );
+  }
 };
+
 
     const handleRoleChosen = (roleKey) => {
     if (PRODUCT_HOME_PATH[roleKey]) {
@@ -3027,7 +3155,7 @@ const MEGA_MENUS = {
         groups: ["Product"],
     items: PRODUCT_ITEMS_ALL.map((i) => ({ key: i.key, title: i.title, group: "Product", go: () => goToProductSection(i.key) })),
   },
-  
+
     // Skills tab — commented out for now
   /*
   cert: {
@@ -3654,6 +3782,8 @@ const renderMegaTrigger = (key) => {
         .d-user-trigger:hover { background:rgba(255,255,255,0.06); }
         .d-user-avatar { width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg,#F97316,#ea580c); display:flex; align-items:center; justify-content:center; font-size:0.82rem; font-weight:800; color:#fff; border:2px solid rgba(249,115,22,.3); flex-shrink:0; user-select:none; }
         @media(min-width:768px){ .d-user-avatar { width:36px; height:36px; font-size:0.9rem; } }
+        .d-user-avatar, .d-mobile-user-avatar { overflow:hidden; }
+        .d-user-avatar-img { width:100%; height:100%; object-fit:cover; display:block; }
         .d-user-arrow { transition:transform .25s; flex-shrink:0; color:#e5e7eb; }
         .d-user-arrow.open { transform:rotate(180deg); }
         .d-user-dropdown { position:absolute; top:calc(100% + 10px); right:0; background:var(--d-dd-bg); border:1px solid var(--d-dd-border); border-radius:14px; min-width:220px; max-width:calc(100vw - 32px); padding:6px 0; box-shadow:var(--d-dd-shadow); opacity:0; transform:translateY(-8px) scale(.97); pointer-events:none; transition:all .2s cubic-bezier(.22,.61,.36,1); z-index:200; }
@@ -3942,7 +4072,7 @@ const renderMegaTrigger = (key) => {
           />
         )}
 
-        
+
 
         {/* Step 5 welcome popup intentionally removed — role selection now
             goes straight to the role-based dashboard (Step 6). */}
@@ -3995,7 +4125,7 @@ const renderMegaTrigger = (key) => {
               Workshops
             </button>
 
-            
+
 {/* Skills — commented out for now */}
 {/* {renderMegaTrigger("cert")} */}
 
@@ -4089,7 +4219,13 @@ const renderMegaTrigger = (key) => {
                   className="d-user-trigger"
                   onClick={() => setUserMenuOpen((o) => !o)}
                 >
-                  <div className="d-user-avatar">{userInitial}</div>
+                                    <div className="d-user-avatar">
+                    {avatarSrc ? (
+                      <img src={avatarSrc} alt={userName || "Profile"} className="d-user-avatar-img" />
+                    ) : (
+                      userInitial
+                    )}
+                  </div>
                   <ChevronRight
                     size={14}
                     className="d-user-arrow"
@@ -4129,7 +4265,7 @@ const renderMegaTrigger = (key) => {
                   >
                     <User size={16} /> Profile
                   </button>
-                 <button
+                 {/* <button
                     className={`d-user-dropdown-item${hasUsedRoleChange() ? " disabled" : ""}`}
                     onClick={() => {
                       setUserMenuOpen(false);
@@ -4154,7 +4290,37 @@ const renderMegaTrigger = (key) => {
                     }}
                   >
                     <Settings size={16} /> Change Password
-                  </button>
+                  </button> */}
+                                    {!isProductUser && (
+                    <>
+                      <button
+                        className={`d-user-dropdown-item${hasUsedRoleChange() ? " disabled" : ""}`}
+                        onClick={() => {
+                          setUserMenuOpen(false);
+                          if (hasUsedRoleChange()) {
+                            addToast({
+                              type: "warning",
+                              title: "Role Changes Exhausted",
+                              desc: `You've used all ${MAX_ROLE_CHANGES} role changes. Your role is now locked.`,
+                            });
+                            return;
+                          }
+                          goToProfile("role");
+                        }}
+                      >
+                        {hasUsedRoleChange() ? <Lock size={16} /> : <UserCog size={16} />} Swap Role
+                      </button>
+                      <button
+                        className="d-user-dropdown-item"
+                        onClick={() => {
+                          setUserMenuOpen(false);
+                          goToProfile("password");
+                        }}
+                      >
+                        <Settings size={16} /> Change Password
+                      </button>
+                    </>
+                  )}
                   <div className="d-user-dropdown-divider" />
                   <button
                     className="d-user-dropdown-item signout"
@@ -4339,7 +4505,7 @@ const renderMegaTrigger = (key) => {
 
               <div className="d-mobile-menu-divider" />
 
-              
+
 {/* Career Tracks — collapsible accordion (replaces Skills) */}
 <button
   type="button"
@@ -4437,7 +4603,13 @@ const renderMegaTrigger = (key) => {
             {isLoggedIn ? (
               <div className="d-mobile-user-block">
                 <div className="d-mobile-user-row">
-                  <div className="d-mobile-user-avatar">{userInitial}</div>
+                                    <div className="d-mobile-user-avatar">
+                    {avatarSrc ? (
+                      <img src={avatarSrc} alt={userName || "Profile"} className="d-user-avatar-img" />
+                    ) : (
+                      userInitial
+                    )}
+                  </div>
                   <div>
                     <div className="d-mobile-user-name">{userName}</div>
                      <div className="d-mobile-user-email">{userEmail}</div>
@@ -4522,11 +4694,24 @@ const renderMegaTrigger = (key) => {
               overflowX: "hidden",
             }}
           >
-              <IlmDemoProfilePage
+              {/* <IlmDemoProfilePage
               roleOverride={isProductUser ? "admin" : featureRoleKey}
               onProfileComplete={handleProfileCompleted}
               scrollTarget={profileScrollTarget}
-            />
+            /> */}
+            {isProductUser ? (
+  productKeyForContent === "workspace" ? (
+    <WorkspaceProfilePage />
+  ) : productKeyForContent === "calendar" ? (
+    <CalendarProfilePage />
+  ) : null
+) : (
+  <IlmDemoProfilePage
+    roleOverride={featureRoleKey}
+    onProfileComplete={handleProfileCompleted}
+    scrollTarget={profileScrollTarget}
+  />
+)}
           </div>
         ) : isLoggedIn && hasRole ? (
           // ═══ REAL PRODUCTION CONTENT ═══
@@ -4578,7 +4763,7 @@ const renderMegaTrigger = (key) => {
           </div>
                                  ) : (
                     <div className="d-sidebar-offset">
-              
+
                        <OnboardingLanding
               key={isLoggedIn ? "onb-auth:" + getLoggedInDisplayName() : "onb-guest"}
               theme={theme}

@@ -347,10 +347,63 @@ const userService = {
       headers: { Authorization: `Bearer ${localStorage.getItem("lms_token")}` },
     });
   },
+  // updateTrainerProfile(data) {
+  //   return axios.put(`${API_GATEWAY}/users/me/trainer-profile`, data, {
+  //     headers: { Authorization: `Bearer ${localStorage.getItem("lms_token")}` },
+  //   });
+  // },
+
+  // TRAINER PROFILE
+  getTrainerProfile() {
+    return axios.get(`${API_GATEWAY}/users/me/trainer-profile`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("lms_token")}` },
+    });
+  },
+
   updateTrainerProfile(data) {
     return axios.put(`${API_GATEWAY}/users/me/trainer-profile`, data, {
       headers: { Authorization: `Bearer ${localStorage.getItem("lms_token")}` },
     });
+  },
+
+  // =====================================================
+  // WORKSPACE PROFILE APIs
+  // =====================================================
+
+  getWorkspaceProfile() {
+    return axios.get(`${API_GATEWAY}/users/me/workspace-profile`, {
+      headers: authHeader(),
+    });
+  },
+
+  updateWorkspaceProfile(data) {
+    return axios.put(
+      `${API_GATEWAY}/users/me/workspace-profile`,
+      data,
+      {
+        headers: authHeader(),
+      }
+    );
+  },
+
+  // =====================================================
+  // CALENDAR PROFILE APIs
+  // =====================================================
+
+  getCalendarProfile() {
+    return axios.get(`${API_GATEWAY}/users/me/calendar-profile`, {
+      headers: authHeader(),
+    });
+  },
+
+  updateCalendarProfile(data) {
+    return axios.put(
+      `${API_GATEWAY}/users/me/calendar-profile`,
+      data,
+      {
+        headers: authHeader(),
+      }
+    );
   },
 
   // // ADMIN PROFILE
@@ -379,19 +432,41 @@ const userService = {
       },
     );
   },
+    // WORKSPACE PROFILE APIs
+  getWorkspaceProfile() {
+    return axios.get(`${API_GATEWAY}/users/me/workspace-profile`, {
+      headers: authHeader(),
+    });
+  },
+
+  updateWorkspaceProfile(data) {
+    return axios.put(
+      `${API_GATEWAY}/users/me/workspace-profile`,
+      data,
+      { headers: authHeader() },
+    );
+  },
+
+  // CALENDAR PROFILE APIs
+  getCalendarProfile() {
+    return axios.get(`${API_GATEWAY}/users/me/calendar-profile`, {
+      headers: authHeader(),
+    });
+  },
+
+  updateCalendarProfile(data) {
+    return axios.put(
+      `${API_GATEWAY}/users/me/calendar-profile`,
+      data,
+      { headers: authHeader() },
+    );
+  },
+
+  // Existing Admin profile methods remain commented.
   // getAdminProfileByEmail(email) {
   //   return axios.get(`${API_GATEWAY}/users/admin-profile/by-email/${email}`, {
   //     headers: authHeader(),
   //   });
-  // },
-  // updateAdminProfileByEmail(email, data) {
-  //   return axios.put(
-  //     `${API_GATEWAY}/users/admin-profile/by-email/${email}`,
-  //     data,
-  //     {
-  //       headers: authHeader(),
-  //     },
-  //   );
   // },
 };
 

@@ -632,25 +632,54 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
   // already uses (localStorage["lms_token"] / localStorage["lms_user"]),
   // so the same authenticated session is detected everywhere, including
   // after navigating away from /onboarding to a public page.
+  // useEffect(() => {
+  //   const token = localStorage.getItem("lms_token");
+  //   const rawUser = localStorage.getItem("lms_user");
+  //   let parsedUser = null;
+  //   try {
+  //     parsedUser = rawUser ? JSON.parse(rawUser) : null;
+  //   } catch {
+  //     parsedUser = null;
+  //   }
+
+  //   // Same stale-data guard IlmOraDemoPage.jsx already runs on mount: a
+  //   // bare isNewUser:true flag with no matching Google credential is
+  //   // leftover data from an interrupted Google sign-in (tab/browser
+  //   // closed before role selection finished) — sessionStorage clears on
+  //   // session end but localStorage["lms_user"] doesn't, so this flag can
+  //   // outlive the real session. Without this check, a public page loaded
+  //   // first (before /onboarding ever mounts and cleans it up) would trust
+  //   // the stale flag and show the avatar for a user who never logged in.
+  //   const hasGoogleCred = !!sessionStorage.getItem("ilmora_google_credential");
+  //   if (!token && parsedUser?.isNewUser === true && !hasGoogleCred) {
+  //     localStorage.removeItem("lms_user");
+  //     setUser(null);
+  //     return;
+  //   }
+
+  //   if (token || parsedUser) {
+  //     setUser(parsedUser || {});
+  //   } else {
+  //     setUser(null);
+  //   }
+  // }, []);
+
   useEffect(() => {
+  const loadUser = () => {
     const token = localStorage.getItem("lms_token");
     const rawUser = localStorage.getItem("lms_user");
     let parsedUser = null;
+
     try {
       parsedUser = rawUser ? JSON.parse(rawUser) : null;
     } catch {
       parsedUser = null;
     }
 
-    // Same stale-data guard IlmOraDemoPage.jsx already runs on mount: a
-    // bare isNewUser:true flag with no matching Google credential is
-    // leftover data from an interrupted Google sign-in (tab/browser
-    // closed before role selection finished) — sessionStorage clears on
-    // session end but localStorage["lms_user"] doesn't, so this flag can
-    // outlive the real session. Without this check, a public page loaded
-    // first (before /onboarding ever mounts and cleans it up) would trust
-    // the stale flag and show the avatar for a user who never logged in.
-    const hasGoogleCred = !!sessionStorage.getItem("ilmora_google_credential");
+    const hasGoogleCred = !!sessionStorage.getItem(
+      "ilmora_google_credential"
+    );
+
     if (!token && parsedUser?.isNewUser === true && !hasGoogleCred) {
       localStorage.removeItem("lms_user");
       setUser(null);
@@ -658,11 +687,72 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
     }
 
     if (token || parsedUser) {
-      setUser(parsedUser || {});
+      setUser({
+        ...parsedUser,
+        name:
+          parsedUser?.displayName ||
+          parsedUser?.name ||
+          parsedUser?.fullName ||
+          "",
+        picture:
+          localStorage.getItem("lms_profile_avatar") ||
+          parsedUser?.picture ||
+          parsedUser?.photoUrl ||
+          "",
+      });
     } else {
       setUser(null);
     }
-  }, []);
+  };
+
+  const handleProfileUpdate = (event) => {
+    const updated = event.detail || {};
+
+    setUser((previous) => {
+  const currentUser = previous || {};
+
+  return {
+    ...currentUser,
+    name:
+      updated.displayName ||
+      updated.name ||
+      currentUser.name ||
+      "",
+    picture:
+      updated.profileImage !== undefined
+        ? updated.profileImage
+        : currentUser.picture || "",
+  };
+});
+  };
+
+  const handleStorageChange = (event) => {
+    if (
+      event.key === "lms_user" ||
+      event.key === "lms_profile_avatar"
+    ) {
+      loadUser();
+    }
+  };
+
+  loadUser();
+
+  window.addEventListener(
+    "ilmora:profile-updated",
+    handleProfileUpdate
+  );
+
+  window.addEventListener("storage", handleStorageChange);
+
+  return () => {
+    window.removeEventListener(
+      "ilmora:profile-updated",
+      handleProfileUpdate
+    );
+
+    window.removeEventListener("storage", handleStorageChange);
+  };
+}, []);
 
   // Same fields the "Student Hub"/"Trainer Hub"/"Manager Hub" logic in
   // IlmOraDemoPage.jsx already normalizes role strings with — copied
@@ -837,14 +927,22 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
                         variant="outline"
                         className="gap-2 rounded-xl border-white/[0.08] bg-[#2A2A2A] hover:border-[#F97316] text-white h-10 px-3"
                       >
-                        <Avatar className="w-7 h-7">
-                          <AvatarImage src={user.picture} alt={user.name} />
-                          <AvatarFallback className="bg-[#1E293B] text-white text-xs">
-                            {user.name?.charAt(0) || (
-                              <User className="w-3 h-3" />
-                            )}
-                          </AvatarFallback>
-                        </Avatar>
+                                          <Avatar className="w-7 h-7">
+                        <AvatarImage
+                          src={
+                            user.picture ||
+                            localStorage.getItem("lms_profile_avatar") ||
+                            ""
+                          }
+                          alt={user.name || "User"}
+                          className="object-cover"
+                        />
+                        <AvatarFallback className="bg-[#1E293B] text-white text-xs">
+                          {user.name?.charAt(0) || (
+                            <User className="w-3 h-3" />
+                          )}
+                        </AvatarFallback>
+                      </Avatar>
                         <ChevronDown className="w-3 h-3" />
                       </Button>
                     </DropdownMenuTrigger>
