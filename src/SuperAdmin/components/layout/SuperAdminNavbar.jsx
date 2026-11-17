@@ -1302,7 +1302,16 @@
 // src/SuperAdmin/components/layout/SuperAdminNavbar.jsx
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "@/lib/routerCompat";
-import { Mail, FileSearch, ChevronDown, Menu, X } from "lucide-react";
+import {
+  Mail,
+  FileSearch,
+  ChevronDown,
+  ChevronsLeft,
+  ChevronsRight,
+  Menu,
+  Search,
+  X,
+} from "lucide-react";
 import { PERMISSIONS } from "@/SuperAdmin/constants/permissions";
 import { useTheme } from "../../context/ThemeContext";
 
@@ -1607,117 +1616,301 @@ const useOutside = (ref, cb) => {
   }, [ref, cb]);
 };
 
-// ── Desktop dropdown ──────────────────────────────────────────
-const Dropdown = ({ group, pendingCount, dark, active, idle }) => {
-  const [open, setOpen] = useState(false);
-  const ref = useRef(null);
-  useOutside(ref, () => setOpen(false));
+// ── Desktop sidebar (≥1024px) — the only desktop navigation ───
+// Renders the SAME `NAV` config, NavLink shim and hasPermission used by the
+// mobile drawer below; there is no second route list.
+const SIDEBAR_W = 232;
+const SIDEBAR_W_COLLAPSED = 68;
 
-  const panelBg = dark ? "#13131f" : "#fff";
-  const panelBdr = dark ? "rgba(255,255,255,.10)" : "rgba(0,0,0,.10)";
-  const itemClr = dark ? "#cbd5e1" : "#374151";
-  const activeBg = dark ? "rgba(124,58,237,.12)" : "rgba(124,58,237,.07)";
+// NAV's dropdown groups carry no icon of their own, so map them here
+// (keeps the NAV config itself untouched).
+const GROUP_ICON = {
+  "Access Management": ic.onboarding,
+  "Landing Pages": ic.featuredPrograms,
+  Settings: ic.settings,
+};
+
+const pathMatches = (pathname, p) =>
+  pathname === p || pathname.startsWith(p + "/");
+
+const Sidebar = ({ dark, collapsed, onToggle, pendingCount, hasPermission }) => {
+  const { pathname } = useLocation();
+  // Start with the group that owns the current route already open, so the
+  // first paint is correct (no collapsed-then-expanded flash on page load).
+  const [openGroups, setOpenGroups] = useState(() => {
+    const init = {};
+    NAV.forEach((entry, idx) => {
+      if (
+        entry.type === "dropdown" &&
+        entry.children.some((c) => pathMatches(pathname, c.path))
+      ) {
+        init[idx] = true;
+      }
+    });
+    return init;
+  });
+
+  // Keep it in sync on client-side navigation (never closes a group by itself).
+  useEffect(() => {
+    NAV.forEach((entry, idx) => {
+      if (
+        entry.type === "dropdown" &&
+        entry.children.some((c) => pathMatches(pathname, c.path))
+      ) {
+        setOpenGroups((o) => (o[idx] ? o : { ...o, [idx]: true }));
+      }
+    });
+  }, [pathname]);
+
+  const bg = dark ? "#0d0d14" : "#ffffff";
+  const bdr = dark ? "rgba(255,255,255,.07)" : "rgba(0,0,0,.09)";
+  const text = dark ? "#e2e8f0" : "#1f2937";
+  const idleIcon = dark ? "#94a3b8" : "#475569";
+  const subText = dark ? "#94a3b8" : "#475569";
+  const subDot = dark ? "#64748b" : "#94a3b8";
+  const actBg = dark ? "rgba(249,115,22,.16)" : "#fde9dc";
+  const actText = dark ? "#fdba74" : "#9a3412";
+  const actIcon = dark ? "#fb923c" : "#ea580c";
+
+  const row = (isActive) => ({
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    width: "100%",
+    boxSizing: "border-box",
+    padding: collapsed ? "7px 0" : "7px 10px",
+    justifyContent: collapsed ? "center" : "flex-start",
+    borderRadius: 8,
+    textDecoration: "none",
+    fontFamily: "inherit",
+    fontSize: 13,
+    fontWeight: 600,
+    textAlign: "left",
+    color: isActive ? actText : text,
+    background: isActive ? actBg : undefined,
+    marginBottom: 1,
+  });
+
+  const subRow = (isActive) => ({
+    display: "flex",
+    alignItems: "center",
+    gap: 16,
+    boxSizing: "border-box",
+    padding: "6px 10px 6px 17px",
+    borderRadius: 8,
+    textDecoration: "none",
+    fontSize: 12.5,
+    fontWeight: isActive ? 600 : 500,
+    color: isActive ? actText : subText,
+    background: isActive ? actBg : undefined,
+    marginBottom: 0,
+  });
+
+  const icon = (d, isActive) => (
+    <span
+      style={{
+        display: "inline-flex",
+        flexShrink: 0,
+        color: isActive ? actIcon : idleIcon,
+      }}
+    >
+      <SvgIcon d={d} size={18} />
+    </span>
+  );
 
   return (
-    <div
-      ref={ref}
-      style={{ position: "relative", display: "flex", alignItems: "stretch" }}
+    <aside
+      className="sa-sidebar"
+      aria-label="Main navigation"
+      style={{
+        width: collapsed ? SIDEBAR_W_COLLAPSED : SIDEBAR_W,
+        background: bg,
+        borderRight: `1px solid ${bdr}`,
+        "--sa-sb-hover": dark ? "rgba(255,255,255,.06)" : "rgba(0,0,0,.045)",
+      }}
     >
-      <button
-        onClick={() => setOpen((v) => !v)}
+      {/* Brand + collapse toggle */}
+      <div
         style={{
+          height: 56,
+          flexShrink: 0,
           display: "flex",
           alignItems: "center",
-          gap: 4,
-          padding: "0 14px",
-          height: "100%",
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          color: open ? active : idle,
-          fontSize: 13,
-          fontWeight: 500,
-          borderBottom: `2px solid ${open ? active : "transparent"}`,
-          transition: "all .15s",
-          whiteSpace: "nowrap",
+          justifyContent: collapsed ? "center" : "space-between",
+          padding: collapsed ? 0 : "0 12px 0 16px",
         }}
       >
-        {group.label}
-        <ChevronDown
-          size={12}
+        {!collapsed && (
+          <div style={{ minWidth: 0 }}>
+            <h3
+              style={{
+                margin: 0,
+                fontSize: 21,
+                fontWeight: 800,
+                letterSpacing: "-0.05em",
+                lineHeight: 1,
+              }}
+            >
+              <span style={{ color: "#22c55e" }}>ILM</span>
+              <span style={{ color: "#f97316" }}>&nbsp;ORA</span>
+            </h3>
+            <span
+              style={{
+                display: "block",
+                marginTop: 4,
+                fontSize: 8.5,
+                fontWeight: 700,
+                letterSpacing: "0.18em",
+                textTransform: "uppercase",
+                color: dark ? "#94a3b8" : "#475569",
+                whiteSpace: "nowrap",
+              }}
+            >
+              SuperAdmin Panel
+            </span>
+          </div>
+        )}
+        <button
+          type="button"
+          className="sa-sb-toggle"
+          onClick={onToggle}
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          aria-expanded={!collapsed}
+          title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
           style={{
-            transform: open ? "rotate(180deg)" : "none",
-            transition: "transform .2s",
-          }}
-        />
-      </button>
-
-      {open && (
-        <div
-          className="sa-dd-panel"
-          style={{
-            position: "absolute",
-            top: "calc(100% + 2px)",
-            left: 0,
-            minWidth: 210,
-            zIndex: 500,
-            background: panelBg,
-            border: `1px solid ${panelBdr}`,
-            borderRadius: 10,
-            padding: 6,
-            boxShadow: dark
-              ? "0 24px 64px rgba(0,0,0,.55)"
-              : "0 8px 32px rgba(0,0,0,.14)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            width: 28,
+            height: 28,
+            flexShrink: 0,
+            border: "none",
+            borderRadius: 8,
+            cursor: "pointer",
+            background: dark ? "rgba(255,255,255,.06)" : "#f1f5f9",
+            color: idleIcon,
           }}
         >
-          {group.children.map((item) => {
-            const IconEl = item.iconComponent || null;
+          {collapsed ? <ChevronsRight size={16} /> : <ChevronsLeft size={16} />}
+        </button>
+      </div>
+
+      {/* Navigation */}
+      <nav
+        className="sa-sb-nav"
+        style={{
+          flex: 1,
+          minHeight: 0,
+          overflowY: "auto",
+          overflowX: "hidden",
+          padding: "6px 10px 16px",
+        }}
+      >
+        {NAV.map((entry, idx) => {
+          if (entry.type === "item") {
+            if (entry.permission && !hasPermission(entry.permission))
+              return null;
+            const isActive = entry.end
+              ? pathname === entry.path
+              : pathMatches(pathname, entry.path);
             return (
               <NavLink
-                key={item.path}
-                to={item.path}
-                onClick={() => setOpen(false)}
-                style={({ isActive }) => ({
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 9,
-                  padding: "9px 12px",
-                  borderRadius: 7,
-                  textDecoration: "none",
-                  color: isActive ? active : itemClr,
-                  background: isActive ? activeBg : "transparent",
-                  fontSize: 13,
-                  fontWeight: 500,
-                  transition: "all .12s",
-                })}
+                key={entry.path}
+                to={entry.path}
+                end={entry.end ?? false}
+                className="sa-sb-row"
+                title={collapsed ? entry.label : undefined}
+                style={row(isActive)}
               >
-                {IconEl ? (
-                  <IconEl size={13} />
-                ) : (
-                  <SvgIcon d={item.icon} size={13} />
-                )}
-                <span>{item.label}</span>
-                {item.badge && pendingCount > 0 && (
-                  <span
-                    style={{
-                      marginLeft: "auto",
-                      background: "#f59e0b",
-                      color: "#fff",
-                      fontSize: 10,
-                      fontWeight: 700,
-                      padding: "1px 6px",
-                      borderRadius: 999,
-                    }}
-                  >
-                    {pendingCount}
-                  </span>
-                )}
+                {icon(entry.icon, isActive)}
+                {!collapsed && <span>{entry.label}</span>}
               </NavLink>
             );
-          })}
-        </div>
-      )}
-    </div>
+          }
+
+          if (entry.type === "dropdown") {
+            const isOpen = !collapsed && !!openGroups[idx];
+            // Collapsed rail: mark the group that owns the current route.
+            const ownsRoute =
+              collapsed && entry.children.some((c) => pathMatches(pathname, c.path));
+            return (
+              <div key={idx}>
+                <button
+                  type="button"
+                  className="sa-sb-row"
+                  aria-expanded={isOpen}
+                  title={collapsed ? entry.label : undefined}
+                  onClick={() => {
+                    if (collapsed) {
+                      onToggle();
+                      setOpenGroups((o) => ({ ...o, [idx]: true }));
+                    } else {
+                      setOpenGroups((o) => ({ ...o, [idx]: !o[idx] }));
+                    }
+                  }}
+                  style={{ ...row(ownsRoute), border: "none", cursor: "pointer" }}
+                >
+                  {icon(GROUP_ICON[entry.label] || ic.featuredPrograms, ownsRoute)}
+                  {!collapsed && (
+                    <>
+                      <span style={{ flex: 1 }}>{entry.label}</span>
+                      <ChevronDown
+                        size={15}
+                        style={{ color: idleIcon, flexShrink: 0 }}
+                      />
+                    </>
+                  )}
+                </button>
+
+                {isOpen && (
+                  <div style={{ padding: "1px 0 4px" }}>
+                    {entry.children.map((item) => {
+                      const isActive = pathMatches(pathname, item.path);
+                      return (
+                        <NavLink
+                          key={item.path}
+                          to={item.path}
+                          className="sa-sb-row"
+                          style={subRow(isActive)}
+                        >
+                          <span
+                            style={{
+                              width: 5,
+                              height: 5,
+                              borderRadius: "50%",
+                              flexShrink: 0,
+                              background: isActive ? actIcon : subDot,
+                            }}
+                          />
+                          <span style={{ flex: 1, minWidth: 0 }}>
+                            {item.label}
+                          </span>
+                          {item.badge && pendingCount > 0 && (
+                            <span
+                              style={{
+                                background: "#f59e0b",
+                                color: "#fff",
+                                fontSize: 10,
+                                fontWeight: 700,
+                                padding: "1px 6px",
+                                borderRadius: 999,
+                              }}
+                            >
+                              {pendingCount}
+                            </span>
+                          )}
+                        </NavLink>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          }
+          return null;
+        })}
+      </nav>
+    </aside>
   );
 };
 
@@ -1737,6 +1930,33 @@ const SuperAdminNavbar = ({ pendingCount = 0, activeUsers = 0 }) => {
 
   useOutside(notifRef, () => setShowNotif(false));
   useOutside(userRef, () => setShowUser(false));
+
+  // Desktop sidebar collapse is UI-only. Its width is published as a CSS
+  // variable so the fixed top bar and SuperAdminLayout's <main> can offset.
+  const [collapsed, setCollapsed] = useState(false);
+  const searchRef = useRef(null);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      "--sa-sidebar-w",
+      `${collapsed ? SIDEBAR_W_COLLAPSED : SIDEBAR_W}px`,
+    );
+    return () => document.documentElement.style.removeProperty("--sa-sidebar-w");
+  }, [collapsed]);
+
+  // Ctrl/⌘ + K focuses the top-bar search (ignored while it is hidden <1024px).
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key && e.key.toLowerCase() === "k") {
+        const el = searchRef.current;
+        if (!el || el.getClientRects().length === 0) return;
+        e.preventDefault();
+        el.focus();
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
 
   const drawerRef = useRef(null);
 
@@ -1830,14 +2050,24 @@ const SuperAdminNavbar = ({ pendingCount = 0, activeUsers = 0 }) => {
   return (
     <>
       {/* ══════════════════════════════════════════════════════
-          HEADER — fixed, full width, two rows
+          SIDEBAR — desktop (≥1024px), the only desktop navigation
+      ══════════════════════════════════════════════════════ */}
+      <Sidebar
+        dark={dark}
+        collapsed={collapsed}
+        onToggle={() => setCollapsed((v) => !v)}
+        pendingCount={pendingCount}
+        hasPermission={hasPermission}
+      />
+
+      {/* ══════════════════════════════════════════════════════
+          TOP BAR — fixed, single row (right of the sidebar on desktop)
       ══════════════════════════════════════════════════════ */}
       <header
         className="sa-header"
         style={{
           position: "fixed",
           top: 0,
-          left: 0,
           right: 0,
           zIndex: 50,
           background: bg,
@@ -1845,18 +2075,17 @@ const SuperAdminNavbar = ({ pendingCount = 0, activeUsers = 0 }) => {
           boxShadow: dark ? "none" : "0 1px 8px rgba(0,0,0,.06)",
         }}
       >
-        {/* ── ROW 1 — Logo + Right controls (52px) ── */}
+        {/* ── Search + right controls (56px desktop / 52px <1024px) ── */}
         <div
           className="sa-row1"
           style={{
             display: "flex",
             alignItems: "center",
-            height: 52,
             padding: "0 20px",
-            borderBottom: `1px solid ${bdr}`,
           }}
         >
-          {/* Logo */}
+          {/* Logo — only shown <1024px, where the sidebar is hidden.
+              On desktop the brand lives in the sidebar. */}
           <div className="sa-logo" style={{ flexShrink: 0, marginRight: 24 }}>
             <h3
               style={{
@@ -1884,6 +2113,56 @@ const SuperAdminNavbar = ({ pendingCount = 0, activeUsers = 0 }) => {
             </span>
           </div>
 
+          {/* Search — desktop only. UI only: the app has no search API yet. */}
+          <label
+            className="sa-search"
+            style={{
+              alignItems: "center",
+              gap: 10,
+              flex: "1 1 auto",
+              minWidth: 0,
+              maxWidth: 460,
+              height: 36,
+              padding: "0 14px",
+              boxSizing: "border-box",
+              borderRadius: 999,
+              cursor: "text",
+              background: dark ? "rgba(255,255,255,.04)" : "#ffffff",
+              border: `1px solid ${pdBdr}`,
+              boxShadow: dark ? "none" : "0 1px 2px rgba(0,0,0,.04)",
+            }}
+          >
+            <Search size={18} style={{ color: idle, flexShrink: 0 }} />
+            <input
+              ref={searchRef}
+              type="text"
+              placeholder="Search anything..."
+              aria-label="Search"
+              autoComplete="off"
+              style={{
+                flex: 1,
+                minWidth: 0,
+                border: "none",
+                outline: "none",
+                background: "transparent",
+                color: uName,
+                fontSize: 14,
+                fontFamily: "inherit",
+              }}
+            />
+            <kbd
+              style={{
+                flexShrink: 0,
+                fontFamily: "inherit",
+                fontSize: 12,
+                color: idle,
+                whiteSpace: "nowrap",
+              }}
+            >
+              Ctrl + K
+            </kbd>
+          </label>
+
           <div style={{ flex: 1 }} />
 
           {/* Right controls */}
@@ -1895,7 +2174,7 @@ const SuperAdminNavbar = ({ pendingCount = 0, activeUsers = 0 }) => {
                 display: "flex",
                 alignItems: "center",
                 gap: 14,
-                fontSize: 12,
+                fontSize: 13,
                 paddingRight: 8,
               }}
             >
@@ -2136,22 +2415,22 @@ const SuperAdminNavbar = ({ pendingCount = 0, activeUsers = 0 }) => {
                     ? "rgba(255,255,255,.04)"
                     : "rgba(0,0,0,.04)",
                   border: `1px solid ${dark ? "rgba(255,255,255,.08)" : "rgba(0,0,0,.10)"}`,
-                  borderRadius: 8,
-                  padding: "5px 10px 5px 6px",
+                  borderRadius: 12,
+                  padding: "6px 12px 6px 8px",
                   cursor: "pointer",
                 }}
               >
                 <div
                   style={{
-                    width: 26,
-                    height: 26,
+                    width: 32,
+                    height: 32,
                     borderRadius: "50%",
                     background: "linear-gradient(135deg,#7c3aed,#4f46e5)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     color: "#fff",
-                    fontSize: 11,
+                    fontSize: 13,
                     fontWeight: 700,
                     flexShrink: 0,
                   }}
@@ -2161,9 +2440,9 @@ const SuperAdminNavbar = ({ pendingCount = 0, activeUsers = 0 }) => {
                 <div className="sa-user-text" style={{ textAlign: "left" }}>
                   <p
                     style={{
-                      fontSize: 12,
+                      fontSize: 13,
                       color: uName,
-                      fontWeight: 500,
+                      fontWeight: 600,
                       margin: 0,
                       lineHeight: 1.2,
                     }}
@@ -2172,7 +2451,7 @@ const SuperAdminNavbar = ({ pendingCount = 0, activeUsers = 0 }) => {
                   </p>
                   <p
                     style={{
-                      fontSize: 9,
+                      fontSize: 10,
                       color: "#a78bfa",
                       margin: 0,
                       textTransform: "uppercase",
@@ -2273,66 +2552,6 @@ const SuperAdminNavbar = ({ pendingCount = 0, activeUsers = 0 }) => {
               {mobileOpen ? <X size={20} /> : <Menu size={20} />}
             </button>
           </div>
-        </div>
-
-        {/* ── ROW 2 — Nav tabs (44px, desktop only) ── */}
-        <div
-          className="sa-nav-row"
-          style={{
-            display: "flex",
-            alignItems: "stretch",
-            height: 44,
-            // ✅ KEY FIX: Use padding that keeps all tabs visible
-            // overflowX hidden + flex-wrap won't work, so we use
-            // a min-width trick to let items shrink slightly if needed
-            padding: "0 12px",
-            gap: 0,
-            background: bg,
-          }}
-        >
-          {NAV.map((entry, idx) => {
-            if (entry.type === "item") {
-              if (entry.permission && !hasPermission(entry.permission))
-                return null;
-              return (
-                <NavLink
-                  key={entry.path}
-                  to={entry.path}
-                  end={entry.end ?? false}
-                  style={({ isActive }) => ({
-                    display: "flex",
-                    alignItems: "center",
-                    // ✅ Reduced padding so all 5 tabs fit without scrolling
-                    padding: "0 12px",
-                    height: "100%",
-                    textDecoration: "none",
-                    fontSize: 13,
-                    fontWeight: 500,
-                    whiteSpace: "nowrap",
-                    color: isActive ? active : idle,
-                    borderBottom: `2px solid ${isActive ? active : "transparent"}`,
-                    transition: "color .15s, border-color .15s",
-                    flexShrink: 0,
-                  })}
-                >
-                  {entry.label}
-                </NavLink>
-              );
-            }
-            if (entry.type === "dropdown") {
-              return (
-                <Dropdown
-                  key={idx}
-                  group={entry}
-                  pendingCount={pendingCount}
-                  dark={dark}
-                  active={active}
-                  idle={idle}
-                />
-              );
-            }
-            return null;
-          })}
         </div>
       </header>
 
@@ -2610,42 +2829,48 @@ const SuperAdminNavbar = ({ pendingCount = 0, activeUsers = 0 }) => {
 
       {/* ── Responsive CSS ────────────────────────────────────── */}
       <style>{`
-        /* ≥1024px (xl): two-row desktop header */
+        /* Base (<1024px): sidebar + search hidden, 52px top bar with logo,
+           module links live in the drawer. */
         .sa-mobile-only { display: none !important; }
-        .sa-nav-row     { display: flex !important; }
         .sa-stats       { display: flex !important; }
         .sa-user        { display: flex !important; }
-        .sa-header      { padding-top: env(safe-area-inset-top, 0px); }
-
-        /* ✅ FIX: Remove any overflow/scroll so all tabs stay visible
-           (dropdown panels live inside this row and need overflow: visible) */
-        .sa-nav-row { overflow: visible !important; }
-
-        /* 1024–1279px: slightly tighter tabs so all 10 fit on one row */
-        @media (min-width: 1024px) and (max-width: 1279px) {
-          .sa-nav-row > a,
-          .sa-nav-row > div > button { padding: 0 8px !important; font-size: 12px !important; }
+        .sa-header      { left: 0; padding-top: env(safe-area-inset-top, 0px); transition: left .2s ease; }
+        .sa-row1        { height: 52px; }
+        .sa-logo        { display: block; }
+        .sa-search      { display: none; }
+        .sa-sidebar {
+          display: none; flex-direction: column;
+          position: fixed; top: 0; left: 0; bottom: 0; z-index: 50;
+          box-sizing: border-box; padding-top: env(safe-area-inset-top, 0px);
+          transition: width .2s ease;
         }
 
-        /* Desktop dropdown panels never leave the viewport */
-        .sa-dd-panel {
-          max-width: calc(100vw - 16px);
-          max-height: calc(100vh - 120px); max-height: calc(100dvh - 120px);
-          overflow-y: auto;
+        /* ≥1024px: left sidebar is the only navigation; top bar sits to its right */
+        @media (min-width: 1024px) {
+          .sa-header  { left: var(--sa-sidebar-w, 232px); }
+          .sa-row1    { height: 56px; }
+          .sa-logo    { display: none; }
+          .sa-search  { display: flex; }
+          .sa-sidebar { display: flex; }
         }
-        .sa-nav-row > div:last-child .sa-dd-panel { left: auto !important; right: 0 !important; }
 
-        /* <1024px: Row 2 (module links) collapses into the drawer.
-           Row 1 keeps logo, theme, bell, avatar, hamburger. */
+        /* Sidebar rows */
+        .sa-sb-row { background: transparent; border: none; cursor: pointer; }
+        .sa-sb-row:hover, .sa-sb-toggle:hover { background: var(--sa-sb-hover); }
+        .sa-sb-row:focus-visible, .sa-sb-toggle:focus-visible { outline: 2px solid #7c3aed; outline-offset: -2px; }
+        .sa-sb-nav { scrollbar-width: thin; }
+        .sa-search:focus-within { border-color: #7c3aed !important; }
+
+        /* <1024px: module links collapse into the drawer.
+           Row keeps logo, theme, bell, avatar, hamburger. */
         @media (max-width: 1023px) {
-          .sa-nav-row     { display: none !important; }
           .sa-stats       { display: none !important; }
           .sa-mobile-only { display: flex !important; }
           .sa-user-text, .sa-user-chev { display: none !important; }
           .sa-user > button { padding: 3px !important; }
         }
 
-        /* Phones: tighter Row 1 so five controls fit at 320px */
+        /* Phones: tighter top bar so five controls fit at 320px */
         @media (max-width: 639px) {
           .sa-row1 { padding: 0 12px !important; }
           .sa-logo { margin-right: 8px !important; }
@@ -2672,16 +2897,13 @@ const SuperAdminNavbar = ({ pendingCount = 0, activeUsers = 0 }) => {
           .sa-iconbtn { min-width: 44px; min-height: 44px; }
           .sa-user > button { min-height: 44px; }
           .sa-drawer a, .sa-drawer button { min-height: 44px; }
+          .sa-sb-row { min-height: 44px; }
         }
         .sa-drawer:focus { outline: none; }
 
-        /* Hover state for nav links — only on hover-capable devices */
-        @media (hover: hover) {
-          .sa-nav-row a:hover { color: #7c3aed !important; }
-        }
-
         @media (prefers-reduced-motion: reduce) {
-          .sa-header *, .sa-drawer * { transition: none !important; }
+          .sa-header *, .sa-drawer *, .sa-sidebar * { transition: none !important; }
+          .sa-header, .sa-sidebar { transition: none !important; }
         }
       `}</style>
     </>

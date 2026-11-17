@@ -179,18 +179,26 @@ const SuperAdminLayout = ({ children }) => {
       />
 
       {/*
-        Desktop: paddingTop = 52px (Row1) + 44px (Row2) = 96px
-        Mobile:  paddingTop = 52px only (Row2 hidden)
+        Desktop (>=1024px): left sidebar (width via --sa-sidebar-w, set by
+                            SuperAdminNavbar) + single 56px top bar
+        Below 1024px:       52px top bar, no sidebar (drawer + bottom nav)
       */}
       <main className="sa-main" style={{ paddingTop: "var(--nav-h, 96px)", boxSizing: "border-box" }}>
         <style>{`
-          /* --nav-h = real header height (Row1 52px + Row2 44px on desktop,
-             Row1 only below 1024px) + iPhone notch inset */
-          .sa-shell { min-height: 100vh; min-height: 100dvh; --nav-h: calc(96px + env(safe-area-inset-top, 0px)); --bottom-nav-h: 0px; }
+          /* --nav-h = real header height (56px single-row top bar on desktop,
+             52px below 1024px) + iPhone notch inset */
+          .sa-shell { min-height: 100vh; min-height: 100dvh; --nav-h: calc(56px + env(safe-area-inset-top, 0px)); --bottom-nav-h: 0px; }
           .sa-main  { min-height: 100vh; min-height: 100dvh; min-width: 0; }
 
           @media (max-width: 1023px) {
             .sa-shell { --nav-h: calc(52px + env(safe-area-inset-top, 0px)); }
+          }
+          /* Desktop: content sits to the right of the fixed sidebar */
+          @media (min-width: 1024px) {
+            .sa-main { padding-left: var(--sa-sidebar-w, 232px); transition: padding-left .2s ease; }
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .sa-main { transition: none; }
           }
           @media (min-width: 768px) and (max-width: 1023px) {
             .sa-page { padding: 16px !important; }
