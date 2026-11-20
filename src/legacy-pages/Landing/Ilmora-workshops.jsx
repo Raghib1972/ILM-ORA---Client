@@ -110,8 +110,32 @@ const MEDIA = {
   /** Hero ke liye real video (mp4 URL). Khali ho to hero photo use hota hai. */
   heroVideo: '',
   heroPoster: IMG.javaLive,
-  /** Per-workshop cover override: { 'ai-agents-from-scratch': '/workshops/ai-agents.jpg' } */
-  covers: {},
+    /** Per-workshop cover override: { 'ai-agents-from-scratch': '/workshops/ai-agents.jpg' } */
+  covers: {
+        'ai-agents-from-scratch': U(cineAi),
+    'prompt-engineering-masterclass': U(cineCoding),
+    'genai-for-business-ops': U(cinePresent),
+    'fullstack-nextjs-launchpad': IMG.javaLive,
+    'api-design-that-scales': U(cineCoding),
+    'git-and-ci-for-teams': IMG.mentorGuidance,
+    'ux-research-in-a-day': IMG.studentCollab,
+    'design-systems-figma': IMG.celebration,
+    'motion-design-for-product': IMG.javaCelebration,
+        'growth-marketing-loops': U(cinePresent),
+    'seo-in-the-ai-era': IMG.studentCollab,
+    'brand-storytelling-lab': IMG.celebration,
+    'startup-finance-basics': IMG.corp,
+    'product-strategy-bootcamp': U(cinePresent),
+    'leading-through-change': IMG.corp,
+    'first-time-manager-playbook': IMG.mentorGuidance,
+    'executive-presence': IMG.instructor,
+    'hiring-with-structured-interviews': IMG.studentCollab,
+    'hr-onboarding-and-retention': IMG.celebration,
+    'contact-center-qa-and-coaching': IMG.corp,
+    'handling-difficult-customers': IMG.mentorGuidance,
+    'devops-and-cicd-essentials': IMG.coding,
+    'cloud-architecture-fundamentals': U(cineCoding),
+  },
   /** Per-workshop promo video (YouTube ID) details page par. */
   promos: {},
   /** Workshop instructor photo override: { aarav: '/team/aarav.jpg' } */
@@ -181,7 +205,7 @@ const SOURCE_LABEL = { linkedin: 'in', x: 'X', whatsapp: 'WA', google: 'G' };
 
 const GALLERY = [
   { img: IMG.javaCelebration, cap: 'Java workshop celebration', pos: '50% 40%' },
-  { img: IMG.certCeremony, cap: 'Certificate ceremony', pos: '50% 40%' },
+ 
   { img: IMG.coding, cap: 'Focused coding session', pos: '50% 40%' },
   { img: IMG.corp, cap: 'Corporate training workshop', pos: '50% 45%' },
   { img: IMG.celebration, cap: 'Workshop celebration', pos: '50% 35%' },
@@ -1098,10 +1122,15 @@ function Yt({ id, title }) {
 }
 
 /** Workshop ka real cover photo (category ke hisaab se, ya MEDIA.covers / w.coverUrl override). */
+const COVER_POS = {
+  'ai-agents-from-scratch': '50% 35%',
+  'prompt-engineering-masterclass': '50% 35%',
+  'growth-marketing-loops': '50% 35%',
+};
 function WorkshopArt({ w }) {
   const c = CATEGORY_COVER[w.category] || { src: IMG.coding, pos: 'center' };
   const src = MEDIA.covers[w.slug] || w.coverUrl || c.src;
-  return <img src={src} alt={`${w.title} workshop`} loading="lazy" style={{ objectPosition: c.pos }} />;
+  return <img src={src} alt={`${w.title} workshop`} loading="lazy" style={{ objectPosition: COVER_POS[w.slug] || c.pos }} />;
 }
 
 function Avatar({ person, large = false }) {
@@ -1266,7 +1295,19 @@ function useCountdown(ts) {
   return [['Days', Math.floor(d / 864e5)], ['Hrs', p(Math.floor(d / 36e5) % 24)], ['Min', p(Math.floor(d / 6e4) % 60)], ['Sec', p(Math.floor(d / 1e3) % 60)]];
 }
 function Countdown({ ts }) { const c = useCountdown(ts); return <div className="cdn" role="timer">{c.map(([l, v]) => <div key={l}><b>{v}</b><small>{l}</small></div>)}</div>; }
-const Faq = () => <div className="panel glass faq"><h2>Frequently asked questions</h2>{FAQS.map(([q, a]) => <details key={q}><summary>{q}</summary><p>{a}</p></details>)}</div>;
+const Faq = () => (
+  <div className="faq2">
+    <h2 className="faq2-h">Frequently Asked Questions</h2>
+    <div className="faq2-list">
+      {FAQS.map(([q, a]) => (
+        <details key={q}>
+          <summary>{q}</summary>
+          <p>{a}</p>
+        </details>
+      ))}
+    </div>
+  </div>
+);
 
 const HERO_VIS = {
   a: IMG.studentCollab,   // left polaroid
@@ -1378,7 +1419,7 @@ function Hero({ data }) {
             <span className="chip"><I n="award" s={13} />Verified certificate</span>
           </div>
           <div className="hero2-cta">
-            <button type="button" className="btn btn-primary btn-lg" onClick={() => scrollToId('wk-price')}><I n="award" s={16} />Reserve my seat</button>
+            <button type="button" className="btn btn-primary btn-lg" onClick={() => go(CONFIG.OFFER.registerSlug ? `/register/${CONFIG.OFFER.registerSlug}` : '/catalog')}><I n="award" s={16} />Reserve my seat</button>
             <button type="button" className="btn btn-line btn-lg" onClick={() => scrollToId('wk-roadmap')}><I n="compass" s={15} />See the roadmap</button>
             <button type="button" className="btn btn-line btn-lg" onClick={() => go('/catalog')}><I n="search" s={15} />Browse all workshops</button>
           </div>
@@ -1550,8 +1591,7 @@ function CertificateShowcase() {
           <p className="cert-note">The certificate shown is a sample design. Real certificates are generated only from verified completion records, and download unlocks after your completion is confirmed.</p>
         </div>
       </Reveal>
-      <Reveal delay={100}><figure className="natfig"><img src={IMG.certCeremony} alt="Learners receiving certificates at a Java workshop ceremony" loading="lazy" /><figcaption>Certificate ceremony after a Java workshop</figcaption></figure></Reveal>
-    </section>
+          </section>
   );
 }
 
@@ -1566,7 +1606,7 @@ function Mentors() {
             <figcaption>
               <h3>{m.name}</h3>
               <p className="role">{m.role}</p>
-              {m.org && <p className="org">{m.org}</p>}
+              {m.org && <p className="org"><span className="ilm-g">ILM</span> <span className="ora-o">ORA</span></p>}
             </figcaption>
           </figure>
         </Reveal>
@@ -1702,11 +1742,11 @@ function Community() {
   return (
     <section className="wrap sec" aria-labelledby="gl-h">
       <Reveal><div className="sechead"><div><h2 className="h-xl" id="gl-h">Learner community and success stories</h2><p>Real moments from ILM ORA workshops.</p></div></div></Reveal>
-      <Reveal className="gal">
+            <AutoRow label="Learner community photos">
         {GALLERY.map((g) => (
-          <figure key={g.cap}><img src={g.img} alt={g.cap} loading="lazy" style={{ objectPosition: g.pos }} /><figcaption>{g.cap}</figcaption></figure>
+          <figure className="gal-i" key={g.cap}><img src={g.img} alt={g.cap} loading="lazy" style={{ objectPosition: g.pos }} /><figcaption>{g.cap}</figcaption></figure>
         ))}
-      </Reveal>
+      </AutoRow>
           </section>
   );
 }
@@ -2061,7 +2101,7 @@ function OfferStrip() {
     <div className="offer" role="note">
       <span>{o.banner}</span>
       {o.startsAt && o.startsAt > Date.now() && <span className="cdn" role="timer">{c.map(([l, v]) => <div key={l}><b>{v}</b><small>{l}</small></div>)}</span>}
-      <button type="button" className="btn btn-light btn-sm" onClick={() => scrollToId('wk-price')}>Reserve my seat</button>
+            <button type="button" className="btn btn-light btn-sm" onClick={() => go(o.registerSlug ? `/register/${o.registerSlug}` : '/catalog')}>Reserve my seat</button>
     </div>
   );
 }
@@ -2151,6 +2191,13 @@ const jvPath = (W) => {
 const jvInfo = (s) => {
   const d = s.days.map((i) => ROADMAP[i]);
   return { d, live: d.filter((x) => x.live).length, proj: d.reduce((a, x) => a + x.projects.length, 0) };
+};
+/** Day label from ROADMAP: 'DAY 0', 'DAY 1\u20132', 'DAY 3\u20135', 'BONUS' (no invented data). */
+const jvDays = (s) => {
+  const d = s.days.map((i) => ROADMAP[i]);
+  if (d.length === 1) return d[0].day;
+  const n = (x) => x.day.replace('DAY ', '');
+  return `DAY ${n(d[0])}\u2013${n(d[d.length - 1])}`;
 };
 
 const JV_CSS = `
@@ -2359,7 +2406,7 @@ function Roadmap() {
   const goTo = (i) => { setOpenI(i); if (!live) setFocus(i); };
   const reserve = () => { setOpenI(null); setTimeout(() => scrollToId('wk-price'), 60); };
 
-  const barTxt = current >= JV_N ? `All ${JV_N} stages complete` : `Stage ${current + 1} of ${JV_N}: ${JV_STAGES[current].name}`;
+    const barTxt = current >= JV_N ? 'Full roadmap complete' : `${jvDays(JV_STAGES[current])}: ${JV_STAGES[current].name}`;
 
   return (
     <section className="wrap sec" id="wk-roadmap" aria-labelledby="rm-h" ref={rootRef}>
@@ -2416,28 +2463,29 @@ function Roadmap() {
                   <div className="jv-art">
                     <img src={s.img} alt={s.alt} loading="lazy" style={{ objectPosition: s.pos }} />
                     <span className="jv-st">{label(st)}</span>
-                    <span className="jv-no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                    <span className="jv-no">{jvDays(s)}</span>
                   </div>
                   <div className="jv-body">
-                    <h3><span className="sr">Stage {i + 1}: </span>{s.name}</h3>
-                    <p>{d[0].desc}</p>
+                   <h3><span className="sr">{jvDays(s)}: </span>{s.name}</h3>
+                                       <div className="jv-days">
+                      {d.map((x) => (
+                        <div className="jv-d" key={x.day}>
+                          <div className="jv-dt"><b>{x.day} | {x.when}</b><span className={x.live ? 'lv' : 'sp'}>{x.live ? 'LIVE' : 'SELF-PACED'}</span><em>{x.time}</em></div>
+                          <span className="jv-dn">{x.title}</span>
+                          {x.projects.length > 0 && <ul>{x.projects.map(([n, t]) => <li key={n}><b>{n}</b><span>{t}</span></li>)}</ul>}
+                        </div>
+                      ))}
+                    </div>
                     <div className="jv-chips">
-                      <span className="jv-chip">{d.length} day{d.length === 1 ? '' : 's'}</span>
-                      {nLive > 0 && <span className="jv-chip live">{nLive} live</span>}
-                      {proj > 0 && <span className="jv-chip">{proj} project{proj === 1 ? '' : 's'}</span>}
+                      <span className="jv-chip">{d.length} {d.length === 1 ? 'Day' : 'Days'}</span>
+                      {nLive > 0 && <span className="jv-chip live">{nLive} Live {nLive === 1 ? 'Session' : 'Sessions'}</span>}
+                      {proj > 0 && <span className="jv-chip">{proj} {proj === 1 ? 'Project' : 'Projects'}</span>}
                     </div>
                     <button type="button" className="jv-btn" onClick={open(i)} aria-haspopup="dialog">
                       View modules<span className="sr">: {s.name}</span>
                     </button>
                   </div>
-                  <div className="jv-over" aria-hidden="true">
-                    <h4>Inside this stage</h4>
-                    <ol>
-                      {d.map((x) => (
-                        <li key={x.day}><b>{x.day} | {x.when}</b><span>{x.title}</span><em>{x.live ? 'LIVE' : 'SELF-PACED'} {'\u2022'} {x.time}</em></li>
-                      ))}
-                    </ol>
-                  </div>
+                  
                 </div>
               </li>
             );
@@ -2484,7 +2532,7 @@ function JourneyModal({ i, onClose, onGo, onReserve }) {
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
           </button>
           <div>
-            <small><I n={s.ic} s={14} />Stage {i + 1} of {JV_N}</small>
+              <small><I n={s.ic} s={14} />{jvDays(s)}</small>
             <h2 id="jv-mt">{s.name}</h2>
           </div>
         </div>
@@ -2511,13 +2559,18 @@ function JourneyModal({ i, onClose, onGo, onReserve }) {
 }
 
 /** Cinematic learning journey: 4 alag images, seamless horizontal marquee (AutoRow). */
-const CINE = [
-  { img: U(cineCoding), tag: 'Development', t: 'Build Your First Project', d: 'Learn practical development and build real-world applications.', alt: 'Student coding during an ILM ORA workshop' },
-  { img: U(cineMentor), tag: 'Mentorship', t: 'Learn From Industry Mentors', d: 'Get practical guidance and learn through collaborative sessions.', alt: 'Mentor guiding learners in a collaborative session' },
-  { img: U(cineAi), tag: 'AI', t: 'Explore AI and Innovation', d: 'Discover AI-powered tools, technologies and creative possibilities.', alt: 'Learner exploring AI tools on a laptop' },
-    { img: U(cinePresent), tag: 'Showcase', t: 'Turn Ideas Into Products', d: 'Build, present and showcase your skills with confidence.', alt: 'Presenter showcasing a product to a team' },
-  { img: IMG.studentCollab, tag: 'Collaboration', t: 'Learn Together', d: 'Work through problems with peers and get guidance when you are stuck.', alt: 'Learners collaborating over a task with a mentor' },
+const DAY_IMGS = [
+  [IMG.celebration, 'Learners together at an ILM ORA workshop'],
+  [IMG.javaLive, 'Live Java workshop session'],
+  [U(cineCoding), 'Student coding during an ILM ORA workshop'],
+  [U(cineAi), 'Learner exploring tools on a laptop'],
+  [U(cineMentor), 'Mentor guiding learners in a collaborative session'],
+  [IMG.studentCollab, 'Learners collaborating with a mentor'],
+  [IMG.coding, 'Learner coding during a focused workshop'],
+  [U(cinePresent), 'Presenter showcasing a product to a team'],
+  [IMG.javaCelebration, 'Learners celebrating at a Java workshop'],
 ];
+const CINE = ROADMAP.map((r, i) => ({ r, img: DAY_IMGS[i][0], alt: DAY_IMGS[i][1] }));
 
 function CinematicJourney() {
   const boxRef = useRef(null);
@@ -2590,17 +2643,27 @@ function CinematicJourney() {
   }, []);
 
   return (
-    <section className="wrap sec" aria-labelledby="cj-h">
-      <Reveal><div className="sechead"><div><h2 className="h-xl" id="cj-h">Explore Your Learning Journey</h2><p>Discover new skills, build real projects and grow with ILM ORA.</p></div></div></Reveal>
+        <section className="wrap sec" id="wk-roadmap" aria-labelledby="cj-h">
+      <Reveal><div className="sechead"><div><h2 className="h-xl" id="cj-h">Explore Your Learning Journey</h2><p>{(CONFIG.OFFER && CONFIG.OFFER.cohort) || ''} Live Sat and Sun, self-paced Mon to Fri (2 to 3 hrs a day), 10+ projects, certificate on completion.</p></div></div></Reveal>
       <div className="cj" ref={boxRef} role="region" aria-label="Explore your learning journey">
         <div className="cj-track" ref={trackRef}>
           {items.map((c) => (
             <article className="cj-card" key={`${c.k}-${c.i}`} aria-hidden={c.k > 0 ? 'true' : undefined}>
               <img src={c.img} alt={c.k === 0 ? c.alt : ''} loading="lazy" draggable="false" />
-              <div className="cj-in">
-                <div className="cj-top"><span className="n">STEP {String(c.i + 1).padStart(2, '0')}</span><span className="tg">{c.tag}</span></div>
-                <h3>{c.t}</h3>
-                <p>{c.d}</p>
+                            <div className="cj-in">
+                <div className="cj-top">
+                  <span className="n">{c.r.day} | {c.r.when.toUpperCase()}</span>
+                  {c.r.live ? <span className="tg live"><i />LIVE</span> : <span className="tg sp">SELF-PACED</span>}
+                  <span className="t">| {c.r.time}</span>
+                </div>
+                <h3>{c.r.title}</h3>
+                <p>{c.r.desc}</p>
+                {c.r.projects.length > 0 && (
+                  <>
+                    <b className="cj-ph">Projects</b>
+                    <ul className="cj-pl">{c.r.projects.map(([n, t]) => <li key={n}><b>{n}</b><span>{t}</span></li>)}</ul>
+                  </>
+                )}
               </div>
             </article>
           ))}
@@ -2837,7 +2900,7 @@ function CatalogTeaser({ data }) {
   return (
     <section className="wrap sec" aria-labelledby="ct-h">
       <Reveal><div className="sechead"><div><h2 className="h-xl" id="ct-h">More workshops to explore</h2><p>Short live and on-demand workshops across AI, development, design, business and more.</p></div><LinkBtn href="/catalog" ghost sm>Browse all workshops</LinkBtn></div></Reveal>
-      <div className="grid">{top.map((w) => <WorkshopCard key={w.slug} w={w} registered={regs.has(w.slug)} />)}</div>
+            <div className="grid teaser">{top.map((w) => <WorkshopCard key={w.slug} w={w} registered={regs.has(w.slug)} />)}</div>
       {UPCOMING.length > 0 && <p className="muted" style={{ marginTop: 14 }}>Coming soon: {UPCOMING.join(', ')}</p>}
     </section>
   );
@@ -2888,19 +2951,14 @@ function MidCta() {
 
 /** Scroll ke baad neeche chipakne wala Reserve bar (mobile par dikhta hai, .stickybar CSS). */
 function StickyReserve() {
-  const [show, setShow] = useState(false);
-  useEffect(() => {
-    const on = () => setShow(window.scrollY > 700);
-    on();
-    window.addEventListener('scroll', on, { passive: true });
-    return () => window.removeEventListener('scroll', on);
-  }, []);
   const o = CONFIG.OFFER || {};
-  if (!show || !o.on) return null;
+  if (!o.on) return null;
   return (
-    <div className="stickybar" role="complementary" aria-label="Reserve your seat">
-      <div><b>{money(o.price || 0)}</b>{o.original ? <s className="muted" style={{ marginLeft: 6, fontSize: '.8rem' }}>{money(o.original)}</s> : null}</div>
-      <button type="button" className="btn btn-primary" onClick={() => scrollToId('wk-price')}>Reserve my seat</button>
+    <div className="stickybar gsbar" role="complementary" aria-label="Reserve your seat">
+      <div className="gsbar-in">
+        <div className="gsbar-price"><b>{money(o.price || 0)}</b>{o.original ? <s>{money(o.original)}</s> : null}</div>
+        <button type="button" className="btn btn-primary gsbar-btn" onClick={() => go(o.registerSlug ? `/register/${o.registerSlug}` : '/catalog')}>Register Now</button>
+      </div>
     </div>
   );
 }
@@ -3030,15 +3088,11 @@ function Home() {
     <>
       <OfferStrip />
       <Hero data={data} />
-            <FormatStrip />
       <CinematicJourney />
       <FeaturedIn />
       <WhyNow />
-      <ProblemVsRoadmap />
-      <Roadmap />
-      <MidCta />
-      <ToolsSection />
-      <PricingCard />
+      
+            <ToolsSection />
       <Experience />
       <CertificateShowcase />
       
@@ -3677,6 +3731,290 @@ function WatchPlayer({ slug }) {
 /* ---------------------------------------------------------------------
    ROOT
    --------------------------------------------------------------------- */
+   const COMPACT_CSS = `
+/* global spacing */
+.wk .wk-main{padding-bottom:24px}
+.wk .wk-main .wrap{--gx:clamp(12px,2.2vw,36px);max-width:1520px}
+.wk .wk-main .sec{margin-top:18px}
+.wk .wk-main .sechead{margin-bottom:10px}
+.wk .wk-main .sechead p{margin-top:2px}
+.wk .wk-main .grid{gap:12px}
+
+/* hero */
+.wk .wk-main .hero2{min-height:min(52vh,400px)}
+.wk .wk-main .hero3 .hero2-in{padding-top:28px;padding-bottom:16px;gap:20px}
+.wk .wk-main .hero3 .hv-stage{max-width:460px}
+.wk .wk-main .hero2-stats{padding:8px 0 10px}
+.wk .wk-main .hero2 h1{font-size:clamp(1.4rem,3.6vw,2.2rem)}
+
+/* explore your learning journey (cinematic cards) */
+.wk .wk-main .cj{padding:12px 0 22px}
+.wk .wk-main .cj-track{gap:16px}
+.wk .wk-main .cj-card{width:min(400px,78vw);aspect-ratio:16/9;border-radius:16px}
+.wk .wk-main .cj-in{padding:14px 16px;gap:6px;max-width:72%}
+.wk .wk-main .cj-card h3{font-size:clamp(.95rem,1.6vw,1.15rem)}
+.wk .wk-main .cj-card p{font-size:.74rem;line-height:1.4}
+@media(max-width:640px){
+  .wk .wk-main .cj-card{aspect-ratio:16/10;width:min(320px,84vw)}
+  .wk .wk-main .cj-in{max-width:100%;justify-content:flex-end}
+}
+
+/* roadmap (day-wise) */
+.wk .wk-main .jv{margin-top:10px}
+.wk .wk-main .jv-list{gap:10px}
+.wk .wk-main .jv-art{aspect-ratio:16/7}
+.wk .wk-main .jv-body{padding:9px 11px 11px;gap:5px}
+.wk .wk-main .jv-body h3{font-size:.92rem}
+.wk .wk-main .jv-no{left:9px;bottom:9px;font-size:.78rem;letter-spacing:.04em;line-height:1;padding:4px 10px;border-radius:999px;background:var(--brand);text-shadow:none}
+.wk .wk-main .jv-step.done .jv-no{background:var(--accent)}
+.wk .wk-main .jv-chip{font-size:.7rem;padding:3px 9px}
+
+/* tools marquee */
+.wk .wk-main .tools-marquee{margin-top:8px;padding:6px 0 10px}
+.wk .wk-main .tools-track{gap:12px}
+.wk .wk-main .tool{flex:0 0 150px;min-height:104px;padding:12px 10px;gap:8px;font-size:.85rem;border-radius:14px}
+.wk .wk-main .tool img{width:84px!important;height:48px!important}
+@media(max-width:640px){
+  .wk .wk-main .tool{flex-basis:124px;min-height:90px}
+  .wk .wk-main .tool img{width:64px!important;height:38px!important}
+}
+
+/* pricing, experience, certificate */
+.wk .wk-main .price-card{padding:16px 20px;gap:12px}
+.wk .wk-main .xp{gap:10px}
+.wk .wk-main .xp-card,.wk .wk-main .xp-btn{min-height:130px}
+@media(max-width:640px){.wk .wk-main .xp-card,.wk .wk-main .xp-btn{min-height:150px}}
+.wk .wk-main .cert{padding:12px 16px;gap:14px}
+.wk .wk-main .cert-frame{max-width:250px}
+.wk .wk-main .cert-list{margin:8px 0 10px;gap:6px}
+
+/* mentors */
+.wk .wk-main .mentors{max-width:900px;margin-left:auto;margin-right:auto;gap:12px}
+.wk .wk-main .mentor{padding:8px;gap:2px}
+.wk .wk-main .mentor .ph{aspect-ratio:1/1;margin-bottom:6px;border-radius:8px}
+.wk .wk-main .mentor h3{font-size:.88rem}
+.wk .wk-main .mentor .org{margin-top:5px;padding-top:5px}
+.wk .wk-main .mentors>.wkrv{height:100%}
+
+/* gallery: uniform tiles */
+.wk .wk-main .gal{display:grid;columns:auto;grid-template-columns:repeat(2,1fr);gap:8px}
+@media(min-width:800px){.wk .wk-main .gal{grid-template-columns:repeat(3,1fr)}}
+.wk .wk-main .gal figure{margin:0;aspect-ratio:16/10}
+.wk .wk-main .gal img{height:100%;object-fit:cover}
+
+/* bands (corporate + final CTA) */
+.wk .wk-main .band img{width:100%;height:100%;max-height:240px;object-fit:cover}
+.wk .wk-main .band-in{padding:16px 20px}
+.wk .wk-main .band .cert-act{margin-top:12px}
+.wk .wk-main .nl{margin:10px 0;padding:14px 18px}
+
+/* journey cards: reference style (day, live, time, projects inside) */
+.wk .wk-main .cj-card{width:min(600px,88vw);aspect-ratio:16/10;border-radius:16px}
+.wk .wk-main .cj-in{max-width:66%;gap:5px;padding:16px 18px;justify-content:center}
+.wk .wk-main .cj-top{flex-wrap:wrap;font-size:.64rem;gap:6px}
+.wk .wk-main .cj-top .t{color:rgba(255,255,255,.75);font-weight:600}
+.wk .wk-main .cj-top .tg.live{display:inline-flex;align-items:center;gap:5px;background:rgba(0,0,0,.45);border:1px solid rgba(255,255,255,.35)}
+.wk .wk-main .cj-top .tg.live i{width:6px;height:6px;border-radius:50%;background:#ff4d6d}
+.wk .wk-main .cj-top .tg.sp{background:var(--accent)}
+.wk .wk-main .cj-card h3{font-size:clamp(.98rem,1.8vw,1.2rem)}
+.wk .wk-main .cj-card p{font-size:.72rem;line-height:1.4}
+.wk .cj-ph{color:#fff;font-size:.74rem;margin-top:3px}
+.wk .cj-pl{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.wk .cj-pl li{position:relative;padding-left:14px;font-size:.68rem;line-height:1.3}
+.wk .cj-pl li::before{content:"\\2713";position:absolute;left:0;color:#ffb27a;font-weight:800}
+.wk .cj-pl b{display:block;color:#fff;font-size:.72rem}
+.wk .cj-pl span{color:rgba(255,255,255,.75)}
+@media(max-width:640px){
+  .wk .wk-main .cj-card{aspect-ratio:4/5;width:min(330px,88vw)}
+  .wk .wk-main .cj-in{max-width:100%;justify-content:flex-end}
+}
+
+/* roadmap cards: days + projects always visible */
+.wk .wk-main .jv-days{display:grid;gap:8px}
+.wk .wk-main .jv-d{display:grid;gap:3px;padding-top:6px;border-top:1px dashed var(--ln)}
+.wk .wk-main .jv-d:first-child{border-top:0;padding-top:0}
+.wk .wk-main .jv-dt{display:flex;flex-wrap:wrap;gap:4px 6px;align-items:center;font-size:.62rem}
+.wk .wk-main .jv-dt b{color:var(--brand);font-weight:800}
+.wk .wk-main .jv-dt .lv{padding:1px 6px;border-radius:999px;background:#ff4d6d;color:#fff;font-weight:800}
+.wk .wk-main .jv-dt .sp{padding:1px 6px;border-radius:999px;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--ok);font-weight:800}
+.wk .wk-main .jv-dt em{font-style:normal;color:var(--muted);font-weight:600}
+.wk .wk-main .jv-dn{font-size:.76rem;font-weight:700;line-height:1.25}
+.wk .wk-main .jv-d ul{list-style:none;margin:2px 0 0;padding:0;display:grid;gap:3px}
+.wk .wk-main .jv-d li{position:relative;padding-left:13px;font-size:.68rem;line-height:1.3}
+.wk .wk-main .jv-d li::before{content:"\\2713";position:absolute;left:0;color:var(--ok);font-weight:800}
+.wk .wk-main .jv-d li b{display:block;font-size:.7rem}
+.wk .wk-main .jv-d li span{color:var(--muted)}
+
+/* always-visible bottom bar (all screens) */
+.wk .stickybar.gsbar{display:block;padding:0;background:var(--solid);border-top:1px solid var(--ln);box-shadow:0 -4px 16px rgba(0,0,0,.08)}
+.wk .gsbar-in{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;max-width:1520px;margin:0 auto;padding:10px clamp(14px,3vw,36px) calc(10px + env(safe-area-inset-bottom,0px))}
+.wk .gsbar-price b{font-size:1.15rem;font-weight:800}
+.wk .gsbar-price s{margin-left:8px;font-size:.8rem;color:var(--muted)}
+.wk .gsbar-btn{background:#2d1250;box-shadow:none;border-radius:8px;padding:8px 18px;min-height:38px}
+.wk .gsbar-btn:hover{background:#3d1a6a;box-shadow:none;transform:none}
+/* bar ke peeche content na chhupe */
+.wk .wk-main{padding-bottom:72px}
+
+/* FAQ: left heading, right list with + icons */
+.wk .faq2{display:grid;gap:18px;padding:clamp(14px,3vw,28px) 0}
+@media(min-width:800px){.wk .faq2{grid-template-columns:minmax(0,.8fr) minmax(0,1.6fr);gap:48px;align-items:start}}
+.wk .faq2-h{font-size:clamp(1.5rem,3.2vw,2.3rem);font-weight:600;line-height:1.2;letter-spacing:-.02em;max-width:9em}
+.wk .faq2-list{display:grid}
+.wk .faq2 details{border-bottom:1px solid var(--ln)}
+.wk .faq2 summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:14px;padding:16px 2px;font-size:.88rem;font-weight:500}
+.wk .faq2 summary::-webkit-details-marker{display:none}
+.wk .faq2 summary::marker{content:""}
+.wk .faq2 summary::after{content:"+";flex:none;font-size:1.5rem;font-weight:300;line-height:1;color:var(--muted);transition:transform .25s}
+.wk .faq2 details[open] summary::after{transform:rotate(45deg)}
+.wk .faq2 details p{padding:0 2px 16px;color:var(--muted);font-size:.84rem;max-width:62ch}
+
+/* ===== NO-CROP IMAGES + SMALLER CARDS + WOW ===== */
+
+/* 1. Journey cards (text left, full image right, nothing cut) */
+.wk .wk-main .cj-card{width:min(520px,86vw);aspect-ratio:16/9;border-radius:16px;background:linear-gradient(135deg,#14141f,#0b0b10);border:1px solid rgba(249,115,22,.35);box-shadow:0 14px 34px rgba(8,8,14,.34),0 0 0 1px rgba(255,255,255,.04) inset}
+.wk .wk-main .cj-card img{left:auto;right:0;width:44%;height:100%;object-fit:contain;object-position:center;background:#0b0b10}
+.wk .wk-main .cj-card::before{background:linear-gradient(90deg,rgba(11,11,16,.97) 0%,rgba(11,11,16,.9) 54%,rgba(11,11,16,0) 62%)}
+.wk .wk-main .cj-in{max-width:58%;padding:12px 14px;gap:4px}
+.wk .wk-main .cj-card h3{font-size:clamp(.9rem,1.5vw,1.05rem)}
+.wk .wk-main .cj-card p{font-size:.68rem;-webkit-line-clamp:3;display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
+.wk .wk-main .cj-pl li{font-size:.64rem}
+.wk .wk-main .cj-pl b{font-size:.68rem}
+@media(max-width:640px){
+  .wk .wk-main .cj-card{aspect-ratio:auto;min-height:300px;width:min(300px,86vw)}
+  .wk .wk-main .cj-card img{width:100%;height:46%;top:0;right:0}
+  .wk .wk-main .cj-card::before{background:linear-gradient(0deg,rgba(11,11,16,.98) 0%,rgba(11,11,16,.92) 56%,rgba(11,11,16,0) 62%)}
+  .wk .wk-main .cj-in{max-width:100%;top:auto;height:56%;justify-content:flex-start}
+}
+
+/* 2. Workshop cards, tiles, banners: full image on dark backdrop */
+.wk .art{background:linear-gradient(135deg,#14141f,#0b0b10)}
+.wk .art img{object-fit:contain!important}
+.wk .art::after{display:none}
+.wk .banner{background:linear-gradient(135deg,#14141f,#0b0b10)}
+.wk .banner img{object-fit:contain!important}
+.wk .tile{background:linear-gradient(135deg,#14141f,#0b0b10)}
+.wk .tile img{object-fit:contain!important;height:70%}
+.wk .jv-art{background:#0b0b10}
+.wk .jv-art img{object-fit:contain!important}
+.wk .xp-btn{background:linear-gradient(135deg,#14141f,#0b0b10)}
+.wk .xp-btn img,.wk .xp-btn video{object-fit:contain!important}
+.wk .hv-f{background:#0b0b10}
+.wk .hv-f img,.wk .hv-f video{object-fit:contain!important}
+.wk .mq-logo img,.wk .tool img{object-fit:contain!important}
+
+/* 3. Mentors: natural image height, compact */
+.wk .wk-main .mentors{max-width:760px;gap:10px}
+.wk .wk-main .mentor{padding:6px;border-radius:12px}
+.wk .wk-main .mentor .ph{aspect-ratio:auto!important;background:#0b0b10;border-radius:8px;margin-bottom:6px}
+.wk .wk-main .mentor .ph img{height:auto!important;width:100%;object-fit:contain!important}
+.wk .wk-main .mentor h3{font-size:.82rem}
+.wk .wk-main .mentor .role{font-size:.7rem}
+.wk .wk-main .mentor .org{font-size:.7rem;margin-top:4px;padding-top:4px}
+
+/* 4. Gallery: masonry with natural heights (no cropping) */
+.wk .wk-main .gal{display:block;columns:2;column-gap:8px}
+@media(min-width:800px){.wk .wk-main .gal{columns:4}}
+.wk .wk-main .gal figure{aspect-ratio:auto;margin:0 0 8px;border-radius:10px}
+.wk .wk-main .gal img{height:auto;object-fit:contain}
+
+/* 5. Corporate + final CTA bands */
+.wk .wk-main .band{background:linear-gradient(135deg,#14141f,#0b0b10)}
+.wk .wk-main .band img{max-height:220px;height:auto;width:100%;object-fit:contain;background:#0b0b10}
+.wk .wk-main .band h2,.wk .wk-main .band p{color:#fff}
+.wk .wk-main .band p{opacity:.8}
+
+/* 6. Smaller grid cards */
+.wk .grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.wk .row .card{flex-basis:min(210px,74vw)}
+.wk .cbody{padding:8px 10px 10px;gap:4px}
+.wk .cbody p.sd{font-size:.74rem}
+.wk .tiles{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.wk .row .tile{flex-basis:min(170px,56vw)}
+.wk .wk-main .cert-frame{max-width:210px}
+
+/* 7. WOW: gradient borders, glow, lift */
+.wk .card,.wk .mentor,.wk .fb,.wk .opt,.wk .pain>div,.wk .tool,.wk .xp-btn{transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s,border-color .35s}
+.wk .card:hover,.wk .mentor:hover,.wk .fb:hover,.wk .pain>div:hover{transform:translateY(-5px);border-color:var(--brand);box-shadow:0 16px 34px color-mix(in srgb,var(--brand) 24%,rgba(20,10,0,.2)),0 0 0 1px color-mix(in srgb,var(--brand) 45%,transparent)}
+.wk .card.featured{box-shadow:0 0 0 1px var(--brand),0 10px 26px color-mix(in srgb,var(--brand) 28%,transparent)}
+.wk .cj-card:hover{border-color:var(--brand);box-shadow:0 20px 44px rgba(8,8,14,.5),0 0 28px rgba(249,115,22,.35)}
+.wk .wk-main .sechead h2,.wk .wk-main h2.h-xl{background:linear-gradient(90deg,var(--text),color-mix(in srgb,var(--brand) 70%,var(--text)));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.wk .btn-primary{background-size:200% 100%;transition:background-position .4s,transform .18s,box-shadow .2s}
+.wk .btn-primary:hover{background-position:100% 0}
+.wk .gsbar-btn{background:#2d1250}
+
+/* ===== FIXES ===== */
+
+/* 1. Experience videos: no side bars */
+.wk .wk-main .xp-btn{background:#111}
+.wk .wk-main .xp-btn img,.wk .wk-main .xp-btn video{object-fit:cover!important}
+
+/* 2. Mentors: full width, 4 equal cards */
+.wk .wk-main .mentors{max-width:none;margin:6px 0 0;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+@media(max-width:900px){.wk .wk-main .mentors{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.wk .wk-main .mentor{height:100%;padding:8px}
+.wk .wk-main .mentor .ph{aspect-ratio:4/5!important;background:#1a1a22}
+.wk .wk-main .mentor .ph img{height:100%!important;width:100%;object-fit:cover!important;object-position:50% 20%}
+
+/* 3. Corporate / final CTA band: image fills, text visible */
+.wk .wk-main .band{background:linear-gradient(135deg,#14141f,#0b0b10);align-items:stretch}
+.wk .wk-main .band img{height:100%;max-height:260px;min-height:180px;object-fit:cover;object-position:50% 40%;background:none}
+.wk .wk-main .band .btn-ghost{color:#fff;border-color:rgba(255,255,255,.55)}
+.wk .wk-main .band .btn-ghost:hover{background:rgba(255,255,255,.14);border-color:#fff}
+
+/* 4. Workshop cards: image fills, teaser fills the row */
+.wk .art img{object-fit:cover!important}
+.wk .grid.teaser{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+@media(max-width:900px){.wk .grid.teaser{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.wk .grid.teaser{grid-template-columns:1fr}}
+.wk .grid.teaser .card.featured{box-shadow:var(--shadow);border-color:var(--ln)}
+.wk .grid.teaser .art{aspect-ratio:16/8}
+.wk .grid.teaser .art img{object-fit:cover!important}
+
+/* gallery: single moving row */
+.wk .gal-i{position:relative;flex:0 0 min(300px,72vw);margin:0;aspect-ratio:16/10;border-radius:12px;overflow:hidden;background:#111;box-shadow:var(--shadow);transition:transform .3s,box-shadow .3s}
+.wk .gal-i img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.7,.2,1);-webkit-user-drag:none}
+.wk .gal-i:hover{transform:translateY(-4px);box-shadow:0 14px 30px color-mix(in srgb,var(--brand) 26%,rgba(20,10,0,.2))}
+.wk .gal-i:hover img{transform:scale(1.06)}
+.wk .gal-i figcaption{position:absolute;left:0;right:0;bottom:0;padding:16px 10px 7px;color:#fff;font-size:.72rem;font-weight:600;background:linear-gradient(0deg,rgba(8,8,14,.78),transparent)}
+
+/* ===== BANDS: image full (no crop), text centered ===== */
+.wk .wk-main .band{display:grid;grid-template-columns:1fr;align-items:center;background:linear-gradient(135deg,#14141f,#0b0b10)}
+@media(min-width:760px){.wk .wk-main .band{grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr)}}
+.wk .wk-main .band img{width:100%;height:auto!important;max-height:none!important;min-height:0!important;object-fit:contain;display:block;background:none;align-self:center}
+.wk .wk-main .band-in{display:flex;flex-direction:column;justify-content:center;align-items:flex-start;gap:6px;padding:16px 22px;min-width:0}
+.wk .wk-main .band h2{font-size:clamp(1rem,1.8vw,1.3rem);margin:0}
+.wk .wk-main .band p{font-size:.84rem;margin:0}
+.wk .wk-main .band .cert-act{margin-top:10px;gap:8px}
+.wk .wk-main .band .btn-lg{min-height:36px;padding:6px 16px;font-size:.82rem}
+.wk .wk-main .band{min-height:0!important}
+section .band[style]{min-height:0!important}
+
+/* ===== MENTORS: compact cards like reference ===== */
+.wk .wk-main .mentors{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;max-width:none;margin:8px 0 0}
+.wk .wk-main .mentors>.wkrv{flex:0 0 168px;width:168px;height:auto}
+@media(max-width:560px){.wk .wk-main .mentors>.wkrv{flex-basis:calc(50% - 6px);width:calc(50% - 6px)}}
+.wk .wk-main .mentor{padding:8px;border-radius:12px;gap:0;height:100%}
+.wk .wk-main .mentor .ph{aspect-ratio:1/1!important;border-radius:8px;margin-bottom:7px;background:#1a1a22}
+.wk .wk-main .mentor .ph img{width:100%;height:100%!important;object-fit:cover!important;object-position:50% 22%}
+.wk .wk-main .mentor h3{font-size:.8rem;line-height:1.2}
+.wk .wk-main .mentor .role{font-size:.68rem;min-height:0}
+.wk .wk-main .mentor .org{margin-top:6px;padding-top:6px;font-size:.68rem}
+
+/* ===== MENTORS: full-row, equal cards, brand colors ===== */
+.wk .wk-main .mentors{display:grid!important;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;justify-content:stretch;max-width:none;margin:10px 0 0}
+@media(max-width:900px){.wk .wk-main .mentors{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}}
+.wk .wk-main .mentors>.wkrv{flex:none;width:auto;height:100%}
+.wk .wk-main .mentor{padding:12px;border-radius:14px;height:100%;background:#fcfcfb}
+.wk .wk-main .mentor .ph{aspect-ratio:1/1!important;border-radius:10px;margin-bottom:10px;background:#1a1a22}
+.wk .wk-main .mentor .ph img{width:100%;height:100%!important;object-fit:cover!important;object-position:50% 20%}
+.wk .wk-main .mentor h3{font-size:.98rem;font-weight:800;line-height:1.2}
+.wk .wk-main .mentor .role{font-size:.8rem;margin-top:2px}
+.wk .wk-main .mentor .org{margin-top:10px;padding-top:9px;border-top:1px dashed var(--ln);font-size:1rem;font-weight:800;letter-spacing:.03em}
+.wk .mentor .ilm-g{color:#16a34a}
+.wk .mentor .ora-o{color:#f97316}
+`;
+
+
 const TITLES = {
   workshops: ['Explore Workshops | ILM ORA', 'Browse live and on-demand workshops in AI, development, design, marketing, business and leadership. Search, filter and register in minutes.'],
      feedback: ['Learner feedback | ILM ORA', 'Real feedback and video testimonials from ILM ORA workshop learners.'],
@@ -3733,7 +4071,8 @@ function WorkshopsApp({ openLogin, initialParts }) {
     <RouteCtx.Provider value={route}>
       <div className="wk">
         <style dangerouslySetInnerHTML={{ __html: WK_CSS }} />
-        <style dangerouslySetInnerHTML={{ __html: GS_CSS }} />
+                <style dangerouslySetInnerHTML={{ __html: GS_CSS }} />
+        <style dangerouslySetInnerHTML={{ __html: COMPACT_CSS }} />
         <AppProviders openLogin={openLogin}>
           <div className="wk-main" id="wk-main" tabIndex={-1} ref={mainRef}>
             {CONFIG.USE_MOCK && <div className="notice" role="note">Preview mode: sample workshops, sign-in and payment are simulated.</div>}
