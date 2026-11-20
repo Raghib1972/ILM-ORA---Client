@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 /**
  * ILM ORA Workshops: ek hi self-contained page component.
  *
@@ -47,10 +47,10 @@ import logo5 from '../../assets/Workshop/Logo/06_Topaz_Labs.webp';
 import logo6 from '../../assets/Workshop/Logo/07_DaVinci_Resolve.webp';
 import logo7 from '../../assets/Workshop/Logo/08_Midjourney.webp';
 import logo8 from '../../assets/Workshop/Logo/09_Perplexity.webp';
-import mentorShibli from '../../assets/Workshop/Mentor/M shibli.webp';
-import mentorShareef from '../../assets/Workshop/Mentor/shareef.webp';
-import mentorRaghib from '../../assets/Workshop/Mentor/raghib.webp';
-import mentorVishesh from '../../assets/Workshop/Mentor/vishesh.webp';
+import mentorShibli from '../../assets/Workshop/Mentor/M Shibli.webp';
+import mentorShareef from '../../assets/Workshop/Mentor/Shareef.webp';
+import mentorRaghib from '../../assets/Workshop/Mentor/Raghib.webp';
+import mentorVishesh from '../../assets/Workshop/Mentor/Vishesh.webp';
 import cineCoding from '../../assets/Workshop/ILM_ORA_Cinematic_Video_Images_WebP/01_student_coding.webp';
 import cineMentor from '../../assets/Workshop/ILM_ORA_Cinematic_Video_Images_WebP/02_mentor_guidance.webp';
 import cineAi from '../../assets/Workshop/ILM_ORA_Cinematic_Video_Images_WebP/03_ai_learning.webp';
@@ -2100,7 +2100,7 @@ function ProblemVsRoadmap() {
 }
 
 /* ====================================================================
-   ROADMAP → INTERACTIVE LEARNING JOURNEY
+   ROADMAP â†’ INTERACTIVE LEARNING JOURNEY
    --------------------------------------------------------------------
    KAISE LAGAYEIN (sirf ek jagah):
    1. Purana `function Roadmap() { ... }` poora DELETE karo.
@@ -2114,19 +2114,19 @@ function ProblemVsRoadmap() {
 
    DATA: Koi naya course, module, duration ya statistic nahi banaya.
    Har stage ROADMAP ke existing din (index) ko group karta hai:
-     Discover Your Path        → DAY 0
-     Learn Core Skills         → DAY 1, DAY 2
-     Practice & Assignments    → DAY 3, DAY 4, DAY 5
-     Build Real-World Projects → DAY 6
-     Get Certified             → DAY 7
-     Launch Your Career        → BONUS
+     Discover Your Path        â†’ DAY 0
+     Learn Core Skills         â†’ DAY 1, DAY 2
+     Practice & Assignments    â†’ DAY 3, DAY 4, DAY 5
+     Build Real-World Projects â†’ DAY 6
+     Get Certified             â†’ DAY 7
+     Launch Your Career        â†’ BONUS
    Card ka short text = us stage ke pehle din ka existing `desc`.
    Chips (days / live / projects) ROADMAP se count hote hain.
 
    STAGE STATUS:
    - CONFIG.OFFER.startsAt set hai aur cohort shuru ho chuka hai
-     → stage asli cohort din se nikalta hai (Completed / In progress / Upcoming).
-   - startsAt null hai (abhi ki setting) → PREVIEW mode: visitor stage
+     â†’ stage asli cohort din se nikalta hai (Completed / In progress / Upcoming).
+   - startsAt null hai (abhi ki setting) â†’ PREVIEW mode: visitor stage
      kholta hai to wahan tak ka raasta "Unlocked" ho jata hai. Kisi ko
      jhootha "Completed" nahi dikhta.
    ==================================================================== */
