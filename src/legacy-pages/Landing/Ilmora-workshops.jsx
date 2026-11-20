@@ -1,95 +1,292 @@
 "use client";
 /**
- * ILM ORA Workshops: one self-contained page component.
+ * ILM ORA Workshops: ek hi self-contained page component.
  *
- *   src/legacy-pages/Landing/Ilmora-workshops.jsx   (this file)
+ *   src/legacy-pages/Landing/Ilmora-workshops.jsx   (yehi file, koi nayi file nahi)
  *   app/(public)/Ilmora-workshops/client.jsx        renders <IlmoraWorkshops {...props} />
  *   app/(public)/Ilmora-workshops/page.jsx          metadata + <Client />
  *
- * Same pattern as Ilmora-Microsoft.jsx: the page is wrapped in <PublicLayout> (shared
- * Navbar + Footer) and in the .ilm theme wrapper, so light/dark mode follows the site.
- *
- * Inside the page, navigation uses the URL hash, so no extra Next.js routes are needed:
+ * Page ke andar navigation URL hash se hota hai:
  *   #/workshops              listing           #/dashboard         registered workshops
  *   #/workshops/<slug>       details           #/watch/<slug>      on-demand modules
  *   #/register/<slug>        registration      #/login             sign in / sign up
  *   #/confirmation/<slug>    confirmation
  *
- * INTEGRATION: see the CONFIG block. Set USE_MOCK to false once the real endpoints exist.
- * All page styles are scoped under .wk, so no other page is affected.
+ * IMAGES: src/assets/Workshop/ ke 10 real images neeche IMAGE IMPORTS mein hain.
+ * Agar aapki files .jpg / .jpeg / .webp hain to sirf imports ka extension badal do.
+ * Sabhi page sections IMG / MEDIA / TEAM / GALLERY / JOURNEY config se chalte hain.
+ *
+ * INTEGRATION: CONFIG block dekho. Real backend ke liye USE_MOCK = false karo.
+ * Saare styles .wk ke andar scoped hain, isliye baaki pages affect nahi hote.
  */
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
-// Same shared shell (AnnouncementBanner, Navbar, Footer) used by Ilmora-Microsoft, StudyAbroad, Careers etc.
+// Same shared shell (AnnouncementBanner, Navbar, Footer) jo baaki Ilmora-* pages use karte hain.
 import PublicLayout from "../Landing/components/PublicLayout";
+
+/* ====================================================================
+   IMAGE IMPORTS  (src/assets/Workshop)
+   Extension .png assume kiya hai. Agar file .jpg / .webp hai to yahan badal do.
+   ==================================================================== */
+import imgCoding from '../../assets/Workshop/Focused Coding Workshop.webp';
+import imgCeo from '../../assets/Workshop/ILM ORA CEO Corporate Profile.webp';
+import imgDirector from '../../assets/Workshop/ILM ORA Corporate Portrait Banner.webp';
+import imgCorp from '../../assets/Workshop/ILM ORA Corporate Training Workshop.webp';
+import imgCertFull from '../../assets/Workshop/ILM ORA Full Stack Certificate.webp';
+import imgJavaCelebration from '../../assets/Workshop/ILM ORA Java Workshop Celebration.webp';
+import imgJavaLive from '../../assets/Workshop/ILM ORA Java Workshop Live.webp';
+import imgCelebration from '../../assets/Workshop/ILM ORA Workshop Celebration.webp';
+import imgInstructor from '../../assets/Workshop/ILM ORA Workshop Instructor Portrait.webp';
+import imgCertCeremony from '../../assets/Workshop/Java Workshop Certificate Ceremony.webp';
+import logo0 from '../../assets/Workshop/Logo/01_Claude.webp';
+import logo1 from '../../assets/Workshop/Logo/02_Make.webp';
+import logo2 from '../../assets/Workshop/Logo/03_Magnific_AI.webp';
+import logo3 from '../../assets/Workshop/Logo/04_Runway.webp';
+import logo4 from '../../assets/Workshop/Logo/05_Luma_AI.webp';
+import logo5 from '../../assets/Workshop/Logo/06_Topaz_Labs.webp';
+import logo6 from '../../assets/Workshop/Logo/07_DaVinci_Resolve.webp';
+import logo7 from '../../assets/Workshop/Logo/08_Midjourney.webp';
+import logo8 from '../../assets/Workshop/Logo/09_Perplexity.webp';
+import mentorShibli from '../../assets/Workshop/Mentor/M shibli.webp';
+import mentorShareef from '../../assets/Workshop/Mentor/shareef.webp';
+import mentorRaghib from '../../assets/Workshop/Mentor/raghib.webp';
+import mentorVishesh from '../../assets/Workshop/Mentor/vishesh.webp';
+import cineCoding from '../../assets/Workshop/ILM_ORA_Cinematic_Video_Images_WebP/01_student_coding.webp';
+import cineMentor from '../../assets/Workshop/ILM_ORA_Cinematic_Video_Images_WebP/02_mentor_guidance.webp';
+import cineAi from '../../assets/Workshop/ILM_ORA_Cinematic_Video_Images_WebP/03_ai_learning.webp';
+import cinePresent from '../../assets/Workshop/ILM_ORA_Cinematic_Video_Images_WebP/04_product_presentation.webp';
+import imgStudentCollab from '../../assets/Workshop/ILM_ORA_Workshops_Media/Images/01_student_collaboration.webp';
+import imgMentorGuidance from '../../assets/Workshop/ILM_ORA_Workshops_Media/Images/02_mentor_guidance.webp';
+import vidEnvironment from '../../assets/Workshop/ILM_ORA_Workshops_Media/Videos/01_workshop_environment.mp4';
+import vidInstructor from '../../assets/Workshop/ILM_ORA_Workshops_Media/Videos/02_instructor_workspace.mp4';
+import vidTraining from '../../assets/Workshop/ILM_ORA_Workshops_Media/Videos/03_training_session.mp4';
 
 /* ====================================================================
    CONFIG
    ==================================================================== */
 
 const CONFIG = {
-  /** true  = sample data from the MOCK block (UI preview only, clearly labelled on the page).
+  /** true  = sample data (UI preview only, page par clearly labelled).
    *  false = real backend through realApi below. */
   USE_MOCK: true,
   API_BASE: process.env.NEXT_PUBLIC_API_URL || '',
+  /** Corporate / group enquiries ka email. Apna real email yahan daalo. */
+  CONTACT_EMAIL: 'workshops@ilmora.example',
+  /** Offer strip / pricing card. REAL values daalo (dates, price, refund policy). */
+  OFFER: {
+    on: true,
+    banner: 'LIMITED SEATS: Register now at the launch price',
+    cohort: 'Next cohort: SET REAL DATES',
+    startsAt: null, // ms timestamp, e.g. Date.UTC(2026, 10, 27, 13, 30). null = countdown hidden
+    price: 199, original: 9999,
+    registerSlug: 'fullstack-nextjs-launchpad', // flagship workshop jiska register page 'Reserve my seat' kholega
+    batchNote: 'Batch 1 price. Increases from the next batch.',
+    refund: 'If you complete every build and the workshop is not for you, request a refund within 24 hours of the final live session.',
+  },
 };
 
 /* ====================================================================
-   SCOPED STYLES (everything lives under .wk)
+   MEDIA CONFIG  (images / videos ek hi jagah se badlo)
+   ==================================================================== */
+/** Next.js static import object {src,width,height} ya plain string, dono chalte hain. */
+const U = (m) => (m && m.src) || m;
+
+const IMG = {
+  coding: U(imgCoding),
+  ceo: U(imgCeo),
+  director: U(imgDirector),
+  corp: U(imgCorp),
+  certFull: U(imgCertFull),
+  javaCelebration: U(imgJavaCelebration),
+  javaLive: U(imgJavaLive),
+  celebration: U(imgCelebration),
+  instructor: U(imgInstructor),
+    certCeremony: U(imgCertCeremony),
+  studentCollab: U(imgStudentCollab),
+  mentorGuidance: U(imgMentorGuidance),
+};
+
+const MEDIA = {
+  /** Hero ke liye real video (mp4 URL). Khali ho to hero photo use hota hai. */
+  heroVideo: '',
+  heroPoster: IMG.javaLive,
+  /** Per-workshop cover override: { 'ai-agents-from-scratch': '/workshops/ai-agents.jpg' } */
+  covers: {},
+  /** Per-workshop promo video (YouTube ID) details page par. */
+  promos: {},
+  /** Workshop instructor photo override: { aarav: '/team/aarav.jpg' } */
+     instructors: { shareef: U(mentorShareef), raghib: U(mentorRaghib), vishesh: U(mentorVishesh) },
+  /** "Experience ILM ORA Workshops" videos. youtube = YouTube ID, src = mp4 URL.
+   *  Dono khali = card "official video will be added" dikhata hai (fake video nahi). */
+    videos: [
+    { id: 'environment', tag: 'Illustrative preview', title: 'The learning environment', text: 'A look at the kind of collaborative room where hands-on sessions take place.', poster: '', pos: '50% 50%', alt: 'Illustrative video of a workshop room with learners at tables', youtube: '', src: vidEnvironment },
+    { id: 'instructor', tag: 'Illustrative preview', title: 'Instructor at work', text: 'An instructor at a laptop, the way live build sessions are guided.', poster: '', pos: '50% 30%', alt: 'Illustrative video of an instructor working on a laptop', youtube: '', src: vidInstructor },
+    { id: 'training', tag: 'Illustrative preview', title: 'A training session', text: 'A presentation-style training session with a group of learners.', poster: '', pos: '50% 50%', alt: 'Illustrative video of a training session with a presentation screen', youtube: '', src: vidTraining },
+  ],
+  /** Learner stories (sirf real, permission-cleared). Format:
+   *  { name, role, workshop, quote, photo, youtube } */
+  stories: [],
+};
+
+/** Har workshop category ka real cover photo. */
+const CATEGORY_COVER = {
+  AI: { src: IMG.coding, pos: '50% 40%' },
+  Development: { src: IMG.javaLive, pos: '50% 40%' },
+  Design: { src: IMG.celebration, pos: '50% 35%' },
+  Marketing: { src: IMG.javaCelebration, pos: '50% 35%' },
+  Business: { src: IMG.corp, pos: '50% 45%' },
+  Leadership: { src: IMG.corp, pos: '30% 40%' },
+  HR: { src: IMG.celebration, pos: '70% 40%' },
+  'Contact Center': { src: IMG.corp, pos: '75% 45%' },
+  Engineering: { src: IMG.coding, pos: '30% 50%' },
+};
+
+/** Mentors section: role apne real details se badlo. role khali ho to line khali rehti hai. */
+const MENTORS = [
+  { name: 'M. Shibli', role: 'Co-Founder', org: 'ILM ORA', img: U(mentorShibli), pos: '50% 20%' },
+    { name: 'Raghib', role: 'Workshop Instructor', org: 'ILM ORA', img: U(mentorRaghib), pos: '50% 70%' },
+  { name: 'Shareef', role: 'Workshop Trainer', org: 'ILM ORA', img: U(mentorShareef), pos: '50% 25%' },
+  { name: 'Vishesh', role: 'Workshop Trainer', org: 'ILM ORA', img: U(mentorVishesh), pos: '50% 20%' },
+];
+
+/** REAL learner feedback yahan daalo (sirf permission-cleared). Naya feedback upar add karo.
+ *  Text card:   { name, role, text, source: 'linkedin' | 'x' | 'whatsapp' | 'google', date: 'Nov 2026', rating: 5 }
+ *  Video card:  { name, role, text, youtube: 'YOUTUBE_ID' }  ya  { video: '/path/video.mp4', poster: U(img) }
+ *  Screenshot:  { name, shot: U(importedImage) }
+ *  photo: U(importedImage) optional. Baaki sab fields optional. */
+/** Real feedback yahan daalo. Jab isme kuch bhi ho, sample cards apne aap hat jaate hain. */
+const FEEDBACK_REAL = [];
+
+/** Sirf layout preview ke liye (USE_MOCK true hone par). Real nahi hain, "Sample" tag ke saath dikhte hain. */
+const FEEDBACK_SAMPLE = Array.from({ length: 10 }, (_, i) => ({
+  name: `Sample learner ${i + 1}`,
+  role: 'Sample role',
+  text: [
+    'Sample text: yahan learner ka real feedback aayega.',
+    'Sample text: live build days se kaafi kuch seekhne ko mila.',
+    'Sample text: instructor ne har doubt clear kiya.',
+    'Sample text: projects banane se confidence aaya.',
+    'Sample text: is jagah real review replace hoga.',
+  ][i % 5],
+  source: ['linkedin', 'whatsapp', 'x', 'google'][i % 4],
+  date: 'Nov 2026',
+  rating: 5,
+  sample: true,
+}));
+
+const FEEDBACK = FEEDBACK_REAL.length ? FEEDBACK_REAL : (CONFIG.USE_MOCK ? FEEDBACK_SAMPLE : []);
+const FEEDBACK_PREVIEW = 8;  // home page par kitne cards
+const FEEDBACK_PAGE = 12;    // /feedback page par ek baar mein kitne
+const SOURCE_LABEL = { linkedin: 'in', x: 'X', whatsapp: 'WA', google: 'G' };
+
+const GALLERY = [
+  { img: IMG.javaCelebration, cap: 'Java workshop celebration', pos: '50% 40%' },
+  { img: IMG.certCeremony, cap: 'Certificate ceremony', pos: '50% 40%' },
+  { img: IMG.coding, cap: 'Focused coding session', pos: '50% 40%' },
+  { img: IMG.corp, cap: 'Corporate training workshop', pos: '50% 45%' },
+  { img: IMG.celebration, cap: 'Workshop celebration', pos: '50% 35%' },
+  { img: IMG.javaLive, cap: 'Live Java workshop', pos: '50% 40%' },
+];
+
+const JOURNEY = [
+  { ic: 'compass', t: 'Explore workshops', d: 'Search by topic, level, price or date. Every workshop shows its instructor, format, duration and seats left before you decide.', img: IMG.celebration, alt: 'Learners together at an ILM ORA workshop', pos: '50% 40%' },
+  { ic: 'select', t: 'Select your workshop', d: 'Open the details page to read the agenda, outcomes and prerequisites, then register in about a minute.', img: IMG.corp, alt: 'ILM ORA corporate training workshop in a classroom', pos: '50% 45%' },
+     { ic: 'present', t: 'Learn from experts', d: 'Join the live session with your instructor and ask questions in real time, or watch the recording whenever it suits you.', img: IMG.mentorGuidance, alt: 'Mentor guiding a learner who is working on a laptop', pos: '50% 40%' },
+  { ic: 'code', t: 'Build practical projects', d: 'Apply every idea to a real task during the session and leave with working output you can show.', img: IMG.coding, alt: 'Learner coding during a focused workshop', pos: '50% 40%' },
+  { ic: 'assess', t: 'Complete assessment', d: 'Finish the session or modules and your instructor confirms completion.', img: IMG.instructor, alt: 'ILM ORA workshop instructor', pos: '50% 25%' },
+  { ic: 'award', t: 'Earn your certificate', d: 'Verified completions receive an ILM ORA certificate with a unique ID and QR verification.', img: IMG.certCeremony, alt: 'Learners receiving certificates at a Java workshop ceremony', pos: '50% 40%' },
+];
+
+/* ====================================================================
+   SCOPED STYLES (sab kuch .wk ke andar)
    ==================================================================== */
 const WK_CSS = `.wk{
-  --bg:var(--cream,#f6ede6); --solid:var(--card,#ffffff);
+  --bg:var(--wkbg,#fbfcfe); --solid:var(--card,#ffffff);
   --surface:color-mix(in srgb,var(--card,#fff) 94%,transparent);
   --text:var(--tx,#1f1b18); --muted:var(--mut,#6a5f57);
   --ln:var(--line,rgba(60,35,20,.14));
-  --brand:var(--or,#f97316); --brand2:#fb8b3a; --accent:#00a857; --ok:#0f7a58; --err:#c42c49;
+  --brand:var(--or,#f97316); --brand2:#fb8b3a; --accent:#16a34a; --ok:#0f7a58; --err:#c42c49;
   --shadow:0 8px 22px rgba(60,35,10,.12); --r-lg:16px; --r-md:12px; --r-sm:8px;
-  position:relative; isolation:isolate; background:var(--bg); color:var(--text);
+  position:relative; isolation:isolate; background-color:var(--bg); background-image:linear-gradient(var(--wkgrid,rgba(100,120,160,.16)) 1px,transparent 1px),linear-gradient(90deg,var(--wkgrid,rgba(100,120,160,.16)) 1px,transparent 1px); background-size:32px 32px; color:var(--text);
   min-height:60vh; font-family:inherit; font-size:14px; line-height:1.5; font-weight:400;
   overflow-x:clip; -webkit-font-smoothing:antialiased;
 }
 .wk *,.wk *::before,.wk *::after{box-sizing:border-box}
 .wk h1,.wk h2,.wk h3,.wk h4{font-family:inherit;line-height:1.15;margin:0;letter-spacing:-.012em;color:var(--text)}
-.wk h1{font-size:clamp(1.7rem,3.8vw,2.5rem);font-weight:700}
-.wk h2{font-size:clamp(1.05rem,2vw,1.35rem);font-weight:700}
-.wk h3{font-size:.98rem;font-weight:700}
+.wk h1{font-size:clamp(1.3rem,2.8vw,1.8rem);font-weight:700}
+.wk h2{font-size:clamp(.98rem,1.6vw,1.15rem);font-weight:700}
+.wk h3{font-size:.92rem;font-weight:700}
 .wk p{margin:0}
 .wk a{color:inherit}
+.wk img{max-width:100%}
 .wk button,.wk input,.wk select,.wk textarea{font:inherit;color:inherit}
 .wk :focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
-.wk .wrap{width:100%;max-width:var(--w,1200px);margin:0 auto;padding:0 20px}
-.wk .bgclip{position:absolute;inset:0;clip-path:inset(0);pointer-events:none;z-index:-1}
-.wk .bg3d{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;transition:opacity .6s}
+.wk .wrap{--gx:clamp(14px,3.2vw,56px);width:100%;max-width:1680px;margin:0 auto;padding:0 var(--gx)}
 .wk .wk-main{position:relative;z-index:1;outline:none;padding-bottom:44px}
 .wk .notice{background:color-mix(in srgb,var(--accent) 14%,transparent);border-bottom:1px solid color-mix(in srgb,var(--accent) 40%,transparent);padding:6px 14px;text-align:center;font-size:.78rem;font-weight:600}
 .wk .sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);clip-path:inset(50%);white-space:nowrap;border:0}
 .wk .muted{color:var(--muted)}
 
 /* buttons, badges */
-.wk .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid transparent;border-radius:999px;padding:7px 15px;min-height:36px;font-size:.86rem;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;transition:transform .18s,box-shadow .2s,background .2s}
+.wk .btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border:1px solid transparent;border-radius:999px;padding:7px 15px;min-height:36px;font-size:.86rem;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;transition:transform .18s,box-shadow .2s,background .2s,border-color .2s}
 .wk .btn:active{transform:scale(.97)}
 .wk .btn-primary{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff;box-shadow:0 6px 16px color-mix(in srgb,var(--brand) 38%,transparent)}
 .wk .btn-primary:hover{box-shadow:0 9px 22px color-mix(in srgb,var(--brand) 52%,transparent);transform:translateY(-1px)}
 .wk .btn-ghost{background:transparent;border-color:var(--ln);color:var(--text)}
 .wk .btn-ghost:hover{background:color-mix(in srgb,var(--brand) 9%,transparent);border-color:var(--brand)}
+.wk .btn-green{background:var(--accent);color:#fff}
+.wk .btn-green:hover{background:#12873e}
+.wk .btn-light{background:#fff;color:#1f1b18}
+.wk .btn-light:hover{background:#ffe9d6}
+.wk .btn-line{background:transparent;border-color:rgba(255,255,255,.55);color:#fff}
+.wk .btn-line:hover{background:rgba(255,255,255,.14);border-color:#fff}
 .wk .btn[disabled],.wk .btn[aria-disabled="true"]{opacity:.55;cursor:not-allowed;transform:none;box-shadow:none}
 .wk .btn-sm{padding:5px 11px;min-height:30px;font-size:.78rem}
+.wk .btn-lg{padding:8px 18px;min-height:40px;font-size:.88rem}
 .wk .btn-block{width:100%}
 .wk .badge{display:inline-flex;align-items:center;gap:5px;padding:3px 8px;border-radius:999px;font-size:.68rem;font-weight:700;background:rgba(10,12,30,.72);color:#fff;backdrop-filter:blur(6px)}
 .wk .badge.live i{width:7px;height:7px;border-radius:50%;background:#ff4d6d;animation:wkpulse 1.8s infinite}
 .wk .badge.free{background:var(--accent);color:#fff}
+.wk .badge.feat{background:var(--brand);color:#fff}
 @keyframes wkpulse{70%{box-shadow:0 0 0 7px rgba(255,77,109,0)}100%{box-shadow:0 0 0 0 rgba(255,77,109,0)}}
 .wk .glass{background:var(--surface);border:1px solid var(--ln);box-shadow:var(--shadow)}
 
-/* hero + search + filters */
-.wk .hero{padding-top:28px;padding-bottom:4px}
-.wk .hero h1{max-width:none}
-.wk .lead{max-width:58ch;margin-top:10px;font-size:.95rem;color:var(--muted)}
-.wk .searchbox{display:flex;align-items:center;gap:8px;margin-top:18px;padding:5px 5px 5px 14px;border-radius:999px;max-width:600px}
+/* reveal */
+.wk .wkrv{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s cubic-bezier(.2,.7,.2,1)}
+.wk .wkrv.wkrv-on{opacity:1;transform:none}
+
+/* cinematic hero */
+.wk .hero2{position:relative;color:#fff;overflow:hidden;background:#0b0b10;min-height:min(64vh,480px);display:flex;flex-direction:column;justify-content:flex-end}
+.wk .hero2-bg{position:absolute;inset:-4% 0;transform:scale(1.08);will-change:transform}
+.wk .hero2-bg img,.wk .hero2-bg video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.wk .hero2-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(8,8,14,.9) 0%,rgba(8,8,14,.62) 55%,rgba(8,8,14,.34) 100%),linear-gradient(0deg,rgba(8,8,14,.88),transparent 48%)}
+.wk .hero2-in{position:relative;display:grid;gap:18px;padding-top:56px;padding-bottom:16px;align-items:end}
+@media(min-width:960px){.wk .hero2-in{grid-template-columns:minmax(0,1.5fr) minmax(280px,.75fr)}}
+.wk .hero2 h1{color:#fff;font-size:clamp(1.55rem,4.2vw,2.6rem);font-weight:800;line-height:1.08;letter-spacing:-.025em;max-width:22ch}
+.wk .hero2 p.lead{color:rgba(255,255,255,.84);font-size:clamp(.84rem,1.3vw,.95rem);max-width:56ch;margin-top:10px}
+.wk .hero2-cta{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.wk .livepill{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border-radius:999px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);backdrop-filter:blur(8px);font-size:.74rem;font-weight:700;margin-bottom:12px}
+.wk .livepill i{width:8px;height:8px;border-radius:50%;background:#ff4d6d;animation:wkpulse 1.8s infinite}
+.wk .hero2-card{background:rgba(14,14,22,.58);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(14px);border-radius:16px;padding:14px;display:grid;gap:8px}
+.wk .hero2-card small{font-size:.72rem;font-weight:700;color:#ffb27a}
+.wk .hero2-card h3{color:#fff;font-size:.95rem}
+.wk .hero2-card p{color:rgba(255,255,255,.78);font-size:.82rem}
+.wk .cdn{display:flex;gap:8px}
+.wk .cdn div{background:rgba(0,0,0,.28);border-radius:10px;padding:6px 10px;text-align:center;min-width:52px}
+.wk .cdn b{display:block;font-size:1.15rem;font-variant-numeric:tabular-nums}
+.wk .cdn small{font-size:.65rem;opacity:.85}
+.wk .hero2-stats{position:relative;display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:0;padding:12px 0 16px;border-top:1px solid rgba(255,255,255,.2)}
+@media(min-width:700px){.wk .hero2-stats{grid-template-columns:repeat(4,1fr)}}
+.wk .hero2-stats b{display:block;font-size:clamp(1.15rem,2.2vw,1.5rem);font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.wk .hero2-stats span{font-size:.74rem;color:rgba(255,255,255,.74)}
+
+/* explore: search + filters */
+.wk .exhead h2.h-xl,.wk h2.h-xl{font-size:clamp(1.1rem,2vw,1.45rem);font-weight:700;letter-spacing:-.015em}
+.wk .searchbox{display:flex;align-items:center;gap:8px;margin-top:16px;padding:5px 5px 5px 14px;border-radius:999px;max-width:640px}
 .wk .searchbox svg{flex:none;opacity:.6}
 .wk .searchbox input{flex:1;min-width:0;border:0;background:transparent;outline:0;font-size:.92rem;padding:7px 0}
 .wk .searchbox:focus-within{box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 50%,transparent),var(--shadow)}
-.wk .cats{display:flex;gap:6px;overflow-x:auto;padding:12px 20px 4px;margin:0 -20px;scrollbar-width:none}
+.wk .cats{display:flex;gap:6px;overflow-x:auto;padding:12px var(--gx) 4px;margin:0 calc(var(--gx) * -1);scrollbar-width:none}
 .wk .cats::-webkit-scrollbar{display:none}
 .wk .pill{flex:none;border:1px solid var(--ln);background:var(--surface);border-radius:999px;padding:5px 13px;font-size:.82rem;font-weight:600;cursor:pointer;transition:all .2s}
 .wk .pill small{opacity:.65;margin-left:4px;font-weight:600}
@@ -107,49 +304,166 @@ const WK_CSS = `.wk{
 
 /* sections + cards */
 .wk .sec{margin-top:30px}
-.wk .sechead{display:flex;align-items:end;justify-content:space-between;gap:10px;margin-bottom:12px}
-.wk .sechead p{color:var(--muted);margin-top:2px;font-size:.84rem}
-.wk .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:16px;perspective:1100px}
-.wk .row{display:flex;gap:16px;overflow-x:auto;padding:8px 20px 18px;margin:0 -20px;perspective:1100px;scrollbar-width:none}
+.wk .sechead{display:flex;align-items:end;justify-content:space-between;gap:10px;margin-bottom:14px}
+.wk .sechead p{color:var(--muted);margin-top:3px;font-size:.82rem;max-width:62ch}
+.wk .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+.wk .row{display:flex;gap:14px;overflow-x:auto;padding:6px var(--gx) 14px;margin:0 calc(var(--gx) * -1);scrollbar-width:none}
 .wk .row::-webkit-scrollbar{display:none}
 @media(prefers-reduced-motion:reduce){.wk .row{scrollbar-width:thin}.wk .row::-webkit-scrollbar{display:block}}
-.wk .row .card{flex:0 0 min(272px,80vw);min-width:0}
-.wk .card{position:relative;min-width:0;display:flex;flex-direction:column;border-radius:var(--r-lg);background:var(--surface);border:1px solid var(--ln);box-shadow:var(--shadow);transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg));transition:transform .28s cubic-bezier(.2,.8,.2,1),box-shadow .3s}
-.wk .card:hover{box-shadow:0 20px 38px color-mix(in srgb,var(--brand) 28%,rgba(60,25,0,.2))}
-.wk .card.tilting{transition:transform .06s linear,box-shadow .3s}
-.wk .card::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;background:radial-gradient(220px circle at var(--mx,50%) var(--my,0%),rgba(255,255,255,.2),transparent 60%);opacity:0;transition:opacity .25s}
-.wk .card:hover::after{opacity:1}
-.wk .art{position:relative;border-radius:var(--r-lg) var(--r-lg) 0 0;overflow:hidden;aspect-ratio:16/8.4;margin:-1px -1px 0}
-.wk .art svg{display:block;width:100%;height:100%}
-.wk .art .badges{position:absolute;left:9px;top:9px;display:flex;gap:5px;flex-wrap:wrap}
-.wk .cbody{display:flex;flex-direction:column;gap:7px;padding:11px 13px 13px;flex:1}
+.wk .row .card{flex:0 0 min(244px,78vw);min-width:0}
+.wk .card{position:relative;min-width:0;display:flex;flex-direction:column;border-radius:var(--r-lg);background:var(--solid);border:1px solid var(--ln);box-shadow:var(--shadow);overflow:hidden;transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s,border-color .3s}
+.wk .card:hover{transform:translateY(-4px);box-shadow:0 18px 36px color-mix(in srgb,var(--brand) 22%,rgba(60,25,0,.18))}
+.wk .card.featured{border-color:var(--brand)}
+.wk .art{position:relative;overflow:hidden;aspect-ratio:16/9;background:#1a1a22}
+.wk .art img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+.wk .card:hover .art img{transform:scale(1.07)}
+.wk .art::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.4),transparent 55%);pointer-events:none}
+.wk .art .badges{position:absolute;left:9px;top:9px;display:flex;gap:5px;flex-wrap:wrap;z-index:1}
+.wk .cbody{display:flex;flex-direction:column;gap:6px;padding:10px 12px 12px;flex:1}
+.wk .cbody .cat{font-size:.72rem;font-weight:700;color:var(--brand)}
 .wk .cbody h3 a{text-decoration:none}
 .wk .cbody h3 a::before{content:"";position:absolute;inset:0;z-index:0;border-radius:inherit}
 .wk .cbody p.sd{color:var(--muted);font-size:.8rem;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-.wk .inst{display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:600}
-.wk .av{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.66rem;color:#fff;box-shadow:0 0 0 2px var(--solid)}
+.wk .inst{display:flex;align-items:center;gap:9px;font-size:.8rem}
+.wk .inst b{display:block;font-weight:700;line-height:1.2}
+.wk .inst small{display:block;color:var(--muted);font-size:.7rem}
+.wk .av{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.62rem;color:#fff;box-shadow:0 0 0 2px var(--solid)}
 .wk .av.lg{width:58px;height:58px;font-size:1.1rem}
 .wk .meta{display:flex;flex-wrap:wrap;gap:3px 11px;font-size:.74rem;color:var(--muted)}
 .wk .meta span{display:inline-flex;align-items:center;gap:4px}
-.wk .cfoot{margin-top:auto;flex-wrap:wrap;display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:7px;border-top:1px dashed var(--ln)}
-.wk .price{font-weight:800;font-size:1.02rem}
+.wk .meta .seat{color:var(--ok);font-weight:700}
+.wk .meta .seat.low{color:var(--err)}
+.wk .cfoot{margin-top:auto;flex-wrap:wrap;display:flex;align-items:center;justify-content:space-between;gap:8px;padding-top:9px;border-top:1px dashed var(--ln)}
+.wk .price{font-weight:800;font-size:1.04rem}
 .wk .price.free{color:var(--ok)}
 .wk .cta{display:flex;gap:6px;position:relative;z-index:2}
 .wk .cta .btn-sm{padding:5px 9px;font-size:.74rem}
-.wk .state{display:grid;place-items:center;text-align:center;gap:9px;padding:36px 18px;border-radius:var(--r-lg)}
+.wk .state{display:grid;place-items:center;text-align:center;gap:8px;padding:26px 16px;border-radius:var(--r-lg)}
 .wk .state svg{opacity:.85}
 .wk .skel{border-radius:var(--r-lg);height:300px;background:linear-gradient(100deg,var(--surface) 30%,color-mix(in srgb,var(--brand) 13%,var(--surface)) 50%,var(--surface) 70%);background-size:300% 100%;animation:wksh 1.3s infinite linear;border:1px solid var(--ln)}
 @keyframes wksh{to{background-position:-100% 0}}
 
+/* experience videos */
+.wk .xp{display:grid;gap:16px}
+@media(min-width:860px){.wk .xp{grid-template-columns:1.5fr 1fr;grid-template-rows:1fr 1fr}.wk .xp .lead{grid-row:1/3}}
+.wk .xp-card{min-height:160px}
+.wk .xp-btn{position:relative;display:block;width:100%;height:100%;min-height:160px;border:0;padding:0;border-radius:14px;overflow:hidden;cursor:pointer;background:#111;text-align:left;color:#fff}
+.wk .xp-btn[disabled]{cursor:default}
+.wk .xp-btn img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+.wk .xp-btn:not([disabled]):hover img{transform:scale(1.05)}
+.wk .xp-shade{position:absolute;inset:0;background:linear-gradient(0deg,rgba(8,8,14,.88),rgba(8,8,14,.15) 65%)}
+.wk .xp-play{position:absolute;left:50%;top:42%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:var(--brand);display:grid;place-items:center;box-shadow:0 0 0 6px rgba(249,115,22,.28);transition:transform .25s}
+.wk .xp-btn:hover .xp-play{transform:scale(1.1)}
+.wk .xp-cap{position:absolute;left:0;right:0;bottom:0;padding:12px 14px;display:grid;gap:3px}
+.wk .xp-cap small{font-size:.72rem;font-weight:700;color:#ffb27a}
+.wk .xp-cap b{font-size:clamp(.88rem,1.4vw,1rem);line-height:1.2}
+.wk .xp-cap em{font-style:normal;font-size:.74rem;color:rgba(255,255,255,.8);max-width:52ch}
+.wk .vm{position:fixed;inset:0;z-index:95;background:rgba(5,5,10,.86);display:grid;place-items:center;padding:16px;backdrop-filter:blur(4px)}
+.wk .vm-box{position:relative;width:min(960px,100%);aspect-ratio:16/9;background:#000;border-radius:16px;overflow:hidden}
+.wk .vm-box iframe,.wk .vm-box video{position:absolute;inset:0;width:100%;height:100%;border:0}
+.wk .vm-x{position:absolute;right:8px;top:8px;z-index:2;width:38px;height:38px;border-radius:50%;border:0;background:rgba(0,0,0,.65);color:#fff;display:grid;place-items:center;cursor:pointer}
+
+/* topic tiles (real photos) */
+.wk .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px}
+.wk .tile{position:relative;display:block;border-radius:12px;overflow:hidden;aspect-ratio:16/10;text-decoration:none;color:#fff;background:#111}
+.wk .tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+.wk .tile:hover img{transform:scale(1.08)}
+.wk .tile::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(8,8,14,.92),rgba(8,8,14,.12) 62%)}
+.wk .tile div{position:absolute;left:0;right:0;bottom:0;padding:9px 11px;z-index:1}
+.wk .tile h3{color:#fff;font-size:.88rem}
+.wk .tile p{font-size:.7rem;color:rgba(255,255,255,.86);margin-top:1px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.wk .row .tile{flex:0 0 min(210px,62vw);min-width:0}
+
+/* learning journey */
+.wk .jr{display:grid;gap:14px;margin-top:14px}
+.wk .jr-step{display:grid;gap:10px;align-items:center;padding:10px;border:1px solid var(--ln);border-radius:14px;background:var(--solid)}
+@media(min-width:700px){.wk .jr-step{grid-template-columns:minmax(220px,320px) 1fr;gap:18px}}
+.wk .jr-img{border-radius:10px;overflow:hidden;background:#fff;width:100%}
+.wk .jr-img img{display:block;width:100%;height:auto;transition:transform .9s cubic-bezier(.2,.7,.2,1)}
+.wk .jr-step:hover .jr-img img{transform:scale(1.05)}
+.wk .jr-no{font-size:1.1rem;font-weight:800;line-height:1;color:var(--brand)}
+.wk .jr-step h3{font-size:.98rem;margin:6px 0 3px}
+.wk .jr-step p{color:var(--muted);font-size:.84rem;max-width:60ch}
+
+/* certificate showcase */
+.wk .cert{display:grid;gap:18px;align-items:center;padding:clamp(12px,2.2vw,22px);border-radius:16px;background:linear-gradient(135deg,color-mix(in srgb,var(--brand) 10%,var(--solid)),var(--solid) 55%,color-mix(in srgb,var(--accent) 10%,var(--solid)));border:1px solid var(--ln);box-shadow:var(--shadow)}
+@media(min-width:920px){.wk .cert{grid-template-columns:minmax(0,.75fr) minmax(0,1.25fr)}}
+.wk .cert-frame{position:relative;border-radius:10px;background:#fff;padding:5px;box-shadow:0 14px 30px rgba(60,25,0,.22);transform:rotate(-1deg);transition:transform .5s;max-width:380px;margin:0 auto}
+.wk .cert-frame:hover{transform:rotate(0) scale(1.015)}
+.wk .cert-frame img{display:block;width:100%;height:auto;border-radius:6px}
+.wk .cert-frame .tagc{position:absolute;left:14px;top:-12px;background:var(--accent);color:#fff;font-size:.72rem;font-weight:700;padding:4px 11px;border-radius:999px}
+.wk .cert-list{display:grid;gap:8px;margin:10px 0 14px;padding:0;list-style:none}
+@media(min-width:560px){.wk .cert-list{grid-template-columns:1fr 1fr}}
+.wk .cert-list li{display:flex;gap:8px;align-items:center;font-size:.82rem}
+.wk .cert-list li svg{flex:none;color:var(--ok)}
+.wk .cert-act{display:flex;gap:10px;flex-wrap:wrap}
+.wk .cert-note{font-size:.72rem;color:var(--muted);margin-top:10px;max-width:60ch}
+
+/* team */
+.wk .team{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+.wk .tm{border-radius:12px;overflow:hidden;background:var(--solid);border:1px solid var(--ln);box-shadow:var(--shadow);height:100%}
+.wk .tm .ph{overflow:hidden;background:#fff}
+.wk .tm .ph img{display:block;width:100%;height:auto;transition:transform .7s}
+.wk .tm:hover .ph img{transform:scale(1.05)}
+.wk .tm .tx{padding:8px 10px}
+.wk .tm p{color:var(--muted);font-size:.74rem;margin-top:1px}
+.wk .ilist{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px 22px;margin-top:16px;padding:0;list-style:none}
+.wk .ilist li{display:flex;gap:11px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--ln)}
+.wk .ilist b{display:block;font-size:.88rem}
+.wk .ilist small{color:var(--muted);font-size:.76rem}
+
+/* corporate + cta band */
+.wk .band{display:grid;align-items:center;border-radius:16px;overflow:hidden;background:var(--solid);border:1px solid var(--ln);box-shadow:var(--shadow)}
+.wk .band img{display:block;width:100%;height:auto}
+@media(min-width:760px){.wk .band{grid-template-columns:minmax(0,1.1fr) minmax(0,1fr)}}
+.wk .band-in{padding:clamp(16px,3vw,32px)}
+.wk .band h2{font-size:clamp(1.05rem,2vw,1.4rem);font-weight:700}
+.wk .band p{color:var(--muted);margin-top:8px;font-size:.88rem}
+.wk .band .cert-act{margin-top:20px}
+.wk .plist{display:grid;gap:0;margin-top:6px;padding:0;list-style:none}
+@media(min-width:760px){.wk .plist{grid-template-columns:1fr 1fr;column-gap:44px}}
+.wk .plist li{display:grid;grid-template-columns:32px 1fr;gap:1px 10px;padding:9px 0;border-bottom:1px solid var(--ln);align-items:center}
+.wk .pi{grid-row:1/3;width:28px;height:28px;border-radius:8px;display:grid;place-items:center;background:color-mix(in srgb,var(--brand) 12%,transparent);color:var(--brand)}
+.wk .plist b{font-size:.86rem}
+.wk .plist span{color:var(--muted);font-size:.78rem}
+
+/* gallery + stories */
+.wk .gal{display:block;columns:2;column-gap:8px}
+@media(min-width:800px){.wk .gal{columns:3}}
+.wk .gal figure{position:relative;margin:0 0 8px;border-radius:10px;overflow:hidden;background:#111;break-inside:avoid}
+@media(min-width:800px){.wk .gal figure{aspect-ratio:auto}}
+.wk .gal img{display:block;width:100%;height:auto;transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+.wk .gal figure:hover img{transform:scale(1.07)}
+.wk .gal figcaption{position:absolute;left:0;right:0;bottom:0;padding:16px 10px 7px;color:#fff;font-size:.72rem;font-weight:600;background:linear-gradient(0deg,rgba(8,8,14,.78),transparent)}
+.wk .stories{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.wk .story{padding:20px;border:1px solid var(--ln);border-radius:var(--r-lg);background:var(--solid)}
+.wk .story .qt{font-size:.95rem;margin:0 0 12px}
+.wk .story .who{display:flex;gap:10px;align-items:center}
+.wk .story img.ph{width:44px;height:44px;border-radius:50%;object-fit:cover}
+.wk .empty-note{padding:16px 18px;border:1px dashed var(--ln);border-radius:var(--r-md);color:var(--muted);font-size:.86rem;margin-top:14px;max-width:70ch}
+
+.wk .tic{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:8px;background:var(--brand);color:#fff;margin-bottom:5px}
+.wk .jr-top{display:flex;align-items:center;gap:8px}
+.wk .jr-ic{display:grid;place-items:center;width:28px;height:28px;border-radius:8px;background:color-mix(in srgb,var(--brand) 14%,transparent);color:var(--brand)}
+.wk .natfig{position:relative;margin:14px auto 0;max-width:820px;border-radius:12px;overflow:hidden;background:#111;border:1px solid var(--ln)}
+.wk .natfig img{display:block;width:100%;height:auto}
+.wk .natfig figcaption{padding:8px 12px;font-size:.78rem;color:var(--muted);background:var(--solid)}
+.wk img,.wk video{max-width:100%}
+.wk{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+@media(max-width:640px){.wk .hero2{min-height:auto}.wk .hero2-in{padding-top:40px}.wk .xp-card,.wk .xp-btn{min-height:190px}.wk .cfoot{gap:6px}.wk .sechead{flex-wrap:wrap}}
+@media(min-width:768px) and (max-width:1100px){.wk .grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}.wk .tiles{grid-template-columns:repeat(auto-fill,minmax(180px,1fr))}}
+@media(min-width:1800px){.wk{font-size:15px}.wk .tiles{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}}
+@media(max-width:900px){.wk .wk-main{padding-bottom:84px}}
 /* details */
 .wk .crumbs{padding-top:16px;font-size:.78rem;color:var(--muted)}
 .wk .crumbs a{text-decoration:none}.wk .crumbs a:hover{text-decoration:underline}
-.wk .banner{position:relative;margin-top:10px;border-radius:18px;overflow:hidden;box-shadow:var(--shadow);height:clamp(140px,19vw,210px);transform-style:preserve-3d;perspective:1200px}
-.wk .banner svg{width:100%;height:100%;display:block}
-.wk .banner .badges{position:absolute;left:14px;top:14px;display:flex;gap:6px}
+.wk .banner{position:relative;margin-top:10px;border-radius:14px;overflow:hidden;box-shadow:var(--shadow);height:clamp(130px,18vw,230px);background:#111}
+.wk .banner img{width:100%;height:100%;object-fit:cover;display:block}
+.wk .banner::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.4),transparent 55%)}
+.wk .banner .badges{position:absolute;left:14px;top:14px;display:flex;gap:6px;z-index:1}
 .wk .dgrid{display:grid;gap:18px;margin-top:18px}
 @media(min-width:960px){.wk .dgrid{grid-template-columns:minmax(0,1fr) 320px;align-items:start}}
-.wk .panel{border-radius:var(--r-lg);padding:18px}
+.wk .panel{border-radius:var(--r-lg);padding:14px}
 .wk .panel+.panel{margin-top:12px}
 .wk .panel h2{margin-bottom:10px}
 .wk .aside{position:sticky;top:104px}
@@ -173,25 +487,17 @@ const WK_CSS = `.wk{
 .wk .alert{padding:9px 12px;border-radius:var(--r-sm);font-weight:600;font-size:.84rem}
 .wk .alert.bad{background:color-mix(in srgb,var(--err) 13%,transparent);color:var(--err);border:1px solid var(--err)}
 .wk .alert.good{background:color-mix(in srgb,var(--ok) 13%,transparent);color:var(--ok);border:1px solid var(--ok)}
+.wk .certmini{display:grid;gap:14px;align-items:center}
+@media(min-width:640px){.wk .certmini{grid-template-columns:150px 1fr}}
+.wk .certmini img{display:block;width:100%;height:auto;border-radius:8px;border:1px solid var(--ln);background:#fff}
 
 /* forms */
 .wk .formwrap{max-width:660px;margin:22px auto 0}
-.wk .formwrap.narrow{max-width:410px}
 .wk .form{display:grid;gap:11px}
 .wk .fr{display:grid;gap:11px}
 @media(min-width:600px){.wk .fr.two{grid-template-columns:1fr 1fr}}
-.wk .steps{display:flex;gap:6px;margin-bottom:14px;padding:0;list-style:none;flex-wrap:wrap}
-.wk .steps li{flex:1 1 110px;padding:7px 11px;border-radius:var(--r-sm);border:1px solid var(--ln);font-weight:600;font-size:.78rem;color:var(--muted)}
-.wk .steps li[aria-current="step"]{border-color:var(--brand);color:var(--text);background:color-mix(in srgb,var(--brand) 11%,transparent)}
-.wk .steps li.done{color:var(--ok);border-color:var(--ok)}
-.wk .tabs{display:flex;background:var(--solid);border:1px solid var(--ln);border-radius:999px;padding:3px;margin-bottom:12px}
-.wk .tabs button{flex:1;border:0;background:transparent;border-radius:999px;padding:6px;font-size:.84rem;font-weight:700;cursor:pointer;color:var(--muted)}
-.wk .tabs button[aria-selected="true"]{background:linear-gradient(135deg,var(--brand),var(--brand2));color:#fff}
-.wk .check{display:flex;gap:8px;align-items:flex-start;font-size:.84rem}
-.wk .check input{margin-top:3px;width:16px;height:16px;accent-color:var(--brand)}
 .wk .spin{width:15px;height:15px;border-radius:50%;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;animation:wkrot .7s linear infinite}
 @keyframes wkrot{to{transform:rotate(360deg)}}
-/* join (Maven style) */
 .wk .jn{display:grid;gap:28px;max-width:900px;margin:26px auto 0;align-items:start}
 @media(min-width:820px){.wk .jn{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:44px}}
 .wk .jn-info h1{font-size:clamp(1.3rem,2.6vw,1.65rem)}
@@ -211,14 +517,13 @@ const WK_CSS = `.wk{
 .wk .jn-sum .tot{font-weight:800;border-top:1px solid var(--ln);padding-top:8px}
 .wk .linkbtn{background:none;border:0;padding:0;text-decoration:underline;cursor:pointer;color:inherit;font-size:inherit}
 
-
 /* ticket */
 .wk .ticketstage{perspective:1400px;margin:20px auto;max-width:470px}
 .wk .ticket{position:relative;transform-style:preserve-3d;transform:rotateX(var(--rx,8deg)) rotateY(var(--ry,-14deg));transition:transform .3s;animation:wktin 1.1s cubic-bezier(.2,.9,.2,1) both}
 @keyframes wktin{from{transform:rotateY(-120deg) scale(.7);opacity:0}}
 .wk .ticket .face{border-radius:20px;overflow:hidden;box-shadow:0 30px 60px rgba(90,35,0,.34);background:var(--solid);border:1px solid var(--ln)}
-.wk .ticket .top{height:120px;position:relative;transform:translateZ(26px)}
-.wk .ticket .top svg{width:100%;height:100%;display:block}
+.wk .ticket .top{height:100px;position:relative;transform:translateZ(26px);overflow:hidden}
+.wk .ticket .top img{width:100%;height:100%;object-fit:cover;display:block}
 .wk .ticket .mid{padding:15px 18px 6px;transform:translateZ(18px)}
 .wk .ticket .perf{height:0;border-top:2px dashed var(--ln);margin:8px 14px;position:relative}
 .wk .ticket .perf::before,.wk .ticket .perf::after{content:"";position:absolute;top:-11px;width:20px;height:20px;border-radius:50%;background:var(--bg)}
@@ -231,7 +536,7 @@ const WK_CSS = `.wk{
 
 /* player + dashboard */
 .wk .player{border-radius:var(--r-lg);overflow:hidden;aspect-ratio:16/9;position:relative;background:#06071a;display:grid;place-items:center}
-.wk .player .bgp svg{width:100%;height:100%;display:block}
+.wk .player .bgp img{width:100%;height:100%;object-fit:cover;display:block}
 .wk .player .ctrl{position:absolute;left:0;right:0;bottom:0;padding:11px;display:flex;align-items:center;gap:10px;background:linear-gradient(transparent,rgba(0,0,0,.7));color:#fff}
 .wk .prog{flex:1;height:5px;border-radius:6px;background:rgba(255,255,255,.28);overflow:hidden}
 .wk .prog i{display:block;height:100%;width:0;background:var(--accent);transition:width .25s linear}
@@ -240,21 +545,28 @@ const WK_CSS = `.wk{
 .wk .lessons button[aria-current="true"]{border-color:var(--brand);background:color-mix(in srgb,var(--brand) 11%,var(--solid))}
 .wk .dash{display:grid;gap:12px;margin-top:16px}
 .wk .dcard{display:grid;gap:12px;padding:13px;border-radius:var(--r-lg)}
-@media(min-width:760px){.wk .dcard{grid-template-columns:160px 1fr auto;align-items:center}}
-.wk .dcard .art{border-radius:var(--r-md);transform:none;margin:0}
+@media(min-width:760px){.wk .dcard{grid-template-columns:130px 1fr auto;align-items:center}}
+.wk .dcard .art{border-radius:var(--r-md)}
 .wk #toasts{position:fixed;right:14px;bottom:14px;z-index:90;display:grid;gap:8px;max-width:min(340px,calc(100vw - 28px))}
 .wk .toast{padding:9px 13px;border-radius:12px;background:var(--solid);border:1px solid var(--ln);box-shadow:var(--shadow);font-weight:600;font-size:.84rem;border-left:4px solid var(--brand);animation:wktst .35s ease}
 .wk .toast.ok{border-left-color:var(--ok)}.wk .toast.bad{border-left-color:var(--err)}
 @keyframes wktst{from{transform:translateY(12px);opacity:0}}
-@media(prefers-reduced-motion:reduce){.wk *,.wk *::before,.wk *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}.wk .card{transform:none!important}}
+.wk .nl{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin:18px 0;padding:18px 22px;border-radius:var(--r-lg);color:#fff;background:linear-gradient(120deg,#c2410c,var(--brand))}
+.wk .nl h3,.wk .nl p{color:#fff}.wk .nl .btn{background:#fff;color:#c2410c}
+.wk .qt{font-style:italic;margin-bottom:12px}
+.wk .faq details{border-bottom:1px solid var(--ln);padding:12px 0}.wk .faq summary{cursor:pointer;font-weight:600}.wk .faq p{color:var(--muted);margin-top:8px}
+.wk .share{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.wk .stickybar{position:fixed;left:0;right:0;bottom:0;z-index:40;display:none;align-items:center;justify-content:space-between;gap:12px;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));background:var(--solid);border-top:1px solid var(--ln);box-shadow:0 -6px 20px rgba(0,0,0,.12)}
+@media(max-width:900px){.wk .stickybar{display:flex}}
+@media(prefers-reduced-motion:reduce){.wk *,.wk *::before,.wk *::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important}.wk .wkrv{opacity:1;transform:none}.wk .hero2-bg{transform:none!important}}
 `;
 
-/** Theme + font variables, identical to the other Ilmora-* pages (see HOST_CSS in Ilmora-Microsoft.jsx). */
+/** Theme + font variables, baaki Ilmora-* pages jaisa hi. */
 const HOST_CSS = `@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-.ilm{--cream:#f6ede6;--white:#ffffff;--card:#ffffff;--tx:#1f1b18;--tx2:#3b332d;--mut:#6a5f57;--or:#f97316;--ord:#c2410c;--line:#e7d9cd;--w:1200px;background:var(--white);color:var(--tx);font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;overflow-x:hidden;line-height:1.55}
+.ilm{--wkbg:#fbfcfe;--wkgrid:rgba(100,120,160,.16);--cream:#f6ede6;--white:#ffffff;--card:#ffffff;--tx:#1f1b18;--tx2:#3b332d;--mut:#6a5f57;--or:#f97316;--ord:#c2410c;--line:#e7d9cd;--w:1200px;background:var(--white);color:var(--tx);font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;overflow-x:hidden;line-height:1.55}
 .ilm *{box-sizing:border-box}
 .ilm button{font-family:inherit;cursor:pointer}
-.ilm.dark{--cream:#0c0c14;--white:#0f0f18;--card:#13131e;--tx:#f1f5f9;--tx2:#cbd5e1;--mut:#94a3b8;--line:rgba(255,255,255,.1)}
+.ilm.dark{--wkbg:#0c0c14;--wkgrid:rgba(255,255,255,.06);--cream:#0c0c14;--white:#0f0f18;--card:#13131e;--tx:#f1f5f9;--tx2:#cbd5e1;--mut:#94a3b8;--line:rgba(255,255,255,.1)}
 @media(min-width:1600px){.ilm{--w:1360px}}`;
 
 
@@ -269,8 +581,12 @@ const money = (p) => (p === 0 ? 'Free' : '\u20B9' + p.toLocaleString('en-IN'));
 const durTxt = (m) => (m >= 60 ? Math.floor(m / 60) + 'h' + (m % 60 ? ' ' + (m % 60) + 'm' : '') : m + 'm');
 const initials = (n) => n.split(' ').map((x) => x[0]).slice(0, 2).join('');
 const emailOK = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v);
-/** Only allow same-site relative redirects after login (prevents open redirects). */
+/** Login ke baad sirf same-site relative redirect allow (open redirect se bachav). */
 const safeNext = (n, fallback = '/dashboard') => (typeof n === 'string' && /^\/(?!\/)/.test(n) ? n : fallback);
+const scrollToId = (id) => {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+};
 
 /** Site ke asli login (popup) ka user, localStorage se. Keys apne login ke hisaab se adjust karo. */
 let SITE_USER = null;
@@ -281,7 +597,6 @@ const readSiteUser = () => {
     email: o.email,
     hasId: Boolean(o.id || o._id || o.userId || o.user_id || o.sub),
   });
-  // JSON ke andar kahin bhi (3 level tak) email wala object dhundo
   const findUser = (o, depth = 0) => {
     if (!o || typeof o !== 'object' || depth > 3) return null;
     if (typeof o.email === 'string' && o.email.includes('@')) return toUser(o);
@@ -326,13 +641,8 @@ const readSiteUser = () => {
 };
 
 /* ====================================================================
-   MOCK DATA + MOCK BACKEND  (temporary, UI preview only; delete when the real API is connected)
+   MOCK DATA + MOCK BACKEND  (temporary, sirf UI preview; real API lagne par delete karo)
    ==================================================================== */
-/* =====================================================================
-   MOCK DATA  (temporary, for UI development only)
-   Nothing outside lib/mock/ and lib/api.js should import from here.
-   Replace with the real ILM ORA workshop service.
-   ===================================================================== */
 const INSTRUCTORS = {
   aarav: { name: 'Aarav Mehta', role: 'AI engineer and founder', years: 9, hue: 24, bio: 'Aarav has shipped AI assistants for fintech and education teams, and previously founded a small automation start-up. He teaches by building one working system from a blank folder.' },
   neha: { name: 'Neha Kapoor', role: 'Principal product designer', years: 11, hue: 8, bio: 'Neha leads design for a consumer learning app used by millions. She runs research sprints and design critiques for teams across India and Southeast Asia.' },
@@ -341,6 +651,10 @@ const INSTRUCTORS = {
   vikram: { name: 'Vikram Rao', role: 'Fractional CFO', years: 15, hue: 150, bio: 'Vikram advises early-stage founders on cash, pricing and fundraising. He explains finance without jargon.' },
   ishita: { name: 'Ishita Bose', role: 'Leadership coach', years: 13, hue: 18, bio: 'Ishita coaches first-time managers and senior leaders through change, hard conversations and team health.' },
   kabir: { name: 'Kabir Singh', role: 'Brand strategist', years: 10, hue: 12, bio: 'Kabir has built brand narratives for consumer and B2B companies, and writes about positioning and storytelling.' },
+  meera: { name: 'Meera Joshi', role: 'HR director', years: 14, hue: 330, bio: 'Meera has built HR functions for fast-growing companies, from first hire to a few hundred people.' },
+  dinesh: { name: 'Dinesh Nair', role: 'Contact center operations head', years: 16, hue: 190, bio: 'Dinesh has run multi-site customer support operations and trains QA teams and team leaders.' },
+  tarun: { name: 'Tarun Verma', role: 'Cloud and DevOps engineer', years: 10, hue: 215, bio: 'Tarun designs cloud platforms and delivery pipelines and mentors engineers moving into DevOps.' },
+    shareef: { name: 'Shareef', role: 'Workshop trainer, ILM ORA', years: 0, hue: 24, bio: 'Shareef trains learners in ILM ORA workshops and runs the live build sessions, guiding them through hands-on projects and answering questions in real time.' },
   ananya: { name: 'Ananya Das', role: 'Applied AI researcher', years: 7, hue: 175, bio: 'Ananya applies language models to analytics and operations. She helps non-technical teams find practical, safe uses for AI.' },
 };
 
@@ -351,6 +665,9 @@ const TPL = {
   Marketing: { learn: ['Finding the one metric that matters', 'Designing channels that compound', 'Writing messages people act on', 'Running small experiments quickly', 'Reading results without fooling yourself', 'Planning a quarter of work'], out: ['Leave with a 90-day growth plan', 'Launch one experiment this week', 'Write a clear value proposition', 'Report results the team trusts'], aud: ['Marketers and growth teams', 'Founders doing their own marketing', 'Content and community leads'], seg: ['Context and goals', 'Framework deep dive', 'Plan-building workshop', 'Feedback, Q&A and next steps'] },
   Business: { learn: ['Reading the numbers that run a business', 'Pricing with confidence', 'Planning cash for the next 12 months', 'Making decisions with incomplete data', 'Prioritising a roadmap', 'Communicating strategy to a team'], out: ['Build a simple financial model', 'Set pricing you can defend', 'Create a one-page strategy', 'Know what to track every week'], aud: ['Founders and operators', 'Product and business managers', 'Career switchers entering business roles'], seg: ['Introductions and goals', 'Key concepts', 'Worked example', 'Q&A and next steps'] },
   Leadership: { learn: ['Setting expectations without micromanaging', 'Holding clear, kind conversations', 'Leading a team through uncertainty', 'Giving feedback that lands', 'Protecting focus and energy', 'Building trust over time'], out: ['Prepare for a hard conversation', 'Create a 30-60-90 day plan', 'Give feedback with a simple structure', 'Build a personal leadership habit'], aud: ['New and aspiring managers', 'Team leads', 'Senior professionals growing influence'], seg: ['Check-in and goals', 'Core practices', 'Role-play lab', 'Reflection, Q&A and next steps'] },
+  HR: { learn: ['Hiring a strong team with structured interviews', 'Writing clear job descriptions and offers', 'Onboarding that makes people stay', 'Performance reviews and fair feedback', 'Handling conflict and sensitive cases', 'Basics of labour law and HR compliance'], out: ['Build a structured interview scorecard', 'Create a 30-day onboarding checklist', 'Draft a review and feedback template', 'Plan an HR calendar for the year'], aud: ['HR executives and recruiters', 'Founders hiring their first team', 'Team leads who manage people'], seg: ['Check-in and goals', 'Core HR practices', 'Case study lab', 'Q&A and next steps'] },
+  'Contact Center': { learn: ['Call flow design and quality scripts', 'Handling difficult customers with empathy', 'Core metrics: AHT, CSAT, FCR and SLA', 'Workforce planning and shift scheduling', 'Quality monitoring and coaching agents', 'Using CRM, IVR and AI assist tools'], out: ['Create a QA scorecard', 'Build a call-handling playbook', 'Plan staffing for peak hours', 'Set up a weekly metrics dashboard'], aud: ['Agents and team leaders', 'QA and training specialists', 'Contact center managers and operations heads'], seg: ['Check-in and goals', 'Core practices', 'Live call simulation', 'Q&A and next steps'] },
+  Engineering: { learn: ['Cloud fundamentals and reliable architecture', 'CI/CD pipelines and infrastructure as code', 'Monitoring, logging and incident response', 'Testing strategy and QA automation', 'Data pipelines and database basics', 'Security habits for engineering teams'], out: ['Set up a working CI/CD pipeline', 'Write an incident runbook', 'Design a test plan for a service', 'Draft a simple cloud architecture diagram'], aud: ['Engineers and DevOps beginners', 'QA and support engineers', 'Students moving into tech roles'], seg: ['Check-in and goals', 'Core concepts', 'Hands-on lab', 'Review, Q&A and next steps'] },
 };
 const PRE = {
   Beginner: ['No prior experience needed', 'A laptop with a stable internet connection'],
@@ -378,7 +695,7 @@ const WORKSHOPS = [
   mk('ai-agents-from-scratch', 'Build AI agents from scratch', 'AI', 'Intermediate', 2999, 'live', 3, '19:00', 120, 98, 60, 255, 'aarav', 'agents automation llm tools', 'Design, build and test an AI agent that completes real tasks for you.', 'In two hours you will go from a blank file to an AI agent that uses tools, remembers context and can be tested. We build one complete agent together, then adapt it to a problem from your own work.'),
   mk('prompt-engineering-masterclass', 'Prompt engineering masterclass', 'AI', 'Beginner', 0, 'live', 1, '18:30', 90, 95, 200, 230, 'ananya', 'prompts chatgpt writing productivity', 'Learn a repeatable way to get dependable answers from AI tools.', 'This free session shows how to structure instructions, give examples and check output. You will leave with a prompt library you can adapt for writing, research and analysis.'),
   mk('genai-for-business-ops', 'Generative AI for business operations', 'AI', 'Beginner', 999, 'ondemand', 0, '00:00', 140, 80, null, 170, 'ananya', 'operations automation reports', 'Find safe, practical uses for AI in everyday business tasks.', 'A recorded series on automating reports, summaries and customer replies, with templates and a risk checklist for your team.'),
-  mk('fullstack-nextjs-launchpad', 'Full-stack web apps launchpad', 'Development', 'Intermediate', 3499, 'live', 6, '11:00', 180, 88, 40, 215, 'rohan', 'react nextjs javascript web', 'Build and deploy a full-stack web app with routing, data and sign-in.', 'A three-hour guided build covering pages, data fetching, forms and authentication, finishing with a live deployment you can share.'),
+  mk('fullstack-nextjs-launchpad', 'Full-stack web apps launchpad', 'Development', 'Intermediate', 3499, 'live', 6, '11:00', 180, 88, 40, 215, 'shareef', 'react nextjs javascript web', 'Build and deploy a full-stack web app with routing, data and sign-in.', 'A three-hour guided build covering pages, data fetching, forms and authentication, finishing with a live deployment you can share.'),
   mk('api-design-that-scales', 'API design that scales', 'Development', 'Advanced', 1999, 'ondemand', 0, '00:00', 150, 70, null, 195, 'rohan', 'api rest backend architecture', 'Design APIs that stay consistent and easy to evolve.', 'Recorded modules on resource modelling, versioning, pagination, errors and rate limits, drawn from real production systems.'),
   mk('git-and-ci-for-teams', 'Git and CI for teams', 'Development', 'Beginner', 0, 'live', 9, '17:00', 60, 60, 150, 205, 'rohan', 'git github workflow testing', 'Collaborate without merge-day panic using clean Git habits and automated checks.', 'A free one-hour session on branching, pull requests and setting up automated tests so every change is checked before it ships.'),
   mk('ux-research-in-a-day', 'UX research in a day', 'Design', 'Beginner', 1499, 'live', 4, '10:00', 150, 77, 35, 335, 'neha', 'ux research interviews usability', 'Plan, run and summarise a user interview round in one session.', 'Practise writing interview guides, running sessions and turning notes into clear, shareable insights.'),
@@ -392,9 +709,15 @@ const WORKSHOPS = [
   mk('leading-through-change', 'Leading through change', 'Leadership', 'Intermediate', 2299, 'live', 7, '18:00', 120, 69, 45, 280, 'ishita', 'change management communication teams', 'Guide your team through uncertainty with clarity and care.', 'Practise the conversations that matter most during reorganisations, launches and setbacks.'),
   mk('first-time-manager-playbook', 'First-time manager playbook', 'Leadership', 'Beginner', 1499, 'ondemand', 0, '00:00', 130, 79, null, 300, 'ishita', 'management feedback one-on-ones', 'Start strong in your first management role.', 'Recorded sessions on one-on-ones, feedback, delegation and your first 90 days, with scripts and templates.'),
   mk('executive-presence', 'Executive presence', 'Leadership', 'Advanced', 2999, 'live', 20, '17:30', 90, 64, 25, 310, 'ishita', 'influence communication senior leadership', 'Communicate with the clarity and calm that senior roles demand.', 'A small-group lab on framing your message, handling pushback and showing up well in high-stakes rooms.'),
+  mk('hiring-with-structured-interviews', 'Hiring with structured interviews', 'HR', 'Beginner', 1299, 'live', 5, '18:00', 120, 76, 60, 330, 'meera', 'hiring recruitment interviews', 'Hire better with scorecards and consistent interview questions.', 'Build a scorecard, practise interview questions and learn to compare candidates fairly.'),
+  mk('hr-onboarding-and-retention', 'Onboarding and retention for HR teams', 'HR', 'Intermediate', 0, 'ondemand', 0, '00:00', 100, 70, null, 335, 'meera', 'onboarding retention culture hr', 'Design an onboarding journey that helps new joiners stay.', 'Recorded modules on onboarding plans, check-ins and exit insights.'),
+  mk('contact-center-qa-and-coaching', 'Contact center QA and coaching', 'Contact Center', 'Intermediate', 1499, 'live', 4, '17:00', 120, 78, 50, 190, 'dinesh', 'quality qa coaching agents', 'Score calls fairly and coach agents to improve CSAT.', 'Create a QA scorecard, review sample calls and practise coaching conversations.'),
+  mk('handling-difficult-customers', 'Handling difficult customers', 'Contact Center', 'Beginner', 0, 'live', 2, '16:30', 75, 88, 150, 195, 'dinesh', 'customer service empathy de-escalation', 'Stay calm and resolve heated calls with proven techniques.', 'Live role-play on de-escalation, empathy statements and clear closing.'),
+  mk('devops-and-cicd-essentials', 'DevOps and CI/CD essentials', 'Engineering', 'Beginner', 1999, 'live', 8, '19:00', 150, 82, 45, 215, 'tarun', 'devops cicd cloud pipelines', 'Set up a working delivery pipeline from commit to deployment.', 'Hands-on lab covering Git, automated tests, builds and deployment.'),
+  mk('cloud-architecture-fundamentals', 'Cloud architecture fundamentals', 'Engineering', 'Intermediate', 1799, 'ondemand', 0, '00:00', 160, 74, null, 220, 'tarun', 'cloud aws azure architecture', 'Design reliable, secure and cost-aware cloud systems.', 'Recorded lessons on networking, storage, scaling and monitoring.'),
 ];
 
-/** What a real backend keeps server-side. Never sent to the browser without an authorisation check. */
+/** Jo real backend server-side rakhta hai. Authorisation check ke bina browser ko kabhi nahi jata. */
 const PRIVATE = Object.fromEntries(
   WORKSHOPS.map((w, i) => [w.slug, {
     meetLink: `https://meet.ilmora.example/room/${w.slug}-${1000 + i * 37}`,
@@ -402,7 +725,7 @@ const PRIVATE = Object.fromEntries(
   }]),
 );
 
-/** Public shape of a workshop: pure, safe to call on the server. */
+/** Workshop ka public shape: pure, server par bhi safe. */
 function toPublic(w, taken = 0) {
   const tpl = TPL[w.category];
   const agenda = tpl.seg.map((title, i) => {
@@ -418,10 +741,6 @@ function toPublic(w, taken = 0) {
     tz: 'IST (UTC+5:30)',
   };
 }
-/* =====================================================================
-   MOCK BACKEND  (browser-only; uses localStorage as a stand-in database)
-   Replace every function with a call to the real ILM ORA API.
-   ===================================================================== */
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const mem = {};
@@ -459,7 +778,7 @@ const backend = {
     if (!w) throw err('Workshop not found', 404);
     return view(w);
   },
-    session: () => SITE_USER || store.get('ilm_session', null),
+  session: () => SITE_USER || store.get('ilm_session', null),
   async signup({ name, email, password }) {
     await sleep(500);
     const users = store.get('ilm_users', []);
@@ -505,7 +824,7 @@ const backend = {
     const s = backend.session();
     store.set('ilm_regs', regsAll().filter((r) => !(r.slug === slug && r.userId === (s && s.id))));
   },
-  /** Only returns private content when the signed-in user is registered. */
+  /** Private content tabhi milta hai jab signed-in user registered ho. */
   async access(slug) {
     await sleep(300);
     if (!backend.session()) throw err('Sign in to see your access details.', 401);
@@ -517,16 +836,10 @@ const backend = {
 };
 
 /* ====================================================================
-   API LAYER (every component talks only to `api`)
+   API LAYER (har component sirf `api` se baat karta hai)
    ==================================================================== */
-
-/* ---------------------------------------------------------------------
-   REAL API ADAPTER  (used when CONFIG.USE_MOCK === false)
-   Written against the endpoints listed in the README. Adjust the paths and
-   the two auth helpers to match the existing ILM ORA backend and login.
-   --------------------------------------------------------------------- */
-const getAuthToken = () => { try { return window.localStorage.getItem('token'); } catch { return null; } }; // TODO: use the existing auth storage
-const getSessionUser = () => { try { return JSON.parse(window.localStorage.getItem('user') || 'null'); } catch { return null; } }; // TODO: use the existing auth state
+const getAuthToken = () => { try { return window.localStorage.getItem('token'); } catch { return null; } }; // TODO: existing auth storage
+const getSessionUser = () => { try { return JSON.parse(window.localStorage.getItem('user') || 'null'); } catch { return null; } }; // TODO: existing auth state
 
 async function http(path, opts = {}) {
   const token = getAuthToken();
@@ -556,7 +869,7 @@ const realApi = {
   cancel: async (slug) => { await http(`/workshops/${encodeURIComponent(slug)}/register`, { method: 'DELETE' }); regsCache.list = regsCache.list.filter((r) => r.slug !== slug); },
   access: (slug) => http(`/workshops/${encodeURIComponent(slug)}/access`),              // 401 / 403 when not allowed
 };
-// Real registrations must be loaded before pages read them (call once after login / on load):
+// Real registrations pages se pehle load karo (login ke baad / page load par):
 //   realApi.loadRegs = async () => { regsCache.list = await http('/me/registrations'); };
 const impl = CONFIG.USE_MOCK ? backend : realApi;
 const api = {
@@ -569,29 +882,78 @@ const api = {
 /* ====================================================================
    ROUTER (hash based)
    ==================================================================== */
+const BASE = '/workshops';
+const PAGES = ['catalog', 'details', 'register', 'confirmation', 'watch', 'dashboard', 'feedback', 'login'];
+const NEEDS_W = ['details', 'register', 'confirmation', 'watch'];
+const DEFAULT_W = () => (CONFIG.OFFER && CONFIG.OFFER.registerSlug) || '';
 
-/* hash router */
-const RouteCtx = createContext({ parts: ['workshops'], query: new URLSearchParams(), raw: '/workshops' });
-function parseHash() {
-  const h = (typeof window !== 'undefined' && window.location.hash.slice(1)) || '/workshops';
-  const [path, qs] = h.split('?');
-  return { parts: path.split('/').filter(Boolean), query: new URLSearchParams(qs || ''), raw: h };
+/** Internal path se real URL: '/register/abc' -> '/workshops/register?w=abc' */
+const toUrl = (p) => {
+  const [path, qs] = p.split('?');
+  const [a, b] = path.split('/').filter(Boolean);
+  // Slug ke hyphens path banenge: prompt-engineering-masterclass -> prompt/engineering/masterclass
+  const wPath = (s) => (s && s !== DEFAULT_W() ? '/' + s.split('-').join('/') : '');
+  let u = BASE;
+  if (a === 'workshops') { if (b) u += '/details' + wPath(b); }
+  else if (NEEDS_W.includes(a)) u += '/' + a + wPath(b);
+  else if (a) u += '/' + a;
+  return qs ? `${u}?${qs}` : u;
+};
+
+/** URL ke page naam se internal route parts */
+export function partsFromPage(page, w) {
+  if (!page) return ['workshops'];
+  if (page === 'details') return ['workshops', w || DEFAULT_W()];
+  if (NEEDS_W.includes(page)) return [page, w || DEFAULT_W()];
+  if (PAGES.includes(page)) return [page];
+  return ['workshops'];
 }
-const go = (p) => { window.location.hash = p; };
-const replaceRoute = (p) => { window.history.replaceState(null, '', '#' + p); window.dispatchEvent(new Event('hashchange')); };
+
+function parseUrl() {
+  // Purane #/ links naye URL par bhej do
+  if (window.location.hash.startsWith('#/')) {
+    window.history.replaceState(null, '', toUrl(window.location.hash.slice(1)));
+  }
+    const segs = window.location.pathname.split('/').filter(Boolean).slice(1); // 'workshops' hata do
+  const page = segs[0] || '';
+  const query = new URLSearchParams(window.location.search);
+  const parts = partsFromPage(page, segs.slice(1).join('-') || query.get('w'));
+  return { parts, query, raw: parts.join('/') };
+}
+
+const RouteCtx = createContext({ parts: ['workshops'], query: new URLSearchParams(), raw: '' });
+
+const navigate = (p, replace = false) => {
+  window.history[replace ? 'replaceState' : 'pushState'](null, '', toUrl(p));
+  window.dispatchEvent(new Event('wkroute'));
+};
+const go = (p) => navigate(p);
+const replaceRoute = (p) => navigate(p, true);
 const useRouter = () => ({ push: go, replace: replaceRoute });
 const useSearchParams = () => useContext(RouteCtx).query;
-function Link({ href, children, ...p }) { return <a href={'#' + href} {...p}>{children}</a>; }
-function useHashRoute() {
-  const [r, setR] = useState({ parts: ['workshops'], query: new URLSearchParams(), raw: '/workshops' });
+
+function Link({ href, children, onClick, ...p }) {
+  const click = (e) => {
+    if (onClick) onClick(e);
+    if (e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || p.target === '_blank') return;
+    e.preventDefault();
+    go(href);
+  };
+  return <a href={toUrl(href)} onClick={click} {...p}>{children}</a>;
+}
+
+function usePathRoute(initialParts) {
+  const [r, setR] = useState({ parts: initialParts || ['workshops'], query: new URLSearchParams(), raw: '' });
   useEffect(() => {
-    const on = () => setR(parseHash());
+    const on = () => setR(parseUrl());
     on();
-    window.addEventListener('hashchange', on);
-    return () => window.removeEventListener('hashchange', on);
+    window.addEventListener('popstate', on);
+    window.addEventListener('wkroute', on);
+    return () => { window.removeEventListener('popstate', on); window.removeEventListener('wkroute', on); };
   }, []);
   return r;
 }
+
 function setPageMeta(title, desc) {
   document.title = title;
   if (!desc) return;
@@ -603,11 +965,9 @@ function setPageMeta(title, desc) {
 /* ====================================================================
    SHARED STATE: workshops cache, auth, toasts
    ==================================================================== */
-
 let cache = null;
 const invalidateWorkshops = () => { cache = null; };
 
-/** Loads the workshop list once and shares it between pages. */
 function useWorkshops() {
   const [state, set] = useState({ data: null, error: null, loading: true });
   const load = useCallback(() => {
@@ -625,18 +985,16 @@ function useWorkshops() {
 
 const Ctx = createContext(null);
 
-/** Auth state + toasts. Replace the api.* calls with the existing ILM ORA auth provider. */
 function AppProviders({ children, openLogin }) {
   const [user, setUser] = useState(null);
   const [ready, setReady] = useState(false);
   const [toasts, setToasts] = useState([]);
-
-    const pending = useRef(null);
+  const pending = useRef(null);
 
   // Site login (popup) ke baad user detect karo
   useEffect(() => {
     const sync = () => {
-            SITE_USER = readSiteUser();
+      SITE_USER = readSiteUser();
       const u = SITE_USER || store.get('ilm_session', null);
       setUser((prev) => (prev && u && prev.email === u.email ? prev : u));
       setReady(true);
@@ -649,7 +1007,7 @@ function AppProviders({ children, openLogin }) {
     return () => { window.removeEventListener('storage', sync); window.removeEventListener('focus', sync); clearInterval(t); };
   }, []);
 
-  // Login chahiye: pehle wapas safe page pe jao, phir site ka popup kholo
+  // Login chahiye: pehle safe page par jao, phir site ka popup kholo
   const requireLogin = useCallback((next, back = '/workshops') => {
     pending.current = next;
     replaceRoute(back);
@@ -662,7 +1020,7 @@ function AppProviders({ children, openLogin }) {
     setTimeout(() => setToasts((t) => t.filter((x) => x.id !== id)), 4600);
   }, []);
 
-    const value = useMemo(() => ({
+  const value = useMemo(() => ({
     user, ready, toast, requireLogin,
     logout: () => { api.logout(); setUser(null); },
   }), [user, ready, toast, requireLogin]);
@@ -682,37 +1040,73 @@ const useApp = () => useContext(Ctx);
 /* ====================================================================
    UI PIECES
    ==================================================================== */
-const CH = { AI: 24, Development: 152, Design: 10, Marketing: 36, Business: 166, Leadership: 20 };
-
-const GLYPH = {
-  AI: (<><path d="M300 40l14 38 38 14-38 14-14 38-14-38-38-14 38-14z" fill="#fff" opacity=".92" /><path d="M345 110l7 18 18 7-18 7-7 18-7-18-18-7 18-7z" fill="#fff" opacity=".6" /></>),
-  Development: <text x="212" y="140" fontFamily="monospace" fontWeight="700" fontSize="86" fill="#fff" opacity=".92">{'</>'}</text>,
-  Design: (<><circle cx="270" cy="95" r="46" fill="#fff" opacity=".45" /><circle cx="320" cy="95" r="46" fill="#fff" opacity=".4" /><circle cx="295" cy="132" r="46" fill="#fff" opacity=".5" /></>),
-  Marketing: (<><rect x="230" y="110" width="24" height="46" rx="5" fill="#fff" opacity=".55" /><rect x="266" y="82" width="24" height="74" rx="5" fill="#fff" opacity=".7" /><rect x="302" y="56" width="24" height="100" rx="5" fill="#fff" opacity=".85" /><rect x="338" y="30" width="24" height="126" rx="5" fill="#fff" opacity=".95" /></>),
-  Business: (<><path d="M300 100V40a60 60 0 0 1 60 60z" fill="#fff" opacity=".95" /><path d="M300 100h60a60 60 0 1 1-60-60z" fill="#fff" opacity=".45" /></>),
-  Leadership: (<><path d="M240 160l55-100 40 70 25-36 40 66z" fill="#fff" opacity=".8" /><path d="M295 60V28l34 12-34 12" fill="var(--accent)" /></>),
+const CAT_INFO = {
+  AI: 'Agents, prompts and AI for work', Development: 'Web, APIs, Git and delivery', Design: 'UX research, Figma and motion',
+  Marketing: 'Growth, SEO and brand', Business: 'Finance, pricing and strategy', Leadership: 'Managing people and change',
+  HR: 'Hiring, onboarding and people ops', 'Contact Center': 'QA, coaching and customer handling', Engineering: 'Cloud, DevOps and QA engineering',
 };
 
-/** Generated placeholder artwork. Swap for `w.thumbnailUrl` once the backend provides real images. */
-function WorkshopArt({ w }) {
-  const h = ((CH[w.category] || 24) + (w.hue % 14)) % 360;
-  const id = 'g' + w.slug.replace(/[^a-z0-9]/g, '');
+/** Scroll-reveal wrapper (reduced motion mein seedha dikhta hai). */
+function Reveal({ children, className = '', delay = 0, as: Tag = 'div' }) {
+  const ref = useRef(null);
+  const [on, setOn] = useState(false);
+  useEffect(() => {
+    if (reduce() || typeof IntersectionObserver === 'undefined') { setOn(true); return undefined; }
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setOn(true); io.disconnect(); } }, { threshold: 0.12 });
+    if (ref.current) io.observe(ref.current);
+    return () => io.disconnect();
+  }, []);
+  return <Tag ref={ref} className={`wkrv ${on ? 'wkrv-on' : ''} ${className}`} style={delay ? { transitionDelay: delay + 'ms' } : undefined}>{children}</Tag>;
+}
+
+/** Animated counter: viewport mein aate hi ginti shuru. */
+function Counter({ to }) {
+  const ref = useRef(null);
+  const [v, setV] = useState(0);
+  useEffect(() => {
+    if (to == null) return undefined;
+    if (reduce() || typeof IntersectionObserver === 'undefined') { setV(to); return undefined; }
+    let raf = 0, started = false;
+    const run = () => {
+      const t0 = performance.now();
+      const tick = (t) => {
+        const p = Math.min(1, (t - t0) / 1200);
+        setV(Math.round(to * (1 - Math.pow(1 - p, 3))));
+        if (p < 1) raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+    };
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting && !started) { started = true; run(); } });
+    if (ref.current) io.observe(ref.current);
+    return () => { io.disconnect(); cancelAnimationFrame(raf); };
+  }, [to]);
+  return <span ref={ref}>{to == null ? '\u2013' : v}</span>;
+}
+
+const PlayIcon = ({ size = 28 }) => <svg width={size} height={size} viewBox="0 0 24 24" fill="#fff" aria-hidden="true" style={{ marginLeft: 3 }}><path d="M7 4l13 8-13 8z" /></svg>;
+
+function Yt({ id, title }) {
+  const [on, setOn] = useState(false);
   return (
-    <svg viewBox="0 0 400 225" preserveAspectRatio="xMidYMid slice" role="img" aria-label={`${w.category} workshop artwork`}>
-      <defs>
-        <linearGradient id={id} x1="0" y1="0" x2="1" y2="1"><stop offset="0" stopColor={`hsl(${h} 78% 52%)`} /><stop offset="1" stopColor={`hsl(${(h + 22) % 360} 85% 27%)`} /></linearGradient>
-        <radialGradient id={`${id}r`} cx=".75" cy=".2" r=".7"><stop offset="0" stopColor="#fff" stopOpacity=".35" /><stop offset="1" stopColor="#fff" stopOpacity="0" /></radialGradient>
-      </defs>
-      <rect width="400" height="225" fill={`url(#${id})`} />
-      <rect width="400" height="225" fill={`url(#${id}r)`} />
-      <g stroke="#fff" strokeOpacity=".08">{Array.from({ length: 10 }, (_, i) => <path key={i} d={`M${i * 44} 0V225M0 ${i * 26}H400`} />)}</g>
-      <circle cx="60" cy="190" r="90" fill="#fff" opacity=".07" />
-      {GLYPH[w.category]}
-    </svg>
+    <div style={{ position: 'relative', aspectRatio: '16/9', borderRadius: 14, overflow: 'hidden', background: '#111' }}>
+      {on ? <iframe title={title} src={`https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0`} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }} />
+        : <button type="button" onClick={() => setOn(true)} aria-label={`Play: ${title}`} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0, cursor: 'pointer', background: `center/cover url(https://i.ytimg.com/vi/${id}/hqdefault.jpg)` }}>
+          <span style={{ position: 'absolute', inset: 0, display: 'grid', placeItems: 'center', background: 'rgba(0,0,0,.25)' }}><span style={{ width: 68, height: 68, borderRadius: '50%', background: '#f97316', display: 'grid', placeItems: 'center' }}><PlayIcon /></span></span>
+        </button>}
+    </div>
   );
 }
 
+/** Workshop ka real cover photo (category ke hisaab se, ya MEDIA.covers / w.coverUrl override). */
+function WorkshopArt({ w }) {
+  const c = CATEGORY_COVER[w.category] || { src: IMG.coding, pos: 'center' };
+  const src = MEDIA.covers[w.slug] || w.coverUrl || c.src;
+  return <img src={src} alt={`${w.title} workshop`} loading="lazy" style={{ objectPosition: c.pos }} />;
+}
+
 function Avatar({ person, large = false }) {
+  const ph = MEDIA.instructors[Object.keys(INSTRUCTORS).find((k) => INSTRUCTORS[k].name === person.name)] || person.photoUrl;
+  if (ph) return <img className={`av ${large ? 'lg' : ''}`} src={ph} alt={person.name} loading="lazy" style={{ objectFit: 'cover' }} />;
   return (
     <span
       className={`av ${large ? 'lg' : ''}`}
@@ -727,7 +1121,7 @@ function Avatar({ person, large = false }) {
 const FormatBadge = ({ w }) =>
   w.format === 'live'
     ? <span className="badge live"><i />Live</span>
-    : <span className="badge">On-demand</span>;
+    : <span className="badge">Recorded</span>;
 
 const Skeletons = ({ n = 6, height }) => (
   <>{Array.from({ length: n }, (_, i) => <div key={i} className="skel" style={height ? { height } : undefined} aria-hidden="true" />)}</>
@@ -737,7 +1131,6 @@ const ErrorIcon = () => (
   <svg width="52" height="52" viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round"><circle cx="32" cy="32" r="26" /><path d="M32 18v17M32 44v2" /></svg>
 );
 
-/** Centered error / empty / restricted state. */
 function StateBox({ title, text, children, icon }) {
   return (
     <div className="wrap">
@@ -766,53 +1159,69 @@ function Field({ id, label, error, children }) {
   );
 }
 
+const P = {
+  search: <><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></>,
+  calendar: <><rect x="3" y="4" width="18" height="18" rx="2" /><path d="M16 2v4M8 2v4M3 10h18" /></>,
+  clock: <><circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" /></>,
+  level: <path d="M5 20V14M12 20V9M19 20V4" />,
+  play: <path d="M6 3l14 9-14 9z" />,
+  video: <><path d="m16 13 5.2 3.5a.5.5 0 0 0 .8-.4V7.9a.5.5 0 0 0-.8-.4L16 11" /><rect x="2" y="6" width="14" height="12" rx="2" /></>,
+  award: <><circle cx="12" cy="8" r="6" /><path d="M15.5 12.9 17 22l-5-3-5 3 1.5-9.1" /></>,
+  qr: <><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><path d="M14 14h3v3M21 14v.01M14 21h3M21 17v4" /></>,
+  user: <><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></>,
+  users: <><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><circle cx="9" cy="7" r="4" /><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8" /></>,
+  pen: <path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" />,
+  hash: <path d="M4 9h16M4 15h16M10 3 8 21M16 3l-2 18" />,
+  book: <><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></>,
+  download: <><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><path d="m7 10 5 5 5-5M12 15V3" /></>,
+  linkedin: <><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" /><rect x="2" y="9" width="4" height="12" /><circle cx="4" cy="4" r="2" /></>,
+  building: <><rect x="4" y="2" width="16" height="20" rx="2" /><path d="M9 22v-4h6v4M8 6h.01M12 6h.01M16 6h.01M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01" /></>,
+  mail: <><rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-10 6L2 7" /></>,
+  compass: <><circle cx="12" cy="12" r="10" /><path d="m16.2 7.8-2.1 6.3-6.3 2.1 2.1-6.3z" /></>,
+  select: <><path d="m9 11 3 3L22 4" /><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" /></>,
+  present: <path d="M2 3h20M21 3v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V3M12 16v5M8 21h8" />,
+  code: <path d="m16 18 6-6-6-6M8 6l-6 6 6 6" />,
+  assess: <><rect x="8" y="2" width="8" height="4" rx="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><path d="m9 14 2 2 4-4" /></>,
+  trending: <><path d="m22 7-8.5 8.5-5-5L2 17" /><path d="M16 7h6v6" /></>,
+  briefcase: <><rect x="2" y="7" width="20" height="14" rx="2" /><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" /></>,
+  sparkles: <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z" />,
+  palette: <><circle cx="13.5" cy="6.5" r="1" /><circle cx="17.5" cy="10.5" r="1" /><circle cx="8.5" cy="7.5" r="1" /><circle cx="6.5" cy="12.5" r="1" /><path d="M12 2a10 10 0 0 0 0 20 2 2 0 0 0 2-2c0-.6-.2-1-.5-1.4a2 2 0 0 1 1.5-3.3H17a5 5 0 0 0 5-5C22 6 17.5 2 12 2z" /></>,
+  headset: <><path d="M3 14v-2a9 9 0 0 1 18 0v2" /><path d="M21 15a2 2 0 0 1-2 2h-1v-5h1a2 2 0 0 1 2 2zM3 15a2 2 0 0 0 2 2h1v-5H5a2 2 0 0 0-2 2z" /></>,
+  cog: <><circle cx="12" cy="12" r="3" /><path d="M12 2v3M12 19v3M4.9 4.9 7 7M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1 7 17M17 7l2.1-2.1" /></>,
+  bell: <><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0" /></>,
+  file: <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6M8 13h8M8 17h8" /></>,
+  message: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />,
+};
+const I = ({ n, s = 15 }) => (
+  <svg width={s} height={s} viewBox="0 0 24 24" fill={n === 'play' ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flex: 'none' }}>{P[n]}</svg>
+);
+const CAT_ICON = { AI: 'sparkles', Development: 'code', Design: 'palette', Marketing: 'trending', Business: 'briefcase', Leadership: 'compass', HR: 'users', 'Contact Center': 'headset', Engineering: 'cog' };
 const Icons = {
-  cal: (<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3" /><path d="M8 3v4M16 3v4M3 10h18" /></svg>),
-  clock: (<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>),
-  lvl: (<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M5 20V14M12 20V9M19 20V4" /></svg>),
-  play: (<svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4l13 8-13 8z" /></svg>),
-  search: (<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="M21 21l-4.3-4.3" /></svg>),
+  cal: <I n="calendar" />, clock: <I n="clock" />, lvl: <I n="level" />, play: <I n="play" s={13} />, search: <I n="search" s={18} />,
 };
 
 function WorkshopCard({ w, registered = false }) {
-  const ref = useRef(null);
   const full = w.format === 'live' && w.seatsLeft === 0;
-
-  const onMove = (e) => {
-    if (e.pointerType !== 'mouse') return;
-    const c = ref.current;
-    const r = c.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width;
-    const y = (e.clientY - r.top) / r.height;
-    c.classList.add('tilting');
-    c.style.setProperty('--ry', (x - 0.5) * 12 + 'deg');
-    c.style.setProperty('--rx', (0.5 - y) * 10 + 'deg');
-    c.style.setProperty('--mx', x * 100 + '%');
-    c.style.setProperty('--my', y * 100 + '%');
-  };
-  const onLeave = () => {
-    const c = ref.current;
-    c.classList.remove('tilting');
-    c.style.removeProperty('--rx');
-    c.style.removeProperty('--ry');
-  };
-
+  const featured = w.popularity >= 95;
   return (
-    <article className="card" ref={ref} onPointerMove={onMove} onPointerLeave={onLeave}>
+    <article className={`card ${featured ? 'featured' : ''}`}>
       <div className="art">
         <WorkshopArt w={w} />
-        <div className="badges"><FormatBadge w={w} />{w.price === 0 && <span className="badge free">Free</span>}</div>
+        <div className="badges"><FormatBadge w={w} />{featured && <span className="badge feat">Featured</span>}{w.price === 0 && <span className="badge free">Free</span>}</div>
       </div>
       <div className="cbody">
+        <span className="cat">{w.category}</span>
         <h3><Link href={`/workshops/${w.slug}`}>{w.title}</Link></h3>
         <p className="sd">{w.short}</p>
-        <div className="inst"><Avatar person={w.instructor} /><span>{w.instructor.name}</span></div>
+        <div className="inst"><Avatar person={w.instructor} /><span><b>{w.instructor.name}</b><small>{w.instructor.role}</small></span></div>
         <div className="meta">
           {w.format === 'live'
             ? <span>{Icons.cal}{fmtD.format(w.start)}, {fmtT.format(w.start)}</span>
             : <span>{Icons.play}Watch anytime</span>}
           <span>{Icons.clock}{durTxt(w.duration)}</span>
           <span>{Icons.lvl}{w.level}</span>
+          {w.seatsLeft != null && <span className={`seat ${w.seatsLeft < 20 ? 'low' : ''}`}><I n="users" s={13} />{w.seatsLeft === 0 ? 'No seats left' : `${w.seatsLeft} seats left`}</span>}
+          {w.rating ? <span>Rated {w.rating}/5</span> : null}
         </div>
         <div className="cfoot">
           <span className={`price ${w.price === 0 ? 'free' : ''}`}>{money(w.price)}</span>
@@ -829,10 +1238,1379 @@ function WorkshopCard({ w, registered = false }) {
 }
 
 /* ====================================================================
+   PAGE SECTIONS (listing page): har section ko apni real photo / content
+   ==================================================================== */
+const PERKS = [
+  ['award', 'Certificate of completion', 'Issued from verified completion records, with a unique ID.'],
+  ['video', 'Session recording', 'Rewatch the workshop from your dashboard after you register.'],
+  ['message', 'Live Q&A with your instructor', 'Ask your own questions during live sessions.'],
+  ['file', 'Templates and resources', 'Download materials shared by the instructor.'],
+  ['bell', 'Reminders', 'Get notified before your live session starts.'],
+  ['building', 'Group and corporate batches', 'Bring your team or college to a private session.'],
+];
+const FAQS = [
+  ['Are there any prerequisites?', 'No formal prerequisites for beginner workshops. Each workshop lists its level and what to prepare on its page.'],
+  ['When are the live sessions?', 'Live sessions run on Day 0, Day 1 and Day 2, with a bonus live showcase at the end. Exact dates are shown for each cohort.'],
+  ['What if I cannot attend a live session?', 'The week is designed around a working schedule: lessons Monday to Friday are self-paced. Registered learners can watch recordings from My learning when the instructor publishes them.'],
+  ['How much access do I get to instructors?', 'Instructors are active during live sessions to answer questions and give feedback. They may not reply to every individual message.'],
+  ['How much time do I need each week?', 'About 8 hours on each live weekend day and 2 to 3 hours a day for self-paced lessons.'],
+  ['What is included?', 'Live sessions, projects, lifetime access to project files, the learner community and a verified certificate after completion.'],
+  ['Will I get a certificate?', 'Yes, after your completion is verified. Each certificate has a unique ID and QR code so anyone can check it.'],
+  ['Can I get a refund?', 'If the workshop is not for you, request a refund within 24 hours of the session start. See our refund policy.'],
+  ['Can my team or college join together?', 'Yes. Contact us for group pricing, private batches and custom workshops.'],
+];
+function useCountdown(ts) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => { const t = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(t); }, []);
+  const d = Math.max(0, ts - now), p = (n) => String(n).padStart(2, '0');
+  return [['Days', Math.floor(d / 864e5)], ['Hrs', p(Math.floor(d / 36e5) % 24)], ['Min', p(Math.floor(d / 6e4) % 60)], ['Sec', p(Math.floor(d / 1e3) % 60)]];
+}
+function Countdown({ ts }) { const c = useCountdown(ts); return <div className="cdn" role="timer">{c.map(([l, v]) => <div key={l}><b>{v}</b><small>{l}</small></div>)}</div>; }
+const Faq = () => <div className="panel glass faq"><h2>Frequently asked questions</h2>{FAQS.map(([q, a]) => <details key={q}><summary>{q}</summary><p>{a}</p></details>)}</div>;
+
+const HERO_VIS = {
+  a: IMG.studentCollab,   // left polaroid
+  b: IMG.mentorGuidance,  // chhoti photo, neeche left
+  // main photo = MEDIA.heroPoster (ya MEDIA.heroVideo agar set ho)
+};
+
+const HERO3_CSS = `
+.wk .hero3 .hero2-bg img{filter:blur(22px) saturate(1.15) brightness(.55);transform:scale(1.12)}
+.wk .hero3 .hero2-shade{background:
+  radial-gradient(60% 80% at 82% 40%,rgba(249,115,22,.24),transparent 60%),
+  radial-gradient(40% 60% at 68% 95%,rgba(22,163,74,.24),transparent 60%),
+  linear-gradient(90deg,rgba(8,8,14,.92) 0%,rgba(8,8,14,.72) 55%,rgba(8,8,14,.5) 100%),
+  linear-gradient(0deg,rgba(8,8,14,.8),transparent 45%)}
+.wk .hero3 .hero2-in{align-items:center;padding-top:44px;padding-bottom:28px}
+@media(min-width:960px){.wk .hero3 .hero2-in{grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:36px}}
+
+/* collage stage */
+.wk .hv-stage{position:relative;width:100%;max-width:560px;margin-left:auto;aspect-ratio:1/.82}
+.wk .hv{position:absolute;transform:translate3d(calc(var(--mx,0) * var(--d,0) * 1px),calc(var(--my,0) * var(--d,0) * 1px),0);transition:transform .25s ease-out}
+.wk .hv-f{position:relative;width:100%;height:100%;margin:0;overflow:hidden;border-radius:24px;background:#14141f;border:1px solid rgba(255,255,255,.22);box-shadow:0 26px 54px rgba(0,0,0,.5);transform:rotate(var(--r,0deg));animation:hvin .9s cubic-bezier(.2,.8,.2,1) var(--e,0s) both,hvfloat 7s ease-in-out calc(var(--e,0s) + .9s) infinite}
+.wk .hv-f img,.wk .hv-f video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+.wk .hv-f::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(8,8,14,.5),transparent 55%);pointer-events:none}
+@keyframes hvin{from{opacity:0;translate:0 28px}}
+@keyframes hvfloat{50%{transform:rotate(var(--r,0deg)) translateY(-9px)}}
+.wk .hv-main{--r:2deg;--d:10;--e:.1s;right:0;top:0;width:82%;height:66%;z-index:1}
+.wk .hv-a{--r:-6deg;--d:22;--e:.3s;left:0;top:14%;width:33%;aspect-ratio:4/5;z-index:2}
+.wk .hv-b{--r:3deg;--d:30;--e:.5s;left:3%;bottom:0;width:28%;aspect-ratio:16/11;z-index:2}
+.wk .hv-a .hv-f,.wk .hv-b .hv-f{position:absolute;inset:0;width:auto;height:auto;border:4px solid #fff;border-radius:18px}
+.wk .hv-tag{position:absolute;left:10px;bottom:10px;z-index:2;display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:.66rem;font-weight:800;background:rgba(10,12,30,.76);color:#fff;backdrop-filter:blur(6px);white-space:nowrap}
+.wk .hv-main .hv-tag{top:12px;bottom:auto;left:12px}
+.wk .hv-tag i{width:7px;height:7px;border-radius:50%;background:#ff4d6d;animation:wkpulse 1.8s infinite}
+.wk .hv-tag.ok{background:var(--accent)}
+.wk .hv-glow{position:absolute;border-radius:50%;filter:blur(44px);opacity:.55;pointer-events:none}
+.wk .hv-glow.o{width:55%;aspect-ratio:1;right:-8%;top:-12%;background:#f97316}
+.wk .hv-glow.g{width:40%;aspect-ratio:1;left:8%;bottom:6%;background:#16a34a}
+.wk .hv-card{position:absolute;right:0;bottom:0;width:72%;z-index:4;box-shadow:0 20px 44px rgba(0,0,0,.45);animation:hvin .9s cubic-bezier(.2,.8,.2,1) .7s both}
+.wk .hv-card .btn{justify-self:start}
+
+@media(max-width:959px){
+  /* collage laptop jaisa hi rahega, card uske neeche aayega */
+  .wk .hv-stage{display:block;width:100%;max-width:540px;aspect-ratio:auto;margin:0 auto}
+  .wk .hv-collage{position:relative;inset:auto;display:block;width:100%;height:0;padding-bottom:82%;margin-bottom:14px}
+  .wk .hv-card{position:relative!important;right:auto!important;bottom:auto!important;left:auto!important;top:auto!important;width:100%!important;display:grid;opacity:1;z-index:4}
+  .wk .hv-tag{font-size:.6rem;padding:3px 8px}
+}
+@media(max-width:480px){
+  .wk .hv-a{width:36%;top:16%}
+  .wk .hv-b{width:34%;left:2%}
+  .wk .hv-a .hv-f,.wk .hv-b .hv-f{border-width:3px;border-radius:14px}
+  .wk .hv-tag{left:6px;bottom:6px;font-size:.54rem;padding:2px 6px;white-space:normal;line-height:1.15}
+  .wk .hv-main .hv-tag{left:8px;top:8px}
+}
+`;
+
+/** 1. Cinematic hero: left content, right image collage + next-session card. */
+function Hero({ data }) {
+  const bg = useRef(null);
+  const stage = useRef(null);
+  useEffect(() => {
+    if (reduce()) return undefined;
+    let raf = 0;
+    const on = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => { if (bg.current) bg.current.style.transform = `translate3d(0,${Math.min(window.scrollY, 700) * 0.18}px,0) scale(1.08)`; });
+    };
+    window.addEventListener('scroll', on, { passive: true });
+    return () => { window.removeEventListener('scroll', on); cancelAnimationFrame(raf); };
+  }, []);
+
+  // Mouse parallax: photos alag-alag depth par halka sa hilte hain (touch / reduced motion par band)
+  const onMove = (e) => {
+    if (e.pointerType !== 'mouse' || reduce() || !stage.current) return;
+    const r = stage.current.getBoundingClientRect();
+    const c = (v) => Math.max(-1, Math.min(1, v));
+    stage.current.style.setProperty('--mx', c(((e.clientX - r.left) / r.width - 0.5) * 2).toFixed(3));
+    stage.current.style.setProperty('--my', c(((e.clientY - r.top) / r.height - 0.5) * 2).toFixed(3));
+  };
+  const onLeave = () => {
+    if (!stage.current) return;
+    stage.current.style.setProperty('--mx', 0);
+    stage.current.style.setProperty('--my', 0);
+  };
+
+  const upcoming = (data || []).filter((x) => x.format === 'live' && x.start > Date.now()).sort((a, b) => a.start - b.start);
+  const next = upcoming[0];
+  const stats = [
+    ['Workshops', data ? data.length : null],
+    ['Live sessions coming up', data ? upcoming.length : null],
+    ['Free workshops', data ? data.filter((x) => x.price === 0).length : null],
+    ['Topics', data ? new Set(data.map((x) => x.category)).size : null],
+  ];
+
+  return (
+    <section className="hero2 hero3" aria-labelledby="hero-h" onPointerMove={onMove} onPointerLeave={onLeave}>
+      <style dangerouslySetInnerHTML={{ __html: HERO3_CSS }} />
+      <div className="hero2-bg" ref={bg}>
+        <img src={MEDIA.heroPoster} alt="" />
+      </div>
+      <div className="hero2-shade" aria-hidden="true" />
+      <div className="wrap hero2-in">
+        <div>
+          <span className="livepill"><i />{data ? `${upcoming.length} live workshops open for registration` : 'Loading live workshops'}</span>
+          <h1 id="hero-h">Build real Java full-stack projects. Get certified.</h1>
+          <p className="lead">Learn Java, Spring Boot, databases and React by building a working application, step by step. Live build days with working instructors, self-paced lessons in between. Beginner friendly.</p>
+          <div className="chips">
+            <span className="chip"><I n="code" s={13} />10+ projects</span>
+            <span className="chip"><I n="video" s={13} />Live weekend sessions</span>
+            <span className="chip"><I n="award" s={13} />Verified certificate</span>
+          </div>
+          <div className="hero2-cta">
+            <button type="button" className="btn btn-primary btn-lg" onClick={() => scrollToId('wk-price')}><I n="award" s={16} />Reserve my seat</button>
+            <button type="button" className="btn btn-line btn-lg" onClick={() => scrollToId('wk-roadmap')}><I n="compass" s={15} />See the roadmap</button>
+            <button type="button" className="btn btn-line btn-lg" onClick={() => go('/catalog')}><I n="search" s={15} />Browse all workshops</button>
+          </div>
+        </div>
+
+        <div className="hv-stage" ref={stage}>
+                    <div className="hv-collage" aria-hidden="true">
+            <span className="hv-glow o" />
+            <span className="hv-glow g" />
+            <div className="hv hv-main">
+              <figure className="hv-f">
+                {MEDIA.heroVideo
+                  ? <video src={MEDIA.heroVideo} poster={MEDIA.heroPoster} autoPlay muted loop playsInline preload="metadata" />
+                  : <img src={MEDIA.heroPoster} alt="" />}
+                <span className="hv-tag"><i />Live build days</span>
+              </figure>
+            </div>
+            <div className="hv hv-a">
+              <figure className="hv-f">
+                <img src={HERO_VIS.a} alt="" loading="lazy" style={{ objectPosition: '50% 40%' }} />
+                <span className="hv-tag ok">10+ projects</span>
+              </figure>
+            </div>
+            <div className="hv hv-b">
+              <figure className="hv-f">
+                <img src={HERO_VIS.b} alt="" loading="lazy" style={{ objectPosition: '50% 40%' }} />
+                <span className="hv-tag ok">Verified certificate</span>
+              </figure>
+            </div>
+          </div>
+          {next && (
+            <aside className="hero2-card hv-card" aria-label="Next live workshop">
+              <small>Next live session</small>
+              <h3>{next.title}</h3>
+              <p>with {next.instructor.name}. {fmtD.format(next.start)}, {fmtT.format(next.start)} IST</p>
+              <Countdown ts={next.start} />
+              <Link className="btn btn-light btn-sm" href={`/workshops/${next.slug}`}>Reserve my seat</Link>
+            </aside>
+          )}
+        </div>
+      </div>
+      <div className="wrap">
+        <dl className="hero2-stats" style={{ margin: 0 }}>
+          {stats.map(([l, v]) => <div key={l}><b><Counter to={v} /></b><span>{l}</span></div>)}
+        </dl>
+      </div>
+    </section>
+  );
+}
+
+/** 2. Video: real URL ho to play, nahi to clearly-labelled slot (fake video nahi). */
+function VideoModal({ v, onClose }) {
+  const btn = useRef(null);
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const key = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', key);
+    if (btn.current) btn.current.focus();
+    return () => { document.body.style.overflow = prev; window.removeEventListener('keydown', key); };
+  }, [onClose]);
+  return (
+    <div className="vm" role="dialog" aria-modal="true" aria-label={v.title} onClick={onClose}>
+      <div className="vm-box" onClick={(e) => e.stopPropagation()}>
+        <button type="button" className="vm-x" ref={btn} onClick={onClose} aria-label="Close video">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+        </button>
+        {v.youtube
+          ? <iframe title={v.title} src={`https://www.youtube-nocookie.com/embed/${v.youtube}?autoplay=1&rel=0`} allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
+          : <video src={v.src} poster={v.poster} controls autoPlay playsInline />}
+      </div>
+    </div>
+  );
+}
+function Experience() {
+  const [open, setOpen] = useState(null);
+  const playable = (v) => Boolean(v.youtube || v.src);
+  return (
+    <section className="wrap sec" id="wk-experience" aria-labelledby="xp-h">
+      <Reveal><div className="sechead"><div><h2 className="h-xl" id="xp-h">Experience ILM ORA Workshops</h2><p>Illustrative previews of the learning environment. These are not recordings of past ILM ORA events.</p></div></div></Reveal>
+      <div className="xp">
+        {MEDIA.videos.map((v, i) => (
+          <Reveal key={v.id} className={`xp-card ${i === 0 ? 'lead' : ''}`} delay={i * 80}>
+            <button type="button" className="xp-btn" disabled={!playable(v)} onClick={() => setOpen(v)} aria-label={playable(v) ? `Play video: ${v.title}` : `${v.title}. Official video not uploaded yet`}>
+                            {v.poster
+                ? <img src={v.poster} alt={v.alt} loading="lazy" style={{ objectPosition: v.pos || '50% 40%' }} />
+                : <video src={`${v.src}#t=0.5`} preload="metadata" muted playsInline aria-hidden="true" tabIndex={-1} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', objectPosition: v.pos || '50% 40%' }} />}
+              <span className="xp-shade" />
+              {playable(v) && <span className="xp-play"><PlayIcon size={20} /></span>}
+              <span className="xp-cap"><small>{v.tag}</small><b>{v.title}</b><em>{playable(v) ? v.text : 'Official ILM ORA video will be added here.'}</em></span>
+            </button>
+          </Reveal>
+        ))}
+      </div>
+      {open && <VideoModal v={open} onClose={() => setOpen(null)} />}
+    </section>
+  );
+}
+
+/** 3. Topics: real photo tiles, live count from data. */
+function TopicTiles({ data }) {
+  return (
+    <section className="wrap sec" aria-labelledby="top-h">
+      <Reveal><div className="sechead"><div><h2 className="h-xl" id="top-h">Popular learning categories</h2><p>Pick a skill area and see every workshop in it.</p></div></div></Reveal>
+      <AutoRow label="Popular learning categories">
+        {Object.entries(CAT_INFO).map(([c, d]) => {
+          const cv = CATEGORY_COVER[c];
+          const n = data ? data.filter((w) => w.category === c).length : null;
+          return (
+            <Link key={c} className="tile" href={`/catalog?cat=${encodeURIComponent(c)}`} onClick={() => setTimeout(() => scrollToId('wk-explore'), 60)}>
+              <img src={cv.src} alt="" loading="lazy" style={{ objectPosition: cv.pos }} />
+              <div><span className="tic"><I n={CAT_ICON[c]} s={15} /></span><h3>{c}</h3><p>{d}{n != null ? ` (${n})` : ''}</p></div>
+            </Link>
+          );
+        })}
+      </AutoRow>
+    </section>
+  );
+}
+
+/** 4. Learning journey: 6 steps, har step ki real photo, scroll reveal. */
+function Journey() {
+  return (
+    <section className="wrap sec" aria-labelledby="jr-h">
+      <Reveal><div className="sechead"><div><h2 className="h-xl" id="jr-h">Your learning journey, start to certificate</h2><p>Six steps from finding a workshop to holding a verified ILM ORA certificate.</p></div></div></Reveal>
+      <ol className="jr" style={{ listStyle: 'none', padding: 0, margin: '22px 0 0' }}>
+        {JOURNEY.map((s, i) => (
+          <Reveal as="li" key={s.t} className="jr-step">
+            <div className="jr-img"><img src={s.img} alt={s.alt} loading="lazy" style={{ objectPosition: s.pos }} /></div>
+            <div><div className="jr-top"><span className="jr-ic"><I n={s.ic} s={16} /></span><span className="jr-no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span></div><h3>{s.t}</h3><p>{s.d}</p></div>
+          </Reveal>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+/** 5. Certificate showcase: real ILM ORA full stack certificate + ceremony photo. */
+function CertificateShowcase() {
+  const share = () => {
+    const url = window.location.origin + window.location.pathname;
+    window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, '_blank', 'noopener,noreferrer');
+  };
+  return (
+    <section className="wrap sec" aria-labelledby="ce-h">
+      <Reveal className="cert">
+        <div>
+          <div className="cert-frame">
+            <span className="tagc">Sample preview</span>
+            <img src={IMG.certFull} alt="Sample ILM ORA Full Stack certificate of completion" loading="lazy" />
+          </div>
+        </div>
+        <div>
+          <h2 className="h-xl" id="ce-h">Your skills deserve recognition</h2>
+          <p className="muted" style={{ marginTop: 10, maxWidth: '56ch' }}>Finish a workshop and your completion is recorded by ILM ORA. Verified learners receive a certificate they can download and share.</p>
+          <ul className="cert-list">
+            <li><I n="user" />Your name as registered</li>
+            <li><I n="book" />Workshop or course name</li>
+            <li><I n="pen" />Instructor signature</li>
+            <li><I n="hash" />Unique certificate ID</li>
+            <li><I n="calendar" />Issue date</li>
+            <li><I n="qr" />QR code to verify it online</li>
+          </ul>
+          <div className="cert-act">
+            <LinkBtn href="/dashboard"><I n="award" s={16} />View my certificates</LinkBtn>
+            <button type="button" className="btn btn-ghost" onClick={share}><I n="linkedin" s={16} />Share on LinkedIn</button>
+            <button type="button" className="btn btn-ghost" disabled aria-disabled="true" title="Available once your completion is verified"><I n="download" s={16} />Download certificate</button>
+          </div>
+          <p className="cert-note">The certificate shown is a sample design. Real certificates are generated only from verified completion records, and download unlocks after your completion is confirmed.</p>
+        </div>
+      </Reveal>
+      <Reveal delay={100}><figure className="natfig"><img src={IMG.certCeremony} alt="Learners receiving certificates at a Java workshop ceremony" loading="lazy" /><figcaption>Certificate ceremony after a Java workshop</figcaption></figure></Reveal>
+    </section>
+  );
+}
+
+/** 6. Team + workshop instructors (instructors backend data se). */
+function Mentors() {
+  return (
+    <div className="mentors">
+      {MENTORS.map((m, i) => (
+        <Reveal key={m.name} delay={i * 80}>
+          <figure className="mentor" style={{ margin: 0, height: '100%' }}>
+            <div className="ph"><img src={m.img} alt={`${m.name}${m.role ? `, ${m.role}` : ''} at ILM ORA`} loading="lazy" style={{ objectPosition: m.pos }} /></div>
+            <figcaption>
+              <h3>{m.name}</h3>
+              <p className="role">{m.role}</p>
+              {m.org && <p className="org">{m.org}</p>}
+            </figcaption>
+          </figure>
+        </Reveal>
+      ))}
+    </div>
+  );
+}
+function Instructors({ data }) {
+  const list = useMemo(() => {
+    const m = new Map();
+    (data || []).forEach((w) => {
+      const e = m.get(w.instructor.name) || { p: w.instructor, n: 0, slug: w.slug };
+      e.n += 1; m.set(w.instructor.name, e);
+    });
+    return [...m.values()];
+  }, [data]);
+  return (
+    <section className="wrap sec" aria-labelledby="in-h">
+            <Reveal><div className="sechead"><div><h2 className="h-xl" id="in-h">Our mentors are the best at what they teach</h2><p>The founders and instructors who run your sessions.</p></div></div></Reveal>
+      <Mentors />
+      {list.length > 0 && (
+        <Reveal>
+          <h3 style={{ marginTop: 28 }}>Instructors teaching now</h3>
+          <ul className="ilist">
+            {list.map(({ p, n, slug }) => (
+              <li key={p.name}>
+                <Avatar person={p} />
+                <span><b><Link href={`/workshops/${slug}`}>{p.name}</Link></b><small>{p.role}{p.years ? `, ${p.years}+ years` : ''}. {n} workshop{n === 1 ? '' : 's'}</small></span>
+              </li>
+            ))}
+          </ul>
+        </Reveal>
+      )}
+    </section>
+  );
+}
+
+/** 7. Corporate training: real corporate training photo. */
+function Corporate() {
+  return (
+    <section className="wrap sec" aria-labelledby="co-h">
+      <Reveal className="band">
+        <img src={IMG.corp} alt="ILM ORA corporate training workshop in progress" loading="lazy" />
+        <div className="band-in">
+          <h2 id="co-h">Corporate training for your team</h2>
+          <p>Private batches, group pricing and custom workshops for companies and colleges, delivered live by ILM ORA instructors.</p>
+          <div className="cert-act">
+            <a className="btn btn-primary btn-lg" href={`mailto:${CONFIG.CONTACT_EMAIL}?subject=Group%20workshop%20enquiry`}><I n="mail" s={16} />Talk to us</a>
+            <button type="button" className="btn btn-ghost btn-lg" onClick={() => go('/catalog')}><I n="search" s={16} />Browse workshops</button>
+          </div>
+        </div>
+      </Reveal>
+    </section>
+  );
+}
+
+function FeedbackCard({ f, onPlay }) {
+  const playable = Boolean(f.youtube || f.video);
+  const poster = f.poster || (f.youtube ? `https://i.ytimg.com/vi/${f.youtube}/hqdefault.jpg` : '');
+  return (
+    <figure className="fb">
+      {playable && (
+        <button type="button" className="fb-vid" aria-label={`Play feedback from ${f.name}`}
+          onClick={() => onPlay({ title: `${f.name} feedback`, youtube: f.youtube, src: f.video, poster })}>
+          {poster ? <img src={poster} alt="" loading="lazy" /> : <span className="fb-ph" />}
+          <span className="fb-play"><PlayIcon size={20} /></span>
+        </button>
+      )}
+      {f.shot && <img className="fb-shot" src={f.shot} alt={`Feedback screenshot from ${f.name}`} loading="lazy" />}
+      <figcaption className="fb-body">
+        <div className="fb-head">
+          {f.photo
+            ? <img className="av" src={f.photo} alt={f.name} loading="lazy" />
+            : <span className="av" style={{ background: 'linear-gradient(135deg,#f97316,#c2410c)' }} aria-hidden="true">{initials(f.name)}</span>}
+          <span><b>{f.name}</b>{f.role && <small>{f.role}</small>}</span>
+          {f.source && SOURCE_LABEL[f.source] && <span className="fb-src" title={f.source}>{SOURCE_LABEL[f.source]}</span>}
+        </div>
+                {f.sample && <span className="fb-sample">Sample preview, not a real review</span>}
+        {f.text && <p className="fb-text">{'\u201C'}{f.text}{'\u201D'}</p>}
+        {(f.date || f.rating) && (
+          <div className="fb-foot">
+            <span>{f.date || ''}</span>
+            {f.rating ? <span className="fb-stars" aria-label={`${f.rating} out of 5`}>{'\u2605'.repeat(f.rating)}</span> : null}
+          </div>
+        )}
+      </figcaption>
+    </figure>
+  );
+}
+
+/** Home par feedback wall: pehle FEEDBACK_PREVIEW cards, neeche See more -> #/feedback */
+function WallOfLove() {
+  const [open, setOpen] = useState(null);
+  const list = FEEDBACK.slice(0, FEEDBACK_PREVIEW);
+  return (
+    <section className="wrap sec" id="wk-feedback" aria-labelledby="wl-h">
+      <Reveal><div className="sechead"><div><h2 className="h-xl" id="wl-h">Ambitious people {'\u2764\uFE0F'} ILM ORA</h2><p>Real feedback from learners who built with us.</p></div></div></Reveal>
+      {list.length > 0 ? (
+        <>
+          <div className="wall">
+            {list.map((f, i) => <Reveal key={f.name + i} delay={(i % 4) * 60}><FeedbackCard f={f} onPlay={setOpen} /></Reveal>)}
+          </div>
+          {FEEDBACK.length > FEEDBACK_PREVIEW && (
+            <div className="wall-more"><button type="button" className="btn btn-ghost btn-lg" onClick={() => go('/feedback')}>See more ({FEEDBACK.length - FEEDBACK_PREVIEW}+)</button></div>
+          )}
+        </>
+      ) : <p className="empty-note">Written feedback and video testimonials will appear here once learners have given permission to publish them.</p>}
+      {open && <VideoModal v={open} onClose={() => setOpen(null)} />}
+    </section>
+  );
+}
+
+/** Poori feedback wall (#/feedback) with Load more */
+function FeedbackPage() {
+  const [open, setOpen] = useState(null);
+  const [shown, setShown] = useState(FEEDBACK_PAGE);
+  const list = FEEDBACK.slice(0, shown);
+  return (
+    <div className="wrap" style={{ paddingTop: 18 }}>
+      <Link className="btn btn-ghost btn-sm" href="/workshops">{'\u2190'} Back to workshops</Link>
+      <div className="sechead" style={{ marginTop: 18 }}><div><h1>What our learners say</h1><p>{FEEDBACK.length} real feedback{FEEDBACK.length === 1 ? '' : 's'} from ILM ORA workshops.</p></div></div>
+      {list.length > 0
+        ? <div className="wall">{list.map((f, i) => <div key={f.name + i} className="wkrv wkrv-on"><FeedbackCard f={f} onPlay={setOpen} /></div>)}</div>
+        : <p className="empty-note">Feedback will appear here once learners have given permission to publish it.</p>}
+      {shown < FEEDBACK.length && <div className="wall-more"><button type="button" className="btn btn-ghost btn-lg" onClick={() => setShown((s) => s + FEEDBACK_PAGE)}>Load more</button></div>}
+      {open && <VideoModal v={open} onClose={() => setOpen(null)} />}
+    </div>
+  );
+}
+
+/** 8. Gallery + learner stories (sirf real; abhi photos, testimonials MEDIA.stories se). */
+function Community() {
+  return (
+    <section className="wrap sec" aria-labelledby="gl-h">
+      <Reveal><div className="sechead"><div><h2 className="h-xl" id="gl-h">Learner community and success stories</h2><p>Real moments from ILM ORA workshops.</p></div></div></Reveal>
+      <Reveal className="gal">
+        {GALLERY.map((g) => (
+          <figure key={g.cap}><img src={g.img} alt={g.cap} loading="lazy" style={{ objectPosition: g.pos }} /><figcaption>{g.cap}</figcaption></figure>
+        ))}
+      </Reveal>
+          </section>
+  );
+}
+
+function Perks() {
+  return (
+    <section className="wrap sec" aria-labelledby="pk-h">
+      <Reveal><div className="sechead"><div><h2 className="h-xl" id="pk-h">Included with every workshop</h2></div></div></Reveal>
+      <Reveal><ol className="plist">{PERKS.map(([ic, t, d]) => <li key={t}><div className="pi"><I n={ic} s={16} /></div><b>{t}</b><span>{d}</span></li>)}</ol></Reveal>
+    </section>
+  );
+}
+
+function FinalCta() {
+  return (
+    <section className="wrap sec" aria-labelledby="fc-h">
+      <Reveal className="band" style={{ minHeight: 300 }}>
+        <img src={IMG.celebration} alt="Learners celebrating together at an ILM ORA workshop" loading="lazy" />
+        <div className="band-in">
+          <h2 id="fc-h">Your next skill is one workshop away</h2>
+          <p>Pick a session, register in about a minute and start building.</p>
+          <div className="cert-act">
+            <button type="button" className="btn btn-primary btn-lg" onClick={() => go('/catalog')}><I n="search" s={16} />Explore workshops</button>
+            <a className="btn btn-ghost btn-lg" href={`mailto:${CONFIG.CONTACT_EMAIL}?subject=Workshop%20enquiry`}><I n="mail" s={16} />Ask a question</a>
+          </div>
+        </div>
+      </Reveal>
+    </section>
+  );
+}
+
+function DetailExtras({ w }) {
+  const live = w.format === 'live' && w.start;
+  const iso = (t) => new Date(t).toISOString().replace(/[-:]|\.\d{3}/g, '');
+  const gcal = live ? `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(w.title)}&dates=${iso(w.start)}/${iso(w.start + w.duration * 6e4)}` : null;
+  const url = typeof window !== 'undefined' ? window.location.href : '';
+  const share = async () => { try { navigator.share ? await navigator.share({ title: w.title, url }) : await navigator.clipboard.writeText(url); } catch (e) {} };
+  return (
+    <>
+      {live && w.start > Date.now() && <div className="nl" style={{ margin: '12px 0 0' }}><div><p style={{ fontWeight: 700 }}>Starts in</p></div><Countdown ts={w.start} /></div>}
+      <div className="panel glass" style={{ marginTop: 12 }}>
+        <h2>Your certificate</h2>
+        <div className="certmini">
+          <img src={IMG.certFull} alt="Sample ILM ORA certificate of completion" loading="lazy" />
+          <div>
+            <p>Complete this workshop and receive an ILM ORA certificate with a unique ID and QR verification.</p>
+            <p className="muted" style={{ fontSize: '.8rem', marginTop: 8 }}>Sample design shown. Your certificate is generated from your verified completion record.</p>
+          </div>
+        </div>
+      </div>
+      <div className="panel glass"><h2>What you get</h2><ol className="plist">{PERKS.map(([ic, t, d]) => <li key={t}><div className="pi"><I n={ic} s={16} /></div><b>{t}</b><span>{d}</span></li>)}</ol>
+        <div className="share">{gcal && <a className="btn btn-ghost btn-sm" href={gcal} target="_blank" rel="noopener noreferrer">Add to calendar</a>}<button type="button" className="btn btn-ghost btn-sm" onClick={share}>Share</button></div></div>
+      <Faq />
+    </>
+  );
+}
+
+/* ====================================================================
    PAGES
    ==================================================================== */
+/* ---------- B. CSS (WK_CSS ke baad naya const) ---------- */
+const GS_CSS = `
+.wk .offer{background:linear-gradient(90deg,#c2410c,var(--brand));color:#fff;text-align:center;font-weight:700;font-size:.8rem;padding:7px 14px;display:flex;gap:10px;justify-content:center;align-items:center;flex-wrap:wrap}
+.wk .offer .cdn div{background:rgba(0,0,0,.25);padding:2px 7px;min-width:40px}.wk .offer .cdn b{font-size:.85rem}.wk .offer .cdn small{font-size:.58rem}
+.wk .chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}
+.wk .chip{display:inline-flex;gap:6px;align-items:center;padding:5px 11px;border-radius:999px;font-size:.76rem;font-weight:700;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.28);color:#fff}
+.wk .fmt{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:6px}
+.wk .fmt div{padding:12px;border-radius:12px;border:1px solid var(--ln);background:var(--solid)}
+.wk .fmt b{display:block;font-size:.95rem;color:var(--brand)}.wk .fmt span{font-size:.76rem;color:var(--muted)}
+.wk .two-opt{display:grid;gap:12px}
+@media(min-width:760px){.wk .two-opt{grid-template-columns:1fr 1fr}}
+.wk .opt{padding:16px;border-radius:14px;border:1px solid var(--ln);background:var(--solid)}
+.wk .opt.bad{border-color:color-mix(in srgb,var(--err) 40%,var(--ln))}.wk .opt.good{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 6%,var(--solid))}
+.wk .opt h3{margin-bottom:8px}.wk .opt ul{margin:0;padding-left:18px;font-size:.84rem;color:var(--muted);display:grid;gap:5px}
+.wk .pain{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin-top:6px}
+.wk .pain>div{padding:13px;border-radius:12px;border:1px solid var(--ln);background:var(--solid)}
+.wk .pain .pi{grid-row:auto;width:28px;height:28px;min-height:0;padding:0;border:0;border-radius:8px;margin-bottom:8px;display:grid;place-items:center;background:color-mix(in srgb,var(--brand) 12%,transparent);color:var(--brand)}.wk .pain b{display:block;font-size:.9rem}.wk .pain span{font-size:.78rem;color:var(--muted)}
+.wk .rm{position:relative;display:grid;gap:12px;margin-top:16px;padding-left:22px}
+.wk .rm::before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--brand),var(--accent));border-radius:2px}
+.wk .rm-day{position:relative;padding:14px;border-radius:14px;border:1px solid var(--ln);background:var(--solid);box-shadow:var(--shadow)}
+.wk .rm-day::before{content:"";position:absolute;left:-22px;top:18px;width:16px;height:16px;border-radius:50%;background:var(--brand);border:3px solid var(--bg)}
+.wk .rm-day.brk::before{background:var(--accent)}
+.wk .rm-top{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:.72rem;font-weight:800}
+.wk .rm-top .d{color:var(--brand)}.wk .rm-top .l{padding:2px 8px;border-radius:999px;background:#ff4d6d;color:#fff}.wk .rm-top .s{padding:2px 8px;border-radius:999px;background:color-mix(in srgb,var(--accent) 16%,transparent);color:var(--ok)}.wk .rm-top .t{color:var(--muted);font-weight:600}
+.wk .rm-day h3{margin:6px 0 4px;font-size:1rem}.wk .rm-day>p{color:var(--muted);font-size:.84rem;max-width:70ch}
+.wk .proj{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px;margin-top:10px}
+.wk .proj div{padding:9px 11px;border-radius:10px;background:color-mix(in srgb,var(--brand) 8%,transparent);font-size:.78rem}
+.wk .proj b{display:block;font-size:.84rem}.wk .proj span{color:var(--muted)}
+/* BIG INFINITE MOVING TOOLS MARQUEE */
+.wk .tools-marquee{
+  position:relative;
+  width:100%;
+  overflow:hidden;
+  margin-top:18px;
+  padding:12px 0 20px;
+  -webkit-mask-image:linear-gradient(
+    90deg,
+    transparent,
+    #000 5%,
+    #000 95%,
+    transparent
+  );
+  mask-image:linear-gradient(
+    90deg,
+    transparent,
+    #000 5%,
+    #000 95%,
+    transparent
+  );
+}
 
-const CATS = ['All', 'AI', 'Development', 'Design', 'Marketing', 'Business', 'Leadership'];
+.wk .tools-track{
+  display:flex;
+  align-items:stretch;
+  gap:18px;
+  width:max-content;
+  animation:tools-marquee-move 32s linear infinite;
+  will-change:transform;
+}
+
+.wk .tools-marquee:hover .tools-track{
+  animation-play-state:paused;
+}
+
+.wk .tool{
+  flex:0 0 180px;
+  min-height:125px;
+  padding:18px 14px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  border-radius:18px;
+  border:1px solid var(--ln);
+  background:var(--solid);
+  box-shadow:var(--shadow);
+  font-size:.95rem;
+  font-weight:800;
+  text-align:center;
+  transition:transform .3s,border-color .3s,box-shadow .3s;
+}
+
+.wk .tool:hover{
+  transform:translateY(-7px) scale(1.04);
+  border-color:var(--brand);
+  box-shadow:0 14px 30px color-mix(in srgb,var(--brand) 20%,transparent);
+}
+
+/* Large, clearly visible tool logos */
+.wk .tool img{
+  display:block;
+  width:110px !important;
+  height:65px !important;
+  max-width:100%;
+  margin:0 auto !important;
+  object-fit:contain;
+  object-position:center;
+  flex-shrink:0;
+  background:transparent;
+  border-radius:8px;
+}
+
+/* Bigger cards */
+.wk .tool{
+  flex:0 0 200px;
+  min-height:155px;
+  padding:20px 14px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  border-radius:18px;
+  border:1px solid var(--ln);
+  background:var(--solid);
+  box-shadow:var(--shadow);
+  font-size:1rem;
+  font-weight:800;
+  text-align:center;
+}
+
+/* Mobile */
+@media(max-width:640px){
+  .wk .tool{
+    flex-basis:165px;
+    min-height:135px;
+  }
+
+  .wk .tool img{
+    width:90px !important;
+    height:58px !important;
+  }
+}
+
+@keyframes tools-marquee-move{
+  from{transform:translateX(0)}
+  to{transform:translateX(-50%)}
+}
+
+@media(max-width:640px){
+  .wk .tools-track{gap:12px;animation-duration:25s}
+  .wk .tool{
+    flex-basis:145px;
+    min-height:110px;
+    padding:14px 10px;
+    font-size:.85rem;
+  }
+  .wk .tool img{
+    width:42px !important;
+    height:42px !important;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  .wk .tools-marquee{overflow-x:auto}
+  .wk .tools-track{animation:none}
+}
+.wk .price-card{display:grid;gap:16px;padding:clamp(16px,3vw,28px);border-radius:18px;border:2px solid var(--brand);background:var(--solid);box-shadow:var(--shadow)}
+@media(min-width:860px){.wk .price-card{grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);align-items:center}}
+.wk .pc-price{font-size:clamp(2rem,5vw,2.8rem);font-weight:800;line-height:1}
+.wk .pc-price s{font-size:1.1rem;color:var(--muted);font-weight:600;margin-left:8px}
+.wk .pc-note{font-size:.78rem;color:var(--muted);margin-top:8px}
+.wk .pc-refund{margin-top:12px;padding:9px 12px;border-radius:10px;font-size:.78rem;font-weight:600;background:color-mix(in srgb,var(--ok) 10%,transparent);border:1px solid var(--ok)}
+.wk .gate{display:grid;gap:8px;font-size:.86rem}
+.wk .mq{overflow:hidden;width:100vw;margin-left:calc(50% - 50vw);padding:22px 0;background:transparent;border:0}
+.wk .mq-track{display:flex;align-items:center;gap:22px;width:max-content;margin:0;padding:0;list-style:none;animation:wkmq 45s linear infinite;will-change:transform}
+.wk .mq-tile{display:grid;place-items:center;min-width:170px;height:84px;padding:0 22px;border-radius:14px;background:linear-gradient(135deg,#14141f,#0b0b10);color:#fff;font-weight:800;font-size:1.02rem;letter-spacing:-.01em;white-space:nowrap;box-shadow:0 6px 18px rgba(20,12,4,.18);border-bottom:3px solid var(--brand)}
+.wk .mq:hover .mq-track,.wk .mq:focus-within .mq-track{animation-play-state:paused}
+.wk .mq-logo{flex:none;padding:0;background:none;border:0;box-shadow:none}
+.wk .mq-logo img{display:block;width:auto;height:auto;max-width:200px;max-height:104px;border-radius:14px;object-fit:contain;box-shadow:0 6px 18px rgba(20,12,4,.18)}
+@keyframes wkmq{to{transform:translateX(calc(-50% - 11px))}}
+@media(prefers-reduced-motion:reduce){.wk .mq-track{animation:none;flex-wrap:wrap;width:auto;justify-content:center}.wk .mq-logo[aria-hidden=true]{display:none}}
+.wk .mentors{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin-top:6px;width:100%}
+@media(max-width:900px){.wk .mentors{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:480px){.wk .mentors{gap:10px}}
+.wk .mentors>.wkrv{min-width:0}
+.wk .mentor{display:flex;flex-direction:column;gap:3px;padding:14px;border-radius:14px;border:1px solid var(--ln);background:var(--solid);box-shadow:var(--shadow);transition:transform .3s,box-shadow .3s;width:100%}
+.wk .mentor:hover{transform:translateY(-4px);box-shadow:0 16px 32px color-mix(in srgb,var(--brand) 20%,rgba(60,25,0,.16))}
+.wk .mentor .ph{aspect-ratio:1/1;border-radius:10px;overflow:hidden;background:#1a1a22;margin-bottom:10px}
+.wk .mentor .ph img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.7,.2,1)}
+.wk .mentor:hover .ph img{transform:scale(1.05)}
+.wk .mentor h3{font-size:.95rem}
+.wk .mentor .role{font-size:.76rem;color:var(--muted);min-height:1.2em}
+.wk .mentor .org{margin-top:8px;padding-top:8px;border-top:1px dashed var(--ln);font-size:.78rem;font-weight:800;color:var(--brand);letter-spacing:.02em}
+.wk .wall{columns:1;column-gap:14px;margin-top:6px}
+@media(min-width:560px){.wk .wall{columns:2}}
+@media(min-width:900px){.wk .wall{columns:3}}
+@media(min-width:1250px){.wk .wall{columns:4}}
+.wk .wall>.wkrv{break-inside:avoid;margin:0 0 14px}
+.wk .fb{margin:0;overflow:hidden;border-radius:14px;border:1px solid var(--ln);background:var(--solid);box-shadow:var(--shadow);break-inside:avoid}
+.wk .fb-vid{position:relative;display:block;width:100%;aspect-ratio:16/10;border:0;padding:0;cursor:pointer;background:#111;overflow:hidden}
+.wk .fb-vid img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .6s}
+.wk .fb-vid:hover img{transform:scale(1.05)}
+.wk .fb-ph{position:absolute;inset:0;background:linear-gradient(135deg,#1a1a22,#2b2b38)}
+.wk .fb-play{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:var(--brand);display:grid;place-items:center;box-shadow:0 0 0 6px rgba(249,115,22,.28)}
+.wk .fb-shot{display:block;width:100%;height:auto}
+.wk .fb-body{padding:12px 13px 13px;display:grid;gap:8px}
+.wk .fb-head{display:flex;gap:9px;align-items:center}
+.wk .fb-head .av{width:34px;height:34px;font-size:.72rem;object-fit:cover}
+.wk .fb-head b{display:block;font-size:.84rem;line-height:1.2}
+.wk .fb-head small{display:block;font-size:.7rem;color:var(--muted);line-height:1.25}
+.wk .fb-src{margin-left:auto;flex:none;width:22px;height:22px;border-radius:5px;background:#1f1f2b;color:#fff;font-size:.62rem;font-weight:800;display:grid;place-items:center}
+.wk .fb-text{font-size:.82rem;color:var(--text);line-height:1.55}
+.wk .fb-foot{display:flex;justify-content:space-between;gap:8px;font-size:.7rem;color:var(--muted)}
+.wk .fb-stars{color:#f5a623;letter-spacing:1px}
+.wk .wall-more{display:flex;justify-content:center;margin-top:10px}
+.wk .fb-sample{justify-self:start;padding:2px 8px;border-radius:999px;font-size:.64rem;font-weight:700;background:color-mix(in srgb,var(--brand) 14%,transparent);color:var(--brand)}
+.wk .row.dragging{cursor:grabbing;user-select:none}
+.wk .row .cine{position:relative;flex:0 0 min(360px,78vw);aspect-ratio:4/5;border-radius:20px;overflow:hidden;background:#111318;color:#fff;box-shadow:0 14px 34px rgba(8,8,14,.28);border:1px solid rgba(255,255,255,.08);cursor:grab;transition:transform .45s cubic-bezier(.2,.8,.2,1),box-shadow .45s}
+.wk .row .cine:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 22px 46px rgba(8,8,14,.42),0 0 0 1px rgba(249,115,22,.55),0 0 34px rgba(249,115,22,.28)}
+.wk .cine img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.1);animation:wkkb 16s ease-in-out infinite alternate;transition:filter .45s;user-select:none;-webkit-user-drag:none}
+.wk .cine:hover img{filter:brightness(1.08) saturate(1.1)}
+@keyframes wkkb{from{transform:scale(1.1) translate3d(-1.5%,0,0)}to{transform:scale(1.2) translate3d(1.5%,-1%,0)}}
+.wk .cine-shade{position:absolute;inset:0;background:linear-gradient(0deg,rgba(11,12,18,.94) 0%,rgba(11,12,18,.55) 42%,rgba(11,12,18,.05) 72%);pointer-events:none}
+.wk .cine::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,var(--brand),var(--accent))}
+.wk .cine-in{position:absolute;left:0;right:0;bottom:0;padding:18px 18px 20px;display:grid;gap:7px}
+.wk .cine-tag{justify-self:start;padding:3px 10px;border-radius:999px;font-size:.68rem;font-weight:800;letter-spacing:.02em;background:var(--brand);color:#fff;box-shadow:0 0 16px rgba(249,115,22,.5)}
+.wk .cine h3{color:#fff;font-size:1.15rem;line-height:1.2}
+.wk .cine p{color:rgba(255,255,255,.82);font-size:.84rem;line-height:1.5;max-width:34ch}
+@media(max-width:640px){.wk .row .cine{aspect-ratio:3/4}.wk .cine h3{font-size:1.02rem}}
+.wk .cj{position:relative;overflow:hidden;width:100vw;margin-left:calc(50% - 50vw);padding:34px 0 52px;cursor:grab;touch-action:pan-y;user-select:none}
+.wk .cj.dragging{cursor:grabbing}
+.wk .cj-track{position:relative;display:flex;gap:30px;width:max-content;will-change:transform}
+.wk .cj-card{position:relative;flex:none;width:min(620px,80vw);aspect-ratio:16/10;border-radius:22px;overflow:hidden;color:#fff;background:#0e0e16;border:1px solid rgba(255,255,255,.1);box-shadow:0 18px 44px rgba(8,8,14,.34);will-change:transform,opacity;transform-origin:50% 50%}
+.wk .cj-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;-webkit-user-drag:none;pointer-events:none}
+.wk .cj-card::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(8,8,14,.94) 0%,rgba(8,8,14,.72) 42%,rgba(8,8,14,.1) 100%)}
+.wk .cj-card::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;z-index:2;background:linear-gradient(90deg,var(--brand),var(--accent))}
+.wk .cj-in{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:center;gap:9px;padding:clamp(16px,3vw,34px);max-width:62%}
+.wk .cj-top{display:flex;gap:8px;align-items:center;font-size:.7rem;font-weight:800}
+.wk .cj-top .n{color:#ffb27a;letter-spacing:.04em}
+.wk .cj-top .tg{padding:2px 9px;border-radius:999px;background:var(--brand);color:#fff}
+.wk .cj-card h3{color:#fff;font-size:clamp(1.05rem,2.2vw,1.55rem);line-height:1.15}
+.wk .cj-card p{color:rgba(255,255,255,.82);font-size:clamp(.78rem,1.2vw,.9rem);line-height:1.5}
+@media(max-width:640px){.wk .cj-card{aspect-ratio:4/5}.wk .cj-in{max-width:100%;justify-content:flex-end}.wk .cj-card::before{background:linear-gradient(0deg,rgba(8,8,14,.95) 0%,rgba(8,8,14,.55) 55%,rgba(8,8,14,.05) 100%)}}
+@media(prefers-reduced-motion:reduce){.wk .cj{overflow-x:auto;cursor:auto}.wk .cj-track{transform:none!important}}
+.wk .cj{position:relative;overflow:hidden;width:100vw;margin-left:calc(50% - 50vw);padding:34px 0 52px;cursor:grab;touch-action:pan-y;user-select:none}
+.wk .cj.dragging{cursor:grabbing}
+.wk .cj-track{position:relative;display:flex;gap:30px;width:max-content;will-change:transform}
+.wk .cj-card{position:relative;flex:none;width:min(620px,80vw);aspect-ratio:16/10;border-radius:22px;overflow:hidden;color:#fff;background:#0e0e16;border:1px solid rgba(255,255,255,.1);box-shadow:0 18px 44px rgba(8,8,14,.34);will-change:transform,opacity;transform-origin:50% 50%}
+.wk .cj-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;-webkit-user-drag:none;pointer-events:none}
+.wk .cj-card::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(90deg,rgba(8,8,14,.94) 0%,rgba(8,8,14,.72) 42%,rgba(8,8,14,.1) 100%)}
+.wk .cj-card::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;z-index:2;background:linear-gradient(90deg,var(--brand),var(--accent))}
+.wk .cj-in{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:center;gap:9px;padding:clamp(16px,3vw,34px);max-width:62%}
+.wk .cj-top{display:flex;gap:8px;align-items:center;font-size:.7rem;font-weight:800}
+.wk .cj-top .n{color:#ffb27a;letter-spacing:.04em}
+.wk .cj-top .tg{padding:2px 9px;border-radius:999px;background:var(--brand);color:#fff}
+.wk .cj-card h3{color:#fff;font-size:clamp(1.05rem,2.2vw,1.55rem);line-height:1.15}
+.wk .cj-card p{color:rgba(255,255,255,.82);font-size:clamp(.78rem,1.2vw,.9rem);line-height:1.5}
+@media(max-width:640px){.wk .cj-card{aspect-ratio:4/5}.wk .cj-in{max-width:100%;justify-content:flex-end}.wk .cj-card::before{background:linear-gradient(0deg,rgba(8,8,14,.95) 0%,rgba(8,8,14,.55) 55%,rgba(8,8,14,.05) 100%)}}
+@media(prefers-reduced-motion:reduce){.wk .cj{overflow-x:auto;cursor:auto}.wk .cj-track{transform:none!important}}
+`;
+
+
+/* ---------- C. DATA + COMPONENTS (WorkshopsList se pehle paste) ---------- */
+/** Har cheez yahan se edit karo. Naam / projects apne real syllabus ke hisaab se badlo. */
+const AUDIENCE_PAIN = [
+  ['code', 'Learn Java but never build', 'Syntax aata hai, par ek poora working project portfolio mein nahi hota.'],
+  ['book', 'Theory without practice', 'OOP aur collections yaad hain, par real backend ya API banana nahi aata.'],
+  ['compass', 'No clear full-stack roadmap', 'Pata nahi Java ke baad Spring Boot, database aur frontend kis order mein seekhein.'],
+  ['users', 'No mentor to ask', 'Error par atak jaate ho aur jawab dene wala koi nahi.'],
+  ['award', 'Nothing to show recruiters', 'Skills hain, par GitHub project aur verified certificate nahi.'],
+];
+
+const ROADMAP = [
+  { day: 'DAY 0', when: 'Friday', live: true, time: '7PM to 9PM', title: 'Onboarding: set up your Java environment', desc: 'JDK, IDE and Git setup, the full-stack roadmap and your cohort. Ready to code from Day 1.', projects: [] },
+  { day: 'DAY 1', when: 'Saturday', live: true, time: '10AM to 7PM', title: 'Core Java and OOP, with your first project', desc: 'Classes, objects, collections and clean code, applied to a real console application.', projects: [['Console app', 'A working Java application'], ['OOP design', 'Classes that model a real problem'], ['GitHub repo', 'Your code saved and versioned']] },
+  { day: 'DAY 2', when: 'Sunday', live: true, time: '10AM to 7PM', title: 'Backend: Spring Boot, REST APIs and database', desc: 'Build an API, connect it to a database and test it like a professional.', projects: [['REST API', 'Create, read, update and delete'], ['Database schema', 'Tables and relationships'], ['Postman collection', 'Test every endpoint']] },
+  { day: 'DAY 3', when: 'Monday', live: false, time: 'Self-paced', title: 'Data layer: JPA, validation and error handling', desc: 'Guided lessons to make your backend reliable and production-minded.', projects: [['Entity mapping', 'Java objects to database rows'], ['Validation and errors', 'Clear API responses']] },
+  { day: 'DAY 4', when: 'Tuesday', live: false, time: 'Self-paced', title: 'Frontend: connect a React UI to your API', desc: 'Build screens and call your own backend end to end.', projects: [['React screens', 'List, form and detail pages'], ['API integration', 'UI talking to your Spring Boot backend']] },
+  { day: 'DAY 5', when: 'Break day', live: false, time: 'Catch-up', title: 'Catch up with your cohort', desc: 'Share progress, compare notes and unblock yourself before the final stretch.', projects: [], brk: true },
+  { day: 'DAY 6', when: 'Thursday', live: false, time: 'Self-paced', title: 'Capstone: build your full-stack application', desc: 'Plan and build the project you will present: backend, database and frontend together.', projects: [['Capstone app', 'Your best end-to-end work'], ['Demo walkthrough', 'A short recorded demo']] },
+  { day: 'DAY 7', when: 'Friday', live: false, time: 'Self-paced', title: 'Deploy and assessment', desc: 'Put your application online and get instructor review of your completed builds.', projects: [['Live deployment', 'A link you can share'], ['Assessment', 'Instructor-verified completion']] },
+  { day: 'BONUS', when: 'Saturday', live: true, time: 'Evening live', title: 'Showcase and interview readiness', desc: 'Present your capstone, polish your GitHub and resume, and practise common Java interview questions.', projects: [['GitHub and resume', 'Recruiter-ready profile'], ['Mock interview round', 'Practice with feedback']] },
+];
+
+
+const INCLUDED = [
+  'Live sessions with working instructors',
+  'Build a real Java full-stack project, not just watch',
+  'Lifetime access to project files and templates',
+  'Private learner community',
+  'Instructor feedback and Q&A',
+  'Verified ILM ORA certificate with unique ID and QR',
+];
+
+function OfferStrip() {
+  const o = CONFIG.OFFER;
+  const c = useCountdown(o && o.startsAt ? o.startsAt : Date.now());
+  if (!o || !o.on) return null;
+  return (
+    <div className="offer" role="note">
+      <span>{o.banner}</span>
+      {o.startsAt && o.startsAt > Date.now() && <span className="cdn" role="timer">{c.map(([l, v]) => <div key={l}><b>{v}</b><small>{l}</small></div>)}</span>}
+      <button type="button" className="btn btn-light btn-sm" onClick={() => scrollToId('wk-price')}>Reserve my seat</button>
+    </div>
+  );
+}
+
+/** Hero ke neeche: format strip (live vs self-paced) + outcome chips ka data. */
+function FormatStrip() {
+  const o = CONFIG.OFFER || {};
+  return (
+    <section className="wrap sec" aria-label="Programme format">
+      <Reveal>
+        <div className="fmt">
+          <div><b>{o.cohort || 'Cohort dates: set real dates'}</b><span>Next cohort</span></div>
+          <div><b>Sat and Sun</b><span>LIVE sessions</span></div>
+          <div><b>Mon to Fri</b><span>Self-paced lessons, 2 to 3 hrs a day</span></div>
+          <div><b>10+ projects</b><span>Certificate on completion</span></div>
+        </div>
+      </Reveal>
+    </section>
+  );
+}
+
+function ProblemVsRoadmap() {
+  return (
+    <section className="wrap sec" aria-labelledby="pv-h">
+      <Reveal><div className="sechead"><div><h2 className="h-xl" id="pv-h">Two ways to learn this skill</h2><p>Alone by trial and error, or with a proven roadmap and a cohort.</p></div></div></Reveal>
+      <Reveal className="two-opt">
+        <div className="opt bad"><h3>Stress, guesswork, trial and error</h3><ul><li>Random tutorials with no order</li><li>Projects that never get finished</li><li>No feedback on your work</li></ul></div>
+        <div className="opt good"><h3>Certainty, confidence, execution</h3><ul><li>Day-by-day roadmap with named projects</li><li>Live build days with your instructor</li><li>Verified certificate you can share</li></ul></div>
+      </Reveal>
+      <Reveal><h2 className="h-xl" style={{ marginTop: 26 }}>This workshop is for you if you</h2></Reveal>
+      <Reveal className="pain">
+        {AUDIENCE_PAIN.map(([ic, t, d]) => <div key={t}><div className="pi"><I n={ic} s={16} /></div><b>{t}</b><span>{d}</span></div>)}
+      </Reveal>
+    </section>
+  );
+}
+
+/* ====================================================================
+   ROADMAP → INTERACTIVE LEARNING JOURNEY
+   --------------------------------------------------------------------
+   KAISE LAGAYEIN (sirf ek jagah):
+   1. Purana `function Roadmap() { ... }` poora DELETE karo.
+   2. Is file ka poora content (neeche wala) us jagah paste karo, yaani
+      `const ROADMAP = [...]` ke baad. ROADMAP data ko TOUCH mat karo.
+   3. Home() mein <Roadmap /> already hai, wahan koi change nahi.
+   4. Naye imports nahi chahiye. Sab kuch pehle se file mein hai:
+      useState, useEffect, useMemo, useRef, I, IMG, CONFIG, ROADMAP,
+      scrollToId, reduce.
+   CSS is component ke andar hi hai (<style>), alag const/paste nahi.
+
+   DATA: Koi naya course, module, duration ya statistic nahi banaya.
+   Har stage ROADMAP ke existing din (index) ko group karta hai:
+     Discover Your Path        → DAY 0
+     Learn Core Skills         → DAY 1, DAY 2
+     Practice & Assignments    → DAY 3, DAY 4, DAY 5
+     Build Real-World Projects → DAY 6
+     Get Certified             → DAY 7
+     Launch Your Career        → BONUS
+   Card ka short text = us stage ke pehle din ka existing `desc`.
+   Chips (days / live / projects) ROADMAP se count hote hain.
+
+   STAGE STATUS:
+   - CONFIG.OFFER.startsAt set hai aur cohort shuru ho chuka hai
+     → stage asli cohort din se nikalta hai (Completed / In progress / Upcoming).
+   - startsAt null hai (abhi ki setting) → PREVIEW mode: visitor stage
+     kholta hai to wahan tak ka raasta "Unlocked" ho jata hai. Kisi ko
+     jhootha "Completed" nahi dikhta.
+   ==================================================================== */
+
+const JV_STAGES = [
+  { name: 'Discover Your Path', ic: 'compass', img: IMG.celebration, pos: '50% 40%', alt: 'Learners together at an ILM ORA workshop', days: [0] },
+  { name: 'Learn Core Skills', ic: 'book', img: IMG.javaLive, pos: '50% 40%', alt: 'Live Java workshop session', days: [1, 2] },
+  { name: 'Practice & Assignments', ic: 'assess', img: IMG.coding, pos: '50% 40%', alt: 'Learner coding during a focused workshop', days: [3, 4, 5] },
+  { name: 'Build Real-World Projects', ic: 'code', img: IMG.mentorGuidance, pos: '50% 40%', alt: 'Mentor guiding a learner who is working on a laptop', days: [6] },
+  { name: 'Get Certified', ic: 'award', img: IMG.certCeremony, pos: '50% 40%', alt: 'Learners receiving certificates at a Java workshop ceremony', days: [7] },
+  { name: 'Launch Your Career', ic: 'trending', img: IMG.javaCelebration, pos: '50% 40%', alt: 'Learners celebrating at a Java workshop', days: [8] },
+];
+const JV_N = JV_STAGES.length;
+const JV_H = 96; // desktop path strip ki height (px)
+const jvY = (i) => (i % 2 === 0 ? 68 : 28); // node ka center, zig-zag
+const jvPath = (W) => {
+  const cw = W / JV_N, x = (i) => (i + 0.5) * cw;
+  let d = `M${x(0)} ${jvY(0)}`;
+  for (let i = 1; i < JV_N; i++) d += ` C${x(i - 1) + cw / 2} ${jvY(i - 1)} ${x(i) - cw / 2} ${jvY(i)} ${x(i)} ${jvY(i)}`;
+  return d;
+};
+const jvInfo = (s) => {
+  const d = s.days.map((i) => ROADMAP[i]);
+  return { d, live: d.filter((x) => x.live).length, proj: d.reduce((a, x) => a + x.projects.length, 0) };
+};
+
+const JV_CSS = `
+.wk .jv-head{display:flex;justify-content:space-between;align-items:end;gap:14px;flex-wrap:wrap}
+.wk .jv-side{display:grid;gap:8px;min-width:min(100%,300px)}
+.wk .jv-legend{display:flex;gap:14px;flex-wrap:wrap;font-size:.74rem;font-weight:700;color:var(--muted)}
+.wk .jv-legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.wk .jv-legend .d i{background:var(--accent)}.wk .jv-legend .a i{background:var(--brand)}.wk .jv-legend .n i{border:2px dashed var(--muted)}
+.wk .jv-bar{height:6px;border-radius:6px;background:var(--ln);overflow:hidden}
+.wk .jv-bar i{display:block;height:100%;width:100%;transform-origin:left;background:linear-gradient(90deg,var(--accent),var(--brand));transition:transform 1s cubic-bezier(.2,.7,.2,1)}
+.wk .jv-bartxt{font-size:.78rem;font-weight:700}
+
+.wk .jv{position:relative;margin-top:18px}
+.wk .jv-list{list-style:none;margin:0;padding:0;display:grid;gap:14px;position:relative}
+.wk .jv-svg{display:none}
+
+/* ---------- mobile: vertical timeline ---------- */
+.wk .jv-step{position:relative;display:grid;grid-template-columns:44px minmax(0,1fr);gap:14px;opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s cubic-bezier(.2,.7,.2,1);transition-delay:calc(var(--i) * 110ms)}
+.wk .jv-step.on{opacity:1;transform:none}
+.wk .jv-step:not(:last-child)::before,.wk .jv-step:not(:last-child)::after{content:"";position:absolute;left:20px;top:22px;width:3px;height:calc(100% + 14px);border-radius:3px}
+.wk .jv-step::before{background:var(--ln)}
+.wk .jv-step::after{background:linear-gradient(var(--accent),var(--accent));transform:scaleY(0);transform-origin:top;transition:transform .8s ease;transition-delay:calc(var(--i) * 110ms + 250ms)}
+.wk .jv-step.done.on::after{transform:scaleY(1)}
+.wk .jv-top{position:relative;z-index:2}
+.wk .jv-node{position:relative;display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--solid);border:2px dashed var(--muted);color:var(--muted);box-shadow:0 4px 12px rgba(40,25,10,.12)}
+.wk .jv-step.done .jv-node{background:var(--accent);border:2px solid var(--accent);color:#fff}
+.wk .jv-step.active .jv-node{background:var(--brand);border:2px solid var(--brand);color:#fff;animation:jvring 2.2s infinite}
+@keyframes jvring{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--brand) 55%,transparent)}70%,100%{box-shadow:0 0 0 12px transparent}}
+@keyframes jvtrav{from{transform:scale(.6);opacity:.9}to{transform:scale(2.2);opacity:0}}
+.wk .jv-tick{position:absolute;right:-5px;bottom:-4px;width:18px;height:18px;border-radius:50%;background:#fff;color:var(--accent);display:grid;place-items:center;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+
+.wk .jv-card{position:relative;display:flex;flex-direction:column;min-width:0;border-radius:var(--r-lg);overflow:hidden;background:var(--solid);border:1px solid var(--ln);box-shadow:var(--shadow);transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s,border-color .3s}
+.wk .jv-step.done .jv-card{border-color:color-mix(in srgb,var(--accent) 55%,var(--ln))}
+.wk .jv-step.active .jv-card{border-color:var(--brand);box-shadow:0 14px 34px color-mix(in srgb,var(--brand) 28%,transparent)}
+.wk .jv-art{position:relative;aspect-ratio:16/9;overflow:hidden;background:#1a1a22}
+.wk .jv-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .7s cubic-bezier(.2,.7,.2,1),filter .4s}
+.wk .jv-step.next .jv-art img{filter:grayscale(.55) brightness(.9)}
+.wk .jv-art::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(8,8,14,.7),transparent 60%)}
+.wk .jv-no{position:absolute;left:12px;bottom:6px;z-index:1;color:#fff;font-size:1.9rem;font-weight:800;line-height:1;letter-spacing:-.03em;text-shadow:0 2px 10px rgba(0,0,0,.5)}
+.wk .jv-st{position:absolute;right:9px;top:9px;z-index:1;padding:3px 9px;border-radius:999px;font-size:.66rem;font-weight:800;background:rgba(10,12,30,.72);color:#fff;backdrop-filter:blur(6px)}
+.wk .jv-step.done .jv-st{background:var(--accent)}.wk .jv-step.active .jv-st{background:var(--brand)}
+.wk .jv-body{display:flex;flex-direction:column;gap:7px;padding:11px 13px 13px;flex:1}
+.wk .jv-body h3{font-size:.98rem}
+.wk .jv-body p{color:var(--muted);font-size:.8rem}
+.wk .jv-chips{display:flex;gap:5px;flex-wrap:wrap;margin-top:auto;padding-top:4px}
+.wk .jv-chip{padding:2px 8px;border-radius:999px;font-size:.68rem;font-weight:700;background:color-mix(in srgb,var(--text) 7%,transparent);color:var(--muted)}
+.wk .jv-chip.live{background:color-mix(in srgb,#ff4d6d 14%,transparent);color:#d1294a}
+.wk .jv-btn{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;border:0;background:none;padding:0;margin-top:4px;font-weight:800;font-size:.8rem;color:var(--brand);cursor:pointer}
+.wk .jv-btn::after{content:"";position:absolute;inset:0;z-index:3}
+.wk .jv-btn:focus-visible{outline:none}
+.wk .jv-card:has(.jv-btn:focus-visible){outline:3px solid var(--accent);outline-offset:3px}
+.wk .jv-card:hover{transform:translateY(-4px);box-shadow:0 18px 36px color-mix(in srgb,var(--brand) 22%,rgba(60,25,0,.18))}
+.wk .jv-card:hover .jv-art img{transform:scale(1.07)}
+.wk .jv-card:hover .jv-art img,.wk .jv-step.next .jv-card:hover .jv-art img{filter:none}
+
+/* hover reveal (desktop) */
+.wk .jv-over{display:none}
+
+/* ---------- desktop: left to right journey ---------- */
+@media(min-width:1100px){
+  .wk .jv-list{grid-template-columns:repeat(6,minmax(0,1fr));gap:0}
+  .wk .jv-svg{display:block;position:absolute;left:0;top:0;width:100%;height:${JV_H}px;overflow:visible;pointer-events:none}
+  .wk .jv-p0,.wk .jv-p1{fill:none;stroke-width:4;stroke-linecap:round}
+  .wk .jv-p0{stroke:var(--ln)}
+  .wk .jv-p1{stroke:url(#jvg);stroke-dasharray:1;stroke-dashoffset:1}
+  .wk .jv-trav circle{fill:var(--brand);stroke:#fff;stroke-width:3}
+  .wk .jv-trav .ring{fill:color-mix(in srgb,var(--brand) 30%,transparent);stroke:none;animation:jvtrav 1.8s ease-out infinite;transform-box:fill-box;transform-origin:center}
+  .wk .jv-step{display:flex;flex-direction:column;gap:0;padding:0 8px}
+  .wk .jv-step::before,.wk .jv-step::after{display:none!important}
+  .wk .jv-top{height:${JV_H}px;display:flex;justify-content:center;align-items:flex-start}
+  .wk .jv-lo .jv-node{margin-top:${jvY(0) - 22}px}
+  .wk .jv-hi .jv-node{margin-top:${jvY(1) - 22}px}
+  .wk .jv-card{flex:1}
+  .wk .jv-over{display:block;position:absolute;inset:0;z-index:2;padding:14px 13px;overflow:auto;background:linear-gradient(180deg,rgba(11,12,18,.95),rgba(11,12,18,.97));color:#fff;opacity:0;pointer-events:none;transition:opacity .25s}
+  .wk .jv-over h4{font-size:.78rem;color:#ffb27a;margin-bottom:8px}
+  .wk .jv-over ol{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+  .wk .jv-over b{display:block;font-size:.7rem;color:#ffb27a}
+  .wk .jv-over span{display:block;font-size:.78rem;line-height:1.3}
+  .wk .jv-over em{font-style:normal;font-size:.66rem;font-weight:800;opacity:.8}
+}
+@media(min-width:1100px) and (hover:hover){.wk .jv-card:hover .jv-over{opacity:1}}
+@media(min-width:1100px){.wk .jv-card:has(.jv-btn:focus-visible) .jv-over{opacity:1}}
+
+/* ---------- detail modal ---------- */
+.wk .jv-modal{position:fixed;inset:0;z-index:95;display:grid;place-items:center;padding:14px;background:rgba(5,5,10,.78);backdrop-filter:blur(4px);animation:jvfade .2s ease}
+@keyframes jvfade{from{opacity:0}}
+.wk .jv-mbox{position:relative;width:min(760px,100%);max-height:min(92vh,880px);display:flex;flex-direction:column;border-radius:20px;overflow:hidden;background:var(--solid);border:1px solid var(--ln);box-shadow:0 30px 70px rgba(0,0,0,.45);animation:jvpop .3s cubic-bezier(.2,.9,.2,1)}
+@keyframes jvpop{from{transform:translateY(18px) scale(.97);opacity:0}}
+.wk .jv-mhead{position:relative;flex:none;min-height:130px;color:#fff;display:flex;align-items:flex-end;padding:16px 18px;background:#111}
+.wk .jv-mhead img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.wk .jv-mhead::before{content:"";position:absolute;inset:0;z-index:1;background:linear-gradient(0deg,rgba(8,8,14,.92),rgba(8,8,14,.3))}
+.wk .jv-mhead>div{position:relative;z-index:2}
+.wk .jv-mhead h2{color:#fff;font-size:clamp(1.1rem,2.6vw,1.45rem)}
+.wk .jv-mhead small{display:flex;align-items:center;gap:7px;font-size:.74rem;font-weight:800;color:#ffb27a;margin-bottom:4px}
+.wk .jv-x{position:absolute;right:10px;top:10px;z-index:3;width:38px;height:38px;border-radius:50%;border:0;background:rgba(0,0,0,.65);color:#fff;display:grid;place-items:center;cursor:pointer}
+.wk .jv-mbody{overflow:auto;padding:16px 18px;display:grid;gap:12px}
+.wk .jv-day{padding:13px;border:1px solid var(--ln);border-radius:14px;background:var(--bg)}
+.wk .jv-day h3{margin:6px 0 4px;font-size:.98rem}
+.wk .jv-day>p{color:var(--muted);font-size:.84rem}
+.wk .jv-foot{flex:none;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 18px;border-top:1px solid var(--ln)}
+.wk .jv-foot .grp{display:flex;gap:8px;flex-wrap:wrap}
+`;
+
+function Roadmap() {
+  const rootRef = useRef(null);
+  const lastBtn = useRef(null);
+  const [seen, setSeen] = useState(false);
+  const [focus, setFocus] = useState(0); // preview mode: visitor ne kahan tak "travel" kiya
+  const [openI, setOpenI] = useState(null);
+  const [W, setW] = useState(960);
+  const [auto, setAuto] = useState(true); // preview mode mein journey khud chalti hai, user click kare to ruk jati hai
+  const p1Ref = useRef(null);
+  const travRef = useRef(null);
+  const dispRef = useRef(0);
+  const pausedRef = useRef(false);
+  const focusRef = useRef(0);
+  const modalRef = useRef(null);
+
+  const startsAt = CONFIG.OFFER && CONFIG.OFFER.startsAt;
+  const live = Boolean(startsAt && startsAt <= Date.now());
+  const current = useMemo(() => {
+    if (!live) return focus;
+    const day = Math.floor((Date.now() - startsAt) / 864e5);
+    if (day > ROADMAP.length - 1) return JV_N; // cohort poora ho gaya: sab Completed
+    const i = JV_STAGES.findIndex((s) => s.days.includes(day));
+    return i < 0 ? 0 : i;
+  }, [live, startsAt, focus]);
+
+  // scroll-triggered reveal: section viewport mein aate hi journey "chalti" hai
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return undefined;
+    if (reduce() || typeof IntersectionObserver === 'undefined') { setSeen(true); return undefined; }
+    const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setSeen(true); io.disconnect(); } }, { threshold: 0.18 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  // SVG path asli width par banta hai, isliye stroke kabhi stretch nahi hota
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return undefined;
+    const set = () => { const w = el.querySelector('.jv-list'); if (w && w.clientWidth) setW(w.clientWidth); };
+    set();
+    if (typeof ResizeObserver === 'undefined') { window.addEventListener('resize', set); return () => window.removeEventListener('resize', set); }
+    const ro = new ResizeObserver(set);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const path = useMemo(() => jvPath(W), [W]);
+  const frac = current >= JV_N ? 1 : current / (JV_N - 1);
+  focusRef.current = focus;
+  modalRef.current = openI;
+
+  // Traveler marker + progress line: path par smoothly chalte hain
+  useEffect(() => {
+    const p1 = p1Ref.current, tv = travRef.current;
+    if (!p1 || !tv) return undefined;
+    const target = seen ? frac : 0;
+    const paint = (f) => {
+      p1.style.strokeDashoffset = String(1 - f);
+      try {
+        const pt = p1.getPointAtLength(p1.getTotalLength() * f);
+        tv.setAttribute('transform', `translate(${pt.x} ${pt.y})`);
+      } catch (e) { /* hidden svg (mobile) */ }
+    };
+    if (reduce()) { dispRef.current = target; paint(target); return undefined; }
+    const from = dispRef.current, t0 = performance.now();
+    const dur = Math.min(1800, Math.max(500, 5500 * Math.abs(target - from)));
+    let raf = 0;
+    const tick = (t) => {
+      const p = Math.min(1, (t - t0) / dur);
+      const f = from + (target - from) * (1 - Math.pow(1 - p, 3));
+      dispRef.current = f;
+      paint(f);
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [seen, frac, path]);
+
+  // Autoplay: stage 1 se 6 tak ek ke baad ek unlock. Hover, focus, modal ya click par ruk jata hai.
+  useEffect(() => {
+    if (!seen || live || !auto || reduce()) return undefined;
+    let t;
+    const loop = () => {
+      t = setTimeout(() => {
+        if (!pausedRef.current && modalRef.current == null) setFocus((f) => (f + 1) % JV_N);
+        loop();
+      }, focusRef.current === JV_N - 1 ? 3200 : 2000);
+    };
+    loop();
+    return () => clearTimeout(t);
+  }, [seen, live, auto]);
+  const statusOf = (i) => (i < current ? 'done' : i === current ? 'active' : 'next');
+  const label = (st) => (st === 'done' ? (live ? 'Completed' : 'Unlocked') : st === 'active' ? (live ? 'In progress' : 'You are here') : 'Upcoming');
+
+  const open = (i) => (e) => {
+    lastBtn.current = e.currentTarget;
+    setAuto(false);
+    setOpenI(i);
+    if (!live) setFocus(i);
+  };
+  const close = () => { setOpenI(null); if (lastBtn.current) lastBtn.current.focus(); };
+  const goTo = (i) => { setOpenI(i); if (!live) setFocus(i); };
+  const reserve = () => { setOpenI(null); setTimeout(() => scrollToId('wk-price'), 60); };
+
+  const barTxt = current >= JV_N ? `All ${JV_N} stages complete` : `Stage ${current + 1} of ${JV_N}: ${JV_STAGES[current].name}`;
+
+  return (
+    <section className="wrap sec" id="wk-roadmap" aria-labelledby="rm-h" ref={rootRef}>
+      <style dangerouslySetInnerHTML={{ __html: JV_CSS }} />
+      <Reveal>
+        <div className="jv-head">
+          <div className="sechead" style={{ marginBottom: 0 }}>
+            <div>
+              <h2 className="h-xl" id="rm-h">Your roadmap, day by day</h2>
+              <p>10+ projects. Live build days. One verified certificate. {live ? '' : 'Select a stage to open its modules.'}</p>
+            </div>
+          </div>
+          <div className="jv-side">
+            <div className="jv-bartxt" aria-live="polite">{barTxt}</div>
+            <div className="jv-bar" role="progressbar" aria-label="Journey progress" aria-valuemin={0} aria-valuemax={JV_N} aria-valuenow={Math.min(current + 1, JV_N)}>
+              <i style={{ transform: `scaleX(${seen ? Math.min(1, (Math.min(current, JV_N - 1) + 1) / JV_N) : 0})` }} />
+            </div>
+            <div className="jv-legend" aria-hidden="true">
+              <span className="d"><i />{live ? 'Completed' : 'Unlocked'}</span>
+              <span className="a"><i />{live ? 'In progress' : 'Current'}</span>
+              <span className="n"><i />Upcoming</span>
+            </div>
+          </div>
+        </div>
+      </Reveal>
+
+      <div
+        className="jv"
+        onMouseEnter={() => { pausedRef.current = true; }}
+        onMouseLeave={() => { pausedRef.current = false; }}
+        onFocus={() => { pausedRef.current = true; }}
+        onBlur={() => { pausedRef.current = false; }}
+      >
+        <svg className="jv-svg" width={W} height={JV_H} viewBox={`0 0 ${W} ${JV_H}`} aria-hidden="true" focusable="false">
+          <defs><linearGradient id="jvg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2={W} y2="0"><stop offset="0" stopColor="#16a34a" /><stop offset="1" stopColor="#f97316" /></linearGradient></defs>
+          <path className="jv-p0" d={path} />
+          <path className="jv-p1" ref={p1Ref} d={path} pathLength="1" />
+          <g className="jv-trav" ref={travRef}><circle className="ring" r="9" /><circle r="6" /></g>
+        </svg>
+
+        <ol className="jv-list">
+          {JV_STAGES.map((s, i) => {
+            const st = statusOf(i);
+            const { d, live: nLive, proj } = jvInfo(s);
+            return (
+              <li key={s.name} className={`jv-step ${st} ${i % 2 === 0 ? 'jv-lo' : 'jv-hi'} ${seen ? 'on' : ''}`} style={{ '--i': i }} aria-current={st === 'active' ? 'step' : undefined}>
+                <div className="jv-top">
+                  <span className="jv-node" aria-hidden="true">
+                    <I n={s.ic} s={19} />
+                    {st === 'done' && <span className="jv-tick"><svg width="11" height="11" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 10.5l3.2 3.2L15 6.8" /></svg></span>}
+                  </span>
+                </div>
+                <div className="jv-card">
+                  <div className="jv-art">
+                    <img src={s.img} alt={s.alt} loading="lazy" style={{ objectPosition: s.pos }} />
+                    <span className="jv-st">{label(st)}</span>
+                    <span className="jv-no" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+                  </div>
+                  <div className="jv-body">
+                    <h3><span className="sr">Stage {i + 1}: </span>{s.name}</h3>
+                    <p>{d[0].desc}</p>
+                    <div className="jv-chips">
+                      <span className="jv-chip">{d.length} day{d.length === 1 ? '' : 's'}</span>
+                      {nLive > 0 && <span className="jv-chip live">{nLive} live</span>}
+                      {proj > 0 && <span className="jv-chip">{proj} project{proj === 1 ? '' : 's'}</span>}
+                    </div>
+                    <button type="button" className="jv-btn" onClick={open(i)} aria-haspopup="dialog">
+                      View modules<span className="sr">: {s.name}</span>
+                    </button>
+                  </div>
+                  <div className="jv-over" aria-hidden="true">
+                    <h4>Inside this stage</h4>
+                    <ol>
+                      {d.map((x) => (
+                        <li key={x.day}><b>{x.day} | {x.when}</b><span>{x.title}</span><em>{x.live ? 'LIVE' : 'SELF-PACED'} {'\u2022'} {x.time}</em></li>
+                      ))}
+                    </ol>
+                  </div>
+                </div>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
+
+      {openI != null && <JourneyModal i={openI} onClose={close} onGo={goTo} onReserve={reserve} />}
+    </section>
+  );
+}
+
+/** Stage ke poore existing modules (ROADMAP ka poora content: title, desc, time, projects). */
+function JourneyModal({ i, onClose, onGo, onReserve }) {
+  const s = JV_STAGES[i];
+  const { d } = jvInfo(s);
+  const box = useRef(null);
+  const closeBtn = useRef(null);
+
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const key = (e) => {
+      if (e.key === 'Escape') { onClose(); return; }
+      if (e.key !== 'Tab' || !box.current) return;
+      const f = box.current.querySelectorAll('button:not([disabled]),a[href]');
+      if (!f.length) return;
+      const first = f[0], last = f[f.length - 1];
+      if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+      else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+    };
+    window.addEventListener('keydown', key);
+    return () => { document.body.style.overflow = prev; window.removeEventListener('keydown', key); };
+  }, [onClose]);
+
+  useEffect(() => { if (closeBtn.current) closeBtn.current.focus(); if (box.current) box.current.querySelector('.jv-mbody').scrollTop = 0; }, [i]);
+
+  return (
+    <div className="jv-modal" onClick={onClose}>
+      <div className="jv-mbox" role="dialog" aria-modal="true" aria-labelledby="jv-mt" ref={box} onClick={(e) => e.stopPropagation()}>
+        <div className="jv-mhead">
+          <img src={s.img} alt="" style={{ objectPosition: s.pos }} />
+          <button type="button" className="jv-x" ref={closeBtn} onClick={onClose} aria-label="Close modules">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" /></svg>
+          </button>
+          <div>
+            <small><I n={s.ic} s={14} />Stage {i + 1} of {JV_N}</small>
+            <h2 id="jv-mt">{s.name}</h2>
+          </div>
+        </div>
+        <div className="jv-mbody">
+          {d.map((r) => (
+            <article className="jv-day" key={r.day}>
+              <div className="rm-top"><span className="d">{r.day} | {r.when}</span>{r.live ? <span className="l">LIVE</span> : <span className="s">SELF-PACED</span>}<span className="t">{r.time}</span></div>
+              <h3>{r.title}</h3>
+              <p>{r.desc}</p>
+              {r.projects.length > 0 && <div className="proj">{r.projects.map(([n, t]) => <div key={n}><b>{n}</b><span>{t}</span></div>)}</div>}
+            </article>
+          ))}
+        </div>
+        <div className="jv-foot">
+          <div className="grp">
+            <button type="button" className="btn btn-ghost btn-sm" disabled={i === 0} onClick={() => onGo(i - 1)}>{'\u2190'} Previous stage</button>
+            {i < JV_N - 1 && <button type="button" className="btn btn-ghost btn-sm" onClick={() => onGo(i + 1)}>Next stage {'\u2192'}</button>}
+          </div>
+          <button type="button" className="btn btn-primary btn-sm" onClick={onReserve}>Reserve my seat</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Cinematic learning journey: 4 alag images, seamless horizontal marquee (AutoRow). */
+const CINE = [
+  { img: U(cineCoding), tag: 'Development', t: 'Build Your First Project', d: 'Learn practical development and build real-world applications.', alt: 'Student coding during an ILM ORA workshop' },
+  { img: U(cineMentor), tag: 'Mentorship', t: 'Learn From Industry Mentors', d: 'Get practical guidance and learn through collaborative sessions.', alt: 'Mentor guiding learners in a collaborative session' },
+  { img: U(cineAi), tag: 'AI', t: 'Explore AI and Innovation', d: 'Discover AI-powered tools, technologies and creative possibilities.', alt: 'Learner exploring AI tools on a laptop' },
+    { img: U(cinePresent), tag: 'Showcase', t: 'Turn Ideas Into Products', d: 'Build, present and showcase your skills with confidence.', alt: 'Presenter showcasing a product to a team' },
+  { img: IMG.studentCollab, tag: 'Collaboration', t: 'Learn Together', d: 'Work through problems with peers and get guidance when you are stuck.', alt: 'Learners collaborating over a task with a mentor' },
+];
+
+function CinematicJourney() {
+  const boxRef = useRef(null);
+  const trackRef = useRef(null);
+  const copies = 3; // 3 copies: loop hamesha seamless rehta hai
+  const items = Array.from({ length: copies }, (_, k) => CINE.map((c, i) => ({ ...c, k, i }))).flat();
+
+  useEffect(() => {
+    const box = boxRef.current, track = trackRef.current;
+    if (!box || !track || reduce()) return undefined;
+    const cards = [...track.children];
+    let raf = 0, last = 0, pos = 0, hold = false, visible = true, resume = 0;
+    let dragging = false, sx = 0, sp = 0;
+
+    const loopLen = () => {
+      const a = cards[0], b = cards[CINE.length];
+      return a && b ? b.offsetLeft - a.offsetLeft : 0;
+    };
+    const paint = () => {
+      const half = box.clientWidth / 2;
+      for (const el of cards) {
+        const cx = el.offsetLeft + el.offsetWidth / 2 - pos;
+        const t = Math.max(-1, Math.min(1, (cx - half) / (box.clientWidth * 0.55)));
+        const a = Math.abs(t);
+        el.style.transform = `perspective(1300px) rotateY(${(-t * 30).toFixed(2)}deg) translateY(${(a * 16).toFixed(1)}px) scale(${(1 - a * 0.12).toFixed(3)})`;
+        el.style.opacity = (1 - a * 0.28).toFixed(2);
+        el.style.zIndex = String(Math.round((1 - a) * 10));
+      }
+    };
+    const wrap = () => {
+      const len = loopLen();
+      if (!len) return;
+      while (pos >= len) pos -= len;
+      while (pos < 0) pos += len;
+    };
+    const step = (t) => {
+      raf = requestAnimationFrame(step);
+      const dt = last ? Math.min(t - last, 50) : 16;
+      last = t;
+      if (!visible || document.hidden) return;
+      if (!hold && !dragging) { pos += 0.06 * dt; wrap(); }
+      track.style.transform = `translate3d(${-pos}px,0,0)`;
+      paint();
+    };
+
+    const enter = () => { hold = true; clearTimeout(resume); };
+    const leave = () => { clearTimeout(resume); resume = setTimeout(() => { hold = false; }, 600); };
+    const down = (e) => { dragging = true; sx = e.clientX; sp = pos; box.classList.add('dragging'); box.setPointerCapture && box.setPointerCapture(e.pointerId); };
+    const move = (e) => { if (!dragging) return; pos = sp - (e.clientX - sx); wrap(); };
+    const up = () => { if (!dragging) return; dragging = false; box.classList.remove('dragging'); };
+
+    box.addEventListener('mouseenter', enter);
+    box.addEventListener('mouseleave', leave);
+    box.addEventListener('pointerdown', down);
+    box.addEventListener('pointermove', move);
+    box.addEventListener('pointerup', up);
+    box.addEventListener('pointercancel', up);
+    const io = typeof IntersectionObserver !== 'undefined' ? new IntersectionObserver(([e]) => { visible = e.isIntersecting; }) : null;
+    if (io) io.observe(box);
+    raf = requestAnimationFrame(step);
+    return () => {
+      cancelAnimationFrame(raf); clearTimeout(resume); if (io) io.disconnect();
+      box.removeEventListener('mouseenter', enter);
+      box.removeEventListener('mouseleave', leave);
+      box.removeEventListener('pointerdown', down);
+      box.removeEventListener('pointermove', move);
+      box.removeEventListener('pointerup', up);
+      box.removeEventListener('pointercancel', up);
+    };
+  }, []);
+
+  return (
+    <section className="wrap sec" aria-labelledby="cj-h">
+      <Reveal><div className="sechead"><div><h2 className="h-xl" id="cj-h">Explore Your Learning Journey</h2><p>Discover new skills, build real projects and grow with ILM ORA.</p></div></div></Reveal>
+      <div className="cj" ref={boxRef} role="region" aria-label="Explore your learning journey">
+        <div className="cj-track" ref={trackRef}>
+          {items.map((c) => (
+            <article className="cj-card" key={`${c.k}-${c.i}`} aria-hidden={c.k > 0 ? 'true' : undefined}>
+              <img src={c.img} alt={c.k === 0 ? c.alt : ''} loading="lazy" draggable="false" />
+              <div className="cj-in">
+                <div className="cj-top"><span className="n">STEP {String(c.i + 1).padStart(2, '0')}</span><span className="tg">{c.tag}</span></div>
+                <h3>{c.t}</h3>
+                <p>{c.d}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+const CATS = ['All', 'AI', 'Development', 'Design', 'Marketing', 'Business', 'Leadership', 'HR', 'Contact Center', 'Engineering'];
 const PAGE = 6;
 const DEFAULTS = { date: 'any', price: 'any', level: 'any', sort: 'upcoming' };
 
@@ -862,15 +2640,13 @@ function applyFilters(all, { q, cat, f }) {
   });
 }
 
-/** Horizontal row that scrolls by itself (seamless loop). Pauses on hover, touch, focus, when off-screen, and with reduced motion.
- *  If all cards already fit on screen it stays still and does not duplicate anything. */
+/** Horizontal row jo khud scroll hoti hai (seamless loop). Hover, touch, focus, off-screen aur reduced-motion par ruk jati hai. */
 function AutoRow({ children, label }) {
   const ref = useRef(null);
   const copyRef = useRef(null);
   const dupRef = useRef(null);
   const [fits, setFits] = useState(false);
 
-  // Does the whole set of cards fit without scrolling? (also true with reduced motion)
   useEffect(() => {
     const el = ref.current;
     if (!el) return undefined;
@@ -887,11 +2663,10 @@ function AutoRow({ children, label }) {
     return () => window.removeEventListener('resize', measure);
   }, [children]);
 
-  // Auto-scroll loop
   useEffect(() => {
     const el = ref.current;
     if (!el || fits) return undefined;
-    if (dupRef.current) dupRef.current.setAttribute('inert', ''); // the looped copy is decoration only
+    if (dupRef.current) dupRef.current.setAttribute('inert', '');
     let raf = 0, last = 0, pos = el.scrollLeft, hold = false, visible = true, resumeTimer = 0;
     const loopLen = () => {
       const a = copyRef.current && copyRef.current.firstElementChild;
@@ -905,24 +2680,36 @@ function AutoRow({ children, label }) {
       if (hold || !visible || document.hidden) return;
       const len = loopLen();
       if (!len) return;
-      pos += 0.045 * dt; // about 45px per second
+      pos += 0.045 * dt;
       if (pos >= len) pos -= len;
       el.scrollLeft = pos;
     };
     const stop = () => { hold = true; clearTimeout(resumeTimer); };
-    const go = () => { pos = el.scrollLeft; hold = false; };
-    const goLater = () => { clearTimeout(resumeTimer); resumeTimer = setTimeout(go, 1800); };
-    el.addEventListener('mouseenter', stop); el.addEventListener('mouseleave', go);
+    const goOn = () => { pos = el.scrollLeft; hold = false; };
+    const goLater = () => { clearTimeout(resumeTimer); resumeTimer = setTimeout(goOn, 1800); };
+    el.addEventListener('mouseenter', stop); el.addEventListener('mouseleave', goOn);
     el.addEventListener('touchstart', stop, { passive: true }); el.addEventListener('touchend', goLater, { passive: true });
-    el.addEventListener('focusin', stop); el.addEventListener('focusout', go);
+        el.addEventListener('focusin', stop); el.addEventListener('focusout', goOn);
+    let dragging = false, sx = 0, sl = 0;
+    const down = (e) => { if (e.pointerType !== 'mouse' || e.button !== 0) return; dragging = true; sx = e.clientX; sl = el.scrollLeft; el.classList.add('dragging'); };
+    const move = (e) => {
+      if (!dragging) return;
+      let v = sl - (e.clientX - sx);
+      const len = loopLen();
+      if (len) { if (v >= len) { v -= len; sl -= len; } else if (v < 0) { v += len; sl += len; } }
+      el.scrollLeft = v; pos = v;
+    };
+    const up = () => { if (!dragging) return; dragging = false; el.classList.remove('dragging'); pos = el.scrollLeft; };
+    el.addEventListener('pointerdown', down); window.addEventListener('pointermove', move); window.addEventListener('pointerup', up);
     const io = typeof IntersectionObserver !== 'undefined' ? new IntersectionObserver(([e]) => { visible = e.isIntersecting; }) : null;
     if (io) io.observe(el);
     raf = requestAnimationFrame(step);
     return () => {
       cancelAnimationFrame(raf); clearTimeout(resumeTimer); if (io) io.disconnect();
-      el.removeEventListener('mouseenter', stop); el.removeEventListener('mouseleave', go);
+      el.removeEventListener('mouseenter', stop); el.removeEventListener('mouseleave', goOn);
       el.removeEventListener('touchstart', stop); el.removeEventListener('touchend', goLater);
-      el.removeEventListener('focusin', stop); el.removeEventListener('focusout', go);
+            el.removeEventListener('focusin', stop); el.removeEventListener('focusout', goOn);
+      el.removeEventListener('pointerdown', down); window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up);
     };
   }, [fits]);
 
@@ -934,35 +2721,33 @@ function AutoRow({ children, label }) {
   );
 }
 
-function WorkshopsList() {
+function Catalog() {
   const router = useRouter();
   const sp = useSearchParams();
   const catParam = sp.get('cat');
   const urlCat = CATS.includes(catParam) ? catParam : 'All';
   const [cat, setCatState] = useState(urlCat);
-  useEffect(() => setCatState(urlCat), [urlCat]); // follow footer / back-button changes
+  useEffect(() => setCatState(urlCat), [urlCat]); // footer / back-button changes follow karo
   const { data, error, loading, reload } = useWorkshops();
   const { user } = useApp();
 
   const [q, setQ] = useState('');
   const [f, setF] = useState(DEFAULTS);
-  const [nU, setNU] = useState(PAGE);
-  const [nO, setNO] = useState(PAGE);
   const [open, setOpen] = useState(false);
 
-  const regs = useMemo(() => new Set(user ? api.myRegs().map((r) => r.slug) : []), [user, data]);
+  const regs = useMemo(() => new Set(user ? api.myRegs().map((r) => r.slug) : []), [user, data]); // eslint-disable-line react-hooks/exhaustive-deps
   const active = Boolean(q) || cat !== 'All' || f.date !== 'any' || f.price !== 'any' || f.level !== 'any';
   const results = useMemo(() => (data ? applyFilters(data, { q, cat, f }).sort(sorters[f.sort]) : []), [data, q, cat, f]);
   const live = results.filter((w) => w.format === 'live');
   const onDemand = results.filter((w) => w.format === 'ondemand');
-  const trending = useMemo(() => [...results].sort(sorters.popular).slice(0, 5), [results]);
+  const featured = useMemo(() => [...results].sort(sorters.popular).slice(0, 5), [results]);
 
   const setCat = (c) => {
-    setCatState(c); setNU(PAGE); setNO(PAGE);
-    router.replace(c === 'All' ? '/workshops' : `/workshops?cat=${c}`, { scroll: false });
+    setCatState(c);
+    router.replace(c === 'All' ? '/catalog' : `/catalog?cat=${c}`);
   };
-  const setFilter = (k) => (e) => { setNU(PAGE); setNO(PAGE); setF((s) => ({ ...s, [k]: e.target.value })); };
-  const reset = () => { setQ(''); setF(DEFAULTS); setNU(PAGE); setNO(PAGE); router.replace('/workshops', { scroll: false }); };
+  const setFilter = (k) => (e) => { setF((s) => ({ ...s, [k]: e.target.value })); };
+  const reset = () => { setQ(''); setF(DEFAULTS); router.replace('/catalog'); };
 
   const renderSection = ({ id, title, sub, items }) => items.length === 0 ? null : (
     <section className="sec" aria-labelledby={id} key={id}>
@@ -973,13 +2758,15 @@ function WorkshopsList() {
 
   return (
     <>
-      <section className="wrap hero">
-        <h1>Explore Workshops</h1>
-        <p className="lead">Learn a skill in an afternoon. Join a live session with a practitioner, or watch on demand whenever suits you.</p>
+      <section className="wrap" style={{ paddingTop: 18 }}><Link className="btn btn-ghost btn-sm" href="/workshops">{'\u2190'} Back to the 7-day programme</Link></section>
+
+      <section className="wrap sec" id="wk-explore" aria-labelledby="ex-h" style={{ scrollMarginTop: 90 }}>
+        <h2 className="h-xl" id="ex-h">Explore workshops</h2>
+        <p className="lead muted" style={{ marginTop: 8, maxWidth: '58ch' }}>Learn a skill in an afternoon. Join a live session with a practitioner, or watch on demand whenever suits you.</p>
         <form className="searchbox glass" role="search" onSubmit={(e) => e.preventDefault()}>
           {Icons.search}
           <label htmlFor="q" className="sr">Search workshops by title or topic</label>
-          <input id="q" type="search" placeholder="Search by title or topic, e.g. agents, Figma, pricing" autoComplete="off" value={q} onChange={(e) => { setQ(e.target.value); setNU(PAGE); setNO(PAGE); }} />
+          <input id="q" type="search" placeholder="Search by title or topic, e.g. agents, Figma, pricing" autoComplete="off" value={q} onChange={(e) => setQ(e.target.value)} />
           <button type="button" className="btn btn-primary btn-sm" id="filtersBtn" aria-expanded={open} aria-controls="filters" onClick={() => setOpen((o) => !o)}>Filters</button>
         </form>
         <div className="cats" role="group" aria-label="Topics">
@@ -1004,9 +2791,7 @@ function WorkshopsList() {
           </label>
           <div style={{ display: 'flex', alignItems: 'end' }}><button type="button" className="btn btn-ghost btn-block" onClick={reset}>Reset filters</button></div>
         </div>
-      </section>
 
-      <div className="wrap">
         <p className="muted" aria-live="polite" style={{ marginTop: 14 }}>
           {data && `${results.length} workshop${results.length === 1 ? '' : 's'} ${active ? 'match your filters' : 'available'}`}
         </p>
@@ -1032,19 +2817,239 @@ function WorkshopsList() {
 
         {data && results.length > 0 && (
           <>
-            {trending.length > 2 && !q && (
-              <section className="sec" aria-labelledby="trend">
-                <div className="sechead"><div><h2 id="trend">Popular right now</h2><p>What other learners are joining this week.</p></div></div>
-                <AutoRow label="Popular workshops">
-                  {trending.map((w) => <WorkshopCard key={w.slug} w={w} registered={regs.has(w.slug)} />)}
-                </AutoRow>
-              </section>
-            )}
-            {renderSection({ id: 'up', title: 'Upcoming workshops', sub: 'Live sessions you can join with the instructor.', items: live, n: nU, more: () => setNU((n) => n + PAGE) })}
-            {renderSection({ id: 'od', title: 'On-demand workshops', sub: 'Recorded and ready when you are.', items: onDemand, n: nO, more: () => setNO((n) => n + PAGE) })}
+            {featured.length > 2 && !q && renderSection({ id: 'feat', title: 'Featured workshops', sub: 'The most popular sessions with learners right now.', items: featured })}
+            {renderSection({ id: 'up', title: 'Upcoming live workshops', sub: 'Live sessions you can join with the instructor.', items: live })}
+            {renderSection({ id: 'od', title: 'On-demand learning library', sub: 'Recorded and ready when you are.', items: onDemand })}
           </>
         )}
+      </section>
+
+      <TopicTiles data={data} />
+    </>
+  );
+}
+
+function CatalogTeaser({ data }) {
+  const { user } = useApp();
+  const regs = useMemo(() => new Set(user ? api.myRegs().map((r) => r.slug) : []), [user, data]); // eslint-disable-line react-hooks/exhaustive-deps
+  const top = useMemo(() => [...(data || [])].sort(sorters.popular).slice(0, 3), [data]);
+  if (!top.length) return null;
+  return (
+    <section className="wrap sec" aria-labelledby="ct-h">
+      <Reveal><div className="sechead"><div><h2 className="h-xl" id="ct-h">More workshops to explore</h2><p>Short live and on-demand workshops across AI, development, design, business and more.</p></div><LinkBtn href="/catalog" ghost sm>Browse all workshops</LinkBtn></div></Reveal>
+      <div className="grid">{top.map((w) => <WorkshopCard key={w.slug} w={w} registered={regs.has(w.slug)} />)}</div>
+      {UPCOMING.length > 0 && <p className="muted" style={{ marginTop: 14 }}>Coming soon: {UPCOMING.join(', ')}</p>}
+    </section>
+  );
+}
+
+/** Config-driven sections: array khali ho to section dikhta hi nahi. Sirf real, verified data daalo. */
+const FEATURED_IN = []; // [{ name: 'Media name', src: U(importedLogo) }]
+const UPCOMING = [];    // Coming soon workshop names; add only confirmed workshops.
+const WHY_NOW = [];     // [{ value: '00%', label: 'stat description' }]  + WHY_NOW_SOURCE me source likho
+const WHY_NOW_SOURCE = '';
+
+function FeaturedIn() {
+  if (!FEATURED_IN.length) return null;
+  const list = [...FEATURED_IN, ...FEATURED_IN];
+  return (
+    <section className="wrap sec" aria-label="Featured in">
+      <Reveal><p className="muted" style={{ textAlign: 'center', fontWeight: 700 }}>Featured in</p></Reveal>
+      <div className="mq"><ul className="mq-track">{list.map((t, i) => (
+        <li className="mq-logo" key={t.name + i} aria-hidden={i >= FEATURED_IN.length ? 'true' : undefined}><img src={t.src} alt={i >= FEATURED_IN.length ? '' : t.name} loading="lazy" /></li>
+      ))}</ul></div>
+    </section>
+  );
+}
+
+function WhyNow() {
+  if (!WHY_NOW.length) return null;
+  return (
+    <section className="wrap sec" aria-labelledby="wn-h">
+      <Reveal><div className="sechead"><div><h2 className="h-xl" id="wn-h">Why learn this now</h2>{WHY_NOW_SOURCE && <p>Source: {WHY_NOW_SOURCE}</p>}</div></div></Reveal>
+      <Reveal className="fmt">{WHY_NOW.map((x) => <div key={x.label}><b>{x.value}</b><span>{x.label}</span></div>)}</Reveal>
+    </section>
+  );
+}
+
+/** Roadmap ke baad mid-page CTA (GrowthSchool jaisa repeated CTA). */
+function MidCta() {
+  const o = CONFIG.OFFER || {};
+  const target = o.registerSlug ? `/register/${o.registerSlug}` : '/catalog';
+  return (
+    <section className="wrap sec" aria-label="Reserve your seat">
+      <Reveal className="nl">
+        <div><h3 style={{ fontSize: '1.1rem' }}>Ready to build your first full-stack project?</h3><p style={{ marginTop: 4, fontSize: '.86rem' }}>{o.batchNote || 'Limited seats in every cohort.'}</p></div>
+        <button type="button" className="btn btn-light btn-lg" onClick={() => go(target)}>Reserve my seat{o.price ? ` for ${money(o.price)}` : ''}</button>
+      </Reveal>
+    </section>
+  );
+}
+
+/** Scroll ke baad neeche chipakne wala Reserve bar (mobile par dikhta hai, .stickybar CSS). */
+function StickyReserve() {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const on = () => setShow(window.scrollY > 700);
+    on();
+    window.addEventListener('scroll', on, { passive: true });
+    return () => window.removeEventListener('scroll', on);
+  }, []);
+  const o = CONFIG.OFFER || {};
+  if (!show || !o.on) return null;
+  return (
+    <div className="stickybar" role="complementary" aria-label="Reserve your seat">
+      <div><b>{money(o.price || 0)}</b>{o.original ? <s className="muted" style={{ marginLeft: 6, fontSize: '.8rem' }}>{money(o.original)}</s> : null}</div>
+      <button type="button" className="btn btn-primary" onClick={() => scrollToId('wk-price')}>Reserve my seat</button>
+    </div>
+  );
+}
+/* ---------- TOOLS SECTION ---------- */
+
+const WORKSHOP_TOOLS = [
+  { name: 'Claude', img: logo0 },
+  { name: 'Make', img: logo1 },
+  { name: 'Magnific AI', img: logo2 },
+  { name: 'Runway', img: logo3 },
+  { name: 'Luma AI', img: logo4 },
+  { name: 'Topaz Labs', img: logo5 },
+  { name: 'DaVinci Resolve', img: logo6 },
+  { name: 'Midjourney', img: logo7 },
+  { name: 'Perplexity', img: logo8 },
+];
+
+function ToolsSection() {
+  return (
+    <section className="wrap sec" aria-labelledby="tools-heading">
+      <Reveal>
+        <div className="sechead">
+          <div>
+            <h2 className="h-xl" id="tools-heading">
+              Tools You'll Learn
+            </h2>
+            <p>
+              Explore industry-leading AI, development and creative tools
+              through practical workshops.
+            </p>
+          </div>
+        </div>
+      </Reveal>
+
+      <div className="tools-marquee" aria-label="Tools you'll learn">
+  <div className="tools-track">
+    {[...WORKSHOP_TOOLS, ...WORKSHOP_TOOLS].map((tool, index) => (
+      <div
+        className="tool"
+        key={`${tool.name}-${index}`}
+        aria-hidden={index >= WORKSHOP_TOOLS.length ? 'true' : undefined}
+      >
+        <img
+          src={U(tool.img)}
+          alt={index >= WORKSHOP_TOOLS.length ? '' : tool.name}
+          loading="lazy"
+        />
+        <span>{tool.name}</span>
       </div>
+    ))}
+  </div>
+</div>
+  </section>
+  );
+}
+
+
+/* ---------- PRICING CARD ---------- */
+
+function PricingCard() {
+  const offer = CONFIG.OFFER || {};
+
+  return (
+    <section
+      className="wrap sec"
+      id="wk-price"
+      aria-labelledby="pricing-heading"
+    >
+      <Reveal className="price-card">
+        <div>
+          <span className="badge feat">LIMITED TIME OFFER</span>
+
+          <h2
+            className="h-xl"
+            id="pricing-heading"
+            style={{ marginTop: 12 }}
+          >
+            Start Your Learning Journey
+          </h2>
+
+          <p className="muted" style={{ marginTop: 8 }}>
+            Join ILM ORA workshops and learn through expert guidance,
+            practical projects and real-world experience.
+          </p>
+
+          <p className="pc-note">
+            {offer.batchNote}
+          </p>
+        </div>
+
+        <div>
+          <div className="pc-price">
+            {money(offer.price || 0)}
+            {offer.original > offer.price && (
+              <s>{money(offer.original)}</s>
+            )}
+          </div>
+
+          {offer.refund && (
+            <div className="pc-refund">
+              {offer.refund}
+            </div>
+          )}
+
+          <button
+            type="button"
+            className="btn btn-primary btn-lg"
+            style={{ marginTop: 16 }}
+            onClick={() =>
+              go(
+                offer.registerSlug
+                  ? `/register/${offer.registerSlug}`
+                  : '/catalog'
+              )
+            }
+          >
+            Reserve My Seat
+          </button>
+        </div>
+      </Reveal>
+    </section>
+  );
+}
+function Home() {
+  const { data } = useWorkshops();
+  return (
+    <>
+      <OfferStrip />
+      <Hero data={data} />
+            <FormatStrip />
+      <CinematicJourney />
+      <FeaturedIn />
+      <WhyNow />
+      <ProblemVsRoadmap />
+      <Roadmap />
+      <MidCta />
+      <ToolsSection />
+      <PricingCard />
+      <Experience />
+      <CertificateShowcase />
+      
+      <Instructors data={data} />
+      <Community />
+      <WallOfLove />
+      <Corporate />
+      <CatalogTeaser data={data} />
+      <section className="wrap sec"><Faq /></section>
+      <FinalCta />
+      <StickyReserve />
     </>
   );
 }
@@ -1095,7 +3100,7 @@ function WorkshopDetail({ slug }) {
     api.get(slug).then((w) => setState({ w, error: null, loading: false })).catch((e) => setState({ w: null, error: e, loading: false }));
   };
   useEffect(load, [slug]); // eslint-disable-line react-hooks/exhaustive-deps
-  // Per-workshop title, description and structured data (SEO)
+  // Per-workshop title, description aur structured data (SEO)
   useEffect(() => {
     const w = state.w;
     if (!w) return undefined;
@@ -1115,7 +3120,7 @@ function WorkshopDetail({ slug }) {
   if (loading) return <div className="wrap"><div className="skel" style={{ marginTop: 20, height: 220 }} /><div className="skel" style={{ marginTop: 14, height: 340 }} /></div>;
   if (error) {
     return error.code === 404
-      ? <StateBox title="Workshop not found" text="It may have been removed or the link is mistyped."><LinkBtn href="/workshops">Browse workshops</LinkBtn></StateBox>
+      ? <StateBox title="Workshop not found" text="It may have been removed or the link is mistyped."><LinkBtn href="/catalog">Browse workshops</LinkBtn></StateBox>
       : <StateBox title="We could not load this workshop" text={error.message}><button type="button" className="btn btn-primary" onClick={load}>Try again</button></StateBox>;
   }
 
@@ -1135,18 +3140,12 @@ function WorkshopDetail({ slug }) {
     [Icons.cal, 'Registration', full ? 'Closed, this session is full' : w.seatsLeft != null ? `Open, ${w.seatsLeft} seats left` : 'Open, enrol any time'],
   ];
 
-  const onBannerMove = (e) => {
-    if (e.pointerType !== 'mouse') return;
-    const b = e.currentTarget, r = b.getBoundingClientRect();
-    b.style.transform = `perspective(1200px) rotateY(${((e.clientX - r.left) / r.width - 0.5) * 4}deg) rotateX(${(0.5 - (e.clientY - r.top) / r.height) * 3}deg)`;
-  };
-
   return (
     <div className="wrap">
       <nav className="crumbs" aria-label="Breadcrumb">
-        <Link href="/workshops">Workshops</Link> / <Link href={`/workshops?cat=${w.category}`}>{w.category}</Link> / <span aria-current="page">{w.title}</span>
+        <Link href="/catalog">Workshops</Link> / <Link href={`/catalog?cat=${w.category}`}>{w.category}</Link> / <span aria-current="page">{w.title}</span>
       </nav>
-      <div className="banner" onPointerMove={onBannerMove} onPointerLeave={(e) => { e.currentTarget.style.transform = ''; }}>
+      <div className="banner">
         <WorkshopArt w={w} />
         <div className="badges"><FormatBadge w={w} />{w.price === 0 && <span className="badge free">Free</span>}</div>
       </div>
@@ -1155,9 +3154,10 @@ function WorkshopDetail({ slug }) {
         <div>
           <div className="panel glass">
             <h1 style={{ fontSize: 'clamp(1.25rem,2.6vw,1.65rem)' }}>{w.title}</h1>
-            <p className="lead" style={{ marginTop: 12 }}>{w.short}</p>
+            <p className="lead muted" style={{ marginTop: 12 }}>{w.short}</p>
             <p style={{ marginTop: 16 }}>{w.long}</p>
           </div>
+          {MEDIA.promos[w.slug] && <div style={{ marginTop: 12 }}><Yt id={MEDIA.promos[w.slug]} title={`${w.title} preview`} /></div>}
           <div className="panel glass"><h2>What you will learn</h2><ul className="ticks">{w.learn.map((x) => <li key={x}>{x}</li>)}</ul></div>
           <div className="panel glass"><h2>Learning outcomes</h2><ul className="ticks">{w.outcomes.map((x) => <li key={x}>{x}</li>)}</ul></div>
           <div className="panel glass">
@@ -1179,11 +3179,12 @@ function WorkshopDetail({ slug }) {
               <Avatar person={w.instructor} large />
               <div style={{ flex: 1, minWidth: 220 }}>
                 <h3>{w.instructor.name}</h3>
-                <p className="muted">{w.instructor.role} {'\u2022'} {w.instructor.years}+ years of experience</p>
+                <p className="muted">{w.instructor.role}{w.instructor.years ? ` \u2022 ${w.instructor.years}+ years of experience` : ''}</p>
                 <p style={{ marginTop: 10 }}>{w.instructor.bio}</p>
               </div>
             </div>
           </div>
+          <DetailExtras w={w} />
         </div>
 
         <aside className="aside">
@@ -1195,8 +3196,7 @@ function WorkshopDetail({ slug }) {
               ))}
             </ul>
             <div>
-              {reg ? <AccessPanel w={w}
-              /> : full ? (
+              {reg ? <AccessPanel w={w} /> : full ? (
                 <>
                   <button type="button" className="btn btn-primary btn-block" disabled>Sold out</button>
                   <p className="muted" style={{ marginTop: 10, fontSize: '.9rem' }}>Registration is closed. Browse similar workshops below.</p>
@@ -1218,77 +3218,9 @@ function WorkshopDetail({ slug }) {
           <div className="grid">{related.map((x) => <WorkshopCard key={x.slug} w={x} registered={regs.has(x.slug)} />)}</div>
         </section>
       )}
-    </div>
-  );
-}
-
-/** Prototype auth form. Wire login/signup to the existing ILM ORA authentication in AppProviders. */
-function LoginForm() {
-  const router = useRouter();
-  const sp = useSearchParams();
-  const hasNext = Boolean(sp.get('next'));
-  const next = safeNext(sp.get('next'));
-  const { user, ready, login, signup, toast } = useApp();
-  const [mode, setMode] = useState('in');
-  const [v, setV] = useState({ name: '', email: '', pw: '' });
-  const [errors, setErrors] = useState({});
-  const [formErr, setFormErr] = useState('');
-  const [busy, setBusy] = useState(false);
-
-  useEffect(() => { if (ready && user) router.replace(next); }, [ready, user, next, router]);
-
-  const set = (k) => (e) => setV((s) => ({ ...s, [k]: e.target.value }));
-  const validate = () => {
-    const e = {};
-    if (mode === 'up' && v.name.trim().length < 2) e.name = 'Enter your full name.';
-    if (!emailOK(v.email.trim())) e.email = 'Enter a valid email address, like name@example.com.';
-    if (mode === 'up' ? v.pw.length < 8 : v.pw.length === 0) e.pw = mode === 'up' ? 'Use at least 8 characters.' : 'Enter your password.';
-    return e;
-  };
-  const submit = async (ev) => {
-    ev.preventDefault();
-    const e = validate();
-    setErrors(e);
-    if (Object.keys(e).length) { setFormErr('Please fix the highlighted fields.'); return; }
-    setFormErr(''); setBusy(true);
-    try {
-      const u = mode === 'in' ? await login({ email: v.email.trim(), password: v.pw }) : await signup({ name: v.name.trim(), email: v.email.trim(), password: v.pw });
-      toast(mode === 'in' ? `Welcome back, ${u.name.split(' ')[0]}.` : 'Account created. You are signed in.', 'ok');
-      router.replace(next);
-    } catch (err) {
-      setFormErr(err.message); setBusy(false);
-    }
-  };
-  const invalid = (k) => (errors[k] ? 'true' : 'false');
-
-  return (
-    <div className="wrap">
-      <div className="formwrap narrow panel glass">
-        <h1 style={{ fontSize: '1.45rem' }}>{mode === 'in' ? 'Welcome back' : 'Create your account'}</h1>
-        <p className="muted" style={{ margin: '8px 0 18px' }}>{hasNext ? 'Sign in to continue your registration.' : 'Access your registered workshops and join links.'}</p>
-        <div className="tabs" role="tablist">
-          <button type="button" role="tab" aria-selected={mode === 'in'} onClick={() => { setMode('in'); setErrors({}); setFormErr(''); }}>Sign in</button>
-          <button type="button" role="tab" aria-selected={mode === 'up'} onClick={() => { setMode('up'); setErrors({}); setFormErr(''); }}>Create account</button>
-        </div>
-        <form className="form" onSubmit={submit} noValidate>
-          <div role="alert">{formErr && <div className="alert bad">{formErr}</div>}</div>
-          {mode === 'up' && (
-            <Field id="name" label="Full name" error={errors.name}>
-              <input className="in" id="name" autoComplete="name" value={v.name} onChange={set('name')} aria-invalid={invalid('name')} aria-describedby="name-e" />
-            </Field>
-          )}
-          <Field id="email" label="Email" error={errors.email}>
-            <input className="in" id="email" type="email" autoComplete="email" value={v.email} onChange={set('email')} aria-invalid={invalid('email')} aria-describedby="email-e" />
-          </Field>
-          <Field id="pw" label={`Password${mode === 'up' ? ' (8+ characters)' : ''}`} error={errors.pw}>
-            <input className="in" id="pw" type="password" autoComplete={mode === 'in' ? 'current-password' : 'new-password'} value={v.pw} onChange={set('pw')} aria-invalid={invalid('pw')} aria-describedby="pw-e" />
-          </Field>
-          <button className="btn btn-primary btn-block" type="submit" disabled={busy}>
-            {busy ? <><Spinner />Please wait</> : mode === 'in' ? 'Sign in' : 'Create account'}
-          </button>
-        </form>
-        <p className="muted" style={{ fontSize: '.82rem', marginTop: 16 }}>Prototype note: this form uses a temporary in-browser account store. Connect it to ILM ORA's existing authentication.</p>
-      </div>
+      {!reg && !full && (
+        <div className="stickybar"><div><b>{money(w.price)}</b>{w.seatsLeft != null && w.seatsLeft < 20 && <div style={{ fontSize: '.8rem', color: 'var(--err)' }}>Only {w.seatsLeft} seats left</div>}</div><LinkBtn href={`/register/${w.slug}`}>{w.price === 0 ? 'Register free' : 'Register now'}</LinkBtn></div>
+      )}
     </div>
   );
 }
@@ -1296,7 +3228,7 @@ function LoginForm() {
 const luhn = (n) => { let s = 0, d = false; for (let i = n.length - 1; i >= 0; i--) { let x = +n[i]; if (d) { x *= 2; if (x > 9) x -= 9; } s += x; d = !d; } return s % 10 === 0; };
 function RegisterFlow({ slug }) {
   const router = useRouter();
-  const { user, ready, toast } = useApp();
+  const { user, toast } = useApp();
   const [w, setW] = useState(null);
   const [loadErr, setLoadErr] = useState(null);
   const [step, setStep] = useState(1);
@@ -1307,18 +3239,18 @@ function RegisterFlow({ slug }) {
   const [formErr, setFormErr] = useState(null);
   const [busy, setBusy] = useState(false);
 
-    // Guest checkout (Maven style): login ki zaroorat nahi
+  // Guest checkout: login ki zaroorat nahi
   useEffect(() => { if (user) setD((s) => ({ ...s, name: s.name || user.name, email: s.email || user.email })); }, [user]);
   useEffect(() => { api.get(slug).then(setW).catch(setLoadErr); }, [slug]);
-  // Prevent duplicate registrations
+  // Duplicate registration rokna
   useEffect(() => {
     if (user && api.myReg(slug)) { toast('You are already registered for this workshop.'); router.replace(`/workshops/${slug}`); }
   }, [user, slug, router, toast]);
 
-  if (loadErr) return <StateBox title="We could not load this workshop" text={loadErr.message}><LinkBtn href="/workshops">Back to workshops</LinkBtn></StateBox>;
-    if (!w) return <div className="wrap"><div className="skel" style={{ marginTop: 24, height: 340, maxWidth: 900, marginInline: 'auto' }} /></div>;
+  if (loadErr) return <StateBox title="We could not load this workshop" text={loadErr.message}><LinkBtn href="/catalog">Back to workshops</LinkBtn></StateBox>;
+  if (!w) return <div className="wrap"><div className="skel" style={{ marginTop: 24, height: 340, maxWidth: 900, marginInline: 'auto' }} /></div>;
   if (w.format === 'live' && w.seatsLeft === 0) {
-    return <StateBox title="This workshop is full" text="Registration is closed for this session. Explore similar workshops instead."><LinkBtn href={`/workshops?cat=${w.category}`}>See more in {w.category}</LinkBtn></StateBox>;
+    return <StateBox title="This workshop is full" text="Registration is closed for this session. Explore similar workshops instead."><LinkBtn href={`/catalog?cat=${w.category}`}>See more in {w.category}</LinkBtn></StateBox>;
   }
 
   const paid = w.price > 0;
@@ -1334,17 +3266,17 @@ function RegisterFlow({ slug }) {
       invalidateWorkshops();
       toast('You are registered.', 'ok');
       router.push(`/confirmation/${slug}`);
-    } catch (err) {
-      setFormErr({ message: err.message, duplicate: err.code === 409 });
+    } catch (e) {
+      setFormErr({ message: e.message, duplicate: e.code === 409 });
       setBusy(false);
-      if (err.code === 401) router.replace(`/login?next=${encodeURIComponent(`/register/${slug}`)}`);
+      if (e.code === 401) router.replace(`/login?next=${encodeURIComponent(`/register/${slug}`)}`);
     }
   };
 
   const onEmail = (ev) => {
     ev.preventDefault();
     if (!emailOK(d.email.trim())) { setErrors({ email: 'Enter a valid email address.' }); return; }
-       setErrors({}); setFormErr(null);
+    setErrors({}); setFormErr(null);
     // Guest checkout: email se hi session ban jata hai (login zaroori nahi)
     const em = d.email.trim().toLowerCase();
     const cur = api.session();
@@ -1386,8 +3318,8 @@ function RegisterFlow({ slug }) {
   return (
     <div className="wrap">
       <div className="jn">
-        {/* Left: workshop summary */}
         <div className="jn-info">
+          <div className="banner" style={{ height: 150, marginTop: 0, marginBottom: 18 }}><WorkshopArt w={w} /></div>
           <h1>{w.title}</h1>
           <p className="jn-sub">with {w.instructor.name}</p>
           <p className="jn-sub">{live ? `${fmtDL.format(w.start)}, ${fmtT.format(w.start)} IST` : 'On-demand, watch any time'}</p>
@@ -1404,7 +3336,6 @@ function RegisterFlow({ slug }) {
           </ul>
         </div>
 
-        {/* Right: step card */}
         <div>
           <div className="panel glass jn-card">
             {step === 1 ? (
@@ -1498,160 +3429,7 @@ function RegisterFlow({ slug }) {
   );
 }
 
-/** Purana register form (ab use nahi ho raha). Chaho to poora delete kar sakte ho. */
-function RegisterFlowOld({ slug }) {
-
-  const router = useRouter();
-  const { user, ready, toast } = useApp();
-  const [w, setW] = useState(null);
-  const [loadErr, setLoadErr] = useState(null);
-  const [step, setStep] = useState(1);
-  const [d, setD] = useState({ name: '', email: '', phone: '', level: '', goal: '', consent: false });
-  const [pay, setPay] = useState({ cname: '', cnum: '', cexp: '', ccvc: '' });
-  const [errors, setErrors] = useState({});
-  const [formErr, setFormErr] = useState(null);
-  const [busy, setBusy] = useState(false);
-
-  // Auth gate: Workshop Details -> Login/Signup -> Registration
-  useEffect(() => { if (ready && !user) router.replace(`/login?next=${encodeURIComponent(`/register/${slug}`)}`); }, [ready, user, slug, router]);
-  useEffect(() => { if (user) setD((s) => ({ ...s, name: s.name || user.name, email: s.email || user.email })); }, [user]);
-  useEffect(() => { api.get(slug).then(setW).catch(setLoadErr); }, [slug]);
-  // Prevent duplicate registrations
-  useEffect(() => {
-    if (user && api.myReg(slug)) { toast('You are already registered for this workshop.'); router.replace(`/workshops/${slug}`); }
-  }, [user, slug, router, toast]);
-
-  if (loadErr) return <StateBox title="We could not load this workshop" text={loadErr.message}><LinkBtn href="/workshops">Back to workshops</LinkBtn></StateBox>;
-  if (!w || !user) return <div className="wrap"><div className="skel" style={{ marginTop: 24, height: 340, maxWidth: 660, marginInline: 'auto' }} /></div>;
-  if (w.format === 'live' && w.seatsLeft === 0) {
-    return <StateBox title="This workshop is full" text="Registration is closed for this session. Explore similar workshops instead."><LinkBtn href={`/workshops?cat=${w.category}`}>See more in {w.category}</LinkBtn></StateBox>;
-  }
-
-  const paid = w.price > 0;
-  const setField = (k) => (e) => setD((s) => ({ ...s, [k]: e.target.type === 'checkbox' ? e.target.checked : e.target.value }));
-  const inv = (k) => (errors[k] ? 'true' : 'false');
-
-  const submit = async (paidNow) => {
-    setBusy(true); setFormErr(null);
-    try {
-      await api.register(slug, { ...d, paid: paidNow });
-      invalidateWorkshops();
-      toast('You are registered.', 'ok');
-      router.push(`/confirmation/${slug}`);
-    } catch (err) {
-      setFormErr({ message: err.message, duplicate: err.code === 409 });
-      setBusy(false);
-      if (err.code === 401) router.replace(`/login?next=${encodeURIComponent(`/register/${slug}`)}`);
-    }
-  };
-
-  const onDetails = (ev) => {
-    ev.preventDefault();
-    const e = {};
-    if (d.name.trim().length < 2) e.name = 'Enter your full name.';
-    if (!emailOK(d.email.trim())) e.email = 'Enter a valid email address.';
-    if (!/^(\+91[\s-]?)?[6-9]\d{9}$/.test(d.phone.replace(/\s/g, ''))) e.phone = 'Enter a valid 10-digit Indian mobile number.';
-    if (!d.level) e.level = 'Choose your experience level.';
-    if (!d.consent) e.consent = 'Please accept to continue.';
-    setErrors(e);
-    if (Object.keys(e).length) { setFormErr({ message: 'Please fix the highlighted fields.' }); return; }
-    setFormErr(null);
-    if (paid) { setStep(2); window.scrollTo({ top: 0 }); } else submit(false);
-  };
-
-  const onPay = (ev) => {
-    ev.preventDefault();
-    const e = {};
-    if (pay.cname.trim().length < 2) e.cname = 'Enter the name on the card.';
-    const digits = pay.cnum.replace(/\s/g, '');
-    if (!(digits.length >= 13 && luhn(digits))) e.cnum = 'Enter a valid card number.';
-    const m = /^(\d{2})\/(\d{2})$/.exec(pay.cexp);
-    const now = new Date();
-    const okExp = m && +m[1] >= 1 && +m[1] <= 12 && (2000 + +m[2] > now.getFullYear() || (2000 + +m[2] === now.getFullYear() && +m[1] >= now.getMonth() + 1));
-    if (!okExp) e.cexp = 'Enter a valid, future expiry date as MM/YY.';
-    if (!/^\d{3,4}$/.test(pay.ccvc)) e.ccvc = 'Enter the 3 or 4 digit security code.';
-    setErrors(e);
-    if (Object.keys(e).length) { setFormErr({ message: 'Please fix the highlighted fields.' }); return; }
-    submit(true);
-  };
-
-  const steps = [{ n: 1, t: 'Your details' }, ...(paid ? [{ n: 2, t: 'Payment' }] : [])];
-  const alertBox = formErr && (
-    <div className="alert bad">{formErr.message}{formErr.duplicate && <> <Link href={`/workshops/${slug}`}>View your registration</Link></>}</div>
-  );
-
-  return (
-    <div className="wrap">
-      <div className="formwrap">
-        <ol className="steps" aria-label="Registration progress">
-          {steps.map((s) => <li key={s.n} className={step > s.n ? 'done' : ''} aria-current={step === s.n ? 'step' : undefined}>{s.n}. {s.t}</li>)}
-          <li>{steps.length + 1}. Confirmation</li>
-        </ol>
-
-        <div className="panel glass" style={{ marginBottom: 18, display: 'flex', gap: 14, alignItems: 'center', flexWrap: 'wrap' }}>
-          <div style={{ width: 120, borderRadius: 12, overflow: 'hidden', flex: 'none' }}><WorkshopArt w={w} /></div>
-          <div style={{ flex: 1, minWidth: 200 }}>
-            <h2 style={{ fontSize: '1rem' }}>{w.title}</h2>
-            <p className="muted">{w.format === 'live' ? `${fmtD.format(w.start)}, ${fmtT.format(w.start)} IST` : 'On-demand'} {'\u2022'} {money(w.price)}</p>
-          </div>
-        </div>
-
-        <div className="panel glass">
-          {step === 1 ? (
-            <>
-              <h1 style={{ fontSize: '1.3rem', marginBottom: 4 }}>Your details</h1>
-              <p className="muted" style={{ marginBottom: 18 }}>We use these to confirm your place and send reminders.</p>
-              <form className="form" onSubmit={onDetails} noValidate>
-                <div role="alert">{alertBox}</div>
-                <div className="fr two">
-                  <Field id="rname" label="Full name" error={errors.name}><input className="in" id="rname" autoComplete="name" value={d.name} onChange={setField('name')} aria-invalid={inv('name')} aria-describedby="rname-e" /></Field>
-                  <Field id="remail" label="Email" error={errors.email}><input className="in" id="remail" type="email" autoComplete="email" value={d.email} onChange={setField('email')} aria-invalid={inv('email')} aria-describedby="remail-e" /></Field>
-                </div>
-                <div className="fr two">
-                  <Field id="rphone" label="Mobile number" error={errors.phone}><input className="in" id="rphone" type="tel" autoComplete="tel" placeholder="10-digit number" value={d.phone} onChange={setField('phone')} aria-invalid={inv('phone')} aria-describedby="rphone-e" /></Field>
-                  <Field id="rlevel" label="Your experience level" error={errors.level}>
-                    <select id="rlevel" value={d.level} onChange={setField('level')} aria-invalid={inv('level')} aria-describedby="rlevel-e"><option value="">Choose one</option><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select>
-                  </Field>
-                </div>
-                <div><label className="f" htmlFor="rgoal">What do you hope to get from this workshop? (optional)<textarea id="rgoal" rows={3} maxLength={300} value={d.goal} onChange={setField('goal')} /></label></div>
-                <div>
-                  <label className="check"><input type="checkbox" checked={d.consent} onChange={setField('consent')} aria-invalid={inv('consent')} aria-describedby="rconsent-e" /><span>I agree to receive session reminders and accept the workshop terms.</span></label>
-                  <div className="err" id="rconsent-e">{errors.consent}</div>
-                </div>
-                <button className="btn btn-primary btn-block" type="submit" disabled={busy}>
-                  {busy ? <><Spinner />Processing</> : paid ? 'Continue to payment' : w.price === 0 ? 'Confirm free registration' : 'Confirm registration'}
-                </button>
-              </form>
-            </>
-          ) : (
-            <>
-              <h1 style={{ fontSize: '1.3rem', marginBottom: 4 }}>Payment</h1>
-              <p className="muted" style={{ marginBottom: 14 }}>Total due today: <b style={{ color: 'var(--text)' }}>{money(w.price)}</b></p>
-              <div className="alert" style={{ background: 'color-mix(in srgb,var(--accent) 20%,transparent)', border: '1px solid var(--accent)', marginBottom: 16, fontSize: '.88rem' }}>
-                Demo payment form. No card is charged. Connect ILM ORA's existing payment gateway here.
-              </div>
-              <form className="form" onSubmit={onPay} noValidate>
-                <div role="alert">{alertBox}</div>
-                <Field id="cname" label="Name on card" error={errors.cname}><input className="in" id="cname" autoComplete="cc-name" value={pay.cname} onChange={(e) => setPay((s) => ({ ...s, cname: e.target.value }))} aria-invalid={inv('cname')} aria-describedby="cname-e" /></Field>
-                <Field id="cnum" label="Card number" error={errors.cnum}><input className="in" id="cnum" inputMode="numeric" autoComplete="cc-number" placeholder="4242 4242 4242 4242" value={pay.cnum} onChange={(e) => setPay((s) => ({ ...s, cnum: e.target.value.replace(/\D/g, '').slice(0, 16).replace(/(\d{4})(?=\d)/g, '$1 ') }))} aria-invalid={inv('cnum')} aria-describedby="cnum-e" /></Field>
-                <div className="fr two">
-                  <Field id="cexp" label="Expiry (MM/YY)" error={errors.cexp}><input className="in" id="cexp" inputMode="numeric" autoComplete="cc-exp" placeholder="08/29" value={pay.cexp} onChange={(e) => { let x = e.target.value.replace(/\D/g, '').slice(0, 4); if (x.length > 2) x = x.slice(0, 2) + '/' + x.slice(2); setPay((s) => ({ ...s, cexp: x })); }} aria-invalid={inv('cexp')} aria-describedby="cexp-e" /></Field>
-                  <Field id="ccvc" label="CVC" error={errors.ccvc}><input className="in" id="ccvc" inputMode="numeric" autoComplete="cc-csc" placeholder="123" value={pay.ccvc} onChange={(e) => setPay((s) => ({ ...s, ccvc: e.target.value }))} aria-invalid={inv('ccvc')} aria-describedby="ccvc-e" /></Field>
-                </div>
-                <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-                  <button type="button" className="btn btn-ghost" onClick={() => { setStep(1); setFormErr(null); }}>Back</button>
-                  <button className="btn btn-primary" style={{ flex: 1 }} type="submit" disabled={busy}>{busy ? <><Spinner />Processing</> : `Pay ${money(w.price)} and register`}</button>
-                </div>
-              </form>
-            </>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-const COLORS = ['#f97316', '#00bf63', '#ffb27a', '#ffd166', '#2dd4bf'];
+const COLORS = ['#f97316', '#16a34a', '#ffb27a', '#ffd166', '#2dd4bf'];
 const gcal = (w) => {
   const f = (t) => new Date(t).toISOString().replace(/[-:]|\.\d{3}/g, '');
   const end = w.start + w.duration * 60000;
@@ -1677,7 +3455,7 @@ function Confirmation({ slug }) {
     api.get(slug).then(setW).catch(setError);
   }, [ready, user, slug, router]);
   useEffect(() => {
-    if (!w || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!w || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
     setPieces(Array.from({ length: 60 }, (_, i) => ({ id: i, left: Math.random() * 100, color: COLORS[i % 5], dx: Math.random() * 200 - 100, dur: 2.2 + Math.random() * 2, delay: Math.random() * 0.6 })));
     const t = setTimeout(() => setPieces([]), 5200);
     return () => clearTimeout(t);
@@ -1704,8 +3482,8 @@ function Confirmation({ slug }) {
           {pieces.map((p) => <i key={p.id} style={{ left: `${p.left}%`, background: p.color, '--dx': `${p.dx}px`, animationDuration: `${p.dur}s`, animationDelay: `${p.delay}s` }} />)}
         </div>
       )}
-      <h1 style={{ fontSize: 'clamp(1.5rem,3.6vw,2.2rem)' }}>You are in, {reg.name.split(' ')[0]}.</h1>
-      <p className="lead" style={{ margin: '12px auto 0' }}>A confirmation has been saved to your account. {live ? 'Your join link unlocks in My learning.' : 'Your recordings are ready to watch.'}</p>
+      <h1 style={{ fontSize: 'clamp(1.5rem,3.6vw,2.2rem)' }}>You are in, {(reg.name || user.name || 'learner').split(' ')[0]}.</h1>
+      <p className="lead muted" style={{ margin: '12px auto 0', maxWidth: '58ch' }}>A confirmation has been saved to your account. {live ? 'Your join link unlocks in My learning.' : 'Your recordings are ready to watch.'}</p>
 
       <div className="ticketstage" ref={stage} onPointerMove={onMove} onPointerLeave={onLeave}>
         <div className="ticket" ref={ticket}>
@@ -1738,7 +3516,7 @@ function Confirmation({ slug }) {
         {live
           ? <a className="btn btn-ghost" href={gcal(w)} target="_blank" rel="noopener noreferrer">Add to Google Calendar</a>
           : <LinkBtn href={`/watch/${w.slug}`} ghost>Start watching</LinkBtn>}
-        <LinkBtn href="/workshops" ghost>Browse more workshops</LinkBtn>
+        <LinkBtn href="/catalog" ghost>Browse more workshops</LinkBtn>
       </div>
     </div>
   );
@@ -1770,6 +3548,7 @@ function Row({ w, reg, onCancelled }) {
         <h2 style={{ fontSize: '1.02rem' }}><Link href={`/workshops/${w.slug}`} style={{ textDecoration: 'none' }}>{w.title}</Link></h2>
         <p className="muted" style={{ marginTop: 4 }}>{w.format === 'live' ? `${fmtD.format(w.start)}, ${fmtT.format(w.start)} IST` : 'Watch any time'} {'\u2022'} with {w.instructor.name}</p>
         <p className="muted" style={{ fontSize: '.85rem', marginTop: 4 }}>Reference {reg.id}</p>
+        <p className="muted" style={{ fontSize: '.8rem', marginTop: 4 }}>Certificate: issued after your completion is verified.</p>
         <div style={{ marginTop: 10 }} aria-live="polite">
           {link.url && <div className="linkbox"><a href={link.url} target="_blank" rel="noopener noreferrer">{link.url}</a></div>}
           {link.error && <div className="alert bad" role="alert">{link.error}</div>}
@@ -1808,7 +3587,7 @@ function Dashboard() {
   return (
     <div className="wrap" style={{ paddingTop: 24 }}>
       <h1 style={{ fontSize: 'clamp(1.5rem,3.6vw,2.2rem)' }}>My learning</h1>
-      <p className="lead">Signed in as {user.email}</p>
+      <p className="lead muted">Signed in as {user.email}</p>
       {loading ? <div className="dash"><Skeletons n={2} height={140} /></div>
         : rows.length ? (
           <div className="dash">{rows.map(({ reg, w }) => <Row key={reg.id} w={w} reg={reg} onCancelled={() => setTick((t) => t + 1)} />)}</div>
@@ -1817,14 +3596,14 @@ function Dashboard() {
             <svg width="56" height="56" viewBox="0 0 64 64" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" aria-hidden="true"><rect x="8" y="14" width="48" height="40" rx="6" /><path d="M8 26h48M22 8v10M42 8v10" /></svg>
             <h2>No registered workshops yet</h2>
             <p className="muted">Pick a workshop and it will appear here with your join link or recordings.</p>
-            <LinkBtn href="/workshops">Explore workshops</LinkBtn>
+            <LinkBtn href="/catalog">Explore workshops</LinkBtn>
           </div>
         )}
     </div>
   );
 }
 
-/** Prototype player. Replace the placeholder with ILM ORA's secure video player using signed URLs from the backend. */
+/** Prototype player. Placeholder ki jagah backend ke signed URLs wala secure ILM ORA video player lagao. */
 function WatchPlayer({ slug }) {
   const router = useRouter();
   const { user, ready } = useApp();
@@ -1841,7 +3620,7 @@ function WatchPlayer({ slug }) {
       .catch((error) => setData({ w: null, access: null, error }));
   }, [ready, user, slug, router]);
   useEffect(() => {
-    if (!playing) return;
+    if (!playing) return undefined;
     const t = setInterval(() => setPct((p) => { if (p >= 100) { setPlaying(false); return 100; } return Math.min(100, p + 1.5); }), 250);
     return () => clearInterval(t);
   }, [playing]);
@@ -1895,118 +3674,13 @@ function WatchPlayer({ slug }) {
   );
 }
 
-/* ====================================================================
-   3D BACKGROUND
-   ==================================================================== */
-
-function loadThree() {
-  return new Promise((resolve, reject) => {
-    if (window.THREE) return resolve(window.THREE);
-    let s = document.querySelector('script[data-wk-three]');
-    if (!s) {
-      s = document.createElement('script');
-      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
-      s.async = true; s.dataset.wkThree = '1';
-      document.head.appendChild(s);
-    }
-    s.addEventListener('load', () => resolve(window.THREE));
-    s.addEventListener('error', reject);
-  });
-}
-
-/** 3D background (three.js loaded from CDN, so no new npm dependency). Page works without WebGL. */
-function Bg3D({ strong }) {
-  const ref = useRef(null);
-  useEffect(() => {
-    let raf = 0, disposed = false, cleanup = () => {};
-    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    loadThree().then((THREE) => {
-      if (disposed || !ref.current || !THREE) return;
-      const canvas = ref.current;
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
-      renderer.outputEncoding = THREE.sRGBEncoding;
-      renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.15;
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(38, 1, 0.1, 100); camera.position.set(0, 0, 10);
-      const ec = document.createElement('canvas'); ec.width = 1024; ec.height = 512;
-      const g = ec.getContext('2d');
-      const gr = g.createLinearGradient(0, 0, 0, 512);
-      gr.addColorStop(0, '#fff0e0'); gr.addColorStop(0.45, '#8a4a22'); gr.addColorStop(1, '#140a04');
-      g.fillStyle = gr; g.fillRect(0, 0, 1024, 512);
-      [[120, 70, 220, 90, '#ffffff'], [560, 40, 260, 70, '#ffe9b8'], [860, 120, 120, 160, '#b8f0cf'], [330, 200, 90, 130, '#ffc49a'], [700, 230, 180, 40, '#ffe2c4']]
-        .forEach(([x, y, w, h, c]) => { g.fillStyle = c; g.globalAlpha = 0.95; g.fillRect(x, y, w, h); });
-      g.globalAlpha = 1;
-      const et = new THREE.CanvasTexture(ec); et.mapping = THREE.EquirectangularReflectionMapping; et.encoding = THREE.sRGBEncoding;
-      const pm = new THREE.PMREMGenerator(renderer);
-      const envTex = pm.fromEquirectangular(et).texture; scene.environment = envTex; et.dispose(); pm.dispose();
-      const group = new THREE.Group(); scene.add(group);
-      const knot = new THREE.Mesh(new THREE.TorusKnotGeometry(1.25, 0.4, 160, 28, 2, 3),
-        new THREE.MeshPhysicalMaterial({ color: 0xf97316, metalness: 1, roughness: 0.14, clearcoat: 1, clearcoatRoughness: 0.08, envMapIntensity: 1.35 }));
-      group.add(knot);
-      const ring = new THREE.Mesh(new THREE.TorusGeometry(2.4, 0.035, 24, 200), new THREE.MeshStandardMaterial({ color: 0xffb25e, metalness: 1, roughness: 0.25, envMapIntensity: 1.5 }));
-      ring.rotation.x = 1.2; group.add(ring);
-      const ring2 = ring.clone(); ring2.scale.setScalar(1.25); ring2.rotation.set(0.4, 0.6, 0); group.add(ring2);
-      const orbs = [
-        { r: 0.34, c: 0x00bf63, m: 1, ro: 0.2, op: 1, a: 3.1, s: 0.7, y: 0.4 },
-        { r: 0.46, c: 0xffffff, m: 0, ro: 0, op: 0.34, a: 3.6, s: -0.5, y: -0.5 },
-        { r: 0.26, c: 0xffb27a, m: 0.9, ro: 0.18, op: 1, a: 2.7, s: 0.9, y: 0.8 },
-      ].map((o) => {
-        const m = new THREE.Mesh(new THREE.SphereGeometry(o.r, 32, 32), new THREE.MeshPhysicalMaterial({ color: o.c, metalness: o.m, roughness: o.ro, transparent: o.op < 1, opacity: o.op, clearcoat: 1, envMapIntensity: 2.2 }));
-        m.userData = o; group.add(m); return m;
-      });
-      const N = 220, pos = new Float32Array(N * 3);
-      for (let i = 0; i < N; i++) {
-        const r = 4 + Math.random() * 9, th = Math.random() * 6.283, ph = Math.acos(2 * Math.random() - 1);
-        pos[i * 3] = r * Math.sin(ph) * Math.cos(th); pos[i * 3 + 1] = r * Math.sin(ph) * Math.sin(th) * 0.7; pos[i * 3 + 2] = r * Math.cos(ph) - 3;
-      }
-      const pg = new THREE.BufferGeometry(); pg.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-      const pts = new THREE.Points(pg, new THREE.PointsMaterial({ color: 0xffb27a, size: 0.035, transparent: true, opacity: 0.7, sizeAttenuation: true, depthWrite: false }));
-      scene.add(pts);
-      const l1 = new THREE.PointLight(0xff7a1f, 22, 30); l1.position.set(-4, 3, 4); scene.add(l1);
-      const l2 = new THREE.PointLight(0x2ad483, 14, 30); l2.position.set(4, -2, 5); scene.add(l2);
-      scene.add(new THREE.AmbientLight(0xffffff, 0.3));
-      let mx = 0, my = 0, W = 0;
-      const baseY = () => (window.innerWidth > 900 ? 0 : 2.6);
-      const size = () => {
-        W = window.innerWidth; renderer.setSize(W, window.innerHeight, false);
-        camera.aspect = W / window.innerHeight; camera.updateProjectionMatrix();
-        const wide = W > 900; group.position.set(wide ? 3.1 : 0, baseY(), 0); group.scale.setScalar(wide ? 0.9 : 0.5);
-      };
-      const onMove = (e) => { mx = e.clientX / W - 0.5; my = e.clientY / window.innerHeight - 0.5; };
-      const clock = new THREE.Clock();
-      const frame = (t) => {
-        const sy = window.scrollY || 0;
-        knot.rotation.set(t * 0.22 + my * 0.9, t * 0.3 + mx * 1.2 + sy * 0.0016, 0);
-        ring.rotation.z = t * 0.25; ring2.rotation.y = t * 0.18;
-        orbs.forEach((o, i) => { const d = o.userData, a = t * d.s + i * 2.1; o.position.set(Math.cos(a) * d.a, Math.sin(a * 1.3) * d.y + d.y * 0.4, Math.sin(a) * d.a * 0.8); });
-        pts.rotation.y = t * 0.02 + mx * 0.15; pts.position.y = sy * 0.0009;
-        l1.position.x = -4 + Math.sin(t * 0.6) * 3; l2.position.y = -2 + Math.cos(t * 0.5) * 3;
-        group.position.y += (baseY() + sy * 0.0007 - group.position.y) * 0.08;
-        camera.position.x += (mx * 0.6 - camera.position.x) * 0.05; camera.position.y += (-my * 0.4 - camera.position.y) * 0.05;
-        camera.lookAt(0, 0, 0); renderer.render(scene, camera);
-      };
-      size();
-      const onResize = () => { size(); if (reduce) frame(1.5); };
-      window.addEventListener('resize', onResize); window.addEventListener('pointermove', onMove, { passive: true });
-      if (reduce) frame(1.5);
-      else { let lastT = 0; const loop = (now) => { raf = requestAnimationFrame(loop); if (document.hidden || now - lastT < 33) return; lastT = now; frame(clock.getElapsedTime()); }; loop(performance.now()); } // capped at ~30fps
-      cleanup = () => {
-        window.removeEventListener('resize', onResize); window.removeEventListener('pointermove', onMove);
-        scene.traverse((o) => { if (o.geometry) o.geometry.dispose(); if (o.material) o.material.dispose(); });
-        envTex.dispose(); renderer.dispose();
-      };
-    }).catch(() => { if (ref.current) ref.current.style.display = 'none'; }); // no WebGL or CDN blocked: page still works
-    return () => { disposed = true; cancelAnimationFrame(raf); cleanup(); };
-  }, []);
-  return <canvas ref={ref} className="bg3d" aria-hidden="true" style={{ opacity: strong ? 0.9 : 0.35 }} />;
-}
-
 /* ---------------------------------------------------------------------
    ROOT
    --------------------------------------------------------------------- */
 const TITLES = {
   workshops: ['Explore Workshops | ILM ORA', 'Browse live and on-demand workshops in AI, development, design, marketing, business and leadership. Search, filter and register in minutes.'],
+     feedback: ['Learner feedback | ILM ORA', 'Real feedback and video testimonials from ILM ORA workshop learners.'],
+  catalog: ['All Workshops | ILM ORA', 'Browse every live and on-demand ILM ORA workshop. Search, filter and register in minutes.'],
   dashboard: ['My learning | ILM ORA', 'Your registered workshops, join links and recordings.'],
   login: ['Sign in | ILM ORA', 'Sign in or create your ILM ORA account to register for workshops.'],
   register: ['Register for a workshop | ILM ORA', ''],
@@ -2036,29 +3710,31 @@ function Screen({ route }) {
   if (a === 'watch' && slug) return <WatchPlayer slug={slug} />;
   if (a === 'dashboard') return <Dashboard />;
   if (a === 'login') return <LoginRoute />;
-  if (!a || a === 'workshops') return <WorkshopsList />;
-  return <StateBox title="We could not find that page" text="The link may be old or mistyped."><LinkBtn href="/workshops">Browse workshops</LinkBtn></StateBox>;
+    if (a === 'catalog') return <Catalog />;
+  if (a === 'feedback') return <FeedbackPage />;
+  if (!a || a === 'workshops') return <Home />;
+  return <StateBox title="We could not find that page" text="The link may be old or mistyped."><LinkBtn href="/catalog">Browse workshops</LinkBtn></StateBox>;
 }
 
-function WorkshopsApp({ openLogin }) {
-  const route = useHashRoute();
+function WorkshopsApp({ openLogin, initialParts }) {
+  const route = usePathRoute(initialParts);
   const mainRef = useRef(null);
   const key = route.parts.join('/');
   const first = route.parts[0] || 'workshops';
 
   useEffect(() => {
     const t = TITLES[first] || TITLES.workshops;
-    if (!(first === 'workshops' && route.parts[1])) setPageMeta(t[0], t[1]); // detail page sets its own title
+    if (!(first === 'workshops' && route.parts[1])) setPageMeta(t[0], t[1]); // detail page apna title khud set karta hai
     window.scrollTo({ top: 0 });
-    mainRef.current && mainRef.current.focus({ preventScroll: true });
+    if (mainRef.current) mainRef.current.focus({ preventScroll: true });
   }, [key]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <RouteCtx.Provider value={route}>
       <div className="wk">
         <style dangerouslySetInnerHTML={{ __html: WK_CSS }} />
-                <AppProviders openLogin={openLogin}>
-          <div className="bgclip"><Bg3D strong={key === 'workshops' || key === ''} /></div>
+        <style dangerouslySetInnerHTML={{ __html: GS_CSS }} />
+        <AppProviders openLogin={openLogin}>
           <div className="wk-main" id="wk-main" tabIndex={-1} ref={mainRef}>
             {CONFIG.USE_MOCK && <div className="notice" role="note">Preview mode: sample workshops, sign-in and payment are simulated.</div>}
             <Screen route={route} />
@@ -2070,12 +3746,11 @@ function WorkshopsApp({ openLogin }) {
 }
 
 /**
- * Full page: PublicLayout (Navbar + Footer) + .ilm theme wrapper + the workshops app.
- * Props come from your router/page exactly like Ilmora-Microsoft / StudyAbroad / Careers.
- * If a prop is not passed (e.g. client.jsx renders <IlmoraWorkshops /> with none), the page falls back
- * to its own theme state so it still works. Pass `embedded` to render only the content.
+ * Full page: PublicLayout (Navbar + Footer) + .ilm theme wrapper + workshops app.
+ * Props router/page se aate hain (Ilmora-Microsoft / StudyAbroad / Careers jaise).
+ * Prop na mile to page apni theme state se chalta hai. `embedded` dene par sirf content render hota hai.
  */
-export default function IlmoraWorkshops({ theme: themeProp, toggleTheme: toggleProp, setShowLoginModal, scrollToSection, embedded = false }) {
+export default function IlmoraWorkshops({ theme: themeProp, toggleTheme: toggleProp, setShowLoginModal, scrollToSection, embedded = false, initialParts }) {
   const [localTheme, setLocalTheme] = useState('light');
   useEffect(() => {
     try { const t = window.localStorage.getItem('theme') || window.localStorage.getItem('ilmora-theme'); if (t) setLocalTheme(t); } catch {}
@@ -2089,12 +3764,12 @@ export default function IlmoraWorkshops({ theme: themeProp, toggleTheme: toggleP
   const openLogin = setShowLoginModal ?? (() => { window.location.href = '/onboarding'; });
   const scrollTo = scrollToSection ?? ((id) => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' }));
 
-    if (embedded) return <WorkshopsApp openLogin={openLogin} />;
+  if (embedded) return <WorkshopsApp openLogin={openLogin} initialParts={initialParts} />;
   return (
     <PublicLayout theme={theme} toggleTheme={toggleTheme} setShowLoginModal={openLogin} scrollToSection={scrollTo}>
       <style dangerouslySetInnerHTML={{ __html: HOST_CSS }} />
-            <div className={"ilm" + (theme === "dark" ? " dark" : "")}>
-        <WorkshopsApp openLogin={openLogin} />
+      <div className={"ilm" + (theme === "dark" ? " dark" : "")}>
+      <WorkshopsApp openLogin={openLogin} initialParts={initialParts} />
       </div>
     </PublicLayout>
   );
