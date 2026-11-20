@@ -179,7 +179,16 @@ const MENTORS = [
  *  Screenshot:  { name, shot: U(importedImage) }
  *  photo: U(importedImage) optional. Baaki sab fields optional. */
 /** Real feedback yahan daalo. Jab isme kuch bhi ho, sample cards apne aap hat jaate hain. */
-const FEEDBACK_REAL = [];
+const FEEDBACK_REAL = [
+  { name: 'Learner 1', role: 'ILM ORA learner', youtube: 'VQL78M8Y7iY' },
+  { name: 'Sample learner A', role: 'Sample role', text: 'Sample text: yahan learner ka real feedback aayega.', source: 'linkedin', date: 'Nov 2026', rating: 5, sample: true },
+  { name: 'Sample learner B', role: 'Sample role', text: 'Sample text: live build days se kaafi kuch seekhne ko mila.', source: 'x', date: 'Nov 2026', rating: 5, sample: true },
+  { name: 'Learner 2', role: 'ILM ORA learner', youtube: 'R2fnssUvazU' },
+  { name: 'Sample learner C', role: 'Sample role', text: 'Sample text: instructor ne har doubt clear kiya.', source: 'linkedin', date: 'Nov 2026', rating: 5, sample: true },
+  { name: 'Sample learner D', role: 'Sample role', text: 'Sample text: projects banane se confidence aaya.', source: 'whatsapp', date: 'Nov 2026', rating: 5, sample: true },
+  { name: 'Learner 3', role: 'ILM ORA learner', youtube: 'PlHKF8dKZXA' },
+  { name: 'Sample learner E', role: 'Sample role', text: 'Sample text: is jagah real review replace hoga.', source: 'google', date: 'Nov 2026', rating: 5, sample: true },
+];
 
 /** Sirf layout preview ke liye (USE_MOCK true hone par). Real nahi hain, "Sample" tag ke saath dikhte hain. */
 const FEEDBACK_SAMPLE = Array.from({ length: 10 }, (_, i) => ({
@@ -199,7 +208,7 @@ const FEEDBACK_SAMPLE = Array.from({ length: 10 }, (_, i) => ({
 }));
 
 const FEEDBACK = FEEDBACK_REAL.length ? FEEDBACK_REAL : (CONFIG.USE_MOCK ? FEEDBACK_SAMPLE : []);
-const FEEDBACK_PREVIEW = 8;  // home page par kitne cards
+const FEEDBACK_PREVIEW = 6;  // home page par kitne cards
 const FEEDBACK_PAGE = 12;    // /feedback page par ek baar mein kitne
 const SOURCE_LABEL = { linkedin: 'in', x: 'X', whatsapp: 'WA', google: 'G' };
 
@@ -1629,7 +1638,7 @@ function Instructors({ data }) {
       <Mentors />
       {list.length > 0 && (
         <Reveal>
-          <h3 style={{ marginTop: 28 }}>Instructors teaching now</h3>
+          <div className="sechead" style={{ marginTop: 14 }}><div><h2 className="h-xl">Instructors teaching now</h2></div></div>
           <ul className="ilist">
             {list.map(({ p, n, slug }) => (
               <li key={p.name}>
@@ -1672,7 +1681,8 @@ function FeedbackCard({ f, onPlay }) {
         <button type="button" className="fb-vid" aria-label={`Play feedback from ${f.name}`}
           onClick={() => onPlay({ title: `${f.name} feedback`, youtube: f.youtube, src: f.video, poster })}>
           {poster ? <img src={poster} alt="" loading="lazy" /> : <span className="fb-ph" />}
-          <span className="fb-play"><PlayIcon size={20} /></span>
+                  <span className="fb-play"><PlayIcon size={20} /></span>
+          <span className="fb-watch">Watch video</span>
         </button>
       )}
       {f.shot && <img className="fb-shot" src={f.shot} alt={`Feedback screenshot from ${f.name}`} loading="lazy" />}
@@ -1703,15 +1713,13 @@ function WallOfLove() {
   const list = FEEDBACK.slice(0, FEEDBACK_PREVIEW);
   return (
     <section className="wrap sec" id="wk-feedback" aria-labelledby="wl-h">
-      <Reveal><div className="sechead"><div><h2 className="h-xl" id="wl-h">Ambitious people {'\u2764\uFE0F'} ILM ORA</h2><p>Real feedback from learners who built with us.</p></div></div></Reveal>
+      <Reveal><div className="sechead"><div><h2 className="h-xl wl-title" id="wl-h">Ambitious people <svg className="wl-heart" width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><defs><linearGradient id="hg" x1="0" y1="0" x2="1" y2="0"><stop offset="50%" stopColor="#16a34a" /><stop offset="50%" stopColor="#f97316" /></linearGradient></defs><path fill="url(#hg)" d="M12 21s-7.5-4.6-9.6-9.2C.9 8.4 2.6 4.5 6.3 4.5c2 0 3.6 1 4.7 2.6l1 1.4 1-1.4c1.1-1.6 2.7-2.6 4.7-2.6 3.7 0 5.4 3.9 3.9 7.3C19.500 16.400 12 21 12 21z" /></svg> <span className="wl-ilm">ILM</span> <span className="wl-ora">ORA</span></h2><p>Real feedback from learners who built with us.</p></div></div></Reveal>
       {list.length > 0 ? (
         <>
           <div className="wall">
             {list.map((f, i) => <Reveal key={f.name + i} delay={(i % 4) * 60}><FeedbackCard f={f} onPlay={setOpen} /></Reveal>)}
           </div>
-          {FEEDBACK.length > FEEDBACK_PREVIEW && (
-            <div className="wall-more"><button type="button" className="btn btn-ghost btn-lg" onClick={() => go('/feedback')}>See more ({FEEDBACK.length - FEEDBACK_PREVIEW}+)</button></div>
-          )}
+                   <div className="wall-more"><button type="button" className="btn btn-primary btn-lg" onClick={() => go('/feedback')}>{FEEDBACK.length > FEEDBACK_PREVIEW ? `See more (${FEEDBACK.length - FEEDBACK_PREVIEW}+)` : 'See all feedback'}</button></div>
         </>
       ) : <p className="empty-note">Written feedback and video testimonials will appear here once learners have given permission to publish them.</p>}
       {open && <VideoModal v={open} onClose={() => setOpen(null)} />}
@@ -1768,10 +1776,16 @@ function FinalCta() {
         <div className="band-in">
           <h2 id="fc-h">Your next skill is one workshop away</h2>
           <p>Pick a session, register in about a minute and start building.</p>
-          <div className="cert-act">
+                    <div className="cert-act">
             <button type="button" className="btn btn-primary btn-lg" onClick={() => go('/catalog')}><I n="search" s={16} />Explore workshops</button>
             <a className="btn btn-ghost btn-lg" href={`mailto:${CONFIG.CONTACT_EMAIL}?subject=Workshop%20enquiry`}><I n="mail" s={16} />Ask a question</a>
           </div>
+          <div className="cert-act">
+            <LinkBtn href="/dashboard"><I n="award" s={16} />View my certificates</LinkBtn>
+            <button type="button" className="btn btn-ghost btn-lg" onClick={() => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.origin + window.location.pathname)}`, '_blank', 'noopener,noreferrer')}><I n="linkedin" s={16} />Share on LinkedIn</button>
+            <button type="button" className="btn btn-ghost btn-lg" disabled aria-disabled="true" title="Available once your completion is verified"><I n="download" s={16} />Download certificate</button>
+          </div>
+          <p className="cert-note">The certificate shown is a sample design. Real certificates are generated only from verified completion records, and download unlocks after your completion is confirmed.</p>
         </div>
       </Reveal>
     </section>
@@ -2131,7 +2145,7 @@ function ProblemVsRoadmap() {
         <div className="opt bad"><h3>Stress, guesswork, trial and error</h3><ul><li>Random tutorials with no order</li><li>Projects that never get finished</li><li>No feedback on your work</li></ul></div>
         <div className="opt good"><h3>Certainty, confidence, execution</h3><ul><li>Day-by-day roadmap with named projects</li><li>Live build days with your instructor</li><li>Verified certificate you can share</li></ul></div>
       </Reveal>
-      <Reveal><h2 className="h-xl" style={{ marginTop: 26 }}>This workshop is for you if you</h2></Reveal>
+            <Reveal><div className="sechead" style={{ marginTop: 18 }}><div><h2 className="h-xl">This workshop is for you if you</h2></div></div></Reveal>
       <Reveal className="pain">
         {AUDIENCE_PAIN.map(([ic, t, d]) => <div key={t}><div className="pi"><I n={ic} s={16} /></div><b>{t}</b><span>{d}</span></div>)}
       </Reveal>
@@ -2824,8 +2838,10 @@ function Catalog() {
       <section className="wrap" style={{ paddingTop: 18 }}><Link className="btn btn-ghost btn-sm" href="/workshops">{'\u2190'} Back to the 7-day programme</Link></section>
 
       <section className="wrap sec" id="wk-explore" aria-labelledby="ex-h" style={{ scrollMarginTop: 90 }}>
-        <h2 className="h-xl" id="ex-h">Explore workshops</h2>
-        <p className="lead muted" style={{ marginTop: 8, maxWidth: '58ch' }}>Learn a skill in an afternoon. Join a live session with a practitioner, or watch on demand whenever suits you.</p>
+                <div className="textcard">
+          <h2 className="h-xl" id="ex-h">Explore workshops</h2>
+          <p className="muted" style={{ marginTop: 4, maxWidth: '62ch' }}>Learn a skill in an afternoon. Join a live session with a practitioner, or watch on demand whenever suits you.</p>
+        </div>
         <form className="searchbox glass" role="search" onSubmit={(e) => e.preventDefault()}>
           {Icons.search}
           <label htmlFor="q" className="sr">Search workshops by title or topic</label>
@@ -2855,7 +2871,7 @@ function Catalog() {
           <div style={{ display: 'flex', alignItems: 'end' }}><button type="button" className="btn btn-ghost btn-block" onClick={reset}>Reset filters</button></div>
         </div>
 
-        <p className="muted" aria-live="polite" style={{ marginTop: 14 }}>
+                <p className="countpill" aria-live="polite">
           {data && `${results.length} workshop${results.length === 1 ? '' : 's'} ${active ? 'match your filters' : 'available'}`}
         </p>
 
@@ -2899,7 +2915,7 @@ function CatalogTeaser({ data }) {
   if (!top.length) return null;
   return (
     <section className="wrap sec" aria-labelledby="ct-h">
-      <Reveal><div className="sechead"><div><h2 className="h-xl" id="ct-h">More workshops to explore</h2><p>Short live and on-demand workshops across AI, development, design, business and more.</p></div><LinkBtn href="/catalog" ghost sm>Browse all workshops</LinkBtn></div></Reveal>
+      <Reveal><div className="sechead"><div><h2 className="h-xl" id="ct-h">More workshops to explore</h2><p>Short live and on-demand workshops across AI, development, design, business and more.</p></div><LinkBtn href="/catalog" sm>Browse all workshops</LinkBtn></div></Reveal>
             <div className="grid teaser">{top.map((w) => <WorkshopCard key={w.slug} w={w} registered={regs.has(w.slug)} />)}</div>
       {UPCOMING.length > 0 && <p className="muted" style={{ marginTop: 14 }}>Coming soon: {UPCOMING.join(', ')}</p>}
     </section>
@@ -3094,7 +3110,7 @@ function Home() {
       
             <ToolsSection />
       <Experience />
-      <CertificateShowcase />
+      
       
       <Instructors data={data} />
       <Community />
@@ -3372,7 +3388,7 @@ function RegisterFlow({ slug }) {
   return (
     <div className="wrap">
       <div className="jn">
-        <div className="jn-info">
+                <div className="jn-info panel glass">
           <div className="banner" style={{ height: 150, marginTop: 0, marginBottom: 18 }}><WorkshopArt w={w} /></div>
           <h1>{w.title}</h1>
           <p className="jn-sub">with {w.instructor.name}</p>
@@ -3390,7 +3406,7 @@ function RegisterFlow({ slug }) {
           </ul>
         </div>
 
-        <div>
+               <div className="jn-right">
           <div className="panel glass jn-card">
             {step === 1 ? (
               <>
@@ -4012,6 +4028,62 @@ section .band[style]{min-height:0!important}
 .wk .wk-main .mentor .org{margin-top:10px;padding-top:9px;border-top:1px dashed var(--ln);font-size:1rem;font-weight:800;letter-spacing:.03em}
 .wk .mentor .ilm-g{color:#16a34a}
 .wk .mentor .ora-o{color:#f97316}
+
+/* ===== text on background -> white card ===== */
+.wk .wk-main .sechead{align-items:center;background:var(--solid);border:1px solid var(--ln);border-radius:14px;padding:12px 16px;box-shadow:var(--shadow);margin-bottom:12px}
+.wk .wk-main .sechead p{max-width:70ch}
+.wk .wk-main .sechead .btn{flex:none}
+
+/* FAQ in white card */
+.wk .faq2{background:var(--solid);border:1px solid var(--ln);border-radius:16px;box-shadow:var(--shadow);padding:clamp(16px,3vw,28px)}
+
+/* certificate note inside dark band */
+.wk .wk-main .band .cert-note{color:rgba(255,255,255,.7);font-size:.7rem;margin-top:8px;max-width:60ch}
+.wk .wk-main .band .btn[disabled]{color:rgba(255,255,255,.6);border-color:rgba(255,255,255,.3)}
+
+/* white cards for loose text */
+.wk .textcard{margin-top:12px;padding:14px 18px;background:var(--solid);border:1px solid var(--ln);border-radius:14px;box-shadow:var(--shadow)}
+.wk .countpill{display:inline-block;margin-top:14px;padding:6px 14px;background:var(--solid);border:1px solid var(--ln);border-radius:999px;box-shadow:var(--shadow);font-size:.82rem;font-weight:600;color:var(--text)}
+.wk .jn-info.panel{padding:16px;color:var(--text)}
+.wk .jn-info.panel h1,.wk .jn-info.panel .jn-sub,.wk .jn-info.panel .jn-line,.wk .jn-info.panel .jn-pts li{color:var(--text)}
+.wk .jn-info.panel .jn-sub{color:var(--muted)}
+.wk .jn-info.panel .banner{border-radius:12px}
+.wk .jn-pts li{background:color-mix(in srgb,var(--text) 4%,transparent);padding:8px 10px;border-radius:10px}
+
+/* heading brand colors (gradient text override) */
+.wk .wk-main h2.wl-title{background:none;-webkit-text-fill-color:initial;color:var(--text)}
+.wk .wl-title .wl-ilm{color:#16a34a;-webkit-text-fill-color:#16a34a}
+.wk .wl-title .wl-ora{color:#f97316;-webkit-text-fill-color:#f97316}
+.wk .wl-heart{display:inline-block;width:24px;height:24px;vertical-align:-4px;margin:0 2px}
+.wk .wk-main h2.wl-title{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wk .wl-title .wl-ilm,.wk .wl-title .wl-ora{display:inline}
+
+/* mentors: same width, shorter height */
+.wk .wk-main .mentor{padding:8px;border-radius:12px}
+.wk .wk-main .mentor .ph{aspect-ratio:16/10!important;margin-bottom:6px;border-radius:8px}
+.wk .wk-main .mentor .ph img{object-position:50% 18%}
+.wk .wk-main .mentor h3{font-size:.86rem}
+.wk .wk-main .mentor .role{font-size:.72rem}
+.wk .wk-main .mentor .org{margin-top:6px;padding-top:6px;font-size:.84rem}
+
+/* mentors: head must not be cut */
+.wk .wk-main .mentor .ph{aspect-ratio:4/3!important}
+.wk .wk-main .mentor .ph img{object-fit:cover!important;object-position:50% 0%!important}
+/* video feedback cards */
+.wk .fb-vid{aspect-ratio:16/10}
+.wk .fb-vid img{object-fit:cover}
+.wk .fb-vid::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(8,8,14,.55),transparent 55%)}
+.wk .fb-play{z-index:1;transition:transform .25s}
+.wk .fb-vid:hover .fb-play{transform:scale(1.12)}
+.wk .fb-watch{position:absolute;left:10px;bottom:8px;z-index:1;padding:3px 10px;border-radius:999px;font-size:.66rem;font-weight:800;color:#fff;background:rgba(10,12,30,.72);backdrop-filter:blur(6px)}
+@media(max-width:520px){.wk .wk-main h2.wl-title{white-space:normal}}
+
+/* registration: equal cards */
+.wk .jn{align-items:stretch;max-width:1000px}
+.wk .jn-info.panel,.wk .jn-right,.wk .jn-right .jn-card{height:100%}
+.wk .jn-right{display:flex;flex-direction:column}
+.wk .jn-right .jn-card{flex:1;margin:0}
+.wk .jn-info.panel{margin:0}
 `;
 
 
