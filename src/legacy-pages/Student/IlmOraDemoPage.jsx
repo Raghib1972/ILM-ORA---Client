@@ -132,8 +132,9 @@ import {
   Lightbulb,
   Calendar,
   Atom,
-  Plus,
+    Plus,
   MessageSquare,
+  Scale,
 } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -176,6 +177,7 @@ const CAREER_STYLE = {
   "development-engineering": { icon: Laptop, color: "#f97316" },
   "ai-agent-ai": { icon: Bot, color: "#3b82f6" },
   "contact-center": { icon: Headset, color: "#a855f7" },
+  "law": { icon: Scale, color: "#F97316" },
   "personality-development": { icon: User, color: "#f97316" },
   "iq-test": { icon: Brain, color: "#22c55e" },
   "life-skills-ai": { icon: GraduationCap, color: "#a855f7" },
@@ -192,21 +194,36 @@ const NAV_CERT_MENU_ITEMS = [
     { key: "cisco",     title: "Cisco Certification",     description: "CCNA, CCNP & CCIE exams and training", icon: Award,  route: "/cisco",     color: "#0284c7" },
 ];
 
-// "Career Tracks" dropdown — replaces the old "Skills" tab.
-// Items are classified into groups (column headings in the mega menu).
-const CAREER_TRACK_GROUPS = ["Career Tracks", "Personal Growth", "Life Skills", "Assessments"];
+// Career Tracks mega menu groups
+const CAREER_TRACK_GROUPS = [
+  "Career Tracks",
+  "Personal Growth",
+  "Life Skills",
+  "Assessments",
+  "Legal",
+];
 
 const CAREER_TRACK_ITEMS = [
+  // Career Tracks
   { key: "all-career", title: "All Career Tracks", route: "/career", group: "Career Tracks" },
   { key: "development-engineering", title: "Development Engineering Platform", route: "/career?platform=dev", group: "Career Tracks" },
   { key: "ai-agent-ai", title: "AI – Agent AI", route: "/career?platform=ai", group: "Career Tracks" },
-    { key: "contact-center", title: "ToraCX – Agentic CX", route: "/toracx-agentic-cx", group: "Career Tracks" },
+  { key: "contact-center", title: "ToraCX – Agentic CX", route: "/toracx-agentic-cx", group: "Career Tracks" },
+
+  // Personal Growth
   { key: "personality-development", title: "Personality Development", route: "/personality-development", group: "Personal Growth" },
-    { key: "life-skills-ai", title: "Learn with an AI Coach", route: "/life-skills/ai", group: "Life Skills" },
-    { key: "life-skills-own", title: "Learn on Your Own", route: "/life-skills", group: "Life Skills" },
+
+  // Life Skills
+  { key: "life-skills-ai", title: "Learn with an AI Coach", route: "/life-skills/ai", group: "Life Skills" },
+  { key: "life-skills-own", title: "Learn on Your Own", route: "/life-skills", group: "Life Skills" },
   { key: "life-skills-storyline", title: "Storyline", route: "/storyline", group: "Life Skills" },
-    { key: "life-skills-futurism", title: "Futurism", route: "/futurism", group: "Life Skills" },
+  { key: "life-skills-futurism", title: "Futurism", route: "/futurism", group: "Life Skills" },
+
+  // Assessments
   { key: "iq-test", title: "IQ Test", route: "/iq-test", group: "Assessments" },
+
+  // Legal
+  { key: "law", title: "Law – Training & Consulting", route: "/ilmoralaw", group: "Legal" },
 ];
 const GOOGLE_CLIENT_ID =
   "572421778240-akk3kkb4f60ukuv9pcfrpg2ielm09thk.apps.googleusercontent.com";
@@ -1695,6 +1712,7 @@ const NAV_SEARCH_PAGES = [
   { title: "Development Engineering Platform", route: "/career?platform=dev", group: "career", tag: "Career Track" },
   { title: "AI – Agent AI", route: "/career?platform=ai", group: "career", tag: "Career Track" },
     { title: "ToraCX – Agentic CX", route: "/toracx-agentic-cx", group: "career", tag: "Career Track" },
+        { title: "Law – Training & Consulting", desc: "Legal training, consulting, quiz & assessment", route: "/ilmoralaw", group: "career", tag: "Career Track" },
   { title: "Personality Development", route: "/personality-development", group: "career", tag: "Career Track" },
     { title: "Learn with an AI Coach", route: "/life-skills/ai", group: "career", tag: "Career Track" },
      { title: "Learn on Your Own", route: "/life-skills", group: "career", tag: "Career Track" },
@@ -2375,7 +2393,7 @@ if (!target || target === "/onboarding") return;
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [hasRole, hasRealSession, isSigningOut, showRolePopup, showInterestPopup, showProfile, location.pathname, productTick]);
 
-  const userName =
+    const accountName =
     signupUser?.name ||
     savedUser?.name ||
     signupUser?.email?.split("@")[0] ||
@@ -2402,6 +2420,21 @@ if (!target || target === "/onboarding") return;
   normalizeAppRole(localStorage.getItem("role")) ||
   normalizeAppRole(savedUser?.role) ||
   "student";
+    const [, setRoleNameTick] = useState(0);
+  useEffect(() => {
+    const bump = () => setRoleNameTick((t) => t + 1);
+    window.addEventListener("ilmora:full-name-updated", bump);
+    window.addEventListener("storage", bump);
+    return () => {
+      window.removeEventListener("ilmora:full-name-updated", bump);
+      window.removeEventListener("storage", bump);
+    };
+  }, []);
+  let roleScopedName = "";
+  try {
+    roleScopedName = localStorage.getItem(`ilmora_full_name:${userRole}`) || "";
+  } catch {}
+  const userName = roleScopedName || accountName;
   const userInitial = (userName || "U").trim().charAt(0).toUpperCase();
   const featureRoleKey =
     userRole === "admin"
@@ -3681,7 +3714,79 @@ const renderMegaTrigger = (key) => {
           .d-mega { display:block; position:absolute; top:100%; left:0; right:0; background:#fff; border-bottom:1px solid #e5e7eb; box-shadow:0 28px 40px -18px rgba(0,0,0,0.28); animation:dMegaIn .18s ease-out; z-index:200; }
         }
         @keyframes dMegaIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:none; } }
-        .d-mega-inner { display:flex; align-items:flex-start; gap:32px; padding:24px 48px; }
+        .d-mega-inner {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 18px 24px;
+  overflow: hidden;
+}
+
+.d-mega-card {
+  flex: 0 0 175px;
+  width: 175px;
+  height: 175px;
+  box-sizing: border-box;
+}
+
+.d-mega-groups {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: start;
+  gap: 16px;
+}
+
+.d-mega-group {
+  min-width: 0;
+  width: 100%;
+}
+
+.d-mega-group-title {
+  font-size: 10px;
+  margin-bottom: 8px;
+  white-space: nowrap;
+}
+
+.d-mega-group-links {
+  min-width: 0;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.d-mega-link {
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 6px 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 1200px) and (min-width: 1024px) {
+  .d-mega-inner {
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .d-mega-card {
+    flex-basis: 150px;
+    width: 150px;
+    height: 160px;
+  }
+
+  .d-mega-groups {
+    gap: 10px;
+  }
+
+  .d-mega-link {
+    font-size: 11px;
+  }
+}
 
         .d-mega-card { position:relative; flex-shrink:0; width:220px; height:220px; display:flex; flex-direction:column; justify-content:flex-end; text-align:left; padding:16px; border-radius:6px; border:1px solid rgba(255,255,255,0.1); overflow:hidden; cursor:default; font-family:'DM Sans',sans-serif; color:#fff;
           background-color:#0b1020;

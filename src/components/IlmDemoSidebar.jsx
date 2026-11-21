@@ -50,6 +50,7 @@ import { Phone } from "lucide-react";
 import { useLocation, useNavigate } from "@/lib/routerCompat";
 import auth from "../auth";
 import userService from "../services/userService";
+import authService from "../services/authService";
 import { useAvatarContext } from "../context/AvatarContext";
 // ── Sidebar styling — colors matched 1:1 to the Workspace sidebar
 // (see Student/StudentMeeting/workspace-styles.css :root /
@@ -631,10 +632,176 @@ const IlmDemoSidebar = ({
   }
 
   const role = roleConfig[roleKey] || roleConfig.student;
-    const portalLabel =
-    roleKey === "product" && productKey === "calendar"
-      ? "CALENDRY PORTAL"
-      : `${role.label.toUpperCase()} PORTAL`;
+  // Role-specific Brand Logo
+  React.useEffect(() => {
+  let active = true;
+
+  const syncLocalProfile = () => {
+    setBrandLogo(
+      localStorage.getItem(brandLogoStorageKey) || ""
+    );
+
+    setPortalLabel(
+      localStorage.getItem(portalNameStorageKey) ||
+        getDefaultPortalName()
+    );
+  };
+
+  const loadBackendProfile = async () => {
+    syncLocalProfile();
+
+    if (!localStorage.getItem("lms_token")) return;
+
+    try {
+      let profile = {};
+
+      if (roleKey === "student") {
+        const res = await userService.getStudentProfile();
+        profile = res.data || {};
+      } else if (roleKey === "trainer") {
+        const res = await userService.getTrainerProfile();
+        profile = res.data || {};
+      } else if (roleKey === "admin") {
+        const orgId = localStorage.getItem("organizationId");
+        if (!orgId) return;
+
+        profile = await authService.getOrgCapacity(orgId);
+      }
+
+      if (!active) return;
+
+      if (profile.portalName) {
+        localStorage.setItem(
+          portalNameStorageKey,
+          profile.portalName
+        );
+      }
+
+      if (profile.brandLogoUrl) {
+        localStorage.setItem(
+          brandLogoStorageKey,
+          profile.brandLogoUrl
+        );
+      }
+
+      syncLocalProfile();
+    } catch (error) {
+      console.error("Sidebar profile sync failed:", error);
+    }
+  };
+
+  const handleProfileUpdate = (event) => {
+    if (
+      event?.detail?.roleKey &&
+      event.detail.roleKey !== roleKey
+    ) {
+      return;
+    }
+
+    syncLocalProfile();
+  };
+
+  loadBackendProfile();
+
+  window.addEventListener("storage", handleProfileUpdate);
+  window.addEventListener(
+    "ilmora:brand-logo-updated",
+    handleProfileUpdate
+  );
+  window.addEventListener(
+    "ilmora-portal-name-updated",
+    handleProfileUpdate
+  );
+
+  return () => {
+    active = false;
+    window.removeEventListener("storage", handleProfileUpdate);
+    window.removeEventListener(
+      "ilmora:brand-logo-updated",
+      handleProfileUpdate
+    );
+    window.removeEventListener(
+      "ilmora-portal-name-updated",
+      handleProfileUpdate
+    );
+  };
+}, [roleKey, productKey]);
+const brandLogoStorageKey = `ilmora_brand_logo:${roleKey}`;
+
+const [brandLogo, setBrandLogo] = React.useState(
+  () => localStorage.getItem(brandLogoStorageKey) || ""
+);
+
+React.useEffect(() => {
+  const syncBrandLogo = (event) => {
+    if (
+      event?.detail?.roleKey &&
+      event.detail.roleKey !== roleKey
+    ) {
+      return;
+    }
+
+    setBrandLogo(
+      localStorage.getItem(brandLogoStorageKey) || ""
+    );
+  };
+
+  syncBrandLogo();
+
+  window.addEventListener("storage", syncBrandLogo);
+  window.addEventListener("ilmora:brand-logo-updated", syncBrandLogo);
+
+  return () => {
+    window.removeEventListener("storage", syncBrandLogo);
+    window.removeEventListener("ilmora:brand-logo-updated", syncBrandLogo);
+  };
+}, [roleKey]);
+    // Role-specific Portal Name
+const portalNameStorageKey = `ilmora_portal_name:${roleKey}`;
+
+const getDefaultPortalName = () =>
+  roleKey === "product" && productKey === "calendar"
+    ? "CALENDRY PORTAL"
+    : `${role.label.toUpperCase()} PORTAL`;
+
+const [portalLabel, setPortalLabel] = React.useState(() => {
+  return (
+    localStorage.getItem(portalNameStorageKey) ||
+    getDefaultPortalName()
+  );
+});
+
+React.useEffect(() => {
+  const syncPortalName = (event) => {
+    if (
+      event?.detail?.roleKey &&
+      event.detail.roleKey !== roleKey
+    ) {
+      return;
+    }
+
+    setPortalLabel(
+      localStorage.getItem(portalNameStorageKey) ||
+      getDefaultPortalName()
+    );
+  };
+
+  syncPortalName();
+
+  window.addEventListener("storage", syncPortalName);
+  window.addEventListener(
+    "ilmora-portal-name-updated",
+    syncPortalName
+  );
+
+  return () => {
+    window.removeEventListener("storage", syncPortalName);
+    window.removeEventListener(
+      "ilmora-portal-name-updated",
+      syncPortalName
+    );
+  };
+}, [roleKey, productKey]);
 
   const sidebarStorageKey = `sidebarMode:ilmdemo:${roleKey}`;
 
@@ -1140,15 +1307,30 @@ const IlmDemoSidebar = ({
               }}
             >
               <div style={{ minWidth: 0 }}>
-                <p
-                  className="text-[20px] font-bold font-serif leading-none whitespace-nowrap"
-                  style={{ margin: 0 }}
-                >
-                  <span className="text-green-600">ILM</span>
-                  <span className="text-orange-500 ml-1">ORA</span>
-                </p>
-                <p className="ilm-sb-logo-sub">{portalLabel}</p>
-              </div>
+  {brandLogo ? (
+    <img
+      src={brandLogo}
+      alt="Brand Logo"
+      style={{
+        maxWidth: "150px",
+        maxHeight: "42px",
+        width: "auto",
+        height: "auto",
+        objectFit: "contain",
+        display: "block",
+      }}
+    />
+  ) : (
+    <p
+      className="text-[20px] font-bold font-serif leading-none whitespace-nowrap"
+      style={{ margin: 0 }}
+    >
+      <span className="text-green-600">ILM</span>
+      <span className="text-orange-500 ml-1">ORA</span>
+    </p>
+  )}
+  <p className="ilm-sb-logo-sub">{portalLabel}</p>
+</div>
             </div>
           )}
 

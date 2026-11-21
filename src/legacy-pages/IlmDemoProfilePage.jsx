@@ -450,55 +450,45 @@ const ACCENT = {
 const ProfileSidebarNav = ({ user, tabs, activeTab, onChange, accent }) => {
   const ac = ACCENT[accent] || ACCENT.violet;
   return (
-    <aside className="w-full lg:w-72 shrink-0">
-      <div className="rounded-2xl bg-white dark:bg-white/[0.03] border border-gray-100 dark:border-white/10 shadow-sm overflow-hidden lg:sticky lg:top-8">
+    <aside className="w-full min-w-0 shrink-0">
+      <div className="rounded-2xl bg-white dark:bg-white/[0.03] border border-gray-100 dark:border-white/10 shadow-sm overflow-hidden lg:sticky lg:top-4">
         {/* Mini profile card */}
-        <div className="flex flex-col items-center text-center gap-2 px-4 sm:px-6 pt-6 sm:pt-8 pb-5 sm:pb-6">
-          <Avatar
-            initials={user.avatar}
-            size={80}
-            shape="rounded"
-            online
-            className="sm:hidden"
-          />
-          <div className="hidden sm:block">
-            <Avatar initials={user.avatar} size={92} shape="rounded" online />
-          </div>
-          <p className="text-base font-bold text-gray-900 dark:text-white mt-2">
-            {user.name}
-          </p>
-          <span
-            className={`inline-block text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full border ${ac.badge}`}
-          >
-            {user.label}
-          </span>
-          <div className="flex flex-col items-center gap-1 mt-2 text-xs text-gray-400 dark:text-slate-500">
-            <span className="flex items-center gap-1.5">
-              <IdCard className="w-3.5 h-3.5" /> {user.id}
+        <div className="flex items-center lg:flex-col lg:text-center gap-3 lg:gap-1.5 px-3 pt-3 lg:pt-4 pb-3">
+          <Avatar initials={user.avatar} size={56} shape="rounded" online />
+          <div className="min-w-0 flex-1 lg:flex-none flex flex-col lg:items-center gap-1">
+            <p className="text-sm font-bold text-gray-900 dark:text-white truncate max-w-full">
+              {user.name}
+            </p>
+            <span
+              className={`inline-block w-fit text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${ac.badge}`}
+            >
+              {user.label}
             </span>
-            <span className="flex items-center gap-1.5 truncate max-w-[220px]">
-              <Mail className="w-3.5 h-3.5" /> {user.email}
-            </span>
-          </div>
-          <div className="flex items-center gap-1.5 mt-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-            <span className="text-xs text-emerald-500 font-medium">Active</span>
+            <div className="flex flex-col lg:items-center gap-0.5 text-[11px] text-gray-400 dark:text-slate-500 min-w-0">
+              <span className="flex items-center gap-1.5">
+                <IdCard className="w-3 h-3 shrink-0" /> {user.id}
+              </span>
+              <span className="flex items-center gap-1.5 truncate max-w-[200px]">
+                <Mail className="w-3 h-3 shrink-0" />
+                <span className="truncate">{user.email}</span>
+              </span>
+            </div>
           </div>
         </div>
 
         {/* Nav items */}
-        <div className="px-2 sm:px-3">
-          <p className="px-3 pb-2 text-[10px] font-bold text-gray-300 dark:text-slate-600 uppercase tracking-widest">
+        <div className="px-2">
+          <p className="px-2 pb-1.5 text-[10px] font-bold text-gray-300 dark:text-slate-600 uppercase tracking-widest">
             Main Menu
           </p>
-          <nav className="flex flex-row lg:flex-col gap-1 pb-3 overflow-x-auto lg:overflow-visible -mx-1 px-1 lg:mx-0 lg:px-0">
+          <nav className="flex flex-row lg:flex-col gap-1 pb-2 overflow-x-auto lg:overflow-visible">
             {tabs.map((tab) => {
               const active = activeTab === tab.id;
               return (
                 <button
                   key={tab.id}
                   onClick={() => onChange(tab.id)}
-                  className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm font-medium whitespace-nowrap transition-colors shrink-0 lg:shrink ${
+                  className={`flex items-center gap-2 px-3 py-2 rounded-xl text-[13px] font-medium whitespace-nowrap transition-colors shrink-0 lg:shrink ${
                     active
                       ? `${ac.tabActive} shadow-sm`
                       : "text-gray-500 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-white/5 hover:text-gray-800 dark:hover:text-white"
@@ -516,20 +506,21 @@ const ProfileSidebarNav = ({ user, tabs, activeTab, onChange, accent }) => {
         </div>
 
         {/* Promo card */}
-        <div className="mx-2 sm:mx-3 mb-3 p-4 sm:p-5 rounded-2xl bg-violet-50 dark:bg-violet-500/10 border border-violet-100 dark:border-violet-500/15">
-          <div className="w-9 h-9 rounded-xl bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center mb-3">
-            <Crown className="w-4.5 h-4.5 text-amber-500" />
+        <div className="hidden lg:block mx-2 mb-2 p-3 rounded-xl bg-violet-50 dark:bg-violet-500/10 border border-violet-100 dark:border-violet-500/15">
+          <div className="flex items-center gap-2 mb-1.5">
+            <div className="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center shrink-0">
+              <Crown className="w-3.5 h-3.5 text-amber-500" />
+            </div>
+            <h4 className="text-xs font-bold text-gray-900 dark:text-white">
+              Complete Your Profile
+            </h4>
           </div>
-          <h4 className="text-sm font-bold text-gray-900 dark:text-white mb-1">
-            Complete Your Profile
-          </h4>
-          <p className="text-xs text-gray-500 dark:text-slate-400 leading-relaxed mb-4">
-            Complete your profile to unlock all features and personalize your
-            learning experience.
+          <p className="text-[11px] text-gray-500 dark:text-slate-400 leading-snug mb-2.5">
+            Unlock all features and personalize your learning.
           </p>
           <button
             onClick={() => onChange("details")}
-            className={`w-full flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold bg-white dark:bg-white/10 border border-violet-200 dark:border-violet-500/20 hover:bg-violet-100/60 dark:hover:bg-white/15 transition-colors ${ac.text}`}
+            className={`w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-white dark:bg-white/10 border border-violet-200 dark:border-violet-500/20 hover:bg-violet-100/60 dark:hover:bg-white/15 transition-colors ${ac.text}`}
           >
             Learn More <ArrowRight className="w-3 h-3" />
           </button>
@@ -538,7 +529,6 @@ const ProfileSidebarNav = ({ user, tabs, activeTab, onChange, accent }) => {
     </aside>
   );
 };
-
 /* ══════════════════════════════════════════════════════════════
    PROFILE HERO CARD — presentational; percent derived from the same
    `completionItems` array the page already builds.
@@ -549,59 +539,49 @@ const ProfileHeroCard = ({ user, accent, items }) => {
     (items.filter((i) => i.done).length / items.length) * 100,
   );
   return (
-    <div className="relative overflow-hidden rounded-2xl p-4 sm:p-6 lg:p-8 bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100/70 dark:from-orange-500/10 dark:via-amber-500/5 dark:to-orange-500/10 border border-orange-100/70 dark:border-white/10 shadow-sm">
-      <div className="relative flex flex-col lg:flex-row items-start lg:items-center gap-5 sm:gap-6">
+    <div className="relative overflow-hidden rounded-2xl p-3 sm:p-4 bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100/70 dark:from-orange-500/10 dark:via-amber-500/5 dark:to-orange-500/10 border border-orange-100/70 dark:border-white/10 shadow-sm">
+      <div className="relative flex flex-col md:flex-row items-start md:items-center gap-3 sm:gap-4">
         <Avatar
           initials={user.avatar}
-          size={72}
+          size={64}
           editable
           online
           shape="rounded"
-          className="sm:hidden"
         />
-        <div className="hidden sm:block">
-          <Avatar
-            initials={user.avatar}
-            size={88}
-            editable
-            online
-            shape="rounded"
-          />
-        </div>
 
         <div className="flex-1 min-w-0 w-full">
-          <div className="flex flex-wrap items-center gap-2 mb-1">
-            <h1 className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white tracking-tight break-words">
+          <div className="flex flex-wrap items-center gap-2">
+            <h1 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white tracking-tight break-words">
               {user.name}
             </h1>
             <span
-              className={`px-2.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider border ${ac.badge}`}
+              className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${ac.badge}`}
             >
               {user.label}
             </span>
           </div>
-          <div className="flex flex-wrap gap-x-4 sm:gap-x-5 gap-y-1.5 text-xs text-gray-500 dark:text-slate-400 mt-2">
+          <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-gray-500 dark:text-slate-400 mt-1">
             <span className="flex items-center gap-1.5">
-              <IdCard className="w-3.5 h-3.5 shrink-0" /> {user.id}
+              <IdCard className="w-3 h-3 shrink-0" /> {user.id}
             </span>
             <span className="flex items-center gap-1.5 break-all">
-              <Mail className="w-3.5 h-3.5 shrink-0" /> {user.email}
+              <Mail className="w-3 h-3 shrink-0" /> {user.email}
             </span>
             <span className="flex items-center gap-1.5">
-              <Calendar className="w-3.5 h-3.5 shrink-0" /> Joined {user.joined}
+              <Calendar className="w-3 h-3 shrink-0" /> Joined {user.joined}
             </span>
           </div>
 
-          <div className="mt-4 sm:mt-5 max-w-md">
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="text-sm font-semibold text-gray-700 dark:text-white/80">
+          <div className="mt-2 max-w-sm">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-xs font-semibold text-gray-700 dark:text-white/80">
                 Profile Completion
               </span>
-              <span className="text-sm font-bold text-gray-900 dark:text-white">
+              <span className="text-xs font-bold text-gray-900 dark:text-white">
                 {percent}%
               </span>
             </div>
-            <div className="h-2 w-full rounded-full bg-white/70 dark:bg-white/10 overflow-hidden">
+            <div className="h-1.5 w-full rounded-full bg-white/70 dark:bg-white/10 overflow-hidden">
               <div
                 className={`h-full rounded-full ${ac.solid} transition-all duration-500`}
                 style={{ width: `${percent}%` }}
@@ -610,24 +590,25 @@ const ProfileHeroCard = ({ user, accent, items }) => {
           </div>
         </div>
 
-        <div className="hidden md:flex flex-col items-center text-center bg-white/70 dark:bg-white/5 rounded-2xl px-5 lg:px-6 py-4 lg:py-5 shrink-0 backdrop-blur-sm w-full md:w-auto">
-          <div className="w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center mb-2">
-            <Trophy className="w-5 h-5 text-amber-500" />
+        <div className="hidden lg:flex items-center gap-2.5 bg-white/70 dark:bg-white/5 rounded-xl px-4 py-2.5 shrink-0 backdrop-blur-sm">
+          <div className="w-9 h-9 rounded-full bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center shrink-0">
+            <Trophy className="w-4 h-4 text-amber-500" />
           </div>
-          <p className="text-sm font-bold text-gray-900 dark:text-white whitespace-nowrap">
-            {percent < 100 ? "Keep Going!" : "All Done!"}
-          </p>
-          <p className="text-xs text-gray-500 dark:text-slate-400 mt-0.5 max-w-[150px]">
-            {percent < 100
-              ? "Complete your profile to unlock all features."
-              : "Your profile is fully set up."}
-          </p>
+          <div>
+            <p className="text-xs font-bold text-gray-900 dark:text-white whitespace-nowrap">
+              {percent < 100 ? "Keep Going!" : "All Done!"}
+            </p>
+            <p className="text-[11px] text-gray-500 dark:text-slate-400 max-w-[150px] leading-snug">
+              {percent < 100
+                ? "Complete your profile to unlock all features."
+                : "Your profile is fully set up."}
+            </p>
+          </div>
         </div>
       </div>
     </div>
   );
 };
-
 /* ══════════════════════════════════════════════════════════════
    STAT CARD + STATS GRID
 ══════════════════════════════════════════════════════════════ */
@@ -640,23 +621,25 @@ const StatCard = ({
   iconBg,
   iconColor,
 }) => (
-  <div className="rounded-2xl p-4 sm:p-5 bg-white dark:bg-white/[0.03] border border-gray-100 dark:border-white/10 shadow-sm min-w-0">
+  <div className="flex items-center gap-2.5 rounded-xl p-2.5 sm:p-3 bg-white dark:bg-white/[0.03] border border-gray-100 dark:border-white/10 shadow-sm min-w-0">
     <div
-      className={`w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center mb-2.5 sm:mb-3 ${iconBg}`}
+      className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${iconBg}`}
     >
-      <Icon className="w-4.5 h-4.5 sm:w-5 sm:h-5" />
+      <Icon className={`w-4 h-4 ${iconColor || ""}`} />
     </div>
-    <p className="text-xs text-gray-400 dark:text-slate-500 mb-1 truncate">
-      {label}
-    </p>
-    <p className="text-base sm:text-lg font-bold text-gray-900 dark:text-white truncate">
-      {value}
-    </p>
-    {footer && (
-      <p className={`text-xs font-medium mt-1 ${footerColor} truncate`}>
-        {footer}
+    <div className="min-w-0">
+      <p className="text-[11px] text-gray-400 dark:text-slate-500 truncate leading-tight">
+        {label}
       </p>
-    )}
+      <p className="text-sm font-bold text-gray-900 dark:text-white truncate leading-tight">
+        {value}
+      </p>
+      {footer && (
+        <p className={`text-[10px] font-medium ${footerColor} truncate leading-tight`}>
+          {footer}
+        </p>
+      )}
+    </div>
   </div>
 );
 
@@ -715,18 +698,18 @@ const ProfileStatsGrid = ({ items, user, accent }) => {
 const ProfileTipsCard = ({ accent, items }) => {
   const tips = [...items, { label: "Explore learning paths", done: false }];
   return (
-    <div className="rounded-2xl p-4 sm:p-5 bg-white dark:bg-white/[0.03] border border-gray-100 dark:border-white/10 shadow-sm">
-      <div className="flex items-center gap-2 mb-4">
-        <div className="w-8 h-8 rounded-lg bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center">
-          <Zap className="w-4 h-4 text-amber-500" />
+    <div className="rounded-2xl p-3 bg-white dark:bg-white/[0.03] border border-gray-100 dark:border-white/10 shadow-sm">
+      <div className="flex items-center gap-2 mb-2.5">
+        <div className="w-7 h-7 rounded-lg bg-amber-100 dark:bg-amber-500/20 flex items-center justify-center">
+          <Zap className="w-3.5 h-3.5 text-amber-500" />
         </div>
-        <h4 className="text-sm font-bold text-gray-900 dark:text-white">
+        <h4 className="text-[13px] font-bold text-gray-900 dark:text-white">
           Profile Tips
         </h4>
       </div>
-      <ul className="space-y-2.5 mb-4">
+      <ul className="space-y-1.5 mb-3">
         {tips.map((t) => (
-          <li key={t.label} className="flex items-center gap-2 text-xs">
+          <li key={t.label} className="flex items-center gap-2 text-[11px]">
             {t.done ? (
               <CheckCircle className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
             ) : (
@@ -744,7 +727,7 @@ const ProfileTipsCard = ({ accent, items }) => {
           </li>
         ))}
       </ul>
-      <button className="w-full flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-500/20 transition-colors">
+      <button className="w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold bg-orange-50 dark:bg-orange-500/10 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-500/20 transition-colors">
         View Learning Paths <ArrowRight className="w-3 h-3" />
       </button>
     </div>
@@ -757,28 +740,28 @@ const ProfileTipsCard = ({ accent, items }) => {
 const SecurityStatusCard = ({ accent, emailVerified }) => {
   const ac = ACCENT[accent] || ACCENT.violet;
   return (
-    <div className="rounded-2xl p-4 sm:p-5 bg-white dark:bg-white/[0.03] border border-gray-100 dark:border-white/10 shadow-sm">
-      <div className="flex items-center gap-2 mb-4">
+    <div className="rounded-2xl p-3 bg-white dark:bg-white/[0.03] border border-gray-100 dark:border-white/10 shadow-sm">
+      <div className="flex items-center gap-2 mb-2.5">
         <div
-          className={`w-8 h-8 rounded-lg flex items-center justify-center ${ac.iconBg}`}
+          className={`w-7 h-7 rounded-lg flex items-center justify-center ${ac.iconBg}`}
         >
-          <Shield className={`w-4 h-4 ${ac.text}`} />
+          <Shield className={`w-3.5 h-3.5 ${ac.text}`} />
         </div>
-        <h4 className="text-sm font-bold text-gray-900 dark:text-white">
+        <h4 className="text-[13px] font-bold text-gray-900 dark:text-white">
           Security Status
         </h4>
       </div>
-      <ul className="space-y-3.5 mb-4">
+      <ul className="space-y-2 mb-3">
         <li className="flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
             <ShieldCheck
               className={`w-4 h-4 shrink-0 ${emailVerified ? "text-emerald-500" : "text-gray-300 dark:text-slate-600"}`}
             />
             <div className="min-w-0">
-              <p className="text-xs font-semibold text-gray-800 dark:text-white/85">
+              <p className="text-[11px] font-semibold text-gray-800 dark:text-white/85 leading-tight">
                 Email Verification
               </p>
-              <p className="text-[11px] text-gray-400 dark:text-slate-500">
+              <p className="text-[10px] text-gray-400 dark:text-slate-500 leading-tight">
                 {emailVerified ? "Your email is verified" : "Not verified"}
               </p>
             </div>
@@ -791,10 +774,10 @@ const SecurityStatusCard = ({ accent, emailVerified }) => {
           <div className="flex items-center gap-2 min-w-0">
             <Lock className="w-4 h-4 shrink-0 text-emerald-500" />
             <div className="min-w-0">
-              <p className="text-xs font-semibold text-gray-800 dark:text-white/85">
+              <p className="text-[11px] font-semibold text-gray-800 dark:text-white/85 leading-tight">
                 Password Strength
               </p>
-              <p className="text-[11px] text-gray-400 dark:text-slate-500">
+              <p className="text-[10px] text-gray-400 dark:text-slate-500 leading-tight">
                 Strong
               </p>
             </div>
@@ -805,10 +788,10 @@ const SecurityStatusCard = ({ accent, emailVerified }) => {
           <div className="flex items-center gap-2 min-w-0">
             <Shield className="w-4 h-4 shrink-0 text-orange-400" />
             <div className="min-w-0">
-              <p className="text-xs font-semibold text-gray-800 dark:text-white/85">
+              <p className="text-[11px] font-semibold text-gray-800 dark:text-white/85 leading-tight">
                 Two-Factor Auth
               </p>
-              <p className="text-[11px] text-gray-400 dark:text-slate-500">
+              <p className="text-[10px] text-gray-400 dark:text-slate-500 leading-tight">
                 Not enabled
               </p>
             </div>
@@ -817,14 +800,13 @@ const SecurityStatusCard = ({ accent, emailVerified }) => {
         </li>
       </ul>
       <button
-        className={`w-full flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-semibold transition-opacity hover:opacity-80 ${ac.iconBg} ${ac.text}`}
+        className={`w-full flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg text-[11px] font-semibold transition-opacity hover:opacity-80 ${ac.iconBg} ${ac.text}`}
       >
         Manage Security <ArrowRight className="w-3 h-3" />
       </button>
     </div>
   );
 };
-
 /* ══════════════════════════════════════════════════════════════
    TOAST COMPONENT — UNCHANGED
 ══════════════════════════════════════════════════════════════ */
@@ -1859,9 +1841,10 @@ const ProfileInfoTab = ({
   onProfileComplete,
   swapRoleNavTarget,
   clearRoleTarget,
+  startEditing = false,
 }) => {
   const navigate = useNavigate();
-  const [editing, setEditing] = useState(false);
+  const [editing, setEditing] = useState(startEditing);
   const [saving, setSaving] = useState(false);
   const [name, setName] = useState(user.name);
   const [toast, setToast] = useState(null);
@@ -1871,8 +1854,156 @@ const ProfileInfoTab = ({
   const [roleChangeCount, setRoleChangeCount] = useState(getRoleChangeCount());
   const roleLocked = roleChangeCount >= MAX_ROLE_CHANGES;
   const { uploadImage, removeImage, profileImage } = useAvatarContext();
-  const fileInputRef = useRef(null);
+    const fileInputRef = useRef(null);
   const ac = ACCENT[accent];
+
+    // Role-specific Brand Logo
+const brandLogoStorageKey = `ilmora_brand_logo:${roleKey}`;
+
+const [brandLogo, setBrandLogo] = useState(
+  () => localStorage.getItem(brandLogoStorageKey) || ""
+);
+
+  const brandLogoInputRef = useRef(null);
+
+  // Editable Portal Name
+  const portalNameStorageKey = `ilmora_portal_name:${roleKey}`;
+
+  const [portalName, setPortalName] = useState(
+    () =>
+      localStorage.getItem(portalNameStorageKey) ||
+      `${user.label.toUpperCase()} PORTAL`
+  );
+
+    // Re-load role-specific values whenever the role changes (e.g. after
+  useEffect(() => {
+  let active = true;
+
+  const loadRoleProfile = async () => {
+    setBrandLogo(
+      localStorage.getItem(`ilmora_brand_logo:${roleKey}`) || ""
+    );
+
+    setPortalName(
+      localStorage.getItem(`ilmora_portal_name:${roleKey}`) ||
+        `${(ROLE_CONFIG[roleKey]?.label || user.label).toUpperCase()} PORTAL`
+    );
+
+    setName(
+      localStorage.getItem(`ilmora_full_name:${roleKey}`) || user.name
+    );
+
+    if (!hasAuthToken()) return;
+
+    try {
+      let profile = {};
+
+      if (roleKey === "student") {
+        const res = await userService.getStudentProfile();
+        profile = res.data || {};
+      } else if (roleKey === "trainer") {
+        const res = await userService.getTrainerProfile();
+        profile = res.data || {};
+      } else if (roleKey === "admin") {
+        const orgId = localStorage.getItem("organizationId");
+        if (!orgId) return;
+
+        profile = await authService.getOrgCapacity(orgId);
+      }
+
+      if (!active) return;
+
+      if (profile.portalName) {
+        setPortalName(profile.portalName);
+        localStorage.setItem(
+          `ilmora_portal_name:${roleKey}`,
+          profile.portalName
+        );
+      }
+
+      if (profile.brandLogoUrl) {
+        setBrandLogo(profile.brandLogoUrl);
+        localStorage.setItem(
+          `ilmora_brand_logo:${roleKey}`,
+          profile.brandLogoUrl
+        );
+      }
+
+      window.dispatchEvent(
+        new CustomEvent("ilmora-portal-name-updated", {
+          detail: { roleKey, portalName: profile.portalName }
+        })
+      );
+
+      window.dispatchEvent(
+        new CustomEvent("ilmora:brand-logo-updated", {
+          detail: { roleKey }
+        })
+      );
+    } catch (error) {
+      console.error("Failed to load role profile:", error);
+    }
+  };
+
+  loadRoleProfile();
+
+  return () => {
+    active = false;
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [roleKey]);
+
+  const handleProfileBrandLogo = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!["image/png", "image/jpeg", "image/webp"].includes(file.type)) {
+      showToast("Upload PNG, JPG or WEBP image", "error");
+      e.target.value = "";
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      showToast("Logo must be below 2 MB", "error");
+      e.target.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      try {
+        localStorage.setItem(brandLogoStorageKey, reader.result);
+setBrandLogo(reader.result);
+
+window.dispatchEvent(
+  new CustomEvent("ilmora:brand-logo-updated", {
+    detail: { roleKey },
+  })
+);
+        showToast("Brand logo updated");
+      } catch {
+        showToast("Storage limit reached. Logo could not be saved.", "error");
+      }
+    };
+
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
+  const removeProfileBrandLogo = () => {
+  localStorage.removeItem(brandLogoStorageKey);
+  setBrandLogo("");
+
+  window.dispatchEvent(
+  new CustomEvent("ilmora:brand-logo-updated", {
+    detail: { roleKey },
+  })
+);
+
+  showToast("Brand logo removed");
+};
 
   // Skip Image 2 entirely: if the navbar "Swap Role" click routed here
   // with scrollTarget="role" (see IlmDemoProfilePage → swapRoleNavTarget
@@ -1961,15 +2092,11 @@ const ProfileInfoTab = ({
       showToast("Name cannot be empty", "error");
       return;
     }
-    setSaving(true);
+       setSaving(true);
     try {
-      if (hasAuthToken()) {
-        try {
-          await userService.updateMyProfile({ displayName: name.trim() });
-        } catch (apiErr) {
-          console.error("updateMyProfile failed:", apiErr);
-        }
-      }
+      // Full Name is stored per-role only (ilmora_full_name:<role>).
+      // Backend displayName is shared by ALL roles of this account,
+      // so we intentionally do NOT sync it here.
 
       const wasFullyComplete = (() => {
         const f = readCompletionFlags();
@@ -1981,7 +2108,82 @@ const ProfileInfoTab = ({
         return f.info && f.details;
       })();
 
-      if (onProfileUpdate) onProfileUpdate({ name: name.trim() });
+      const updatedPortalName = portalName.trim();
+
+if (!updatedPortalName) {
+  showToast("Portal Name cannot be empty", "error");
+  return;
+}
+
+localStorage.setItem(portalNameStorageKey, updatedPortalName);
+
+if (hasAuthToken()) {
+  try {
+    const logo = localStorage.getItem(brandLogoStorageKey) || "";
+    if (roleKey === "student") {
+      // merge zaroori hai: backend update baaki fields ko null kar deta hai
+      const cur = (await userService.getStudentProfile()).data || {};
+      await userService.updateStudentProfile({
+        ...cur,
+        portalName: updatedPortalName,
+        brandLogoUrl: logo,
+      });
+    } else if (roleKey === "trainer") {
+      const cur = (await userService.getTrainerProfile()).data || {};
+      await userService.updateTrainerProfile({
+        ...cur,
+        portalName: updatedPortalName,
+        brandLogoUrl: logo,
+      });
+    } else if (roleKey === "admin") {
+      const orgId = localStorage.getItem("organizationId");
+      if (orgId) {
+        await authService.updateAdminOrgProfile(orgId, {
+          portalName: updatedPortalName,
+          brandLogoUrl: logo,
+        });
+      }
+    }
+  } catch (apiErr) {
+    console.error("Portal name/logo backend sync failed:", apiErr);
+  }
+}
+
+window.dispatchEvent(
+  new CustomEvent("ilmora-portal-name-updated", {
+    detail: {
+      roleKey,
+      portalName: updatedPortalName,
+    },
+  })
+);
+
+window.dispatchEvent(
+  new CustomEvent("ilmora-portal-name-updated", {
+    detail: {
+      roleKey,
+      portalName: updatedPortalName,
+    },
+  })
+);
+
+localStorage.setItem(`ilmora_full_name:${roleKey}`, name.trim());
+
+window.dispatchEvent(
+  new CustomEvent("ilmora:full-name-updated", {
+    detail: {
+      roleKey,
+      fullName: name.trim(),
+    },
+  })
+);
+
+if (onProfileUpdate) {
+  onProfileUpdate({
+    name: name.trim(),
+    portalName: updatedPortalName,
+  });
+}
       setEditing(false);
       showToast("Profile updated successfully");
       if (returnTo) {
@@ -2081,51 +2283,55 @@ const ProfileInfoTab = ({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-4 sm:gap-5">
+            {/* PHOTO + BRAND LOGO — side by side, compact */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {/* Profile Photo */}
         <div
-          onClick={() => fileInputRef.current?.click()}
-          className="flex flex-col items-center justify-center gap-1.5 p-4 sm:p-5 rounded-2xl border-2 border-dashed border-gray-200 dark:border-white/15 bg-gray-50/60 dark:bg-white/[0.02] cursor-pointer hover:border-violet-300 dark:hover:border-violet-500/40 transition-colors text-center min-h-[160px] sm:min-h-[190px]"
+          onClick={() => editing && fileInputRef.current?.click()}
+          className="flex items-center gap-3 p-3 rounded-xl border-2 border-dashed border-gray-200 dark:border-white/15 bg-gray-50/60 dark:bg-white/[0.02] cursor-pointer hover:border-violet-300 dark:hover:border-violet-500/40 transition-colors"
         >
           {profileImage ? (
-            <Avatar
-              initials={user.avatar}
-              size={56}
-              shape="rounded"
-              className="mb-1"
-            />
+            <Avatar initials={user.avatar} size={48} shape="rounded" />
           ) : (
-            <div className="w-12 h-12 rounded-full bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center mb-1">
+            <div className="w-12 h-12 rounded-full bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center shrink-0">
               <UploadCloud className="w-5 h-5 text-violet-500" />
             </div>
           )}
-          <p className="text-sm font-semibold text-gray-800 dark:text-white">
-            Profile Photo
-          </p>
-          <p className="text-xs text-gray-400 dark:text-slate-500">
-            JPG, PNG up to 5MB
-          </p>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              fileInputRef.current?.click();
-            }}
-            className={`mt-2 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-white ${ac.btn} transition-colors`}
-          >
-            <Upload className="w-3 h-3" /> Upload Image
-          </button>
-          {profileImage && (
+          <div className="min-w-0 flex-1">
+            <p className="text-[13px] font-semibold text-gray-800 dark:text-white leading-tight">
+              Profile Photo
+            </p>
+            <p className="text-[11px] text-gray-400 dark:text-slate-500">
+              JPG, PNG up to 5MB
+            </p>
+          </div>
+          <div className="flex flex-col items-end gap-1 shrink-0">
             <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                removeImage();
-              }}
-              className="text-xs text-red-500 hover:underline mt-1.5"
-            >
-              Remove Photo
-            </button>
-          )}
+  type="button"
+  disabled={!editing}
+  onClick={(e) => {
+    e.stopPropagation();
+    if (editing) fileInputRef.current?.click();
+  }}
+  className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-medium text-white ${ac.btn} transition-colors disabled:opacity-40 disabled:cursor-not-allowed`}
+>
+  <Upload className="w-3 h-3" />
+  {profileImage ? "Change" : "Upload"}
+</button>
+
+{editing && profileImage && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  removeImage();
+                }}
+                className="text-[11px] text-red-500 hover:underline"
+              >
+                Remove
+              </button>
+            )}
+          </div>
           <input
             ref={fileInputRef}
             type="file"
@@ -2140,99 +2346,175 @@ const ProfileInfoTab = ({
           />
         </div>
 
-        <div className="space-y-3.5 min-w-0">
-          <div className="space-y-1">
-            <label className="text-xs font-semibold text-gray-500 dark:text-slate-400">
-              Full Name
-            </label>
-            {editing ? (
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className={`w-full pl-9 pr-3 py-2 rounded-xl text-sm transition-all bg-gray-100 dark:bg-white/10 border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 ${ac.ring}`}
-                />
-              </div>
-            ) : (
-              <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <p className="pl-9 pr-3 py-2 rounded-xl text-sm bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-800 dark:text-white/85 truncate">
-                  {name || "—"}
-                </p>
-              </div>
-            )}
-          </div>
-
-          {/* ── Role — Swap Role button, up to 3 changes ── */}
-          <div className="space-y-1" id="profile-role-field">
-            <label className="text-xs font-semibold text-gray-500 dark:text-slate-400 flex items-center gap-1.5">
-              Role
-              {roleLocked && <Lock className="w-3 h-3 text-gray-400" />}
-            </label>
-            <div className="relative">
-              {roleLocked ? (
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              ) : (
-                <IdCard className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              )}
-              <p className="pl-9 pr-3 py-2 rounded-xl text-sm bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-800 dark:text-white/85">
-                {user.label}
-              </p>
+        {/* Brand Logo */}
+        <div className="flex items-center gap-3 p-3 rounded-xl border border-gray-200 dark:border-white/10">
+          {brandLogo ? (
+            <img
+              src={brandLogo}
+              alt="Brand Logo"
+              className="w-12 h-12 object-contain rounded-lg border border-gray-200 dark:border-white/10 p-1 shrink-0"
+            />
+          ) : (
+            <div className="w-12 h-12 rounded-lg border border-dashed border-gray-300 dark:border-white/20 flex items-center justify-center text-[10px] text-gray-400 shrink-0">
+              No Logo
             </div>
-            <div className="flex items-center justify-between gap-2 pl-1">
-              <p className="text-xs text-gray-400 dark:text-slate-500 flex items-center gap-1">
-                {roleLocked ? (
-                  <>
-                    <Lock className="w-3 h-3 shrink-0" /> You've used all{" "}
-                    {MAX_ROLE_CHANGES} role changes — now locked
-                  </>
-                ) : (
-                  `${MAX_ROLE_CHANGES - roleChangeCount} of ${MAX_ROLE_CHANGES} role changes remaining`
-                )}
-              </p>
+          )}
+          <div className="min-w-0 flex-1">
+            <p className="text-[13px] font-semibold text-gray-800 dark:text-white leading-tight">
+              Brand Logo
+            </p>
+            <p className="text-[11px] text-gray-400 dark:text-slate-500">
+              PNG, JPG, WEBP · Max 2 MB
+            </p>
+          </div>
+          <input
+            ref={brandLogoInputRef}
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            onChange={handleProfileBrandLogo}
+            className="hidden"
+          />
+          <div className="flex flex-col items-end gap-1 shrink-0">
+            <button
+  type="button"
+  disabled={!editing}
+  onClick={() => {
+    if (editing) brandLogoInputRef.current?.click();
+  }}
+  className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-medium text-white ${ac.btn} disabled:opacity-40 disabled:cursor-not-allowed`}
+>
+              <Upload className="w-3 h-3" />
+              {brandLogo ? "Change" : "Upload"}
+            </button>
+            {editing && brandLogo && (
               <button
                 type="button"
-                disabled={roleLocked}
-                onClick={() => setShowSwapModal(true)}
-                className={`shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors ${
-                  roleLocked
-                    ? "bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-slate-600 cursor-not-allowed"
-                    : `${ac.iconBg} ${ac.text} hover:opacity-80`
-                }`}
+                onClick={removeProfileBrandLogo}
+                className="text-[11px] text-red-500 hover:underline"
               >
-                {roleLocked ? (
-                  <Lock className="w-3 h-3" />
-                ) : (
-                  <UserCog className="w-3 h-3" />
-                )}
-                Swap Role
+                Remove
               </button>
-            </div>
-          </div>
-
-          <div className="space-y-1">
-            <label className="text-xs font-semibold text-gray-500 dark:text-slate-400">
-              Email Address
-            </label>
-            <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 shrink-0" />
-              <p className="pl-9 pr-16 sm:pr-20 py-2 rounded-xl text-sm bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-500 dark:text-white/50 select-none truncate">
-                {user.email}
-              </p>
-              <span className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 rounded-full bg-gray-100 dark:bg-white/10 text-gray-500 dark:text-white/40 border border-gray-200 dark:border-white/10 whitespace-nowrap">
-                <Lock className="w-2.5 h-2.5 shrink-0" />{" "}
-                <span className="hidden xs:inline">Locked</span>
-              </span>
-            </div>
-            <p className="text-xs text-gray-400 dark:text-slate-500 pl-1">
-              Email cannot be changed from this page
-            </p>
+            )}
           </div>
         </div>
       </div>
 
+      {/* FULL NAME | ROLE | EMAIL — one line */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 items-start">
+        {/* Full Name */}
+        <div className="space-y-1 min-w-0">
+          <label className="text-[11px] font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+            Full Name
+          </label>
+          <div className="relative">
+            <User className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+            {editing ? (
+              <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className={`w-full pl-9 pr-3 py-1.5 rounded-xl text-sm transition-all bg-gray-100 dark:bg-white/10 border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-white/30 focus:outline-none focus:ring-2 ${ac.ring}`}
+              />
+            ) : (
+              <p className="pl-9 pr-3 py-1.5 rounded-xl text-sm bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-800 dark:text-white/85 truncate min-h-[34px]">
+                {name || "—"}
+              </p>
+            )}
+          </div>
+          <p className="text-[11px] text-gray-400 dark:text-slate-500 pl-1">
+            Click "Edit Profile" to change
+          </p>
+        </div>
+
+        {/* Role */}
+        <div className="space-y-1 min-w-0" id="profile-role-field">
+          <label className="text-[11px] font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+            Role
+            {roleLocked && <Lock className="w-3 h-3 text-gray-400" />}
+          </label>
+          <div className="relative">
+            {roleLocked ? (
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+            ) : (
+              <IdCard className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+            )}
+            <p className="pl-9 pr-24 py-1.5 rounded-xl text-sm bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-800 dark:text-white/85 truncate min-h-[34px]">
+              {user.label}
+            </p>
+            <button
+            type="button"
+            disabled={!editing || roleLocked}
+            onClick={() => {
+            if (editing && !roleLocked) setShowSwapModal(true);
+             }}
+              className={`absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center gap-1 px-2 py-1 rounded-lg text-[11px] font-bold transition-colors ${
+                roleLocked
+                  ? "bg-gray-100 dark:bg-white/5 text-gray-400 dark:text-slate-600 cursor-not-allowed"
+                  : `${ac.iconBg} ${ac.text} hover:opacity-80`
+              }`}
+            >
+              {roleLocked ? (
+                <Lock className="w-3 h-3" />
+              ) : (
+                <UserCog className="w-3 h-3" />
+              )}
+              Swap
+            </button>
+          </div>
+          <p className="text-[11px] text-gray-400 dark:text-slate-500 pl-1 flex items-center gap-1">
+            {roleLocked ? (
+              <>
+                <Lock className="w-3 h-3 shrink-0" /> All {MAX_ROLE_CHANGES} role
+                changes used — locked
+              </>
+            ) : (
+              `${MAX_ROLE_CHANGES - roleChangeCount} of ${MAX_ROLE_CHANGES} role changes remaining`
+            )}
+          </p>
+        </div>
+
+        {/* Email */}
+        <div className="space-y-1 min-w-0">
+          <label className="text-[11px] font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+            Email Address
+          </label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400 shrink-0" />
+            <p className="pl-9 pr-16 py-1.5 rounded-xl text-sm bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-500 dark:text-white/50 select-none truncate min-h-[34px]">
+              {user.email}
+            </p>
+            <span className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full bg-gray-100 dark:bg-white/10 text-gray-500 dark:text-white/40 border border-gray-200 dark:border-white/10 whitespace-nowrap">
+              <Lock className="w-2.5 h-2.5 shrink-0" /> Locked
+            </span>
+          </div>
+          <p className="text-[11px] text-gray-400 dark:text-slate-500 pl-1">
+            Email cannot be changed from this page
+          </p>
+          </div>
+        </div>
+            {/* PORTAL NAME */}
+      <div className="space-y-1">
+        <label className="text-[11px] font-semibold text-gray-500 dark:text-slate-400 uppercase tracking-wider">
+          Portal Name
+        </label>
+        {editing ? (
+          <input
+            type="text"
+            value={portalName}
+            maxLength={40}
+            onChange={(e) => setPortalName(e.target.value)}
+            placeholder="Enter portal name"
+            className={`w-full px-3 py-2 rounded-xl text-sm bg-gray-100 dark:bg-white/10 border border-gray-300 dark:border-white/20 text-gray-900 dark:text-white focus:outline-none focus:ring-2 ${ac.ring}`}
+          />
+        ) : (
+          <p className="px-3 py-2 rounded-xl text-sm bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-800 dark:text-white/85">
+            {portalName}
+          </p>
+        )}
+        <p className="text-[11px] text-gray-400 dark:text-slate-500">
+          This name will appear below your dashboard logo.
+        </p>
+      </div>
       {editing && (
         <button
           onClick={handleSave}
@@ -2623,8 +2905,22 @@ const StudentDetailsTab = ({ accent, returnTo, onProfileComplete }) => {
     domain: "",
     experience: "",
   };
-  const [form, setForm] = useState(empty);
+    const [form, setForm] = useState(empty);
   const [draft, setDraft] = useState(empty);
+
+  // Frontend-only brand logo state
+  // Admin role-specific brand logo
+const adminBrandLogoStorageKey = "ilmora_brand_logo:admin";
+
+const [brandLogo, setBrandLogo] = useState(
+  () => localStorage.getItem(adminBrandLogoStorageKey) || ""
+);
+
+const [draftBrandLogo, setDraftBrandLogo] = useState(
+  () => localStorage.getItem(adminBrandLogoStorageKey) || ""
+);
+
+const brandLogoInputRef = useRef(null);
 
   const fieldRefs = useRef({});
 
@@ -2666,16 +2962,42 @@ const StudentDetailsTab = ({ accent, returnTo, onProfileComplete }) => {
       .catch(() => {});
   }, [parseMobile]);
 
-  const showToast = (msg, type = "success") => setToast({ message: msg, type });
+    const showToast = (msg, type = "success") => setToast({ message: msg, type });
+
   const startEdit = () => {
     setDraft({ ...form });
+    setDraftBrandLogo(brandLogo);
     setErrors({});
     setEditing(true);
   };
+
   const cancelEdit = () => {
     setDraft({ ...form });
+    setDraftBrandLogo(brandLogo);
     setErrors({});
     setEditing(false);
+  };
+
+  const handleBrandLogoChange = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!["image/png", "image/jpeg", "image/webp"].includes(file.type)) {
+      showToast("Please upload PNG, JPG or WEBP image", "error");
+      e.target.value = "";
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      showToast("Logo size must be below 2 MB", "error");
+      e.target.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => setDraftBrandLogo(reader.result);
+    reader.readAsDataURL(file);
+    e.target.value = "";
   };
 
   const handleChange = useCallback((e) => {
@@ -2715,49 +3037,30 @@ const StudentDetailsTab = ({ accent, returnTo, onProfileComplete }) => {
     return errs;
   };
 
-  const handleSave = async () => {
+    const handleSave = async () => {
     const errs = validate(draft);
     if (Object.keys(errs).length) {
       setErrors(errs);
       showToast("Please fix all errors before saving", "error");
-      const firstKey = Object.keys(errs)[0];
-      if (fieldRefs.current[firstKey]) fieldRefs.current[firstKey].focus?.();
       return;
     }
-    // Save se PEHLE check: profile pehle se complete tha ya nahi — isse
-    // sirf "pehli baar complete hua" par hi auto-redirect fire hoga,
-    // baad me edit karne par nahi. Sirf Details tab hi mandatory hai
-    // (Profile Info tab optional hai), isliye sirf `profileCompleted`
-    // flag check karo — `profileInfoCompleted` par depend mat karo.
-    const wasFullyComplete = (() => {
-      const f = readCompletionFlags();
-      return f.details;
+    const wasCompleted = (() => {
+      try {
+        return !!JSON.parse(localStorage.getItem("lms_user") || "{}")
+          .profileCompleted;
+      } catch {
+        return false;
+      }
     })();
     setSaving(true);
     try {
-      const payload = {
-        mobileNumber: draft.localNumber.trim()
-          ? `${draft.dialCode}${draft.localNumber.trim()}`
-          : "",
-        dateOfBirth: draft.dateOfBirth,
-        gender: draft.gender,
-        city: draft.city.trim(),
-        state: draft.state.trim(),
-        country: draft.country.trim(),
-        qualification: draft.qualification.trim(),
-        collegeName: draft.collegeName.trim(),
-        yearOfPassing: draft.yearOfPassing,
-        domain: draft.domain.trim(),
-        experience: draft.experience.trim(),
-      };
-
-      // BUG-2 FIX: best-effort backend sync. Success/failure of this call
-      // must NOT block the local "details completed" flow below — the
-      // success toast, syncProfileCompleted(true), and
-      // returnTo/onProfileComplete redirect must always fire.
       if (hasAuthToken()) {
         try {
-          await userService.updateStudentProfile(payload);
+          const { dialCode, localNumber, ...rest } = draft;
+          await userService.updateStudentProfile({
+            ...rest,
+            mobileNumber: `${dialCode} ${localNumber.trim()}`,
+          });
         } catch (apiErr) {
           console.error(
             "updateStudentProfile failed — continuing with local completion:",
@@ -2765,22 +3068,17 @@ const StudentDetailsTab = ({ accent, returnTo, onProfileComplete }) => {
           );
         }
       }
-
       setForm({ ...draft });
       setEditing(false);
-      showToast("Details saved successfully");
+      showToast("Profile details saved");
       syncProfileCompleted(true);
-      const isFullyCompleteNow = (() => {
-        const f = readCompletionFlags();
-        return f.details;
-      })();
       if (returnTo) {
         setShowCelebration(true);
-      } else if (onProfileComplete && !wasFullyComplete && isFullyCompleteNow) {
+      } else if (onProfileComplete && !wasCompleted) {
         onProfileComplete();
       }
     } catch (err) {
-      console.error("Unexpected error while saving student details:", err);
+      console.error("Unexpected error while saving student profile:", err);
       showToast("Failed to save. Try again.", "error");
     } finally {
       setSaving(false);
@@ -3662,7 +3960,12 @@ const AdminDetailsTab = ({ accent, returnTo, onProfileComplete }) => {
       // never blocks the local "details completed" flow below.
       if (hasAuthToken()) {
         try {
-          await authService.updateAdminOrgProfile(orgId, payload);
+            await authService.updateAdminOrgProfile(orgId, {
+            ...payload,
+            portalName:
+              localStorage.getItem("ilmora_portal_name:admin") || undefined,
+            brandLogoUrl: draftBrandLogo || "",
+          });
         } catch (apiErr) {
           console.error(
             "updateAdminOrgProfile failed — continuing with local completion:",
@@ -3671,7 +3974,32 @@ const AdminDetailsTab = ({ accent, returnTo, onProfileComplete }) => {
         }
       }
 
-      setForm((prev) => ({ ...prev, ...payload }));
+            setForm((prev) => ({ ...prev, ...payload }));
+
+      try {
+  if (draftBrandLogo) {
+    localStorage.setItem(
+      adminBrandLogoStorageKey,
+      draftBrandLogo
+    );
+  } else {
+    localStorage.removeItem(adminBrandLogoStorageKey);
+  }
+
+  setBrandLogo(draftBrandLogo);
+
+  window.dispatchEvent(
+    new CustomEvent("ilmora:brand-logo-updated", {
+      detail: { roleKey: "admin" },
+    })
+  );
+} catch (storageError) {
+        console.error("Brand logo storage failed:", storageError);
+        showToast("Logo could not be saved. Storage limit reached.", "error");
+        setSaving(false);
+        return;
+      }
+
       setEditing(false);
       showToast("Organization details saved");
       syncProfileCompleted(true);
@@ -3778,6 +4106,59 @@ const AdminDetailsTab = ({ accent, returnTo, onProfileComplete }) => {
         <p className="text-xs font-bold text-gray-400 dark:text-slate-500 uppercase tracking-wider mb-3 flex items-center gap-2">
           <Building2 className="w-3.5 h-3.5" /> Organization Info
         </p>
+                <div className="mb-4 rounded-xl border border-gray-200 dark:border-white/10 p-4">
+          <label className="block text-sm font-semibold text-gray-700 dark:text-white mb-3">
+            Brand Logo
+          </label>
+
+          <div className="flex flex-wrap items-center gap-4">
+            {draftBrandLogo ? (
+              <img
+                src={draftBrandLogo}
+                alt="Brand Logo"
+                className="w-20 h-20 object-contain rounded-lg border border-gray-200 dark:border-white/10 p-2"
+              />
+            ) : (
+              <div className="w-20 h-20 rounded-lg border border-dashed border-gray-300 dark:border-white/20 flex items-center justify-center text-xs text-gray-400">
+                No Logo
+              </div>
+            )}
+
+            {editing && (
+              <div className="flex flex-wrap gap-2">
+                <input
+                  ref={brandLogoInputRef}
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  onChange={handleBrandLogoChange}
+                  className="hidden"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => brandLogoInputRef.current?.click()}
+                  className={`px-3 py-2 rounded-lg text-sm text-white ${ac.btn}`}
+                >
+                  <Upload className="inline w-4 h-4 mr-1" />
+                  {draftBrandLogo ? "Change Logo" : "Upload Logo"}
+                </button>
+
+                {draftBrandLogo && (
+                  <button
+                    type="button"
+                    onClick={() => setDraftBrandLogo("")}
+                    className="px-3 py-2 rounded-lg text-sm border border-red-300 text-red-600"
+                  >
+                    Remove Logo
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+          <p className="text-xs text-gray-400 mt-2">
+            PNG, JPG or WEBP · Maximum 2 MB
+          </p>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <DetailField icon={Building2} label="Organization Name">
             {editing ? (
@@ -4780,7 +5161,13 @@ const IlmDemoProfilePage = ({
     (targetFromUrl === "role" || targetFromUrl === "password"
       ? targetFromUrl
       : null);
-  const VALID_PROFILE_TABS = ["profile", "details", "security", "billing"];
+ const VALID_PROFILE_TABS = [
+  "profile",
+  "edit",
+  "details",
+  "security",
+  "billing",
+];
   // Bug fix: activeTab used to be plain local state, so refreshing the
   // page while on "Details"/"Security"/"Billing" always dropped the user
   // back onto the default "Profile Info" tab — an unwanted redirect away
@@ -4858,33 +5245,51 @@ const IlmDemoProfilePage = ({
   // the real name/email show immediately, even before — or if —
   // getMyProfile() resolves.
   const [user, setUser] = useState(() => {
-    const lu = getLocalUser();
-    const initial = (lu.name || ROLE_CONFIG[roleKey].name)
-      .charAt(0)
-      .toUpperCase();
-    return {
-      ...ROLE_CONFIG[roleKey],
-      name: lu.name || ROLE_CONFIG[roleKey].name,
-      email: lu.email || ROLE_CONFIG[roleKey].email,
-      avatar: initial,
-    };
-  });
+  const lu = getLocalUser();
+
+  const roleSpecificName =
+    localStorage.getItem(`ilmora_full_name:${initialRoleKey}`);
+
+  const initialName =
+    roleSpecificName || lu.name || ROLE_CONFIG[initialRoleKey].name;
+
+  return {
+    ...ROLE_CONFIG[initialRoleKey],
+    name: initialName,
+    email: lu.email || ROLE_CONFIG[initialRoleKey].email,
+    avatar: initialName.charAt(0).toUpperCase(),
+  };
+});
 
   // Fires from ProfileInfoTab after a successful role change. Updates the
   // local roleKey + user object (label/accent/plan/etc come from
   // ROLE_CONFIG) while keeping the person's real name/email/id/avatar.
-  const handleRoleUpdate = (newRoleKey) => {
-    if (!ROLE_CONFIG[newRoleKey]) return;
-    setRoleKey(newRoleKey);
-    setUser((prev) => ({
-      ...prev,
-      ...ROLE_CONFIG[newRoleKey],
-      name: prev.name,
-      email: prev.email,
-      id: prev.id,
-      avatar: prev.avatar,
-    }));
-  };
+    const handleRoleUpdate = (newRoleKey) => {
+  if (!ROLE_CONFIG[newRoleKey]) return;
+
+  const roleSpecificName =
+    localStorage.getItem(`ilmora_full_name:${newRoleKey}`) ||
+    getLocalUser().name ||
+    ROLE_CONFIG[newRoleKey].name;
+
+  setRoleKey(newRoleKey);
+
+  setUser((prev) => ({
+    ...prev,
+    ...ROLE_CONFIG[newRoleKey],
+    name: roleSpecificName,
+    email: prev.email,
+    id: ROLE_CONFIG[newRoleKey].id,
+    avatar: roleSpecificName.charAt(0).toUpperCase(),
+  }));
+
+  // lets IlmOraDemoPage re-read the active role's name for the navbar
+  window.dispatchEvent(
+    new CustomEvent("ilmora:full-name-updated", {
+      detail: { roleKey: newRoleKey, fullName: roleSpecificName },
+    }),
+  );
+};
 
   useEffect(() => {
     let cancelled = false;
@@ -4905,13 +5310,16 @@ const IlmDemoProfilePage = ({
         if (cancelled) return;
         const data = res.data;
         const lu = getLocalUser();
-        const roleLabel = (() => {
-          if (!data?.roles) return ROLE_CONFIG[roleKey].label;
-          const r = data.roles.toString().toLowerCase();
-          return r.charAt(0).toUpperCase() + r.slice(1);
-        })();
-        const apiName =
-          data?.displayName || lu.name || ROLE_CONFIG[roleKey].name;
+        const roleLabel = ROLE_CONFIG[roleKey].label;
+        const roleSpecificName = localStorage.getItem(
+  `ilmora_full_name:${roleKey}`
+);
+
+const apiName =
+  roleSpecificName ||
+  data?.displayName ||
+  lu.name ||
+  ROLE_CONFIG[roleKey].name;
         const apiEmail = data?.email || lu.email || ROLE_CONFIG[roleKey].email;
         // Display-only ID shown in the UI (e.g. "STU-0012") — unrelated to
         // the real numeric backend userId used for plan/payment calls.
@@ -4965,12 +5373,16 @@ const IlmDemoProfilePage = ({
   }, [pathname]);
 
   const handleProfileUpdate = (updatedForm) => {
-    setUser((prev) => ({
+  setUser((prev) => {
+    const updatedName = updatedForm?.name ?? prev.name;
+
+    return {
       ...prev,
-      name: updatedForm.name,
-      avatar: updatedForm.name.charAt(0).toUpperCase(),
-    }));
-  };
+      name: updatedName,
+      avatar: updatedName?.charAt(0)?.toUpperCase() || prev.avatar,
+    };
+  });
+};
 
   const localProfileCompleted = (() => {
     try {
@@ -4989,21 +5401,22 @@ const IlmDemoProfilePage = ({
   ];
 
   const tabs = [
-    { id: "profile", label: "Profile Info", icon: User },
-    {
-      id: "details",
-      label:
-        roleKey === "admin" || roleKey === "business"
-          ? "Organization Details"
-          : "Details",
-      icon:
-        roleKey === "admin" || roleKey === "business"
-          ? Building2
-          : GraduationCap,
-    },
-    { id: "security", label: "Security", icon: Shield },
-    { id: "billing", label: "Billing", icon: CreditCard },
-  ];
+  { id: "profile", label: "Profile Info", icon: User },
+  { id: "edit", label: "Edit Profile", icon: Edit3 },
+  {
+    id: "details",
+    label:
+      roleKey === "admin" || roleKey === "business"
+        ? "Organization Details"
+        : "Details",
+    icon:
+      roleKey === "admin" || roleKey === "business"
+        ? Building2
+        : GraduationCap,
+  },
+  { id: "security", label: "Security", icon: Shield },
+  { id: "billing", label: "Billing", icon: CreditCard },
+];
 
   // "Edit Role" / "Change Password" navbar shortcuts land here with a
   // scrollTarget ("role" | "password"). Once loading is done and the
@@ -5041,7 +5454,7 @@ const IlmDemoProfilePage = ({
 
   return (
     <div className="min-h-screen w-full bg-[#F8F7FA] dark:bg-[#0a0a0f] transition-colors duration-300">
-      <div className="w-full px-3 sm:px-6 lg:px-10 py-4 sm:py-8">
+      <div className="w-full max-w-[1600px] mx-auto px-3 sm:px-5 lg:px-6 py-4 sm:py-5">
         {error && (
           <div className="mb-6 px-4 py-3 rounded-2xl bg-red-50 dark:bg-red-500/10 border border-red-200 dark:border-red-500/30 text-red-600 dark:text-red-400 text-sm">
             {error}
@@ -5062,7 +5475,7 @@ const IlmDemoProfilePage = ({
         )}
 
         {/* SIDEBAR + MAIN COLUMN */}
-        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-[250px_minmax(0,1fr)] gap-4 lg:gap-5 items-start">
           <ProfileSidebarNav
             user={user}
             tabs={tabs}
@@ -5071,7 +5484,7 @@ const IlmDemoProfilePage = ({
             accent={user.accent}
           />
 
-          <div className="flex-1 min-w-0 w-full space-y-4 sm:space-y-6">
+          <div className="min-w-0 w-full space-y-4">
             {/* HERO */}
             <ProfileHeroCard
               user={user}
@@ -5087,32 +5500,34 @@ const IlmDemoProfilePage = ({
             />
 
             {/* MAIN CONTENT + RIGHT RAIL */}
-            <div className="flex flex-col xl:flex-row gap-4 sm:gap-6 items-start">
+            <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-4 items-start">
               <div className="flex-1 min-w-0 w-full rounded-2xl shadow-sm bg-white dark:bg-white/[0.03] border border-gray-100 dark:border-white/10">
                 <div className="p-4 sm:p-5 lg:p-6">
-                  {activeTab === "profile" && (
-                    <ProfileInfoTab
-                      user={user}
-                      accent={user.accent}
-                      onProfileUpdate={handleProfileUpdate}
-                      returnTo={returnTo}
-                      roleKey={roleKey}
-                      onRoleUpdate={handleRoleUpdate}
-                      onProfileComplete={onProfileComplete}
-                      swapRoleNavTarget={effectiveScrollTarget}
-                      clearRoleTarget={() => {
-                        setSearchParams(
-                          (prev) => {
-                            const next = new URLSearchParams(prev);
-                            if (next.get("target") === "role")
-                              next.delete("target");
-                            return next;
-                          },
-                          { replace: true },
-                        );
-                      }}
-                    />
-                  )}
+                 {(activeTab === "profile" || activeTab === "edit") && (
+  <ProfileInfoTab
+    key={activeTab}
+    user={user}
+    accent={user.accent}
+    onProfileUpdate={handleProfileUpdate}
+    returnTo={returnTo}
+    roleKey={roleKey}
+    onRoleUpdate={handleRoleUpdate}
+    onProfileComplete={onProfileComplete}
+    swapRoleNavTarget={effectiveScrollTarget}
+    startEditing={activeTab === "edit"}
+    clearRoleTarget={() => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev);
+          if (next.get("target") === "role")
+            next.delete("target");
+          return next;
+        },
+        { replace: true },
+      );
+    }}
+  />
+)}
                   {activeTab === "details" && (
                     <DetailsTab
                       accent={user.accent}
@@ -5135,7 +5550,7 @@ const IlmDemoProfilePage = ({
                 </div>
               </div>
 
-              <div className="w-full xl:w-80 shrink-0 space-y-4 sm:space-y-6">
+             <div className="w-full min-w-0 space-y-4">
                 <ProfileTipsCard accent={user.accent} items={completionItems} />
                 <SecurityStatusCard
                   accent={user.accent}

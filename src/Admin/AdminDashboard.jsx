@@ -416,6 +416,25 @@ function MiniCalendar({ t }) {
 const AdminDashboard = () => {
   const navigate = useNavigate();
 
+  const [portalName, setPortalName] = useState(() =>
+    localStorage.getItem("ilmora_portal_name:admin") || "ADMIN PORTAL"
+  );
+
+  useEffect(() => {
+    const updatePortalName = () => {
+      setPortalName(
+        localStorage.getItem("ilmora_portal_name:admin") || "ADMIN PORTAL"
+      );
+    };
+
+    updatePortalName();
+    window.addEventListener("ilmora-portal-name-updated", updatePortalName);
+
+    return () => {
+      window.removeEventListener("ilmora-portal-name-updated", updatePortalName);
+    };
+  }, []);
+
   /* ─────────────────────────────────────────────────────────
      THEME DETECTION — FIXED
      App.jsx only ever toggles the "dark" class on <html>:
@@ -537,7 +556,7 @@ const AdminDashboard = () => {
                 fontFamily: FONT_FAMILY,
               }}
             >
-              Platform Overview
+              {portalName}
             </span>
           </div>
           <DashboardGreeting t={t} />

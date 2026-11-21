@@ -268,6 +268,25 @@ const Dashboard = () => {
   const location = useLocation();
   const [, setSearchParams] = useSearchParams();
 
+  const [portalName, setPortalName] = useState(() =>
+    localStorage.getItem("ilmora_portal_name:trainer") || "TRAINER PORTAL"
+  );
+
+  useEffect(() => {
+    const updatePortalName = () => {
+      setPortalName(
+        localStorage.getItem("ilmora_portal_name:trainer") || "TRAINER PORTAL"
+      );
+    };
+
+    updatePortalName();
+    window.addEventListener("ilmora-portal-name-updated", updatePortalName);
+
+    return () => {
+      window.removeEventListener("ilmora-portal-name-updated", updatePortalName);
+    };
+  }, []);
+
   // Jab yeh component /onboarding ke andar embed hokar render ho raha ho
   // (IlmOraDemoPage se), tab card click par real route pe navigate() karne
   // se poora /onboarding shell chhoot jaata — isliye wahan sirf ?section=
@@ -531,7 +550,7 @@ const Dashboard = () => {
                 fontFamily: FONT_FAMILY,
               }}
             >
-              Trainer Portal
+             {portalName}
             </span>
           </div>
           <DashboardGreeting t={t} />

@@ -1478,6 +1478,13 @@ const NAV = [
     icon: ic.video,
     permission: null, // swap for a PERMISSIONS.* value if you want to gate it
   },
+   {
+  type: "item",
+  label: "Workshops",
+  path: "/superadmin/workshops-management",
+  icon: "M12 3L2 8l10 5 10-5-10-5z M6 10.5V16l6 3 6-3v-5.5",
+  permission: null,
+},
   {
     type: "item", // ✅ NEW
     label: "Roadmap",

@@ -46,15 +46,20 @@ export function getFormattedTime(date = new Date()) {
  */
 export function getCurrentUserName() {
   try {
+    // 1. Latest profile name saved by Profile Info
+    const savedName = localStorage.getItem("userName");
+    if (savedName?.trim()) return savedName.trim();
+
+    // 2. Auth user details
     const rawUser = localStorage.getItem("lms_user");
     if (rawUser) {
       const user = JSON.parse(rawUser);
       const name = user?.name || user?.fullName || user?.displayName;
-      if (name) return name;
+      if (name?.trim()) return name.trim();
       if (user?.email) return user.email.split("@")[0];
     }
   } catch {
-    // malformed lms_user JSON — fall through to token lookup
+    // Continue to token lookup
   }
 
   try {
@@ -65,7 +70,7 @@ export function getCurrentUserName() {
       if (payload?.sub) return String(payload.sub).split("@")[0];
     }
   } catch {
-    // malformed/missing token — fall through to default
+    // Continue to fallback
   }
 
   return "there";

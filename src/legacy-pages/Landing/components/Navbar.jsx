@@ -147,23 +147,36 @@ const CERT_ICON_COLORS = {
   cisco: "text-sky-600",
 };
 
-// "Career Tracks" dropdown — replaces the old "Skills" tab (Skills is commented out for now).
-// Items are classified into groups (shown as column headings in the mega menu).
-// To add a new category: add its name to CAREER_TRACK_GROUPS and use the same
-// name in the item's `group` field.
-const CAREER_TRACK_GROUPS = ["Career Tracks", "Personal Growth", "Life Skills", "Assessments"];
+// Career Tracks mega menu groups
+const CAREER_TRACK_GROUPS = [
+  "Career Tracks",
+  "Personal Growth",
+  "Life Skills",
+  "Assessments",
+  "Legal",
+];
 
 const CAREER_TRACK_ITEMS = [
+  // Career Tracks
   { key: "all-career", title: "All Career Tracks", route: "/career", group: "Career Tracks" },
   { key: "development-engineering", title: "Development Engineering Platform", route: "/career?platform=dev", group: "Career Tracks" },
   { key: "ai-agent-ai", title: "AI – Agent AI", route: "/career?platform=ai", group: "Career Tracks" },
-    { key: "contact-center", title: "ToraCX – Agentic CX", route: "/toracx-agentic-cx", group: "Career Tracks" },
+  { key: "contact-center", title: "ToraCX – Agentic CX", route: "/toracx-agentic-cx", group: "Career Tracks" },
+
+  // Personal Growth
   { key: "personality-development", title: "Personality Development", route: "/personality-development", group: "Personal Growth" },
-    { key: "iq-test", title: "IQ Test", route: "/iq-test", group: "Assessments" },
-    { key: "life-skills-ai", title: "Learn with an AI Coach", route: "/life-skills/ai", group: "Life Skills" },
+
+  // Life Skills
+  { key: "life-skills-ai", title: "Learn with an AI Coach", route: "/life-skills/ai", group: "Life Skills" },
   { key: "life-skills-own", title: "Learn on Your Own", route: "/life-skills", group: "Life Skills" },
-    { key: "life-skills-storyline", title: "Storyline", route: "/storyline", group: "Life Skills" },
+  { key: "life-skills-storyline", title: "Storyline", route: "/storyline", group: "Life Skills" },
   { key: "life-skills-futurism", title: "Futurism", route: "/futurism", group: "Life Skills" },
+
+  // Assessments
+  { key: "iq-test", title: "IQ Test", route: "/iq-test", group: "Assessments" },
+
+  // Legal
+  { key: "law", title: "Law – Training & Consulting", route: "/ilmoralaw", group: "Legal" },
 ];
 // All Courses dropdown — every item opens its own page (same pages as the
 // sidebar on /all-courses).
@@ -413,7 +426,7 @@ function NavbarSearch({ theme }) {
             <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-start gap-8 min-h-full">
               {/* Left dark feature card (same as mega menu) */}
               <div
-                className="relative hidden lg:flex flex-shrink-0 w-[220px] h-[220px] rounded-md overflow-hidden text-left p-4 flex-col justify-end border border-white/10"
+                className="relative hidden lg:flex flex-shrink-0 w-[165px] h-[165px] rounded-md overflow-hidden text-left p-4 flex-col justify-end border border-white/10"
                 style={{ background: "linear-gradient(160deg,#0b1020 0%,#14182b 60%,#1b1224 100%)" }}
               >
                 <span
@@ -430,7 +443,7 @@ function NavbarSearch({ theme }) {
                   className="absolute left-0 right-0 bottom-0 h-[3px] bg-gradient-to-r from-green-600 via-[#F97316] to-transparent"
                 />
                 <span className="relative text-[13px] text-white underline underline-offset-2">Find</span>
-                <span className="relative text-[26px] font-semibold leading-tight text-white">Search</span>
+                <span className="relative text-[21px] font-semibold leading-tight text-white">Search</span>
               </div>
 
               {/* Right: search form */}
@@ -1030,7 +1043,7 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
               theme === "dark" ? "bg-[#161616] border-white/10" : "bg-white border-slate-200"
             }`}
           >
-            <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 flex items-start gap-8">
+            <div className="w-full max-w-none mx-auto px-4 py-4 flex items-start gap-4 box-border">
               {/* Left dark feature card */}
               <button
                 type="button"
@@ -1070,9 +1083,9 @@ export default function Navbar({ theme, toggleTheme, setShowLoginModal }) {
 
               {/* Link columns — grouped if the menu has groups, else 5 per column */}
               {MEGA_MENUS[openMenu].groups ? (
-                <div className="flex items-start gap-12">
+                <div className="flex flex-1 min-w-0 items-start gap-4">
                   {MEGA_MENUS[openMenu].groups.map((g) => (
-                    <div key={g} className="min-w-[210px]">
+                    <div key={g} className="flex-1 min-w-0">
                       <p
                         className={`mb-1 text-[11px] font-semibold uppercase tracking-widest ${
                           theme === "dark" ? "text-gray-500" : "text-slate-500"
