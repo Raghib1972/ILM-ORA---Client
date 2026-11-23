@@ -1,3 +1,4 @@
+
 // "use client";
 
 // import {
@@ -37,6 +38,13 @@
 
 // // Page (grid) variant: how many cards per "Load more" step
 // const PAGE_SIZE = 12;
+
+// // favourites (heart) are remembered in this browser; counts live in the backend
+// const FAV_KEY = "watchnow_favs";
+// // same video opened again within this window is not counted twice
+// const VIEW_DEDUPE_MS = 30 * 1000;
+// const VIEWED_KEY = "watchnow_viewed";
+// const isRealId = (id) => !String(id).startsWith("dummy-");
 
 // /* ============================================================
 //    Category meta — one line telling a normal person WHY this
@@ -206,7 +214,9 @@
 //     return () => {
 //       active = false;
 //     };
-//   }, [item]);
+//     // depend on the video source, not the whole object (counts change it)
+//     // eslint-disable-next-line react-hooks/exhaustive-deps
+//   }, [item.id, item.videoFileName, item.externalVideoUrl]);
 
 //   // Explicit destroy-on-unmount for <video> sources.
 //   useEffect(() => {
@@ -395,9 +405,9 @@
 // /* ============================================================
 //    Story card (carousel / homepage) — click opens the modal
 //    ============================================================ */
-// function StoryCard({ item, onOpen }) {
-//   const [liked, setLiked] = useState(false);
+// function StoryCard({ item, onOpen, liked, onToggleLike }) {
 //   const views = getViews(item);
+//   const likes = getLikes(item);
 
 //   return (
 //     <article
@@ -419,7 +429,7 @@
 //           aria-label={liked ? "Remove from favourites" : "Add to favourites"}
 //           onClick={(e) => {
 //             e.stopPropagation();
-//             setLiked((v) => !v);
+//             onToggleLike();
 //           }}
 //           className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur flex items-center justify-center shadow-md border-none cursor-pointer hover:scale-110 transition-transform"
 //         >
@@ -463,9 +473,15 @@
 //             </span>
 //           </div>
 
-//           <span className="inline-flex items-center gap-1.5 shrink-0 text-[13px] text-slate-500 dark:text-slate-400">
-//             <Eye className="w-4 h-4" />
-//             {formatViews(views)}
+//           <span className="inline-flex items-center gap-3 shrink-0 text-[13px] text-slate-500 dark:text-slate-400">
+//             <span className="inline-flex items-center gap-1">
+//               <Heart className="w-4 h-4" />
+//               {formatViews(likes)}
+//             </span>
+//             <span className="inline-flex items-center gap-1.5">
+//               <Eye className="w-4 h-4" />
+//               {formatViews(views)}
+//             </span>
 //           </span>
 //         </div>
 //       </div>
@@ -479,6 +495,7 @@
 //    ============================================================ */
 // function PageCard({ item, liked, onToggleLike, onOpen }) {
 //   const views = getViews(item);
+//   const likes = getLikes(item);
 
 //   return (
 //     <article
@@ -536,9 +553,15 @@
 //               {item.personName}
 //             </span>
 //           </div>
-//           <span className="inline-flex items-center gap-1 shrink-0 text-[12px] text-slate-400">
-//             <Eye className="w-3.5 h-3.5" />
-//             {formatViews(views)}
+//           <span className="inline-flex items-center gap-2.5 shrink-0 text-[12px] text-slate-400">
+//             <span className="inline-flex items-center gap-1">
+//               <Heart className="w-3.5 h-3.5" />
+//               {formatViews(likes)}
+//             </span>
+//             <span className="inline-flex items-center gap-1">
+//               <Eye className="w-3.5 h-3.5" />
+//               {formatViews(views)}
+//             </span>
 //           </span>
 //         </div>
 //       </div>
@@ -549,14 +572,16 @@
 // /* ============================================================
 //    Journey modal — details + inline video player
 //    ============================================================ */
-// function StoryModal({ item, onClose }) {
+// function StoryModal({ item, onClose, liked, onToggleLike }) {
 //   const navigate = useNavigate();
 //   const [playing, setPlaying] = useState(false);
 
 //   // new item -> back to preview state
 //   useEffect(() => {
 //     setPlaying(false);
-//   }, [item]);
+//     // only when a different video is opened (not when its counts change)
+//     // eslint-disable-next-line react-hooks/exhaustive-deps
+//   }, [item?.id]);
 
 //   useEffect(() => {
 //     if (!item) return undefined;
@@ -678,6 +703,24 @@
 //               </div>
 //             </div>
 
+//             <div className="flex items-center gap-4 mb-3 text-[13px] text-slate-500 dark:text-slate-400">
+//               <span className="inline-flex items-center gap-1.5">
+//                 <Eye className="w-4 h-4" />
+//                 {formatViews(getViews(item))} views
+//               </span>
+//               <button
+//                 type="button"
+//                 onClick={onToggleLike}
+//                 aria-label={liked ? "Remove from favourites" : "Add to favourites"}
+//                 className="inline-flex items-center gap-1.5 p-0 bg-transparent border-none cursor-pointer text-inherit hover:text-red-500 transition-colors"
+//               >
+//                 <Heart
+//                   className={`w-4 h-4 ${liked ? "text-red-500 fill-red-500" : ""}`}
+//                 />
+//                 {formatViews(getLikes(item))} likes
+//               </button>
+//             </div>
+
 //             <p
 //               className="m-0 text-sm text-slate-600 dark:text-slate-300 leading-relaxed"
 //               style={{ overflowWrap: "anywhere" }}
@@ -783,7 +826,7 @@
 //    ============================================================ */
 // const SPEED = 45; // px per second — chhota = slow, bada = fast
 
-// function WatchNowCarousel({ stories, onSelect, paused }) {
+// function WatchNowCarousel({ stories, onSelect, paused, favs, onToggleFav }) {
 //   const { visibleCount, isMobile } = useVisibleCount();
 
 //   const containerRef = useRef(null);
@@ -818,37 +861,40 @@
 //     return () => ro.disconnect();
 //   }, []);
 
-//   const cardWidth =
+//    const cardWidth =
 //     containerWidth > 0
 //       ? (containerWidth - GAP * (visibleCount - 1)) / visibleCount
 //       : 0;
 //   const step = cardWidth + GAP;
 
+//   // cards already screen par fit ho rahe hain -> no marquee, no duplicates
+//   const isStatic = stories.length <= visibleCount;
+
 //   // One "set" is repeated until it is wider than the screen,
 //   // then rendered twice so the loop never shows a gap.
-//   const baseSet = useMemo(() => {
-//     if (!stories.length || step <= 0) return stories;
+//     const baseSet = useMemo(() => {
+//     if (isStatic || !stories.length || step <= 0) return stories;
 //     const repeats = Math.max(
 //       1,
 //       Math.ceil((containerWidth + step) / (stories.length * step)),
 //     );
 //     return Array.from({ length: repeats }).flatMap(() => stories);
-//   }, [stories, containerWidth, step]);
+//   }, [stories, containerWidth, step, isStatic]);
 
 //   const setWidth = baseSet.length * step;
 
-//   const trackItems = useMemo(
+//     const trackItems = useMemo(
 //     () =>
-//       [...baseSet, ...baseSet].map((item, i) => ({
+//       (isStatic ? baseSet : [...baseSet, ...baseSet]).map((item, i) => ({
 //         item,
 //         key: `${i}-${item.id}`,
 //       })),
-//     [baseSet],
+//     [baseSet, isStatic],
 //   );
 
-//   // Animation loop
+//     // Animation loop
 //   useEffect(() => {
-//     if (!setWidth) return undefined;
+//     if (!setWidth || isStatic) return undefined;
 //     let raf;
 //     let last = performance.now();
 
@@ -887,9 +933,9 @@
 //       raf = requestAnimationFrame(tick);
 //     };
 
-//     raf = requestAnimationFrame(tick);
+//         raf = requestAnimationFrame(tick);
 //     return () => cancelAnimationFrame(raf);
-//   }, [setWidth]);
+//   }, [setWidth, isStatic]);
 
 //   const goNext = useCallback(() => {
 //     pendingRef.current += step;
@@ -904,7 +950,8 @@
 //   };
 
 //   // Drag / swipe (pointer events cover mouse + touch)
-//   const onPointerDown = (e) => {
+//     const onPointerDown = (e) => {
+//     if (isStatic) return;
 //     movedRef.current = false;
 //     dragRef.current = {
 //       dragging: true,
@@ -950,7 +997,7 @@
 //     }
 //   };
 
-//   const showArrows = stories.length > 1;
+//     const showArrows = !isStatic;
 
 //   return (
 //     <div
@@ -977,10 +1024,15 @@
 //         onPointerLeave={endDrag}
 //         onPointerCancel={endDrag}
 //       >
-//         <div
+//                 <div
 //           ref={trackRef}
 //           className="flex items-stretch select-none py-2"
-//           style={{ gap: `${GAP}px`, willChange: "transform" }}
+//           style={{
+//             gap: `${GAP}px`,
+//             willChange: isStatic ? "auto" : "transform",
+//             justifyContent: isStatic ? "center" : "flex-start",
+//             transform: isStatic ? "none" : undefined,
+//           }}
 //         >
 //           {trackItems.map(({ item, key }) => (
 //             <div
@@ -991,7 +1043,12 @@
 //                 flexShrink: 0,
 //               }}
 //             >
-//               <StoryCard item={item} onOpen={() => onSelect(item)} />
+//               <StoryCard
+//                 item={item}
+//                 onOpen={() => onSelect(item)}
+//                 liked={favs.has(String(item.id))}
+//                 onToggleLike={() => onToggleFav(item.id)}
+//               />
 //             </div>
 //           ))}
 //         </div>
@@ -1273,6 +1330,75 @@
 //   // real data when the API has published stories, otherwise dummy data
 //   const list = stories.length > 0 ? stories : DUMMY_STORIES;
 
+//   // keep the latest favourites readable inside callbacks
+//   const favsRef = useRef(favs);
+//   favsRef.current = favs;
+
+//   // load saved hearts once (browser only)
+//   useEffect(() => {
+//     try {
+//       const saved = JSON.parse(localStorage.getItem(FAV_KEY) || "[]");
+//       if (Array.isArray(saved)) {
+//         const s = new Set(saved.map(String));
+//         favsRef.current = s;
+//         setFavs(s);
+//       }
+//     } catch {
+//       /* ignore */
+//     }
+//   }, []);
+
+//   // put the real { views, likes } from the backend into the list + open modal
+//   const patchCounts = useCallback((storyId, counts) => {
+//     if (!counts) return;
+//     const merge = (s) =>
+//       String(s.id) === String(storyId)
+//         ? {
+//             ...s,
+//             views: Number(counts.views ?? s.views ?? 0),
+//             likes: Number(counts.likes ?? s.likes ?? 0),
+//           }
+//         : s;
+//     setStories((prev) => prev.map(merge));
+//     setSelected((prev) => (prev ? merge(prev) : prev));
+//   }, []);
+
+//   // open the modal + count one view on the backend
+//   const openStory = useCallback(
+//     (item) => {
+//       setSelected(item);
+//       if (!item || item.isDummy || !isRealId(item.id)) return;
+
+//       const key = String(item.id);
+//       const now = Date.now();
+//       let seen = {};
+//       try {
+//         seen = JSON.parse(sessionStorage.getItem(VIEWED_KEY) || "{}");
+//       } catch {
+//         seen = {};
+//       }
+//       if (now - (seen[key] || 0) < VIEW_DEDUPE_MS) return;
+//       seen[key] = now;
+//       try {
+//         sessionStorage.setItem(VIEWED_KEY, JSON.stringify(seen));
+//       } catch {
+//         /* ignore */
+//       }
+
+//       videoService
+//         .incrementWatchNowView(item.id)
+//         .then((res) => patchCounts(item.id, res.data))
+//         .catch((err) =>
+//           console.error(
+//             "WatchNow view count failed:",
+//             err.response?.status,
+//             err.response?.data || err.message,
+//           ),
+//         );
+//     },
+//     [patchCounts],
+//   );
+
 //   // /watch-now?video=<id> -> open that story's modal once
 //   useEffect(() => {
 //     if (loading || deepLinkHandled.current || typeof window === "undefined")
@@ -1281,7 +1407,7 @@
 //     const vid = new URLSearchParams(window.location.search).get("video");
 //     if (!vid) return;
 //     const found = list.find((s) => String(s.id) === String(vid));
-//     if (found) setSelected(found);
+//     if (found) openStory(found);
 //   }, [loading, list]);
 
 //   const categories = useMemo(() => {
@@ -1336,15 +1462,48 @@
 //     }
 //   }, [filtered, sortKey, favs]);
 
-//   const toggleFav = useCallback((storyId) => {
-//     setFavs((prev) => {
-//       const next = new Set(prev);
+//   const toggleFav = useCallback(
+//     (storyId) => {
 //       const k = String(storyId);
-//       if (next.has(k)) next.delete(k);
+//       const wasLiked = favsRef.current.has(k);
+
+//       const save = (set) => {
+//         favsRef.current = set;
+//         setFavs(set);
+//         try {
+//           localStorage.setItem(FAV_KEY, JSON.stringify([...set]));
+//         } catch {
+//           /* ignore */
+//         }
+//       };
+
+//       const next = new Set(favsRef.current);
+//       if (wasLiked) next.delete(k);
 //       else next.add(k);
-//       return next;
-//     });
-//   }, []);
+//       save(next); // heart changes instantly
+
+//       if (!isRealId(k)) return; // dummy card -> local only
+
+//       const req = wasLiked
+//         ? videoService.unlikeWatchNow(storyId)
+//         : videoService.likeWatchNow(storyId);
+//       req
+//         .then((res) => patchCounts(storyId, res.data))
+//         .catch((err) => {
+//           console.error(
+//             "WatchNow like failed:",
+//             err.response?.status,
+//             err.response?.data || err.message,
+//           );
+//           // revert the heart if the backend rejected it
+//           const back = new Set(favsRef.current);
+//           if (wasLiked) back.add(k);
+//           else back.delete(k);
+//           save(back);
+//         });
+//     },
+//     [patchCounts],
+//   );
 
 //   const catHint =
 //     activeCat === "All"
@@ -1418,14 +1577,19 @@
 //                 items={pageItems}
 //                 favs={favs}
 //                 onToggleFav={toggleFav}
-//                 onSelect={setSelected}
+//                 onSelect={openStory}
 //                 sortKey={sortKey}
 //                 onSortChange={setSortKey}
 //               />
 //             )}
 //           </div>
 
-//           <StoryModal item={selected} onClose={closeModal} />
+// <StoryModal
+//             item={selected}
+//             onClose={closeModal}
+//             liked={!!selected && favs.has(String(selected.id))}
+//             onToggleLike={() => selected && toggleFav(selected.id)}
+//           />
 //         </section>
 //       </PublicLayout>
 //     );
@@ -1451,8 +1615,10 @@
 //           <WatchNowCarousel
 //             key={activeCat}
 //             stories={filtered}
-//             onSelect={setSelected}
+//             onSelect={openStory}
 //             paused={!!selected}
+//             favs={favs}
+//             onToggleFav={toggleFav}
 //           />
 //         )}
 
@@ -1463,10 +1629,24 @@
 //         )}
 //       </div>
 
-//       <StoryModal item={selected} onClose={closeModal} />
+// <StoryModal
+//         item={selected}
+//         onClose={closeModal}
+//         liked={!!selected && favs.has(String(selected.id))}
+//         onToggleLike={() => selected && toggleFav(selected.id)}
+//       />
 //     </section>
 //   );
 // }
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1814,12 +1994,18 @@ function avatarColor(name = "") {
 /* ============================================================
    CAROUSEL CONFIG
    ============================================================ */
-const GAP = 20; // px gap between cards, also used in width math
+const GAP = 16; // px gap between cards, also used in width math
+// card width never grows past this, so cards stay compact on big monitors
+const MAX_CARD_W = 380;
+// on phones the card is a fixed compact width, so the next card peeks in
+const MAX_CARD_W_MOBILE = 270;
 
 function getVisibleCount(width) {
+  if (width >= 2200) return 6; // Very large monitors
+  if (width >= 1800) return 5; // Large desktop / big iMac
   if (width >= 1200) return 4; // Desktop / laptop
   if (width >= 900) return 3; // iPad Pro / large tablet landscape
-  if (width >= 641) return 2; // Tablets
+  if (width >= 641) return 2; // Tablets / iPad mini
   return 1; // Phones
 }
 
@@ -1885,7 +2071,7 @@ function Thumb({ thumbnail, alt, spinner = false }) {
       alt={alt}
       loading="lazy"
       draggable={false}
-            className="absolute inset-0 w-full h-full max-w-full object-cover transition-transform duration-500 group-hover:scale-105"
+      className="absolute inset-0 w-full h-full max-w-full object-cover transition-transform duration-500 group-hover:scale-105"
     />
   );
 }
@@ -1900,14 +2086,14 @@ function StoryCard({ item, onOpen, liked, onToggleLike }) {
   return (
     <article
       onClick={onOpen}
-      className="group h-full flex flex-col bg-white dark:bg-[#1a1d27] border border-slate-200/80 dark:border-white/10 rounded-[20px] p-2 cursor-pointer shadow-[0_2px_10px_rgba(15,23,42,0.06)] hover:shadow-[0_12px_30px_rgba(15,23,42,0.12)] hover:-translate-y-1 transition-all duration-300"
+      className="group h-full flex flex-col bg-white dark:bg-[#1a1d27] border border-slate-200/80 dark:border-white/10 rounded-2xl p-1.5 cursor-pointer shadow-[0_2px_10px_rgba(15,23,42,0.06)] hover:shadow-[0_12px_30px_rgba(15,23,42,0.12)] hover:-translate-y-1 transition-all duration-300"
     >
-      <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-800">
+      <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800">
         <Thumb thumbnail={item.thumbnail} alt={item.personName} />
         <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
 
         {item.category && (
-          <span className="absolute top-3 left-3 max-w-[70%] truncate text-[11px] font-semibold px-3 py-1.5 rounded-full bg-white/80 text-slate-800 backdrop-blur-md border border-white/70 shadow-md">
+          <span className="absolute top-2 left-2 max-w-[70%] truncate text-[10px] sm:text-[11px] font-semibold px-2.5 py-1 rounded-full bg-white/80 text-slate-800 backdrop-blur-md border border-white/70 shadow-md">
             {item.category}
           </span>
         )}
@@ -1919,55 +2105,55 @@ function StoryCard({ item, onOpen, liked, onToggleLike }) {
             e.stopPropagation();
             onToggleLike();
           }}
-          className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur flex items-center justify-center shadow-md border-none cursor-pointer hover:scale-110 transition-transform"
+          className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 backdrop-blur flex items-center justify-center shadow-md border-none cursor-pointer hover:scale-110 transition-transform"
         >
           <Heart
-            className={`w-[18px] h-[18px] transition-colors ${
+            className={`w-4 h-4 transition-colors ${
               liked ? "text-red-500 fill-red-500" : "text-slate-500"
             }`}
           />
         </button>
 
         <span className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <span className="w-12 h-12 rounded-full bg-white/95 flex items-center justify-center shadow-lg transition-transform duration-300 group-hover:scale-110">
-            <Play className="w-5 h-5 text-[#F97316] fill-[#F97316] ml-0.5" />
+          <span className="w-10 h-10 rounded-full bg-white/95 flex items-center justify-center shadow-lg transition-transform duration-300 group-hover:scale-110">
+            <Play className="w-4 h-4 text-[#F97316] fill-[#F97316] ml-0.5" />
           </span>
         </span>
 
         {item.duration && (
-          <span className="absolute bottom-3 right-3 inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-md bg-black/70 text-white">
+          <span className="absolute bottom-2 right-2 inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-md bg-black/70 text-white">
             <Clock className="w-3 h-3" /> {item.duration}
           </span>
         )}
       </div>
 
-      <div className="flex flex-col flex-1 px-2.5 pt-3 pb-2">
-        <h3 className="m-0 text-[15px] font-bold text-slate-900 dark:text-slate-100 truncate leading-snug">
+      <div className="flex flex-col flex-1 px-2 pt-2 pb-1.5">
+        <h3 className="m-0 text-sm font-normal text-slate-900 dark:text-slate-100 truncate leading-snug">
           {item.quote}
         </h3>
         {item.summary && (
-          <p className="mt-1 mb-0 text-[12.5px] leading-snug text-slate-500 dark:text-slate-400 line-clamp-2 min-h-[2.4em]">
+          <p className="mt-0.5 mb-0 text-[12px] leading-snug text-slate-500 dark:text-slate-400 truncate">
             {item.summary}
           </p>
         )}
 
-        <div className="mt-auto pt-3 flex items-center justify-between gap-2">
+        <div className="mt-auto pt-2 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
-            <span className="w-7 h-7 shrink-0 rounded-full bg-emerald-500 text-white text-[10px] font-bold flex items-center justify-center">
+            <span className="w-6 h-6 shrink-0 rounded-full bg-emerald-500 text-white text-[10px] font-bold flex items-center justify-center">
               {initials(item.personName)}
             </span>
-            <span className="text-[13px] font-medium text-slate-600 dark:text-slate-300 truncate">
+            <span className="text-[12px] font-medium text-slate-600 dark:text-slate-300 truncate">
               {item.personName}
             </span>
           </div>
 
-          <span className="inline-flex items-center gap-3 shrink-0 text-[13px] text-slate-500 dark:text-slate-400">
+          <span className="inline-flex items-center gap-2.5 shrink-0 text-[12px] text-slate-500 dark:text-slate-400">
             <span className="inline-flex items-center gap-1">
-              <Heart className="w-4 h-4" />
+              <Heart className="w-3.5 h-3.5" />
               {formatViews(likes)}
             </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Eye className="w-4 h-4" />
+            <span className="inline-flex items-center gap-1">
+              <Eye className="w-3.5 h-3.5" />
               {formatViews(views)}
             </span>
           </span>
@@ -1991,13 +2177,13 @@ function PageCard({ item, liked, onToggleLike, onOpen }) {
       className="group h-full flex flex-col bg-white dark:bg-[#1a1d27] border border-slate-200 dark:border-white/10 rounded-xl overflow-hidden cursor-pointer shadow-[0_1px_4px_rgba(15,23,42,0.05)] hover:shadow-[0_10px_28px_rgba(15,23,42,0.12)] transition-shadow duration-300"
     >
       {/* fixed ratio -> identical thumbnail size on every card */}
-      <div className="relative w-full aspect-[4/3] shrink-0 overflow-hidden bg-slate-100 dark:bg-slate-800">
+      <div className="relative w-full aspect-[16/10] shrink-0 overflow-hidden bg-slate-100 dark:bg-slate-800">
         <Thumb thumbnail={item.thumbnail} alt={item.personName} spinner />
 
         {/* play badge appears on hover — these are videos */}
         <span className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-black/20">
-          <span className="w-12 h-12 rounded-full bg-white/95 flex items-center justify-center shadow-lg">
-            <Play className="w-5 h-5 text-[#F97316] fill-[#F97316] ml-0.5" />
+          <span className="w-10 h-10 rounded-full bg-white/95 flex items-center justify-center shadow-lg">
+            <Play className="w-4 h-4 text-[#F97316] fill-[#F97316] ml-0.5" />
           </span>
         </span>
 
@@ -2008,7 +2194,7 @@ function PageCard({ item, liked, onToggleLike, onOpen }) {
             e.stopPropagation();
             onToggleLike();
           }}
-          className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-white/90 backdrop-blur flex items-center justify-center shadow-md border-none cursor-pointer opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
+          className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 backdrop-blur flex items-center justify-center shadow-md border-none cursor-pointer opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
         >
           <Heart
             className={`w-4 h-4 transition-colors ${
@@ -2018,17 +2204,17 @@ function PageCard({ item, liked, onToggleLike, onOpen }) {
         </button>
 
         {item.duration && (
-          <span className="absolute bottom-2.5 right-2.5 inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-md bg-black/70 text-white">
+          <span className="absolute bottom-2 right-2 inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-md bg-black/70 text-white">
             <Clock className="w-3 h-3" /> {item.duration}
           </span>
         )}
       </div>
 
-      <div className="px-3.5 pt-3 pb-3 mt-auto">
-        <h3 className="m-0 text-[13px] font-bold text-slate-900 dark:text-slate-100 truncate">
+      <div className="px-3 pt-2 pb-2.5 mt-auto">
+        <h3 className="m-0 text-[13px] font-normal text-slate-900 dark:text-slate-100 truncate">
           {item.quote}
         </h3>
-        <div className="mt-2.5 flex items-center justify-between gap-2">
+        <div className="mt-2 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
             <span
               className={`w-6 h-6 shrink-0 rounded-full ${avatarColor(
@@ -2115,16 +2301,16 @@ function StoryModal({ item, onClose, liked, onToggleLike }) {
     navigate(START_PATH);
   };
 
-    return createPortal(
+  return createPortal(
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-sm"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-3xl max-h-[92vh] overflow-y-auto bg-white dark:bg-[#1a1d27] rounded-3xl shadow-2xl"
+        className="relative w-full max-w-3xl max-h-[92vh] overflow-y-auto bg-white dark:bg-[#1a1d27] rounded-2xl sm:rounded-3xl shadow-2xl"
       >
         <button
           type="button"
@@ -2135,10 +2321,10 @@ function StoryModal({ item, onClose, liked, onToggleLike }) {
           <X className="w-4 h-4 text-slate-700" />
         </button>
 
-                  <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+        <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
           {/* Preview / player */}
           <div className="p-3 min-w-0 overflow-hidden">
-            <div className="group relative w-full max-w-full aspect-[4/3] md:aspect-auto md:h-full md:min-h-[300px] overflow-hidden rounded-2xl bg-black">
+            <div className="group relative w-full max-w-full aspect-[16/10] md:aspect-auto md:h-full md:min-h-[260px] overflow-hidden rounded-2xl bg-black">
               {playing ? (
                 <WatchNowSmartPlayer
                   item={item}
@@ -2149,8 +2335,8 @@ function StoryModal({ item, onClose, liked, onToggleLike }) {
                   <Thumb thumbnail={item.thumbnail} alt={item.personName} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
                   <span className="absolute inset-0 flex items-center justify-center">
-                    <span className="w-14 h-14 rounded-full bg-white/95 flex items-center justify-center shadow-lg transition-transform group-hover:scale-110">
-                      <Play className="w-6 h-6 text-[#F97316] fill-[#F97316] ml-0.5" />
+                    <span className="w-12 h-12 rounded-full bg-white/95 flex items-center justify-center shadow-lg transition-transform group-hover:scale-110">
+                      <Play className="w-5 h-5 text-[#F97316] fill-[#F97316] ml-0.5" />
                     </span>
                   </span>
                   {item.duration && (
@@ -2163,15 +2349,15 @@ function StoryModal({ item, onClose, liked, onToggleLike }) {
             </div>
           </div>
 
-                    {/* Details */}
-          <div className="p-5 md:p-6 md:pl-3 flex flex-col min-w-0">
+          {/* Details */}
+          <div className="p-4 md:p-5 md:pl-3 flex flex-col min-w-0">
             {item.category && (
               <span className="self-start text-[11px] font-semibold px-3 py-1 rounded-full bg-orange-50 text-[#F97316] dark:bg-orange-500/15">
                 {item.category}
               </span>
             )}
             <h3
-              className="mt-2 mb-1 text-xl font-bold text-slate-900 dark:text-white leading-snug"
+              className="mt-2 mb-1 text-lg font-normal text-slate-900 dark:text-white leading-snug"
               style={{ overflowWrap: "anywhere" }}
             >
               {item.quote}
@@ -2224,7 +2410,7 @@ function StoryModal({ item, onClose, liked, onToggleLike }) {
               </span>
             </p>
 
-            <p className="mt-4 mb-2 text-[13px] font-semibold text-slate-800 dark:text-slate-100">
+            <p className="mt-3 mb-1.5 text-[13px] font-normal text-slate-800 dark:text-slate-100">
               What you will learn
             </p>
             <ul className="m-0 p-0 list-none space-y-1.5">
@@ -2239,7 +2425,7 @@ function StoryModal({ item, onClose, liked, onToggleLike }) {
               ))}
             </ul>
 
-            <div className="mt-5 pt-1 flex flex-wrap gap-2.5">
+            <div className="mt-4 pt-1 flex flex-wrap gap-2.5">
               {!playing && (
                 <button
                   type="button"
@@ -2349,10 +2535,14 @@ function WatchNowCarousel({ stories, onSelect, paused, favs, onToggleFav }) {
     return () => ro.disconnect();
   }, []);
 
-   const cardWidth =
+  const rawCardWidth =
     containerWidth > 0
       ? (containerWidth - GAP * (visibleCount - 1)) / visibleCount
       : 0;
+  // compact cards: capped on phones and on very large screens
+  const cardWidth = rawCardWidth
+    ? Math.min(rawCardWidth, isMobile ? MAX_CARD_W_MOBILE : MAX_CARD_W)
+    : 0;
   const step = cardWidth + GAP;
 
   // cards already screen par fit ho rahe hain -> no marquee, no duplicates
@@ -2360,7 +2550,7 @@ function WatchNowCarousel({ stories, onSelect, paused, favs, onToggleFav }) {
 
   // One "set" is repeated until it is wider than the screen,
   // then rendered twice so the loop never shows a gap.
-    const baseSet = useMemo(() => {
+  const baseSet = useMemo(() => {
     if (isStatic || !stories.length || step <= 0) return stories;
     const repeats = Math.max(
       1,
@@ -2371,7 +2561,7 @@ function WatchNowCarousel({ stories, onSelect, paused, favs, onToggleFav }) {
 
   const setWidth = baseSet.length * step;
 
-    const trackItems = useMemo(
+  const trackItems = useMemo(
     () =>
       (isStatic ? baseSet : [...baseSet, ...baseSet]).map((item, i) => ({
         item,
@@ -2380,7 +2570,7 @@ function WatchNowCarousel({ stories, onSelect, paused, favs, onToggleFav }) {
     [baseSet, isStatic],
   );
 
-    // Animation loop
+  // Animation loop
   useEffect(() => {
     if (!setWidth || isStatic) return undefined;
     let raf;
@@ -2421,7 +2611,7 @@ function WatchNowCarousel({ stories, onSelect, paused, favs, onToggleFav }) {
       raf = requestAnimationFrame(tick);
     };
 
-        raf = requestAnimationFrame(tick);
+    raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [setWidth, isStatic]);
 
@@ -2438,7 +2628,7 @@ function WatchNowCarousel({ stories, onSelect, paused, favs, onToggleFav }) {
   };
 
   // Drag / swipe (pointer events cover mouse + touch)
-    const onPointerDown = (e) => {
+  const onPointerDown = (e) => {
     if (isStatic) return;
     movedRef.current = false;
     dragRef.current = {
@@ -2485,7 +2675,7 @@ function WatchNowCarousel({ stories, onSelect, paused, favs, onToggleFav }) {
     }
   };
 
-    const showArrows = !isStatic;
+  const showArrows = !isStatic;
 
   return (
     <div
@@ -2512,7 +2702,7 @@ function WatchNowCarousel({ stories, onSelect, paused, favs, onToggleFav }) {
         onPointerLeave={endDrag}
         onPointerCancel={endDrag}
       >
-                <div
+        <div
           ref={trackRef}
           className="flex items-stretch select-none py-2"
           style={{
@@ -2693,14 +2883,14 @@ function WatchNowGrid({
   return (
     <div>
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
         <div className="flex flex-wrap items-center gap-2">
           {TABS.map((t) => (
             <button
               key={t.key}
               type="button"
               onClick={() => onSortChange(t.key)}
-              className={`px-4 py-1.5 rounded-full text-[13px] font-medium border cursor-pointer transition ${
+              className={`px-3 sm:px-4 py-1.5 rounded-full text-[12px] sm:text-[13px] font-medium border cursor-pointer transition ${
                 sortKey === t.key
                   ? "bg-indigo-50 text-indigo-600 border-indigo-200 dark:bg-indigo-500/15 dark:text-indigo-300 dark:border-indigo-400/30"
                   : "bg-white dark:bg-[#1a1d27] text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/10 hover:bg-slate-50 dark:hover:bg-white/10"
@@ -2721,7 +2911,7 @@ function WatchNowGrid({
             : "Nothing to show here yet."}
         </p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 items-stretch">
+        <div className="grid grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 min-[1800px]:grid-cols-5 min-[2200px]:grid-cols-6 gap-3 sm:gap-4 items-stretch">
           {shown.map((item) => (
             <PageCard
               key={item.id}
@@ -2736,12 +2926,12 @@ function WatchNowGrid({
 
       {/* Load more */}
       {items.length > 0 && (
-        <div className="flex flex-col items-center mt-8 mb-2">
+        <div className="flex flex-col items-center mt-6 mb-2">
           <button
             type="button"
             disabled={!hasMore}
             onClick={() => setVisible((v) => v + PAGE_SIZE)}
-            className={`px-8 py-3 rounded-xl text-sm font-medium border transition ${
+            className={`px-8 py-2.5 rounded-xl text-sm font-medium border transition ${
               hasMore
                 ? "bg-white dark:bg-[#1a1d27] text-slate-800 dark:text-slate-100 border-slate-300 dark:border-white/20 cursor-pointer hover:bg-slate-50 dark:hover:bg-white/10"
                 : "bg-slate-100 dark:bg-white/5 text-slate-400 border-slate-200 dark:border-white/10 cursor-default"
@@ -2749,7 +2939,7 @@ function WatchNowGrid({
           >
             {hasMore ? "Load more visuals →" : "Showing all visuals"}
           </button>
-          <p className="mt-3 mb-0 text-xs text-slate-400">
+          <p className="mt-2 mb-0 text-xs text-slate-400">
             Sign up free to unlock unlimited access
           </p>
         </div>
@@ -2782,7 +2972,7 @@ export default function WatchNowSection({
   const [favs, setFavs] = useState(() => new Set());
   const deepLinkHandled = useRef(false);
 
-    // explicit prop wins; otherwise /watch-now* = page layout
+  // explicit prop wins; otherwise /watch-now* = page layout
   const [isPage, setIsPage] = useState(() => {
     if (variant) return variant === "page";
     return (
@@ -3000,12 +3190,13 @@ export default function WatchNowSection({
 
   const closeModal = useCallback(() => setSelected(null), []);
 
+  // Full-width white box: heading + subheading, each on one line
   const heading = (
-    <div className="text-center mx-auto mb-4 sm:mb-5">
-      <h2 className="text-3xl sm:text-[40px] font-semibold text-slate-800 dark:text-white leading-tight m-0">
+    <div className="text-center mb-3 relative left-1/2 -translate-x-1/2 w-screen max-w-none rounded-none border-y border-x-0 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm px-4 sm:px-6 py-2.5 overflow-hidden">
+      <h2 className="text-base sm:text-xl md:text-2xl font-normal text-slate-800 dark:text-white leading-tight m-0 truncate">
         Learn Through, <span className="text-[#F97316]">Expert Sessions</span>
       </h2>
-      <p className="text-base sm:text-lg font-normal text-slate-600 dark:text-slate-400 leading-snug mt-1 mb-0">
+      <p className="text-xs sm:text-sm font-normal text-slate-600 dark:text-slate-400 leading-snug mt-0.5 mb-0 truncate">
         Live sessions, career guidance, interview prep and hands-on projects —
         real stories and walkthroughs to help you build skills that count.
       </p>
@@ -3013,14 +3204,14 @@ export default function WatchNowSection({
   );
 
   const categoryChips = !loading && categories.length > 2 && (
-    <div className="mb-4">
-      <div className="flex flex-wrap justify-center gap-2">
+    <div className="mb-3">
+      <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
         {categories.map((c) => (
           <button
             key={c}
             type="button"
             onClick={() => setActiveCat(c)}
-            className={`px-4 py-1.5 rounded-full text-[13px] font-semibold border cursor-pointer transition ${
+            className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[12px] sm:text-[13px] font-semibold border cursor-pointer transition ${
               activeCat === c
                 ? "bg-[#F97316] text-white border-[#F97316] shadow-md shadow-orange-500/25"
                 : "bg-white dark:bg-[#1a1d27] text-slate-700 dark:text-slate-200 border-slate-200 dark:border-white/10 hover:bg-orange-50 dark:hover:bg-white/10"
@@ -3031,14 +3222,14 @@ export default function WatchNowSection({
         ))}
       </div>
       {catHint && (
-        <p className="text-center text-[13px] text-slate-500 dark:text-slate-400 mt-2 mb-0 max-w-2xl mx-auto leading-snug">
+        <p className="text-center text-[12px] sm:text-[13px] text-slate-500 dark:text-slate-400 mt-2 mb-0 max-w-2xl mx-auto leading-snug">
           {catHint}
         </p>
       )}
     </div>
   );
 
-    /* ---------- Page (uniform gallery grid) ---------- */
+  /* ---------- Page (uniform gallery grid) ---------- */
   if (isPage) {
     return (
       <PublicLayout
@@ -3049,9 +3240,9 @@ export default function WatchNowSection({
       >
         <section
           id={id}
-          className="w-full py-6 sm:py-8 scroll-mt-20 bg-white dark:!bg-black"
+          className="w-full py-4 sm:py-6 scroll-mt-20 bg-white dark:!bg-black overflow-x-clip"
         >
-          <div className="w-full max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-10">
+          <div className="w-full max-w-[2200px] mx-auto px-3 sm:px-6 lg:px-10">
             {heading}
             {categoryChips}
 
@@ -3072,7 +3263,7 @@ export default function WatchNowSection({
             )}
           </div>
 
-<StoryModal
+          <StoryModal
             item={selected}
             onClose={closeModal}
             liked={!!selected && favs.has(String(selected.id))}
@@ -3088,7 +3279,7 @@ export default function WatchNowSection({
     <section
       id={id}
       // full-bleed: breaks out of any max-width parent and spans the whole screen
-      className="relative left-1/2 -translate-x-1/2 w-screen max-w-none py-5 sm:py-6 scroll-mt-20 dark:!bg-black"
+      className="relative left-1/2 -translate-x-1/2 w-screen max-w-none py-4 sm:py-5 scroll-mt-20 overflow-x-clip dark:!bg-black"
       style={{ backgroundColor: SECTION_BG }}
     >
       <div className="w-full max-w-none mx-auto px-4 sm:px-6 lg:px-10">
@@ -3117,7 +3308,7 @@ export default function WatchNowSection({
         )}
       </div>
 
-<StoryModal
+      <StoryModal
         item={selected}
         onClose={closeModal}
         liked={!!selected && favs.has(String(selected.id))}

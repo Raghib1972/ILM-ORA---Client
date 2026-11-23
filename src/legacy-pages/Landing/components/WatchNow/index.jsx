@@ -1,5 +1,3 @@
-
-
 "use client";
 
 import React, {
@@ -159,14 +157,20 @@ function formatViews(n) {
   return String(num);
 }
 
-const GAP = 20; // px gap between cards
+const GAP = 16; // px gap between cards
 const SPEED = 45; // px per second (smaller = slower)
+// card width never grows past this, so cards stay compact on big monitors
+const MAX_CARD_W = 380;
+// on phones the card is a fixed compact width, so the next card peeks in
+const MAX_CARD_W_MOBILE = 270;
 
 function getVisibleCount(width) {
-  if (width >= 1200) return 4;
-  if (width >= 900) return 3;
-  if (width >= 641) return 2;
-  return 1;
+  if (width >= 2200) return 6; // Very large monitors
+  if (width >= 1800) return 5; // Large desktop / big iMac
+  if (width >= 1200) return 4; // Desktop / laptop
+  if (width >= 900) return 3; // iPad Pro / large tablet landscape
+  if (width >= 641) return 2; // Tablets / iPad mini
+  return 1; // Phones
 }
 
 function useVisibleCount() {
@@ -214,9 +218,9 @@ function Thumb({ thumbnail, alt }) {
     <img
       src={src}
       alt={alt}
-           loading="lazy"
+      loading="lazy"
       draggable={false}
-            className="absolute inset-0 w-full h-full max-w-full object-cover transition-transform duration-500 group-hover:scale-105"
+      className="absolute inset-0 w-full h-full max-w-full object-cover transition-transform duration-500 group-hover:scale-105"
     />
   );
 }
@@ -231,15 +235,15 @@ function StoryCard({ item, onOpen, liked, onToggleLike }) {
   return (
     <article
       onClick={onOpen}
-      className="group h-full flex flex-col bg-white dark:bg-[#1a1d27] border border-slate-200/80 dark:border-white/10 rounded-[20px] p-2 cursor-pointer shadow-[0_2px_10px_rgba(15,23,42,0.06)] hover:shadow-[0_12px_30px_rgba(15,23,42,0.12)] hover:-translate-y-1 transition-all duration-300"
+      className="group h-full flex flex-col bg-white dark:bg-[#1a1d27] border border-slate-200/80 dark:border-white/10 rounded-2xl p-1.5 cursor-pointer shadow-[0_2px_10px_rgba(15,23,42,0.06)] hover:shadow-[0_12px_30px_rgba(15,23,42,0.12)] hover:-translate-y-1 transition-all duration-300"
     >
       {/* Thumbnail (inset, rounded) */}
-      <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-800">
+      <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800">
         <Thumb thumbnail={item.thumbnail} alt={item.title || item.personName} />
         <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
 
         {item.category && (
-          <span className="absolute top-3 left-3 max-w-[70%] truncate text-[11px] font-semibold px-3 py-1.5 rounded-full bg-white/80 text-slate-800 backdrop-blur-md border border-white/70 shadow-md">
+          <span className="absolute top-2 left-2 max-w-[70%] truncate text-[10px] sm:text-[11px] font-semibold px-2.5 py-1 rounded-full bg-white/80 text-slate-800 backdrop-blur-md border border-white/70 shadow-md">
             {item.category}
           </span>
         )}
@@ -251,56 +255,56 @@ function StoryCard({ item, onOpen, liked, onToggleLike }) {
             e.stopPropagation();
             onToggleLike();
           }}
-          className="absolute top-3 right-3 w-9 h-9 rounded-full bg-white/90 backdrop-blur flex items-center justify-center shadow-md border-none cursor-pointer hover:scale-110 transition-transform"
+          className="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 backdrop-blur flex items-center justify-center shadow-md border-none cursor-pointer hover:scale-110 transition-transform"
         >
           <Heart
-            className={`w-[18px] h-[18px] transition-colors ${
+            className={`w-4 h-4 transition-colors ${
               liked ? "text-red-500 fill-red-500" : "text-slate-500"
             }`}
           />
         </button>
 
         <span className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <span className="w-12 h-12 rounded-full bg-white/95 flex items-center justify-center shadow-lg transition-transform duration-300 group-hover:scale-110">
-            <Play className="w-5 h-5 text-[#F97316] fill-[#F97316] ml-0.5" />
+          <span className="w-10 h-10 rounded-full bg-white/95 flex items-center justify-center shadow-lg transition-transform duration-300 group-hover:scale-110">
+            <Play className="w-4 h-4 text-[#F97316] fill-[#F97316] ml-0.5" />
           </span>
         </span>
 
         {item.duration && (
-          <span className="absolute bottom-3 right-3 inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-1 rounded-md bg-black/70 text-white">
+          <span className="absolute bottom-2 right-2 inline-flex items-center gap-1 text-[10px] font-semibold px-2 py-0.5 rounded-md bg-black/70 text-white">
             <Clock className="w-3 h-3" /> {item.duration}
           </span>
         )}
       </div>
 
       {/* Body */}
-      <div className="flex flex-col flex-1 px-2.5 pt-3 pb-2">
-        <h3 className="m-0 text-[15px] font-bold text-slate-900 dark:text-slate-100 truncate leading-snug">
+      <div className="flex flex-col flex-1 px-2 pt-2 pb-1.5">
+        <h3 className="m-0 text-sm font-normal text-slate-900 dark:text-slate-100 truncate leading-snug">
           {item.quote}
         </h3>
         {item.summary && (
-          <p className="mt-1 mb-0 text-[12.5px] leading-snug text-slate-500 dark:text-slate-400 line-clamp-2 min-h-[2.4em]">
+          <p className="mt-0.5 mb-0 text-[12px] leading-snug text-slate-500 dark:text-slate-400 truncate">
             {item.summary}
           </p>
         )}
 
-        <div className="mt-auto pt-3 flex items-center justify-between gap-2">
+        <div className="mt-auto pt-2 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
-            <span className="w-7 h-7 shrink-0 rounded-full bg-emerald-500 text-white text-[10px] font-bold flex items-center justify-center">
+            <span className="w-6 h-6 shrink-0 rounded-full bg-emerald-500 text-white text-[10px] font-bold flex items-center justify-center">
               {initials(item.personName)}
             </span>
-            <span className="text-[13px] font-medium text-slate-600 dark:text-slate-300 truncate">
+            <span className="text-[12px] font-medium text-slate-600 dark:text-slate-300 truncate">
               {item.personName}
             </span>
           </div>
 
-          <span className="inline-flex items-center gap-3 shrink-0 text-[13px] text-slate-500 dark:text-slate-400">
+          <span className="inline-flex items-center gap-2.5 shrink-0 text-[12px] text-slate-500 dark:text-slate-400">
             <span className="inline-flex items-center gap-1">
-              <Heart className="w-4 h-4" />
+              <Heart className="w-3.5 h-3.5" />
               {formatViews(likes)}
             </span>
-            <span className="inline-flex items-center gap-1.5">
-              <Eye className="w-4 h-4" />
+            <span className="inline-flex items-center gap-1">
+              <Eye className="w-3.5 h-3.5" />
               {formatViews(views)}
             </span>
           </span>
@@ -312,11 +316,11 @@ function StoryCard({ item, onOpen, liked, onToggleLike }) {
 
 function SkeletonCard() {
   return (
-    <div className="h-full bg-white dark:bg-[#1a1d27] border border-slate-200 dark:border-white/10 rounded-[20px] p-2">
-      <div className="aspect-[4/3] rounded-2xl bg-slate-200 dark:bg-slate-800 animate-pulse" />
-      <div className="px-2.5 pt-3 pb-2 space-y-2.5">
+    <div className="h-full bg-white dark:bg-[#1a1d27] border border-slate-200 dark:border-white/10 rounded-2xl p-1.5">
+      <div className="aspect-[16/10] rounded-xl bg-slate-200 dark:bg-slate-800 animate-pulse" />
+      <div className="px-2 pt-2 pb-1.5 space-y-2">
         <div className="h-4 w-4/5 rounded bg-slate-200 dark:bg-slate-800 animate-pulse" />
-        <div className="h-6 w-1/2 rounded bg-slate-200 dark:bg-slate-800 animate-pulse" />
+        <div className="h-5 w-1/2 rounded bg-slate-200 dark:bg-slate-800 animate-pulse" />
       </div>
     </div>
   );
@@ -365,16 +369,16 @@ function StoryModal({ item, onClose }) {
     navigate(START_PATH);
   };
 
-    return createPortal(
+  return createPortal(
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-sm"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-3xl max-h-[92vh] overflow-y-auto bg-white dark:bg-[#1a1d27] rounded-3xl shadow-2xl"
+        className="relative w-full max-w-3xl max-h-[92vh] overflow-y-auto bg-white dark:bg-[#1a1d27] rounded-2xl sm:rounded-3xl shadow-2xl"
       >
         <button
           type="button"
@@ -385,18 +389,18 @@ function StoryModal({ item, onClose }) {
           <X className="w-4 h-4 text-slate-700" />
         </button>
 
-                <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+        <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
           {/* Preview */}
           <div className="p-3 min-w-0 overflow-hidden">
             <div
               onClick={watchFull}
-              className="group relative w-full max-w-full aspect-[4/3] md:aspect-auto md:h-full md:min-h-[300px] overflow-hidden rounded-2xl cursor-pointer bg-black"
+              className="group relative w-full max-w-full aspect-[16/10] md:aspect-auto md:h-full md:min-h-[260px] overflow-hidden rounded-2xl cursor-pointer bg-black"
             >
               <Thumb thumbnail={item.thumbnail} alt={item.personName} />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
               <span className="absolute inset-0 flex items-center justify-center">
-                <span className="w-14 h-14 rounded-full bg-white/95 flex items-center justify-center shadow-lg transition-transform group-hover:scale-110">
-                  <Play className="w-6 h-6 text-[#F97316] fill-[#F97316] ml-0.5" />
+                <span className="w-12 h-12 rounded-full bg-white/95 flex items-center justify-center shadow-lg transition-transform group-hover:scale-110">
+                  <Play className="w-5 h-5 text-[#F97316] fill-[#F97316] ml-0.5" />
                 </span>
               </span>
               {item.duration && (
@@ -408,14 +412,14 @@ function StoryModal({ item, onClose }) {
           </div>
 
           {/* Details */}
-                    <div className="p-5 md:p-6 md:pl-3 flex flex-col min-w-0">
+          <div className="p-4 md:p-5 md:pl-3 flex flex-col min-w-0">
             {item.category && (
               <span className="self-start text-[11px] font-semibold px-3 py-1 rounded-full bg-orange-50 text-[#F97316] dark:bg-orange-500/15">
                 {item.category}
               </span>
             )}
-                        <h3
-              className="mt-2 mb-1 text-xl font-bold text-slate-900 dark:text-white leading-snug"
+            <h3
+              className="mt-2 mb-1 text-lg font-normal text-slate-900 dark:text-white leading-snug"
               style={{ overflowWrap: "anywhere" }}
             >
               {item.quote}
@@ -444,7 +448,7 @@ function StoryModal({ item, onClose }) {
               Best for: <span className="font-medium text-slate-700 dark:text-slate-200">{audience}</span>
             </p>
 
-            <p className="mt-4 mb-2 text-[13px] font-semibold text-slate-800 dark:text-slate-100">
+            <p className="mt-3 mb-1.5 text-[13px] font-normal text-slate-800 dark:text-slate-100">
               What you will learn
             </p>
             <ul className="m-0 p-0 list-none space-y-1.5">
@@ -459,7 +463,7 @@ function StoryModal({ item, onClose }) {
               ))}
             </ul>
 
-            <div className="mt-5 pt-1 flex flex-wrap gap-2.5">
+            <div className="mt-4 pt-1 flex flex-wrap gap-2.5">
               <button
                 type="button"
                 onClick={watchFull}
@@ -532,10 +536,14 @@ function WatchNowCarousel({ stories, onSelect, paused, favs, onToggleFav }) {
     return () => ro.disconnect();
   }, []);
 
-    const cardWidth =
+  const rawCardWidth =
     containerWidth > 0
       ? (containerWidth - GAP * (visibleCount - 1)) / visibleCount
       : 0;
+  // compact cards: capped on phones and on very large screens
+  const cardWidth = rawCardWidth
+    ? Math.min(rawCardWidth, isMobile ? MAX_CARD_W_MOBILE : MAX_CARD_W)
+    : 0;
   const step = cardWidth + GAP;
 
   // cards already screen par fit ho rahe hain -> no marquee, no duplicates
@@ -560,7 +568,8 @@ function WatchNowCarousel({ stories, onSelect, paused, favs, onToggleFav }) {
       })),
     [baseSet, isStatic],
   );
-   useEffect(() => {
+
+  useEffect(() => {
     if (!setWidth || isStatic) return undefined;
     let raf;
     let last = performance.now();
@@ -598,7 +607,7 @@ function WatchNowCarousel({ stories, onSelect, paused, favs, onToggleFav }) {
       raf = requestAnimationFrame(tick);
     };
 
-        raf = requestAnimationFrame(tick);
+    raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
   }, [setWidth, isStatic]);
 
@@ -614,7 +623,7 @@ function WatchNowCarousel({ stories, onSelect, paused, favs, onToggleFav }) {
     else if (e.key === "ArrowRight") goNext();
   };
 
-    const onPointerDown = (e) => {
+  const onPointerDown = (e) => {
     if (isStatic) return;
     movedRef.current = false;
     dragRef.current = {
@@ -660,7 +669,7 @@ function WatchNowCarousel({ stories, onSelect, paused, favs, onToggleFav }) {
     }
   };
 
-    const showArrows = !isStatic;
+  const showArrows = !isStatic;
 
   return (
     <div
@@ -687,7 +696,7 @@ function WatchNowCarousel({ stories, onSelect, paused, favs, onToggleFav }) {
         onPointerLeave={endDrag}
         onPointerCancel={endDrag}
       >
-                <div
+        <div
           ref={trackRef}
           className="flex items-stretch select-none py-2"
           style={{
@@ -865,16 +874,16 @@ export default function WatchNowSection() {
   return (
     <section
       // full-bleed: breaks out of any max-width parent and spans the whole screen
-      className="relative left-1/2 -translate-x-1/2 w-screen max-w-none py-5 sm:py-6 dark:!bg-transparent"
+      className="relative left-1/2 -translate-x-1/2 w-screen max-w-none py-4 sm:py-5 overflow-x-clip dark:!bg-transparent"
       style={{ backgroundColor: SECTION_BG }}
     >
       <div className="w-full max-w-none mx-auto px-4 sm:px-6 lg:px-10">
-        {/* Heading — same font/weight as "Explore the ILM ORA Platform" */}
-        <div className="text-center mx-auto mb-4 sm:mb-5">
-          <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold text-slate-800 dark:text-white leading-tight m-0">
+        {/* Full-width white box: heading + subheading, each on one line */}
+        <div className="text-center mb-3 relative left-1/2 -translate-x-1/2 w-screen max-w-none rounded-none border-y border-x-0 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm px-4 sm:px-6 py-2.5 overflow-hidden">
+          <h2 className="text-base sm:text-xl md:text-2xl font-normal text-slate-800 dark:text-white leading-tight m-0 truncate">
             Learn Through, <span className="text-[#F97316]">Expert Sessions</span>
           </h2>
-          <p className="text-sm sm:text-base font-normal text-slate-600 dark:text-slate-400 leading-snug mt-1 mb-0">
+          <p className="text-xs sm:text-sm font-normal text-slate-600 dark:text-slate-400 leading-snug mt-0.5 mb-0 truncate">
             Live sessions, career guidance, interview prep and hands-on
             projects — real stories and walkthroughs to help you build skills
             that count.
@@ -884,13 +893,13 @@ export default function WatchNowSection() {
         {/* Category chips + what-is-this line */}
         {!loading && categories.length > 2 && (
           <div className="mb-3">
-            <div className="flex flex-wrap justify-center gap-2">
+            <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
               {categories.map((c) => (
                 <button
                   key={c}
                   type="button"
                   onClick={() => setActiveCat(c)}
-                  className={`px-4 py-1.5 rounded-full text-[13px] font-semibold border cursor-pointer transition ${
+                  className={`px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[12px] sm:text-[13px] font-semibold border cursor-pointer transition ${
                     activeCat === c
                       ? "bg-[#F97316] text-white border-[#F97316] shadow-md shadow-orange-500/25"
                       : "bg-white dark:bg-[#1a1d27] text-slate-700 dark:text-slate-200 border-slate-200 dark:border-white/10 hover:bg-orange-50 dark:hover:bg-white/10"
@@ -901,7 +910,7 @@ export default function WatchNowSection() {
               ))}
             </div>
             {catHint && (
-              <p className="text-center text-[13px] text-slate-500 dark:text-slate-400 mt-2 mb-0 max-w-2xl mx-auto leading-snug">
+              <p className="text-center text-[12px] sm:text-[13px] text-slate-500 dark:text-slate-400 mt-2 mb-0 max-w-2xl mx-auto leading-snug">
                 {catHint}
               </p>
             )}
@@ -910,13 +919,13 @@ export default function WatchNowSection() {
 
         {/* Cards */}
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 min-[480px]:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
             {skeletons.map((i) => (
               <SkeletonCard key={i} />
             ))}
           </div>
         ) : (
-                    <WatchNowCarousel
+          <WatchNowCarousel
             key={activeCat}
             stories={filtered}
             onSelect={setSelected}

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -304,7 +303,7 @@ function MentorTestimonialCarousel({ testimonials }) {
                 }`}
               >
                 <div
-                  className={`relative h-full bg-white dark:bg-gray-900 rounded-[22px] border p-5 flex flex-col transition-all duration-300 ease-out hover:-translate-y-1.5 ${
+                  className={`relative h-full bg-white dark:bg-gray-900 rounded-[22px] border p-4 flex flex-col transition-all duration-300 ease-out hover:-translate-y-1.5 ${
                     isExpanded
                       ? "border-[#F97316] ring-2 ring-[#F97316] shadow-[0_18px_38px_rgba(249,115,22,0.18)]"
                       : "border-[#ECECEC] dark:border-gray-800 shadow-[0_8px_24px_rgba(17,24,39,0.06)] hover:shadow-[0_18px_38px_rgba(17,24,39,0.12)]"
@@ -618,7 +617,7 @@ function AiCompanionTeaser({ navigate }) {
       <div className="max-w-6xl mx-auto relative grid lg:grid-cols-2 items-center gap-10 lg:gap-12">
         {/* left: copy + chips + CTA */}
         <div className="text-center lg:text-left">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-[#1E293B] dark:text-white mb-4 leading-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-[#1E293B] dark:text-white mb-4 leading-tight">
             Meet Your <br className="hidden lg:block" />
             <span className="text-[#F97316]">AI Companion</span>
           </h2>
@@ -953,7 +952,7 @@ function CalendarShowcase({ onLearnMore }) {
             <span className="inline-flex self-start bg-white/25 text-[12px] font-semibold px-3 py-1 rounded-full mb-4">
               {current.badge}
             </span>
-            <h3 className="text-base sm:text-lg lg:text-xl font-bold leading-tight mb-2 text-white">
+            <h3 className="text-base sm:text-lg lg:text-xl font-normal leading-tight mb-2 text-white">
               {current.heading}
             </h3>
             <p className="text-xs sm:text-sm text-white/85 mb-3 max-w-md">
@@ -1077,7 +1076,7 @@ function CalendarShowcase({ onLearnMore }) {
             {current.key === "shield" && (
               <div className="bg-white rounded-[22px] p-6 shadow-2xl text-[#1E293B] flex flex-col items-center justify-center text-center gap-2 h-full">
                 <small className="text-gray-500">Certificate of completion</small>
-                <h4 className="text-xl font-bold">Product Management</h4>
+                <h4 className="text-xl font-normal">Product Management</h4>
                 <div className="font-semibold text-base">Ananya Sharma</div>
                 <small className="text-gray-500">
                   completed all sessions and assignments
@@ -1227,7 +1226,7 @@ function WorkspaceTeaser({
       >
         {/* left: copy + chips + CTA */}
         <div className="text-center lg:text-left">
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold tracking-tight text-white mb-4 leading-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-normal tracking-tight text-white mb-4 leading-tight">
             Your Complete <br className="hidden lg:block" />
             <span className="text-[#F97316]">Meeting Workspace</span>
           </h2>
@@ -1377,7 +1376,7 @@ function PersonalityPreview({ index = 0 }) {
         animation: "hubFade 0.35s ease both",
       }}
     >
-      <div className="px-4 pt-3 text-[11px] font-bold uppercase tracking-[0.18em] text-white/70">
+      <div className="mx-4 mt-3 w-fit rounded-full bg-white dark:bg-white/15 dark:text-white shadow-sm px-3 py-1 text-[11px] font-normal uppercase tracking-[0.18em] text-slate-700">
         {titles[index]}
       </div>
 
@@ -1522,7 +1521,7 @@ function StorylinePreview({ index = 0 }) {
         animation: "hubFade 0.35s ease both",
       }}
     >
-      <div className="px-4 pt-3 text-[11px] font-bold uppercase tracking-[0.18em] text-white/70">
+      <div className="mx-4 mt-3 w-fit rounded-full bg-white shadow-sm px-3 py-1 text-[11px] font-normal uppercase tracking-[0.18em] text-slate-700">
         {titles[index]}
       </div>
 
@@ -1805,11 +1804,11 @@ function ProductHubSection({ navigate }) {
     >
       <style>{`@keyframes hubFade { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }`}</style>
 
-      <div className="text-center mb-2 sm:mb-3">
-                <h2 className="text-lg sm:text-xl md:text-2xl font-semibold tracking-tight text-[#1E293B] dark:text-white">
+      <div className="text-center mb-2 sm:mb-3 relative left-1/2 -translate-x-1/2 w-screen max-w-none rounded-none border-y border-x-0 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm px-4 sm:px-6 py-2.5 overflow-hidden">
+                <h2 className="text-base sm:text-xl md:text-2xl font-normal tracking-tight text-[#1E293B] dark:text-white truncate">
           Explore the <span className="text-[#F97316]">ILM ORA Platform</span>
         </h2>
-        <p className="mt-1 max-w-4xl mx-auto text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+        <p className="mt-0.5 text-[11px] sm:text-sm text-slate-600 dark:text-slate-300 truncate">
           Pick a product, preview its features and open it with one click.
         </p>
       </div>
@@ -1859,12 +1858,12 @@ function ProductHubSection({ navigate }) {
           }`}
           style={{ animation: "hubFade 0.35s ease both" }}
         >
-                    <h2 className="text-base sm:text-lg font-semibold tracking-tight text-[#1E293B] dark:text-white leading-snug mb-2 lg:whitespace-nowrap">
+                    <h2 className="w-full rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm px-3 py-2 text-sm sm:text-base font-normal tracking-tight text-[#1E293B] dark:text-white leading-snug mb-2 truncate">
             {product.line1}{" "}
             <span className="text-[#F97316]">{product.line2}</span>
           </h2>
 
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 max-w-md mx-auto lg:mx-0 mb-4 leading-relaxed">
+          <p className="w-full rounded-xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm px-3 py-2 text-xs sm:text-sm text-slate-600 dark:text-slate-300 mb-3 leading-snug">
             {product.desc}
           </p>
 
@@ -3210,7 +3209,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
       </ClientOnly>
 
       {/* ── Hero ── */}
-            <section className="relative pt-20 sm:pt-24 pb-24 sm:pb-20 px-4 sm:px-6 min-h-[520px] sm:min-h-[480px] lg:min-h-[64svh] flex items-center overflow-hidden bg-[#1E293B]">
+            <section className="relative pt-20 sm:pt-24 pb-16 sm:pb-14 px-4 sm:px-6 min-h-[440px] sm:min-h-[400px] lg:min-h-[56svh] flex items-center overflow-hidden bg-[#1E293B]">
                 {/* Media layer starts below the fixed navbar so heads are never hidden under it */}
               <div className="hx-media absolute inset-x-0 bottom-0 top-14 sm:top-[62px]" data-pill={heroPill ? "1" : "0"}>
         <video
@@ -3277,33 +3276,33 @@ export default function LMSHomepage({ theme, toggleTheme }) {
             `}</style>
             <ClientOnly
               fallback={
-                                <h1 className="mb-5 leading-[1.1] drop-shadow-[0_2px_12px_rgba(0,0,0,0.65)]">
-                  <span suppressHydrationWarning className="block whitespace-nowrap text-2xl min-[400px]:text-[28px] sm:text-3xl md:text-4xl lg:text-5xl font-medium text-white">
+                 <h1 className="mb-2 sm:mb-3 leading-[1.15] drop-shadow-[0_2px_12px_rgba(0,0,0,0.65)]">
+                  <span suppressHydrationWarning className="block whitespace-nowrap text-xl min-[400px]:text-2xl sm:text-3xl lg:text-4xl font-normal text-white">
                     {heroTexts[currentSlide + 1].line1}
                   </span>
-                  <span suppressHydrationWarning className="block whitespace-nowrap text-2xl min-[400px]:text-[28px] sm:text-3xl md:text-4xl lg:text-5xl font-medium text-[#F97316]">
+                  <span suppressHydrationWarning className="block whitespace-nowrap text-xl min-[400px]:text-2xl sm:text-3xl lg:text-4xl font-normal text-[#F97316]">
                     {heroTexts[currentSlide + 1].line2}
                   </span>
                 </h1>
               }
             >
-                              <h1 className="mb-3 sm:mb-4 leading-[1.1] drop-shadow-[0_2px_12px_rgba(0,0,0,0.65)]">
+                <h1 className="mb-2 sm:mb-3 leading-[1.15] drop-shadow-[0_2px_12px_rgba(0,0,0,0.65)]">
                 <HeroRollText
                   text={heroTexts[currentSlide + 1].line1}
-                  className="text-2xl min-[400px]:text-[28px] sm:text-3xl md:text-4xl lg:text-5xl font-medium text-white"
+                 className="text-xl min-[400px]:text-2xl sm:text-3xl lg:text-4xl font-normal text-white"
                 />
                 <HeroRollText
                   text={heroTexts[currentSlide + 1].line2}
                   delay={90}
                   gradient="bg-gradient-to-r from-[#F97316] to-[#FBBF24] bg-clip-text text-transparent"
-                  className="text-2xl min-[400px]:text-[28px] sm:text-3xl md:text-4xl lg:text-5xl font-medium"
+                  className="text-xl min-[400px]:text-2xl sm:text-3xl lg:text-4xl font-normal"
                 />
               </h1>
             </ClientOnly>
                         <p
               key={`p-${currentSlide}`}
               suppressHydrationWarning
-                            className="text-sm sm:text-base md:text-lg text-white mb-5 sm:mb-6 max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal line-clamp-3 min-h-[4.5em] sm:min-h-[3.25em]"
+            className="text-xs sm:text-sm md:text-base text-white mb-4 sm:mb-5 max-w-xl mx-auto lg:mx-0 leading-snug font-normal line-clamp-3 min-h-[4.5em] sm:min-h-[3.25em]"
               style={{
                 animation: "heroTextIn 0.5s ease both",
                 textShadow: "0 1px 8px rgba(0,0,0,0.6)",
@@ -3330,8 +3329,8 @@ export default function LMSHomepage({ theme, toggleTheme }) {
                   }}
                   className={
                     i === 0
-                      ? "inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-semibold text-sm sm:text-base text-white bg-gradient-to-r from-[#F97316] to-[#ea580c] shadow-lg shadow-orange-500/30 hover:-translate-y-0.5 transition-all cursor-pointer"
-                                            : "inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-medium text-sm sm:text-base text-white/90 bg-transparent border border-white/25 hover:bg-white/10 hover:text-white transition-all cursor-pointer"
+                      ? "inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-sm text-white bg-gradient-to-r from-[#F97316] to-[#ea580c] shadow-lg shadow-orange-500/30 hover:-translate-y-0.5 transition-all cursor-pointer"
+                                            : "inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-normal text-sm text-white/90 bg-transparent border border-white/25 hover:bg-white/10 hover:text-white transition-all cursor-pointer"
                   }
                 >
                   {cta.label}
@@ -3403,7 +3402,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
               aria-label="Choose your journey"
                             className="flex flex-wrap items-center gap-x-1.5 gap-y-2 sm:gap-2 mb-4"
             >
-              <span className="w-full sm:w-auto text-[11px] font-bold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 sm:mr-1">
+              <span className="inline-flex w-fit items-center rounded-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm px-3.5 py-2 text-[11px] font-normal uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300 sm:mr-1">
                 You are exploring as
               </span>
               {Object.entries(journeyPanels).map(([key, j]) => {
@@ -3433,13 +3432,13 @@ export default function LMSHomepage({ theme, toggleTheme }) {
               return (
                 <div
                   key={journey}
-                  className="animate-in fade-in-0 duration-500 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_auto] gap-4 items-center bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-4 sm:p-5"
+                  className="animate-in fade-in-0 duration-500 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_auto] gap-3 items-center bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-3 sm:p-4"
                 >
                   <div className="min-w-0">
-                    <h3 className="text-lg sm:text-xl font-bold tracking-tight text-[#1E293B] dark:text-white mb-1.5">
+                    <h3 className="text-base sm:text-lg font-normal tracking-tight text-[#1E293B] dark:text-white mb-1 truncate">
                       {j.title}
                     </h3>
-                    <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed mb-3 max-w-2xl">
+                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-snug mb-2 max-w-2xl">
                       {j.desc}
                     </p>
                     <div className="flex flex-wrap gap-2">
@@ -3499,11 +3498,11 @@ export default function LMSHomepage({ theme, toggleTheme }) {
                 className="grid grid-cols-1 lg:grid-cols-[320px_minmax(0,1fr)] gap-6 lg:gap-8 items-start w-full"
               >
                 {/* ── Left: category panel ── */}
-                <div className="min-w-0 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-4 sm:p-5 lg:sticky lg:top-24">
-                  <span className="block text-[11px] font-bold uppercase tracking-[0.18em] text-[#6D28D9] dark:text-violet-400 mb-2">
+                <div className="min-w-0 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm p-3 sm:p-4 lg:sticky lg:top-24">
+                 <span className="inline-flex items-center rounded-full bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm px-3 py-1.5 text-[11px] font-normal uppercase tracking-[0.18em] text-[#6D28D9] dark:text-violet-400 mb-2">
                     Explore by category
                   </span>
-                  <h2 className="text-xl sm:text-[22px] font-semibold tracking-tight text-[#1E293B] dark:text-white leading-tight mb-4 whitespace-nowrap">
+                  <h2 className="text-lg sm:text-xl font-normal tracking-tight text-[#1E293B] dark:text-white leading-tight mb-3 whitespace-nowrap">
                     Featured Programs
                   </h2>
 
@@ -3514,7 +3513,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
                         <TabsTrigger
                           key={tab}
                           value={tab}
-                          className="flex items-center justify-start gap-3 rounded-xl px-3.5 py-3 text-sm font-medium whitespace-nowrap flex-shrink-0 lg:w-full text-[#1E293B] dark:text-gray-300 bg-transparent hover:bg-orange-50 dark:hover:bg-white/5 transition-all duration-300 data-[state=active]:bg-[#F97316] data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-orange-500/30"
+                          className="flex items-center justify-start gap-3 rounded-xl px-3 py-2 text-sm font-medium whitespace-nowrap flex-shrink-0 lg:w-full text-[#1E293B] dark:text-gray-300 bg-transparent hover:bg-orange-50 dark:hover:bg-white/5 transition-all duration-300 data-[state=active]:bg-[#F97316] data-[state=active]:text-white data-[state=active]:shadow-lg data-[state=active]:shadow-orange-500/30"
                         >
                           <CatIcon className="w-5 h-5 flex-shrink-0" />
                           <span className="flex-1 text-left">{tab}</span>
@@ -3536,7 +3535,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
                       className="mt-0 col-start-1 row-start-1 transition-opacity duration-500 data-[state=inactive]:opacity-0 data-[state=inactive]:invisible data-[state=inactive]:pointer-events-none"
                     >
                       <div className="flex items-center gap-4 mb-4">
-                        <h3 className="text-xs sm:text-sm font-bold uppercase tracking-[0.18em] text-[#1E293B] dark:text-white whitespace-nowrap">
+                        <h3 className="text-xs sm:text-sm font-normal uppercase tracking-[0.18em] text-[#1E293B] dark:text-white whitespace-nowrap">
                           Popular Programs
                         </h3>
                         <div className="flex-1 h-px bg-[#1E293B]/80 dark:bg-white/30" />
@@ -3588,7 +3587,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
                                 className="group relative flex flex-col min-w-0 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl hover:shadow-slate-300/40 dark:hover:shadow-black/40 hover:-translate-y-1 transition-all duration-300 ease-out overflow-hidden cursor-pointer"
                               >
                                 {/* Thumbnail */}
-                                <div className="relative h-28 sm:h-32 overflow-hidden bg-gradient-to-br from-[#1E293B] via-[#334155] to-[#F97316] flex-shrink-0">
+                                <div className="relative h-24 sm:h-28 overflow-hidden bg-gradient-to-br from-[#1E293B] via-[#334155] to-[#F97316] flex-shrink-0">
                                   {course.thumbnailUrl || course.bannerUrl ? (
                                     <img
                                       src={course.thumbnailUrl || course.bannerUrl}
@@ -3642,15 +3641,15 @@ export default function LMSHomepage({ theme, toggleTheme }) {
                                 </div>
 
                                 {/* Body */}
-                                <div className="flex flex-col flex-1 min-w-0 p-3.5 pt-3">
+                                <div className="flex flex-col flex-1 min-w-0 p-3 pt-2.5">
                                   <span className="text-[11px] font-bold uppercase tracking-wider text-[#EA580C] mb-1 truncate">
                                     {category}
                                   </span>
-                                  <h3 className="text-base font-bold text-[#1E293B] dark:text-white leading-snug line-clamp-2 min-h-[2.5em] mb-3 group-hover:text-[#F97316] transition-colors">
+                                  <h3 className="text-sm font-normal text-[#1E293B] dark:text-white leading-snug line-clamp-2 min-h-[2.5em] mb-2 group-hover:text-[#F97316] transition-colors">
                                     {course.title}
                                   </h3>
 
-                                  <div className="grid grid-cols-4 gap-1 text-center mb-3">
+                                  <div className="grid grid-cols-4 gap-1 text-center mb-2">
                                     <div className="flex flex-col items-center gap-0.5 min-w-0">
                                       <PlayCircle className="w-4 h-4 text-[#F97316] flex-shrink-0" />
                                       <span className="text-xs font-semibold text-[#1E293B] dark:text-gray-200 truncate w-full">
@@ -3746,14 +3745,14 @@ export default function LMSHomepage({ theme, toggleTheme }) {
         className="py-4 sm:py-5 px-4 sm:px-6 scroll-mt-20 bg-[#F8FAFC] dark:bg-black overflow-x-hidden"
       >
         <div className="max-w-[1200px] mx-auto">
-          <div className="text-center max-w-[900px] lg:max-w-none mx-auto mb-3">
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight mb-2 text-[#1E293B] dark:text-white leading-tight">
+          <div className="text-center mb-3 relative left-1/2 -translate-x-1/2 w-screen max-w-none rounded-none border-y border-x-0 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm px-4 sm:px-6 py-2.5 overflow-hidden">
+            <h2 className="text-base sm:text-xl md:text-2xl font-normal tracking-tight mb-1 text-[#1E293B] dark:text-white leading-tight truncate">
               What Our <span className="text-[#F97316]">Learners</span> Have To
               Say
             </h2>
-            <div className="flex items-center justify-center gap-2 text-gray-500 dark:text-gray-300 text-sm sm:text-base font-medium">
+            <div className="flex items-center justify-center gap-2 text-gray-500 dark:text-gray-300 text-xs sm:text-sm font-normal whitespace-nowrap">
               <Star className="w-4 h-4 sm:w-[18px] sm:h-[18px] fill-[#F97316] text-[#F97316]" />
-              <span className="text-[#111827] dark:text-white font-bold">
+              <span className="text-[#111827] dark:text-white font-normal">
                 4.9
               </span>
               <span className="text-gray-400">•</span>
@@ -3765,12 +3764,12 @@ export default function LMSHomepage({ theme, toggleTheme }) {
             {mentorBenefits.map((item, i) => (
               <div
                 key={i}
-                className="h-full flex items-center gap-3 bg-white dark:bg-gray-900 rounded-2xl p-3 border border-[#ECECEC] dark:border-gray-800 shadow-[0_10px_35px_rgba(0,0,0,0.08)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+                className="h-full flex items-center justify-between gap-2 bg-white dark:bg-gray-900 rounded-2xl p-2.5 border border-[#ECECEC] dark:border-gray-800 shadow-[0_10px_35px_rgba(0,0,0,0.08)] hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
               >
-                <div className="w-10 h-10 bg-[#1E293B] dark:bg-[#F97316] rounded-xl flex items-center justify-center flex-shrink-0 shadow-sm">
-                  <item.icon className="w-5 h-5 text-white" />
+                <div className="order-2 w-7 h-7 bg-[#1E293B] dark:bg-[#F97316] rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
+                  <item.icon className="w-3.5 h-3.5 text-white" />
                 </div>
-                <p className="text-gray-700 dark:text-gray-300 font-semibold text-sm leading-snug">
+                <p className="flex-1 min-w-0 truncate text-gray-700 dark:text-gray-300 font-normal text-xs sm:text-sm leading-snug">
                   {item.text}
                 </p>
               </div>
@@ -3787,12 +3786,12 @@ export default function LMSHomepage({ theme, toggleTheme }) {
         className="py-4 sm:py-5 px-4 sm:px-6 lg:px-10 scroll-mt-20 bg-[#F8FAFC] dark:bg-black"
       >
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-4">
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-semibold tracking-tight mb-2 text-[#1E293B] dark:text-white">
+          <div className="text-center mb-3 relative left-1/2 -translate-x-1/2 w-screen max-w-none rounded-none border-y border-x-0 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm px-4 sm:px-6 py-2.5 overflow-hidden">
+            <h2 className="text-base sm:text-xl md:text-2xl font-normal tracking-tight mb-1 text-[#1E293B] dark:text-white truncate">
               Career Support That{" "}
               <span className="text-[#F97316]">Delivers Results</span>
             </h2>
-            <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed max-w-3xl mx-auto">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 truncate">
               Get help with interview prep, portfolios, referrals and role
               mapping
             </p>
@@ -3801,15 +3800,15 @@ export default function LMSHomepage({ theme, toggleTheme }) {
             {careerSupport.map((item, i) => (
               <div
                 key={i}
-                className="group bg-white dark:bg-gray-900 rounded-2xl p-4 border border-gray-200 dark:border-gray-800 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all"
+                className="group grid grid-cols-[minmax(0,1fr)_auto] gap-x-2 gap-y-0.5 items-center bg-white dark:bg-gray-900 rounded-2xl p-2.5 border border-gray-200 dark:border-gray-800 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all"
               >
-                <div className="w-10 h-10 bg-[#1E293B] dark:bg-[#F97316] rounded-2xl flex items-center justify-center mb-2 group-hover:scale-105 transition-transform shadow-sm">
-                  <item.icon className="w-5 h-5 text-white" />
+                <div className="col-start-2 row-start-1 w-7 h-7 bg-[#1E293B] dark:bg-[#F97316] rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform shadow-sm">
+                  <item.icon className="w-3.5 h-3.5 text-white" />
                 </div>
-                <h3 className="text-base sm:text-lg font-semibold tracking-tight text-[#1E293B] dark:text-white mb-1.5">
+                <h3 className="col-start-1 row-start-1 text-sm sm:text-base font-normal tracking-tight text-[#1E293B] dark:text-white mb-0.5 truncate">
                   {item.title}
                 </h3>
-                <p className="text-sm font-normal text-slate-600 dark:text-slate-300 leading-relaxed">
+                <p className="col-span-2 row-start-2 text-[11px] min-[1440px]:text-xs font-normal text-slate-600 dark:text-slate-300 leading-snug truncate">
                   {item.description}
                 </p>
               </div>
@@ -3820,7 +3819,7 @@ export default function LMSHomepage({ theme, toggleTheme }) {
           <div className="bg-white dark:bg-gray-900 rounded-3xl relative overflow-hidden border border-[#F97316]/20 shadow-xl">
             <div className="flex flex-col lg:flex-row items-stretch">
               {/* ── Left: full-bleed image, fixed height, cropped to fill ── */}
-              <div className="w-full lg:w-[280px] xl:w-[320px] h-32 sm:h-36 lg:h-auto flex-shrink-0 overflow-hidden">
+              <div className="w-full lg:w-[220px] xl:w-[240px] h-24 sm:h-28 lg:h-auto flex-shrink-0 overflow-hidden">
                 <img
                   src={ctaStudent.src}
                   alt="Student ready to transform their career"
@@ -3829,21 +3828,21 @@ export default function LMSHomepage({ theme, toggleTheme }) {
               </div>
 
               {/* ── Middle: Content ── */}
-              <div className="flex-1 flex flex-col justify-center items-center text-center lg:items-start lg:text-left px-6 sm:px-10 py-5 lg:py-4">
-                <h3 className="text-lg sm:text-xl lg:text-2xl font-semibold tracking-tight mb-2 text-[#1E293B] dark:text-white leading-tight">
+              <div className="flex-1 flex flex-col justify-center items-center text-center lg:items-start lg:text-left px-5 sm:px-8 py-3">
+                <h3 className="text-base sm:text-lg lg:text-xl font-normal tracking-tight mb-1 text-[#1E293B] dark:text-white leading-tight">
                   Ready to Transform Your Career?
                 </h3>
-                <p className="text-sm sm:text-base text-slate-600 dark:text-slate-300 leading-relaxed max-w-xl">
+                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-snug max-w-xl">
                   Join 5000+ professionals who've already taken the leap with
                   our project-based programs and expert mentorship.
                 </p>
               </div>
 
               {/* ── Right: CTA button ── */}
-              <div className="flex items-center justify-center lg:justify-end px-6 sm:px-10 pb-6 lg:pb-0 lg:pr-10">
+              <div className="flex items-center justify-center lg:justify-end px-5 sm:px-8 pb-4 lg:pb-0 lg:pr-8">
                 <button
                   onClick={() => scrollToSection("courses")}
-                  className="flex items-center gap-2 bg-[#1E293B] hover:bg-[#334155] text-white font-semibold px-6 py-3.5 rounded-xl text-sm sm:text-base shadow-md hover:shadow-lg transition-all hover:scale-105 whitespace-nowrap"
+                  className="flex items-center gap-2 bg-[#1E293B] hover:bg-[#334155] text-white font-semibold px-5 py-2.5 rounded-xl text-sm shadow-md hover:shadow-lg transition-all hover:scale-105 whitespace-nowrap"
                 >
                   Explore Courses <ArrowRight className="w-4 h-4" />
                 </button>
@@ -3858,15 +3857,15 @@ export default function LMSHomepage({ theme, toggleTheme }) {
       {/* ── Features ── */}
       <section className="py-4 sm:py-5 px-4 sm:px-6 bg-[#F8FAFC] dark:bg-black">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-4">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight mb-2 text-[#1E293B] dark:text-white">
+          <div className="text-center mb-3 relative left-1/2 -translate-x-1/2 w-screen max-w-none rounded-none border-y border-x-0 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm px-4 sm:px-6 py-2.5 overflow-hidden">
+            <h2 className="text-base sm:text-xl md:text-2xl font-normal tracking-tight mb-1 text-[#1E293B] dark:text-white truncate">
               Why Choose
               <span className="ml-2">
                 <span className="text-green-600">ILM</span>{" "}
                 <span className="text-[#F97316]">ORA</span>
               </span>
             </h2>
-            <p className="text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed max-w-2xl mx-auto">
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 truncate">
               Everything you need to accelerate your career growth
             </p>
           </div>
@@ -3874,15 +3873,15 @@ export default function LMSHomepage({ theme, toggleTheme }) {
             {features.map((feature, i) => (
               <div
                 key={i}
-                className="bg-white dark:bg-gray-900 rounded-2xl p-4 border border-gray-200 dark:border-gray-800 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all group"
+                className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-2 gap-y-0.5 items-center bg-white dark:bg-gray-900 rounded-2xl p-2.5 border border-gray-200 dark:border-gray-800 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all group"
               >
-                <div className="w-11 h-11 bg-[#1E293B] dark:bg-[#F97316] rounded-2xl flex items-center justify-center mb-2 group-hover:scale-105 transition-transform shadow-sm">
-                  <feature.icon className="w-5 h-5 text-white" />
+                <div className="col-start-2 row-start-1 w-7 h-7 bg-[#1E293B] dark:bg-[#F97316] rounded-lg flex items-center justify-center group-hover:scale-105 transition-transform shadow-sm">
+                  <feature.icon className="w-3.5 h-3.5 text-white" />
                 </div>
-                <h3 className="text-base sm:text-lg font-semibold tracking-tight text-[#1E293B] dark:text-white mb-1">
+                <h3 className="col-start-1 row-start-1 text-sm sm:text-base font-normal tracking-tight text-[#1E293B] dark:text-white mb-0.5 truncate">
                   {feature.title}
                 </h3>
-                <p className="text-sm font-normal text-slate-600 dark:text-slate-300 leading-relaxed">
+                <p className="col-span-2 row-start-2 text-[11px] min-[1440px]:text-xs font-normal text-slate-600 dark:text-slate-300 leading-snug truncate">
                   {feature.description}
                 </p>
               </div>
@@ -3893,16 +3892,16 @@ export default function LMSHomepage({ theme, toggleTheme }) {
 
       <section id="partners" className="py-4 sm:py-5 px-4 sm:px-6 relative overflow-hidden bg-[#F8FAFC] dark:bg-black scroll-mt-20">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center" style={{ marginBottom: 12 }}>
-            <p className="text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 font-semibold">
+          <div className="text-center relative left-1/2 -translate-x-1/2 w-screen max-w-none rounded-none border-y border-x-0 bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-800 shadow-sm px-4 sm:px-6 py-2.5 overflow-hidden" style={{ marginBottom: 12 }}>
+            <p className="text-[11px] uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 font-normal truncate">
               TRUSTED BY LEADING ORGANIZATIONS
             </p>
 
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight text-[#1E293B] dark:text-white mt-2">
+            <h2 className="text-base sm:text-xl md:text-2xl font-normal tracking-tight text-[#1E293B] dark:text-white mt-1 truncate">
               Top Global <span className="text-[#F97316]">Companies</span>
             </h2>
 
-            <p className="mt-2 max-w-2xl mx-auto text-base sm:text-lg text-slate-600 dark:text-slate-300 leading-relaxed">
+            <p className="mt-0.5 text-xs sm:text-sm text-slate-600 dark:text-slate-300 truncate">
               We collaborate with leading technology providers and business
               organizations to deliver innovative digital solutions.
             </p>
@@ -3928,43 +3927,3 @@ export default function LMSHomepage({ theme, toggleTheme }) {
     </div>
   );
 }
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
