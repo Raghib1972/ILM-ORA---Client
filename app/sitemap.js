@@ -1,9 +1,3 @@
-// Reproduces the existing public/sitemap.xml exactly — same URLs, same
-// priorities, nothing added or removed. Using Next's sitemap.js convention
-// instead of a static file so future page additions can extend this list
-// in one place; content is unchanged for this foundation step.
-
-
 export default function sitemap() {
   const base = "https://ilmora.texora.ai";
 
@@ -24,10 +18,6 @@ export default function sitemap() {
     { path: "/fde-academy", priority: 0.6 },
     { path: "/workspace", priority: 0.6 },
 
-    { path: "/aws", priority: 0.7 },
-    { path: "/google", priority: 0.7 },
-    { path: "/microsoft", priority: 0.7 },
-    { path: "/cisco", priority: 0.7 },
     { path: "/workshops", priority: 0.7 },
 
     { path: "/board", priority: 0.6 },
@@ -47,12 +37,29 @@ export default function sitemap() {
     { path: "/coding-lab", priority: 0.6 },
     { path: "/study-plan", priority: 0.6 },
 
+    // ---- NEW pages (routes verify kar lena) ----
+    { path: "/hr-hub", priority: 0.7 },
+    { path: "/digital-marketing-hub", priority: 0.7 },
+    { path: "/futurism", priority: 0.6 },
+    { path: "/law", priority: 0.6 },
+    { path: "/meet", priority: 0.6 },
+    { path: "/iq-test", priority: 0.6 },
+    { path: "/life-skills", priority: 0.6 },
+    { path: "/life-skills-ai", priority: 0.6 },
+    { path: "/life-skills-own", priority: 0.6 },
+    { path: "/personality-development", priority: 0.6 },
+    { path: "/storyline", priority: 0.5 },
+    { path: "/syllabus", priority: 0.5 },
+    { path: "/toracx", priority: 0.6 },
+    { path: "/watch-now", priority: 0.6 },
+
     { path: "/privacy-policy", priority: 0.3 },
     { path: "/terms-of-service", priority: 0.3 },
   ];
 
-   return entries.map((e) => ({
+  return entries.map((e) => ({
     url: `${base}${e.path}`,
+    lastModified: new Date(),
     priority: e.priority,
   }));
 }
