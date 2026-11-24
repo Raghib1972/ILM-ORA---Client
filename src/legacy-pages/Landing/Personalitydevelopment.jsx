@@ -4,8 +4,9 @@ import { useState, useEffect, useRef } from "react";
 import {
   Eye, MessageSquare, Heart, TrendingUp, RefreshCw, Lightbulb, Shirt, Sparkles,
   Users, Search, Flag, ClipboardList, X, CheckCircle2, ArrowRight, Route, Target,
-  Brain, ShieldCheck, AlertTriangle, ChevronLeft, ChevronRight,
+    Brain, ShieldCheck, AlertTriangle, ChevronLeft, ChevronRight, Play, List,
 } from "lucide-react";
+import videoService from "@/services/videoService";
 // Same shared shell used by ManagerHub / StudentHub (navbar + footer).
 import PublicLayout from "../Landing/components/PublicLayout";
 // Images live in: src/assets/personallity development/  (folder name has a double "l" and a space)
@@ -18,16 +19,18 @@ import hero3 from "@/assets/personallity development/images 3.webp";
 import hero4 from "@/assets/personallity development/images 4.webp";
 import hero5 from "@/assets/personallity development/iamges 5.png";
 
-/* ═══ THEME (same tokens as Manager Hub) ═══ */
+/* ═══ THEME (same tokens as Ilmora Workshops page) ═══ */
 const DARK = {
-  pageBg: "#000000", cardBg: "#111827", border: "#1F2937", borderHov: "#374151",
-  text: "#ffffff", textSub: "#CBD5E1", textMuted: "#94A3B8",
-  pillBg: "rgba(255,255,255,0.06)", barBg: "rgba(255,255,255,0.10)", shadow: "0 4px 20px rgba(0,0,0,0.45)",
+  pageBg: "#0c0c14", cardBg: "#13131e", border: "rgba(255,255,255,0.10)", borderHov: "#374151",
+  text: "#f1f5f9", textSub: "#cbd5e1", textMuted: "#94a3b8",
+  pillBg: "rgba(255,255,255,0.06)", barBg: "rgba(255,255,255,0.10)", shadow: "0 8px 22px rgba(0,0,0,0.45)",
+  grid: "rgba(255,255,255,0.06)",
 };
 const LIGHT = {
-  pageBg: "#F8FAFC", cardBg: "#ffffff", border: "#E5E7EB", borderHov: "#D1D5DB",
-  text: "#1E293B", textSub: "#475569", textMuted: "#94A3B8",
-  pillBg: "#F1F5F9", barBg: "#E2E8F0", shadow: "0 1px 3px rgba(15,23,42,0.08)",
+  pageBg: "#fbfcfe", cardBg: "#ffffff", border: "rgba(60,35,20,0.14)", borderHov: "#D1D5DB",
+  text: "#1f1b18", textSub: "#3b332d", textMuted: "#6a5f57",
+  pillBg: "#F1F5F9", barBg: "#E2E8F0", shadow: "0 8px 22px rgba(60,35,10,0.12)",
+  grid: "rgba(100,120,160,0.16)",
 };
 
 /* ═══ BACKEND ═══
@@ -180,7 +183,7 @@ function IdentifyMap() {
     return [cx + rx * Math.cos(a), cy + ry * Math.sin(a)];
   });
   return (
-    <svg className="pd-ill" viewBox="20 10 600 540" role="img"aria-label="How to identify personality: six signals around a person" fontFamily="Plus Jakarta Sans,sans-serif">
+    <svg className="pd-ill" viewBox="20 10 600 540" role="img" aria-label="How to identify personality: six signals around a person" fontFamily="Plus Jakarta Sans,sans-serif">
       <defs><clipPath id="pdc"><circle cx={cx} cy={cy} r="96" /></clipPath></defs>
       <ellipse cx={cx} cy={cy} rx={rx} ry={ry} fill="none" stroke="var(--pd-border)" strokeWidth="1.5" strokeDasharray="4 6" />
       {IDENTIFY.map(([t, , side], i) => (
@@ -227,7 +230,7 @@ function IdentifyPersonality() {
     <>
       <style>{IDENT_CSS}</style>
       <section className="pd-sec" id="pd-identify"><div className="pd-wrap">
-                <div className="pd-card pd-idsplit" style={{ padding: "clamp(12px,2vw,24px)" }}>
+        <div className="pd-card pd-idsplit" style={{ padding: "clamp(12px,2vw,24px)" }}>
           <div className="pd-idtxt">
             <h2>How to <span style={{ color: "#f97316" }}>Identify Personality?</span></h2>
             <p className="lead">Personality shows up as patterns in what people say, do and feel. Look at six signals together, over time, and never from one observation.</p>
@@ -459,7 +462,7 @@ const hsrc = (m) => m?.src || m;
 const HERO = [
   { title: "Know your personality.", accent: " Improve it. Prove it.", text: "A practical 30-day personality development program. Learn the skills, follow a daily plan, take the self-check and re-test to see real change.", img: hsrc(hero1), alt: "Person climbing steps toward a goal flag", link: ["See how it works", "pd-how"] },
   { title: "Track your growth,", accent: " one day at a time.", text: "Each day has one small task. Tick it off, write a short weekly reflection and watch your progress build across four stages.", img: hsrc(hero2), alt: "Personal growth charts and progress", link: ["See the 30-day plan", "pd-journey"] },
-    { title: "Balance pressure,", accent: " people and growth.", text: "Real growth is balance: staying steady under pressure, working well with others and helping them move forward. Active listening and clear speaking make that possible.", img: hsrc(hero3), alt: "Person balancing on a tightrope with teamwork and helping scenes", link: ["Learn the skills", "pd-learn"] },
+  { title: "Balance pressure,", accent: " people and growth.", text: "Real growth is balance: staying steady under pressure, working well with others and helping them move forward. Active listening and clear speaking make that possible.", img: hsrc(hero3), alt: "Person balancing on a tightrope with teamwork and helping scenes", link: ["Learn the skills", "pd-learn"] },
   { title: "Seven areas that", accent: " shape your growth.", text: "Self-reflection, self-development, emotional balance, mentoring, confidence and motivation work together. Build them from within first.", img: hsrc(hero4), alt: "Personal growth icons: self reflection, development, emotional balance, mentoring, confidence, motivation", link: ["See the inner foundation", "pd-internal"] },
   { title: "Four areas build", accent: " your personality.", text: "Emotional, social, physical and professional skills grow together. Strengthen all four and the way you come across changes.", img: hsrc(hero5), alt: "Circular diagram of emotional, social, physical and professional growth areas", link: ["See the outer foundation", "pd-external"] },
 ];
@@ -508,7 +511,7 @@ function HeroSlider({ onStart }) {
                   <div>
                     <H className="pd-hs-h">{s.title}<span style={{ color: "#f97316" }}>{s.accent}</span></H>
                     <p className="pd-hs-p">{s.text}</p>
-                                        <div className="pd-actions">
+                    <div className="pd-actions">
                       <button type="button" className="pd-btn p" onClick={onStart}>Start Free Assessment <ArrowRight size={15} /></button>
                       <a className="pd-btn s" href={`#${s.link[1]}`} onClick={goTo(s.link[1])}>{s.link[0]}</a>
                     </div>
@@ -525,7 +528,7 @@ function HeroSlider({ onStart }) {
           <div className="pd-hs-dots">{HERO.map((_, k) => <button key={k} type="button" className="pd-hs-dot" aria-label={`Go to slide ${k + 1}`} aria-current={k === i} onClick={() => setI(k)} />)}</div>
           <button type="button" className="pd-hs-arrow" aria-label="Next slide" onClick={() => setI((i + 1) % n)}><ChevronRight size={18} /></button>
         </div>
-             </div>
+      </div>
     </section>
   );
 }
@@ -613,6 +616,434 @@ details.pd-dt summary{cursor:pointer;padding:12px 0;font-family:'Space Grotesk',
 .pd-page ::-webkit-scrollbar{width:6px;height:6px}.pd-page ::-webkit-scrollbar-thumb{background:rgba(249,115,22,.3);border-radius:99px}
 `;
 
+/* ═══ WORKSHOPS-STYLE OVERRIDE (same design as Ilmora-workshops) ═══ */
+const PD_WK_CSS = `
+/* grid background, same as workshops */
+.pd-page{position:relative;isolation:isolate;font-size:14px;
+  background-image:linear-gradient(var(--pd-grid) 1px,transparent 1px),linear-gradient(90deg,var(--pd-grid) 1px,transparent 1px);
+  background-size:32px 32px}
+.pd-wrap{max-width:1520px;padding:0 clamp(12px,2.2vw,36px)}
+.pd-sec{padding:clamp(10px,1.6vw,16px) 0}
+
+/* UNBOLD: har jagah normal weight */
+.pd-page :where(h1,h2,h3,h4,b,strong,summary,legend,th,small,label,
+  .pd-btn,.pd-tab,.pd-badge,.pd-tag,.pd-lbl,.pd-chip,.pd-stats b,.pd-mbti b,.pd-hs-h,
+  .pd-lk label,.pd-step small,.pd-dt h4,.pd-jrl b){font-weight:400!important}
+.pd-page svg text,.pd-page svg tspan{font-weight:400!important}
+
+/* heading font = workshops jaisa (Plus Jakarta Sans) */
+.pd-page :where(h1,h2,h3,h4,.pd-h3,.pd-h4,.pd-hs-h,.pd-cta h2,.pd-stats b,.pd-mbti b,
+  .pd-idtxt h2,details.pd-dt summary){font-family:'Plus Jakarta Sans',sans-serif!important}
+.pd-page svg{font-family:'Plus Jakarta Sans',sans-serif!important}
+
+/* section head = white card + gradient heading */
+.pd-head{background:var(--pd-card);border:1px solid var(--pd-border);border-radius:14px;
+  padding:12px 16px;box-shadow:var(--pd-shadow);margin-bottom:12px}
+.pd-head h2{background:linear-gradient(90deg,var(--pd-text),color-mix(in srgb,#f97316 70%,var(--pd-text)));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.pd-head h2 span{-webkit-text-fill-color:currentColor}
+.pd-head p{margin-top:2px}
+
+/* cards: workshops jaisa shadow + hover lift + orange glow */
+.pd-card,.pd-fig,details.pd-dt{border-radius:16px;box-shadow:var(--pd-shadow);
+  transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s,border-color .35s}
+.pd-g>.pd-card:hover,.pd-mq .pd-card:hover,.pd-fig:hover,details.pd-dt:hover{
+  transform:translateY(-5px);border-color:#f97316;
+  box-shadow:0 16px 34px color-mix(in srgb,#f97316 24%,rgba(20,10,0,.2)),0 0 0 1px color-mix(in srgb,#f97316 45%,transparent)}
+.pd-step,.pd-fcard,.pd-idc{border-radius:16px}
+
+/* buttons: pill + gradient */
+.pd-btn{border-radius:999px;padding:8px 18px;min-height:38px;font-size:.86rem;
+  transition:transform .18s,box-shadow .2s,background-position .4s,border-color .2s}
+.pd-btn:active{transform:scale(.97)}
+.pd-btn.p{background:linear-gradient(135deg,#f97316,#fb8b3a);background-size:200% 100%;border-color:transparent;
+  box-shadow:0 6px 16px color-mix(in srgb,#f97316 38%,transparent)}
+.pd-btn.p:hover{background-position:100% 0;transform:translateY(-1px);
+  box-shadow:0 9px 22px color-mix(in srgb,#f97316 52%,transparent)}
+.pd-btn.s:hover{background:color-mix(in srgb,#f97316 9%,transparent);border-color:#f97316}
+.pd-btn.sm{padding:5px 12px;min-height:30px;font-size:.78rem}
+.pd-tab{border-radius:999px}
+
+/* hero slider: white card jaisa workshops ka sechead/panel */
+.pd-hero{border-bottom:0;padding:14px 0 4px}
+.pd-hero .pd-hs-view{background:var(--pd-card);border:1px solid var(--pd-border);border-radius:16px;
+  box-shadow:var(--pd-shadow);padding:0;overflow:hidden}
+.pd-hero .pd-hs-slide{padding:clamp(12px,2vw,24px);gap:clamp(16px,2.4vw,32px);align-items:stretch}
+.pd-hero .pd-hs-slide>div:first-child{display:flex;flex-direction:column;justify-content:center}
+.pd-hs-img{border-radius:16px;width:100%;height:100%;min-height:clamp(240px,30vw,360px);
+  background:var(--pd-card);border:0;box-shadow:none;padding:0}
+.pd-hs-img img{width:100%;height:100%;object-fit:contain}
+.pd-hs-dot[aria-current=true]{background:linear-gradient(90deg,#f97316,#16a34a)}
+.pd-stats div{border-radius:12px;background:var(--pd-card);box-shadow:var(--pd-shadow)}
+
+/* progress bar: orange to green (workshops roadmap jaisa) */
+.pd-bar i{background:linear-gradient(90deg,#16a34a,#f97316)}
+
+/* inputs + chips */
+.pd-in{border-radius:8px;background:var(--pd-card)}
+.pd-mbti{border-radius:14px}
+
+/* FAQ / lessons details */
+details.pd-dt summary{font-size:.92rem}
+details.pd-dt{background:var(--pd-card)}
+
+/* CTA: dark band, brand line neeche (workshops .nl / band jaisa) */
+.pd-cta{position:relative;background:linear-gradient(135deg,#14141f,#0b0b10);padding:20px 0;border-radius:16px;
+  margin:clamp(16px,2.6vw,26px) clamp(12px,2.2vw,36px) 0;overflow:hidden}
+.pd-cta::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:linear-gradient(90deg,#f97316,#16a34a)}
+.pd-cta h2{background:none;-webkit-text-fill-color:initial}
+
+/* FULL WIDTH: heads, cards, marquees poori width par */
+.pd-wrap{max-width:none;padding:0 clamp(8px,1.2vw,16px)}
+.pd-head{width:100%}
+.pd-cta{margin-left:clamp(8px,1.2vw,16px);margin-right:clamp(8px,1.2vw,16px)}
+
+/* HEADING SIZE: sab sections ke heading + subheading ek jaise (footer "Explore more on ILM ORA" jaisa) */
+.pd-head{padding:10px 16px}
+.pd-head h2{background:none;-webkit-text-fill-color:var(--pd-text);color:var(--pd-text);
+  font-size:22px;line-height:1.25;letter-spacing:-.01em;margin-bottom:2px}
+.pd-head h2 span{-webkit-text-fill-color:currentColor}
+.pd-head p{font-size:12.5px;line-height:1.5;color:var(--pd-sub);max-width:820px}
+.pd-cta h2{font-size:22px}
+.pd-cta p{font-size:12.5px}
+
+/* NO BLUR: marquee ke dono kinare ka fade/mask hata diya, shadow ab clip nahi hoti */
+.pd-mq{-webkit-mask-image:none!important;mask-image:none!important;
+  margin-top:0;padding:10px 0 18px;overflow:hidden}
+.pd-mq-track{padding:4px 0}
+.pd-page *{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+
+/* modal */
+.pd-mb{border-radius:20px;box-shadow:0 30px 70px rgba(0,0,0,.45)}
+
+@media(prefers-reduced-motion:reduce){
+  .pd-card,.pd-fig,details.pd-dt,.pd-btn{transition:none}
+  .pd-g>.pd-card:hover,.pd-mq .pd-card:hover,.pd-fig:hover,details.pd-dt:hover{transform:none}
+}
+`;
+
+/* ═══ VIDEO SECTION (WatchNow ke "Personality Development" category ke videos) ═══ */
+// Category ka naam "personality" se alag ho to is regex ko badlo (WatchNow.jsx wala same rakho).
+const PD_CATEGORY_RE = /personality/i;
+const isPdVideo = (v) => PD_CATEGORY_RE.test(String(v?.category || ""));
+const PD_VIEWED_KEY = "watchnow_viewed";
+
+function pdParseUrl(raw) {
+  if (!raw) return null;
+  const url = raw.trim();
+  const yt = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/shorts\/|youtube\.com\/embed\/)([\w-]{11})/);
+  if (yt) return { type: "iframe", url: `https://www.youtube.com/embed/${yt[1]}`, yt: yt[1] };
+  const vm = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if (vm) return { type: "iframe", url: `https://player.vimeo.com/video/${vm[1]}` };
+  if (/\.(mp4|webm|ogg|mov|m4v)(\?.*)?$/i.test(url)) return { type: "video", url };
+  return { type: "iframe", url };
+}
+const pdSource = async (v) => (v.videoFileName ? await videoService.getWatchNowStreamUrl(v.videoFileName) : v.externalVideoUrl || "");
+const pdTitle = (v) => v.quote || v.title || "Personality Development video";
+
+// YouTube hqdefault = 4:3 with black bars baked in. maxresdefault / mqdefault = true 16:9.
+function pdYtCandidates(url) {
+  const m = String(url || "").match(
+    /^(https?:\/\/(?:i\.ytimg\.com|img\.youtube\.com)\/vi(?:_webp)?\/[\w-]{11}\/)(?:maxres|sd|hq|mq)?default(?:_live)?\.(jpg|webp)/i,
+  );
+  if (!m) return null;
+  return [`${m[1]}maxresdefault.${m[2]}`, `${m[1]}mqdefault.${m[2]}`];
+}
+
+function PdThumb({ v }) {
+  const [src, setSrc] = useState(null);
+  const [altIdx, setAltIdx] = useState(0);
+  useEffect(() => {
+    let live = true;
+    setSrc(null);
+    setAltIdx(0);
+    const yt = pdParseUrl(v.externalVideoUrl || "")?.yt;
+    if (!v.thumbnail) { if (yt) setSrc(`https://i.ytimg.com/vi/${yt}/hqdefault.jpg`); return undefined; }
+    if (/^https?:\/\//i.test(v.thumbnail)) { setSrc(v.thumbnail); return undefined; }
+    Promise.resolve(videoService.getWatchNowStreamUrl(v.thumbnail)).then((u) => live && setSrc(u)).catch(() => {});
+    return () => { live = false; };
+  }, [v.id, v.thumbnail, v.externalVideoUrl]);
+  if (!src) return <span className="pd-vd-ph" aria-hidden="true" />;
+  const cands = pdYtCandidates(src);
+  const shown = cands ? cands[Math.min(altIdx, cands.length - 1)] : src;
+  const next = () => { if (cands && altIdx < cands.length - 1) setAltIdx(altIdx + 1); };
+  return (
+    <>
+      {!cands && <img className="pd-vd-bg" src={src} alt="" aria-hidden="true" />}
+      <img
+        className={cands ? "pd-vd-img cv" : "pd-vd-img"}
+        src={shown}
+        alt=""
+        loading="lazy"
+        onError={next}
+        onLoad={(e) => { if (cands && e.currentTarget.naturalWidth <= 120) next(); }}
+      />
+    </>
+  );
+}
+
+function PdPlayer({ v }) {
+  const [url, setUrl] = useState(null);
+  const [failed, setFailed] = useState(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    let live = true;
+    setUrl(null); setFailed(false);
+    pdSource(v).then((u) => live && (u ? setUrl(u) : setFailed(true))).catch(() => live && setFailed(true));
+    return () => { live = false; };
+  }, [v.id, v.videoFileName, v.externalVideoUrl]);
+  useEffect(() => () => { const el = ref.current; if (el) { el.pause(); el.removeAttribute("src"); el.load(); } }, []);
+  if (failed) return <div className="pd-vd-msg">This video could not be loaded. Please try again.</div>;
+  if (!url) return <div className="pd-vd-msg"><span className="pd-vd-spin" aria-hidden="true" />Loading video</div>;
+  const parsed = v.videoFileName ? { type: "video", url } : pdParseUrl(url);
+  if (!parsed) return <div className="pd-vd-msg">This video could not be loaded.</div>;
+  if (parsed.type === "video") return <video ref={ref} src={parsed.url} controls autoPlay playsInline className="pd-vd-el" />;
+  const sep = parsed.url.includes("?") ? "&" : "?";
+  return <iframe className="pd-vd-el" src={`${parsed.url}${sep}autoplay=1`} title={pdTitle(v)} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />;
+}
+
+const VIDEO_CSS = `
+.pd-vd{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(280px,1fr);gap:14px;align-items:start}
+@media(max-width:900px){.pd-vd{grid-template-columns:1fr}}
+.pd-vd-stage{position:relative;aspect-ratio:16/9;border-radius:16px;overflow:hidden;background:#0b0b10;border:1px solid var(--pd-border);box-shadow:var(--pd-shadow)}
+.pd-vd-el{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000;object-fit:contain}
+.pd-vd-poster{position:absolute;inset:0;width:100%;height:100%;padding:0;border:0;cursor:pointer;background:#0b0b10;display:block}
+.pd-vd-poster img,.pd-vd-card .pd-vd-th img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.pd-vd-ph{position:absolute;inset:0;background:linear-gradient(135deg,#14141f,#2b2b38)}
+.pd-vd-poster::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(8,8,14,.55),transparent 55%)}
+.pd-vd-play{position:absolute;left:50%;top:50%;z-index:1;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;background:#f97316;
+  display:grid;place-items:center;color:#fff;box-shadow:0 0 0 8px rgba(249,115,22,.28);transition:transform .25s}
+.pd-vd-poster:hover .pd-vd-play{transform:scale(1.1)}
+.pd-vd-poster:focus-visible{outline:3px solid #f97316;outline-offset:-3px}
+.pd-vd-msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:10px;color:#fff;font-size:13.5px;padding:16px;text-align:center}
+.pd-vd-spin{width:20px;height:20px;border-radius:50%;border:2px solid rgba(255,255,255,.25);border-top-color:#f97316;animation:pdSpin .8s linear infinite}
+@keyframes pdSpin{to{transform:rotate(360deg)}}
+.pd-vd-info{margin-top:10px;padding:12px 16px;border-radius:14px;background:var(--pd-card);border:1px solid var(--pd-border);box-shadow:var(--pd-shadow)}
+.pd-vd-info h3{margin:0 0 4px;font-size:16px}
+.pd-vd-info p{font-size:13px;line-height:1.55;color:var(--pd-sub);margin:0 0 4px}
+.pd-vd-info small{font-size:12px;color:var(--pd-muted)}
+.pd-vd-list{list-style:none;margin:0;padding:2px;display:grid;gap:10px;max-height:min(70vh,560px);overflow-y:auto}
+.pd-vd-card{width:100%;display:grid;grid-template-columns:128px 1fr;gap:10px;align-items:center;text-align:left;cursor:pointer;
+  padding:8px;border-radius:14px;background:var(--pd-card);color:var(--pd-text);font-family:inherit;
+  border:1px solid var(--pd-border);box-shadow:var(--pd-shadow);transition:transform .3s,border-color .3s,box-shadow .3s}
+.pd-vd-card:hover{transform:translateY(-3px);border-color:#f97316}
+.pd-vd-card[aria-current=true]{border-color:#f97316;box-shadow:0 10px 26px color-mix(in srgb,#f97316 22%,transparent)}
+.pd-vd-card:focus-visible{outline:2px solid #f97316;outline-offset:2px}
+.pd-vd-th{position:relative;aspect-ratio:16/9;border-radius:10px;overflow:hidden;background:#0b0b10;display:block}
+.pd-vd-th em{position:absolute;right:5px;bottom:5px;z-index:1;font-style:normal;font-size:10.5px;color:#fff;background:rgba(10,12,30,.78);padding:1px 6px;border-radius:99px}
+.pd-vd-txt{display:grid;gap:2px;min-width:0}
+.pd-vd-txt b{font-size:13px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pd-vd-txt span{font-size:11.5px;color:var(--pd-muted)}
+.pd-vd-now{color:#f97316!important}
+.pd-vd-empty{text-align:center;padding:22px 16px}
+.pd-vd-foot{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:12px}
+@media(max-width:480px){.pd-vd-card{grid-template-columns:104px 1fr}}
+@media(prefers-reduced-motion:reduce){.pd-vd-card,.pd-vd-play{transition:none}.pd-vd-spin{animation:none}}
+
+`;
+const VIDEO_CSS2 = `
+.pd-vh{display:flex;align-items:center;gap:16px;margin:4px 0 16px}
+.pd-vh-ic{flex:none;width:64px;height:64px;border-radius:18px;display:grid;place-items:center;color:#f97316;
+  background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.22)}
+.pd-vh h2{font-size:clamp(22px,3vw,34px)!important;line-height:1.2;letter-spacing:-.02em;color:var(--pd-text);margin:0 0 4px;font-weight:500!important}
+.pd-vh h2 span{color:#f97316}
+.pd-vh p{font-size:clamp(13px,1.5vw,16px);line-height:1.5;color:var(--pd-sub)}
+@media(max-width:560px){.pd-vh-ic{width:48px;height:48px;border-radius:14px}}
+
+.pd-vd{gap:18px;align-items:start}
+.pd-vd-main{background:var(--pd-card);border:1px solid var(--pd-border);border-radius:20px;padding:12px;box-shadow:var(--pd-shadow);min-width:0}
+.pd-vd-stage{border-radius:14px;border:0;box-shadow:none}
+.pd-vd-info{border:0;box-shadow:none;background:transparent;margin-top:6px;padding:8px 6px 2px}
+
+.pd-vd-poster img,.pd-vd-card .pd-vd-th img{object-fit:contain!important}
+.pd-vd-poster img.cv,.pd-vd-card .pd-vd-th img.cv{object-fit:cover!important}
+.pd-vd-poster img.pd-vd-bg,.pd-vd-card .pd-vd-th img.pd-vd-bg{object-fit:cover!important;filter:blur(18px);transform:scale(1.15);opacity:.75;pointer-events:none}
+
+.pd-vd-side{background:var(--pd-card);border:1px solid var(--pd-border);border-radius:20px;padding:14px 16px;box-shadow:var(--pd-shadow);min-width:0}
+.pd-vd-sh{display:flex;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid var(--pd-border);margin-bottom:6px}
+.pd-vd-sic{width:38px;height:38px;border-radius:12px;display:grid;place-items:center;color:#f97316;background:rgba(249,115,22,.12)}
+.pd-vd-sh h3{margin:0;font-size:18px;font-weight:500!important}
+.pd-vd-list{max-height:min(68vh,520px);gap:0;padding:0}
+.pd-vd-list li{border-bottom:1px solid var(--pd-border)}
+.pd-vd-list li:last-child{border-bottom:0}
+.pd-vd-card{grid-template-columns:150px 1fr;gap:14px;padding:8px;background:transparent;border:1.5px solid transparent;border-radius:12px;box-shadow:none}
+.pd-vd-card:hover{transform:none;background:color-mix(in srgb,#f97316 6%,transparent);border-color:transparent}
+.pd-vd-card[aria-current=true]{background:rgba(249,115,22,.1);border-color:#f97316;box-shadow:none}
+.pd-vd-th{border-radius:8px}
+.pd-vd-th em{left:50%;right:auto;transform:translateX(-50%);bottom:6px;font-size:11.5px;padding:2px 9px}
+.pd-vd-txt b{font-size:14.5px;font-weight:500!important}
+@media(max-width:480px){.pd-vd-card{grid-template-columns:112px 1fr}}
+
+/* COMPACT video section */
+.pd-vd{width:100%;max-width:none;margin:0;gap:12px;grid-template-columns:minmax(0,1.9fr) minmax(300px,1fr);align-items:stretch}
+.pd-vd-main{padding:8px;border-radius:16px}
+.pd-vd-stage{border-radius:12px}
+.pd-vd-info{padding:6px 4px 0;margin-top:4px}
+.pd-vd-info h3{font-size:14px;margin:0 0 2px}
+.pd-vd-info p{font-size:12px;line-height:1.45;margin:0 0 2px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pd-vd-info small{font-size:11.5px}
+.pd-vd-play{width:50px;height:50px;margin:-25px 0 0 -25px;box-shadow:0 0 0 6px rgba(249,115,22,.28)}
+.pd-vd-side{padding:10px 12px;border-radius:16px;display:flex;flex-direction:column}
+@media(min-width:901px){.pd-vd-side{height:0;min-height:100%}.pd-vd-list{flex:1;min-height:0;max-height:none}}
+.pd-vd-sh{gap:10px;padding-bottom:8px;margin-bottom:4px}
+.pd-vd-sic{width:30px;height:30px;border-radius:10px}
+.pd-vd-sh h3{font-size:14.5px}
+.pd-vd-list{max-height:340px;overflow-y:auto}
+.pd-vd-card{grid-template-columns:104px 1fr;gap:10px;padding:6px}
+.pd-vd-txt b{font-size:12.5px}
+.pd-vd-txt span{font-size:11px}
+.pd-vd-th em{font-size:10px;padding:1px 7px;bottom:4px}
+@media(max-width:900px){.pd-vd{grid-template-columns:1fr}.pd-vd-list{max-height:300px}}
+@media(max-width:480px){.pd-vd-card{grid-template-columns:96px 1fr}}
+`;
+function VideoSection() {
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [failed, setFailed] = useState(false);
+  const [cur, setCur] = useState(0);
+  const [playing, setPlaying] = useState(false);
+  useEffect(() => {
+    let live = true;
+    videoService.getWatchNowPublished()
+      .then(({ data }) => { if (live) setItems(Array.isArray(data) ? data.filter(isPdVideo) : []); })
+      .catch(() => live && setFailed(true))
+      .finally(() => live && setLoading(false));
+    return () => { live = false; };
+  }, []);
+  const v = items[cur];
+  const pick = (i) => { setCur(i); setPlaying(false); };
+  const play = () => {
+    setPlaying(true);
+    // real video par ek view count (same video 30 sec mein dobara count nahi hota)
+    if (!v || v.isDummy || String(v.id).startsWith("dummy-")) return;
+    try {
+      const seen = JSON.parse(sessionStorage.getItem(PD_VIEWED_KEY) || "{}");
+      const k = String(v.id), now = Date.now();
+      if (now - (seen[k] || 0) < 30000) return;
+      seen[k] = now;
+      sessionStorage.setItem(PD_VIEWED_KEY, JSON.stringify(seen));
+      videoService.incrementWatchNowView(v.id).catch(() => {});
+    } catch {}
+  };
+  const meta = (x) => [x.personName, x.duration, x.views != null ? `${Number(x.views) || 0} views` : ""].filter(Boolean).join(" · ");
+  return (
+        <section className="pd-sec" id="pd-videos"><div className="pd-wrap">
+      <style>{VIDEO_CSS}</style>
+      <style>{VIDEO_CSS2}</style>
+            <Head badge="Videos" title='Personality Development – <span style="color:#f97316">Video Lessons</span>' sub="Explore focused video lessons to build confidence, communication and a positive mindset." />
+      {loading ? (
+        <div className="pd-card pd-vd-empty" role="status"><p className="pd-sub" style={{ margin: 0 }}>Loading videos</p></div>
+      ) : !v ? (
+        <div className="pd-card pd-vd-empty">
+          <p className="pd-sub" style={{ margin: 0 }}>{failed ? "We could not load the videos right now. Please try again later." : "Personality Development videos will appear here once they are published."}</p>
+          <div className="pd-vd-foot"><a className="pd-btn s sm" href="/watch-now">Browse all videos on Watch Now</a></div>
+        </div>
+      ) : (
+        <>
+          <div className="pd-vd">
+            <div className="pd-vd-main">
+              <div className="pd-vd-stage">
+                {playing
+                  ? <PdPlayer key={v.id} v={v} />
+                  : <button type="button" className="pd-vd-poster" onClick={play} aria-label={`Play video: ${pdTitle(v)}`}>
+                      <PdThumb v={v} /><span className="pd-vd-play"><Play size={26} fill="#fff" /></span>
+                    </button>}
+                            </div>
+            </div>
+            <aside className="pd-vd-side">
+              <div className="pd-vd-sh">
+                <span className="pd-vd-sic" aria-hidden="true"><List size={18} /></span>
+                <h3>Video Playlist ({items.length})</h3>
+              </div>
+              <ul className="pd-vd-list" aria-label="More Personality Development videos">
+                {items.map((x, i) => (
+                  <li key={x.id}>
+                    <button type="button" className="pd-vd-card" aria-current={i === cur} onClick={() => pick(i)}>
+                      <span className="pd-vd-th"><PdThumb v={x} />{x.duration && <em>{x.duration}</em>}</span>
+                      <span className="pd-vd-txt"><b>{pdTitle(x)}</b><span className={i === cur ? "pd-vd-now" : ""}>{i === cur ? "Now selected" : x.personName || "Watch"}</span></span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </aside>
+          </div>
+          {/* <div className="pd-vd-foot"><a className="pd-btn s sm" href="/watch-now">See all videos on Watch Now</a></div> */}
+        </>
+      )}
+    </div></section>
+  );
+}
+
+/* ═══ LESSONS (tabs + detail panel) ═══ */
+const LESSON_CSS = `
+.pd-ls-tabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:12px}
+.pd-ls-tab{font-family:'Plus Jakarta Sans',sans-serif;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:6px;
+  padding:14px 16px;border-radius:16px;background:var(--pd-card);color:var(--pd-text);
+  border:1px solid var(--pd-border);border-top:4px solid var(--c);box-shadow:var(--pd-shadow);
+  transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s,border-color .3s,background .3s}
+.pd-ls-tab:hover{transform:translateY(-4px);border-color:var(--c)}
+.pd-ls-tab[aria-selected=true]{border-color:var(--c);background:color-mix(in srgb,var(--c) 9%,var(--pd-card));
+  box-shadow:0 12px 28px color-mix(in srgb,var(--c) 22%,transparent)}
+.pd-ls-tab:focus-visible{outline:2px solid #f97316;outline-offset:3px}
+.pd-ls-tag{align-self:flex-start;font-size:11px;color:var(--c);border:1px solid var(--c);border-radius:99px;padding:1px 9px}
+.pd-ls-t{font-size:15px;line-height:1.3}
+.pd-ls-i{font-size:12.5px;line-height:1.5;color:var(--pd-sub);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.pd-ls-go{margin-top:auto;font-size:12px;color:var(--c)}
+.pd-ls-panel{margin-top:12px;border-radius:16px;border:1px solid var(--pd-border);border-left:4px solid var(--c);
+  background:var(--pd-card);box-shadow:var(--pd-shadow);padding:clamp(14px,2vw,22px);animation:pdLsIn .35s ease}
+@keyframes pdLsIn{from{opacity:0;transform:translateY(8px)}}
+.pd-ls-hint{margin-top:12px;text-align:center;font-size:12.5px;color:var(--pd-muted);padding:14px;border:1px dashed var(--pd-border);border-radius:16px}
+.pd-ls-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.pd-ls-top h3{font-size:18px;margin:0 0 4px}
+.pd-ls-intro{font-size:13.5px;line-height:1.6;color:var(--pd-sub);max-width:90ch}
+.pd-ls-close{flex:none;cursor:pointer;background:none;border:1px solid var(--pd-border);color:var(--pd-muted);border-radius:99px;width:30px;height:30px;display:grid;place-items:center}
+.pd-ls-close:hover{border-color:#f97316;color:#f97316}
+.pd-ls-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:14px}
+@media(max-width:900px){.pd-ls-grid{grid-template-columns:1fr}}
+.pd-ls-box{border-radius:12px;padding:12px 14px;background:var(--pd-pill);border:1px solid var(--pd-border)}
+.pd-ls-box h4{margin:0 0 6px;font-size:13px;color:var(--c)}
+.pd-ls-box p,.pd-ls-box li{font-size:13px;line-height:1.55;color:var(--pd-sub)}
+.pd-ls-box ul{padding-left:16px;display:grid;gap:4px}
+@media(prefers-reduced-motion:reduce){.pd-ls-tab,.pd-ls-panel{transition:none;animation:none}}
+`;
+function Lessons() {
+  const [sel, setSel] = useState(null);
+  const l = sel == null ? null : LESSONS[sel];
+  const c = l ? (l[1] === "in" ? "#0e8fa8" : "#f97316") : "#f97316";
+  return (
+    <>
+      <style>{LESSON_CSS}</style>
+      <div className="pd-ls-tabs" role="tablist" aria-label="Lessons">
+        {LESSONS.map((x, i) => (
+          <button key={x[0]} type="button" role="tab" id={`pd-ls-t${i}`} aria-selected={sel === i} aria-controls="pd-ls-panel"
+            className="pd-ls-tab" style={{ "--c": x[1] === "in" ? "#0e8fa8" : "#f97316" }}
+            onClick={() => setSel(sel === i ? null : i)}>
+            <span className="pd-ls-tag">{x[1] === "in" ? "Internal" : "External"}</span>
+            <span className="pd-ls-t">{x[0]}</span>
+            <span className="pd-ls-i">{x[2]}</span>
+            <span className="pd-ls-go">{sel === i ? "Hide lesson" : "Open lesson"}</span>
+          </button>
+        ))}
+      </div>
+      <div id="pd-ls-panel" role="tabpanel" aria-live="polite" aria-labelledby={sel != null ? `pd-ls-t${sel}` : undefined}>
+        {!l ? <p className="pd-ls-hint">Select a lesson above to read its example, reflection questions and exercise.</p> : (
+          <div className="pd-ls-panel" key={sel} style={{ "--c": c }}>
+            <div className="pd-ls-top">
+              <div><h3 className="pd-h3">{l[0]}</h3><p className="pd-ls-intro">{l[2]}</p></div>
+              <button type="button" className="pd-ls-close" onClick={() => setSel(null)} aria-label="Close lesson"><X size={16} /></button>
+            </div>
+            <div className="pd-ls-grid">
+              <div className="pd-ls-box"><h4>Real-life situation</h4><p>{l[3]}</p></div>
+              <div className="pd-ls-box"><h4>Ask yourself</h4><ul>{l[4].map((q) => <li key={q}>{q}</li>)}</ul></div>
+              <div className="pd-ls-box"><h4>Try this</h4><p>{l[5]}</p></div>
+            </div>
+          </div>
+        )}
+      </div>
+    </>
+  );
+}
+
 /* ═══ PAGE ═══ */
 export default function PersonalityDevelopment({ theme: themeProp, toggleTheme: toggleThemeProp, setShowLoginModal, scrollToSection }) {
   const [darkMode, setDarkMode] = useState(() => {
@@ -629,6 +1060,27 @@ export default function PersonalityDevelopment({ theme: themeProp, toggleTheme: 
     window.addEventListener("storage", f);
     return () => window.removeEventListener("storage", f);
   }, []);
+  // Watch Now ke "Explore More" se aane par: ?section=videos (ya #pd-videos) -> seedha Video Section par scroll
+  useEffect(() => {
+    if (typeof window === "undefined") return undefined;
+    const q = new URLSearchParams(window.location.search).get("section");
+    const target = q ? `pd-${q}` : window.location.hash.replace("#", "");
+    if (!target) return undefined;
+    const timers = [];
+    let tries = 0;
+    const run = () => {
+      if (document.getElementById(target)) {
+        goTo(target)();
+        // images / video list load hone se layout hilta hai, isliye do baar aur align karo
+        timers.push(setTimeout(goTo(target), 700), setTimeout(goTo(target), 1600));
+        if (q) { try { const u = new URL(window.location.href); u.searchParams.delete("section"); window.history.replaceState(null, "", u.pathname + u.search + u.hash); } catch {} }
+        return;
+      }
+      if (tries++ < 25) timers.push(setTimeout(run, 150));
+    };
+    timers.push(setTimeout(run, 150));
+    return () => timers.forEach(clearTimeout);
+  }, []);
   const t = theme === "dark" ? DARK : LIGHT;
 
   const [open, setOpen] = useState(false);
@@ -637,10 +1089,13 @@ export default function PersonalityDevelopment({ theme: themeProp, toggleTheme: 
 
   return (
     <PublicLayout theme={theme} toggleTheme={toggleTheme} setShowLoginModal={setShowLoginModal} scrollToSection={scrollToSection}>
-      <div className="pd-page" style={{ "--pd-text": t.text, "--pd-sub": t.textSub, "--pd-muted": t.textMuted, "--pd-card": t.cardBg, "--pd-border": t.border, "--pd-pill": t.pillBg, "--pd-bar": t.barBg, "--pd-shadow": t.shadow, background: t.pageBg, color: t.text, minHeight: "100vh", transition: "background .3s,color .3s" }}>
+      <div className="pd-page" style={{ "--pd-text": t.text, "--pd-sub": t.textSub, "--pd-muted": t.textMuted, "--pd-card": t.cardBg, "--pd-border": t.border, "--pd-pill": t.pillBg, "--pd-bar": t.barBg, "--pd-shadow": t.shadow, "--pd-grid": t.grid, backgroundColor: t.pageBg, color: t.text, minHeight: "100vh", transition: "background-color .3s,color .3s" }}>
         <style>{PD_CSS}</style>
+        <style>{PD_WK_CSS}</style>
 
         <HeroSlider onStart={() => setOpen(true)} />
+
+        <VideoSection />
 
         <section className="pd-sec" id="pd-how"><div className="pd-wrap">
           <Head badge="How it works" title='How it <span style="color:#f97316">works</span>' sub="Read everything free. Sign up only when you want your own assessment." />
@@ -651,14 +1106,7 @@ export default function PersonalityDevelopment({ theme: themeProp, toggleTheme: 
 
         <section className="pd-sec" id="pd-learn"><div className="pd-wrap">
           <Head badge="Learn" title='Learn the <span style="color:#f97316">skills</span>' sub="Internal lessons build you from within; external lessons change how you come across. Each has a real-life example, reflection questions and one exercise." />
-          <div className="pd-g" style={{ gridTemplateColumns: "repeat(auto-fit,minmax(min(100%,420px),1fr))", alignItems: "start" }}>
-            {LESSONS.map((l, i) => (
-              <details key={l[0]} className="pd-dt" open={i === 0}>
-                <summary><span className="pd-tag" style={{ color: l[1] === "in" ? "#0e8fa8" : "#f97316" }}>{l[1] === "in" ? "Internal" : "External"}</span>{l[0]}</summary>
-                <div className="bd"><p>{l[2]}</p><h4>Real-life situation</h4><p>{l[3]}</p><h4>Ask yourself</h4><ul className="pd-ul">{l[4].map((q) => <li key={q}>{q}</li>)}</ul><h4>Try this</h4><p>{l[5]}</p></div>
-              </details>
-            ))}
-          </div>
+          <Lessons />
         </div></section>
 
         <section className="pd-sec" id="pd-body"><div className="pd-wrap">

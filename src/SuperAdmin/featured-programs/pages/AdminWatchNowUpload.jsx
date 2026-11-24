@@ -596,7 +596,9 @@ function StoryEditor({ t, initial, onCancel, onSaved }) {
   const [title, setTitle] = useState(initial?.title || "");
   const [category, setCategory] = useState(initial?.category || "");
   const [audience, setAudience] = useState(initial?.audience || "");
-  const [duration, setDuration] = useState(initial?.duration || "");
+   const [duration, setDuration] = useState(initial?.duration || "");
+  // "" = Auto (decided by duration), "LONG", "SHORT"
+  const [videoType, setVideoType] = useState(initial?.videoType || "");
   const [mode, setMode] = useState(initial?.externalVideoUrl ? "url" : "file");
   const [videoFile, setVideoFile] = useState(null);
   const [externalUrl, setExternalUrl] = useState(
@@ -694,7 +696,9 @@ function StoryEditor({ t, initial, onCancel, onSaved }) {
     fd.append("title", title.trim());
     fd.append("category", category);
     fd.append("audience", audience);
-    fd.append("duration", duration.trim());
+        fd.append("duration", duration.trim());
+    // empty string = clear (Auto), same as other meta fields
+    fd.append("videoType", videoType);
     if (mode === "url") {
       fd.append("externalVideoUrl", externalUrl.trim());
     } else if (videoFile) {
@@ -965,14 +969,29 @@ function StoryEditor({ t, initial, onCancel, onSaved }) {
               </button>
             </div>
           )}
-          <Field label="Duration" t={t}>
-            <input
-              value={duration}
-              onChange={(e) => setDuration(e.target.value)}
-              placeholder="e.g. 4:32"
-              style={getInputStyle(t)}
-            />
-          </Field>
+                    <div
+            style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}
+          >
+            <Field label="Duration" t={t}>
+              <input
+                value={duration}
+                onChange={(e) => setDuration(e.target.value)}
+                placeholder="e.g. 4:32"
+                style={getInputStyle(t)}
+              />
+            </Field>
+            <Field label="Video Type" t={t}>
+              <select
+                value={videoType}
+                onChange={(e) => setVideoType(e.target.value)}
+                style={{ ...getInputStyle(t), cursor: "pointer" }}
+              >
+                <option value="">Auto (by duration)</option>
+                <option value="LONG">Long Video</option>
+                <option value="SHORT">Short</option>
+              </select>
+            </Field>
+          </div>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
@@ -1663,8 +1682,8 @@ export default function AdminWatchNowManagement() {
                   <GripVertical size={14} color={t.textFaint} />
                   <AdminThumb
                     thumbnail={item.thumbnail}
-                    style={{
-                      width: 56,
+                                        style={{
+                      width: 64,
                       height: 36,
                       borderRadius: 6,
                       objectFit: "cover",

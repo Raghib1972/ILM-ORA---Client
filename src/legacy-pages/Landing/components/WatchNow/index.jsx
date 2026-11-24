@@ -20,6 +20,14 @@ import {
   X,
   CheckCircle2,
   Users,
+  MoreVertical,
+  Share2,
+  Link2,
+  Mail,
+  Check,
+  Copy,
+  MessageCircle,
+  Send,
 } from "lucide-react";
 import { useNavigate } from "@/lib/routerCompat";
 import videoService from "@/services/videoService";
@@ -29,6 +37,13 @@ const SECTION_BG = "#F8FAFC";
 
 // Where the "Start your journey" button goes (change to your real route)
 const START_PATH = "/courses";
+
+// Personality Development videos: category name backend se aati hai.
+// Agar aapki category ka naam "personality" se alag hai to is regex ko badlo.
+const PD_CATEGORY_RE = /personality/i;
+const isPdCategory = (c) => PD_CATEGORY_RE.test(String(c || ""));
+// Explore More -> Personality Development page, seedha Video Section par
+const PD_VIDEOS_PATH = "/personality-development?section=videos";
 
 // same key as the /watch-now page, so hearts stay in sync
 const FAV_KEY = "watchnow_favs";
@@ -185,11 +200,25 @@ function useVisibleCount() {
   return { visibleCount: getVisibleCount(width), isMobile: width < 641 };
 }
 
+// YouTube hqdefault/sddefault = 4:3 with black bars baked in.
+// maxresdefault (1280x720) / mqdefault (320x180) = true 16:9 -> fills the card.
+function ytCandidates(url) {
+  const m = String(url || "").match(
+    /^(https?:\/\/(?:i\.ytimg\.com|img\.youtube\.com)\/vi(?:_webp)?\/[\w-]{11}\/)(?:maxres|sd|hq|mq)?default(?:_live)?\.(jpg|webp)/i,
+  );
+  if (!m) return null;
+  return [`${m[1]}maxresdefault.${m[2]}`, `${m[1]}mqdefault.${m[2]}`];
+}
+
 /* ============================================================
    Thumbnail
    ============================================================ */
 function Thumb({ thumbnail, alt }) {
   const [src, setSrc] = useState(null);
+  const [altIdx, setAltIdx] = useState(0);
+  useEffect(() => {
+    setAltIdx(0);
+  }, [src]);
 
   useEffect(() => {
     let active = true;
@@ -214,21 +243,337 @@ function Thumb({ thumbnail, alt }) {
       <div className="absolute inset-0 bg-slate-200 dark:bg-slate-800 animate-pulse" />
     );
   }
+  // true 16:9 YouTube image so it fills the whole card
+  const cands = ytCandidates(src);
+  const shownSrc = cands ? cands[Math.min(altIdx, cands.length - 1)] : src;
+
   return (
-    <img
-      src={src}
-      alt={alt}
-      loading="lazy"
-      draggable={false}
-      className="absolute inset-0 w-full h-full max-w-full object-cover transition-transform duration-500 group-hover:scale-105"
-    />
+    <>
+      {!cands && (
+        <img
+          src={src}
+          alt=""
+          aria-hidden="true"
+          draggable={false}
+          className="absolute inset-0 w-full h-full max-w-full scale-110 blur-xl opacity-70 pointer-events-none"
+          style={{ objectFit: "cover" }}
+        />
+      )}
+      <img
+        src={shownSrc}
+        alt={alt}
+        loading="lazy"
+        draggable={false}
+        onError={() => {
+          if (cands && altIdx < cands.length - 1) setAltIdx(altIdx + 1);
+        }}
+        className="absolute inset-0 w-full h-full max-w-full"
+        style={{
+          objectFit: cands ? "cover" : "contain",
+          objectPosition: "center",
+        }}
+      />
+    </>
+  );
+}
+
+/* ============================================================
+   Share link + Share dialog (YouTube-style)
+   ============================================================ */
+function getShareUrl(item) {
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  if (!item || item.isDummy || !isRealId(item.id)) return `${origin}/watch-now`;
+  return `${origin}/watch-now?video=${encodeURIComponent(item.id)}`;
+}
+
+async function copyText(text) {
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch {
+    /* fall through to legacy copy */
+  }
+  try {
+    const ta = document.createElement("textarea");
+    ta.value = text;
+    ta.style.position = "fixed";
+    ta.style.opacity = "0";
+    document.body.appendChild(ta);
+    ta.select();
+    const ok = document.execCommand("copy");
+    document.body.removeChild(ta);
+    return ok;
+  } catch {
+    return false;
+  }
+}
+
+function ShareModal({ item, onClose }) {
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    setCopied(false);
+  }, [item?.id]);
+
+  useEffect(() => {
+    if (!item) return undefined;
+    const onKey = (e) => e.key === "Escape" && onClose();
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [item, onClose]);
+
+  if (!item) return null;
+
+  const url = getShareUrl(item);
+  const text = item.quote || "Watch this on ILM ORA";
+  const eu = encodeURIComponent(url);
+  const et = encodeURIComponent(text);
+
+  const targets = [
+    {
+      key: "wa",
+      label: "WhatsApp",
+      href: `https://wa.me/?text=${et}%20${eu}`,
+      bg: "bg-[#25D366]",
+      icon: <MessageCircle className="w-6 h-6 text-white" />,
+    },
+    {
+      key: "x",
+      label: "X",
+      href: `https://twitter.com/intent/tweet?text=${et}&url=${eu}`,
+      bg: "bg-black",
+      icon: <span className="text-white text-lg font-bold">X</span>,
+    },
+    {
+      key: "fb",
+      label: "Facebook",
+      href: `https://www.facebook.com/sharer/sharer.php?u=${eu}`,
+      bg: "bg-[#1877F2]",
+      icon: <span className="text-white text-2xl font-bold leading-none">f</span>,
+    },
+    {
+      key: "tg",
+      label: "Telegram",
+      href: `https://t.me/share/url?url=${eu}&text=${et}`,
+      bg: "bg-[#229ED9]",
+      icon: <Send className="w-5 h-5 text-white" />,
+    },
+    {
+      key: "mail",
+      label: "Email",
+      href: `mailto:?subject=${et}&body=${et}%0A${eu}`,
+      bg: "bg-slate-500",
+      icon: <Mail className="w-5 h-5 text-white" />,
+    },
+  ];
+
+  const handleCopy = async () => {
+    const ok = await copyText(url);
+    if (ok) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  const canNativeShare =
+    typeof navigator !== "undefined" && typeof navigator.share === "function";
+  const nativeShare = () => {
+    navigator.share({ title: text, text, url }).catch(() => {});
+  };
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[120] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Share video"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-md bg-white dark:bg-[#1a1d27] rounded-2xl shadow-2xl p-5"
+      >
+        <button
+          type="button"
+          aria-label="Close"
+          onClick={onClose}
+          className="absolute top-3 right-3 w-8 h-8 rounded-full bg-transparent flex items-center justify-center border-none cursor-pointer hover:bg-slate-100 dark:hover:bg-white/10 transition"
+        >
+          <X className="w-4 h-4 text-slate-600 dark:text-slate-300" />
+        </button>
+
+        <h3 className="m-0 text-base font-semibold text-slate-900 dark:text-white">
+          Share
+        </h3>
+        <p
+          className="mt-1 mb-4 text-[12.5px] text-slate-500 dark:text-slate-400 truncate pr-8"
+          title={text}
+        >
+          {text}
+        </p>
+
+        <div className="flex items-start gap-3 overflow-x-auto pb-2">
+          {targets.map((t) => (
+            <a
+              key={t.key}
+              href={t.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col items-center gap-1.5 shrink-0 w-16 no-underline"
+            >
+              <span
+                className={`w-12 h-12 rounded-full ${t.bg} flex items-center justify-center shadow-md hover:scale-105 transition-transform`}
+              >
+                {t.icon}
+              </span>
+              <span className="text-[11px] text-slate-600 dark:text-slate-300">
+                {t.label}
+              </span>
+            </a>
+          ))}
+          {canNativeShare && (
+            <button
+              type="button"
+              onClick={nativeShare}
+              className="flex flex-col items-center gap-1.5 shrink-0 w-16 bg-transparent border-none cursor-pointer p-0"
+            >
+              <span className="w-12 h-12 rounded-full bg-slate-100 dark:bg-white/10 flex items-center justify-center hover:scale-105 transition-transform">
+                <Share2 className="w-5 h-5 text-slate-700 dark:text-slate-200" />
+              </span>
+              <span className="text-[11px] text-slate-600 dark:text-slate-300">
+                More
+              </span>
+            </button>
+          )}
+        </div>
+
+        <div className="mt-3 flex items-center gap-2 rounded-xl border border-slate-200 dark:border-white/15 p-1.5 pl-3">
+          <Link2 className="w-4 h-4 shrink-0 text-slate-400" />
+          <input
+            readOnly
+            value={url}
+            onFocus={(e) => e.target.select()}
+            className="flex-1 min-w-0 bg-transparent border-none outline-none text-[13px] text-slate-700 dark:text-slate-200"
+          />
+          <button
+            type="button"
+            onClick={handleCopy}
+            className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-semibold border-none cursor-pointer transition ${
+              copied
+                ? "bg-emerald-500 text-white"
+                : "bg-[#F97316] text-white hover:bg-[#EA580C]"
+            }`}
+          >
+            {copied ? (
+              <>
+                <Check className="w-3.5 h-3.5" /> Copied
+              </>
+            ) : (
+              <>
+                <Copy className="w-3.5 h-3.5" /> Copy
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
+/* ============================================================
+   Three-dot menu on every card (opens in a portal so card
+   overflow / carousel transform can never clip it)
+   ============================================================ */
+function CardMenu({ onShare }) {
+  const [pos, setPos] = useState(null);
+  const btnRef = useRef(null);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    if (!pos) return undefined;
+    const close = () => setPos(null);
+    const onDoc = (e) => {
+      if (menuRef.current?.contains(e.target)) return;
+      if (btnRef.current?.contains(e.target)) return;
+      close();
+    };
+    const onKey = (e) => e.key === "Escape" && close();
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onKey);
+    window.addEventListener("scroll", close, true);
+    window.addEventListener("resize", close);
+    return () => {
+      document.removeEventListener("mousedown", onDoc);
+      document.removeEventListener("keydown", onKey);
+      window.removeEventListener("scroll", close, true);
+      window.removeEventListener("resize", close);
+    };
+  }, [pos]);
+
+  const toggle = (e) => {
+    e.stopPropagation();
+    if (pos) {
+      setPos(null);
+      return;
+    }
+    const r = btnRef.current.getBoundingClientRect();
+    const W = 176;
+    const H = 52;
+    const left = Math.max(8, Math.min(r.right - W, window.innerWidth - W - 8));
+    const top = r.bottom + 4 + H > window.innerHeight ? r.top - H - 4 : r.bottom + 4;
+    setPos({ left, top });
+  };
+
+  return (
+    <>
+      <button
+        ref={btnRef}
+        type="button"
+        aria-label="More options"
+        aria-haspopup="menu"
+        aria-expanded={!!pos}
+        onPointerDown={(e) => e.stopPropagation()}
+        onClick={toggle}
+        className="w-7 h-7 shrink-0 rounded-full bg-transparent border-none cursor-pointer flex items-center justify-center text-slate-500 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+      >
+        <MoreVertical className="w-4 h-4" />
+      </button>
+
+      {pos &&
+        createPortal(
+          <div
+            ref={menuRef}
+            role="menu"
+            style={{ position: "fixed", left: pos.left, top: pos.top, width: 176 }}
+            className="z-[110] py-1.5 bg-white dark:bg-[#1a1d27] border border-slate-200 dark:border-white/10 rounded-xl shadow-[0_10px_30px_rgba(15,23,42,0.18)]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              role="menuitem"
+              onClick={() => {
+                setPos(null);
+                onShare();
+              }}
+              className="flex items-center gap-2.5 w-full text-left px-3.5 py-2 text-[13px] bg-transparent border-none cursor-pointer text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-white/10 transition-colors"
+            >
+              <Share2 className="w-4 h-4" />
+              Share
+            </button>
+          </div>,
+          document.body,
+        )}
+    </>
   );
 }
 
 /* ============================================================
    Card
    ============================================================ */
-function StoryCard({ item, onOpen, liked, onToggleLike }) {
+function StoryCard({ item, onOpen, liked, onToggleLike, onShare }) {
   const views = item.views ?? item.viewCount ?? item.view_count ?? 0;
   const likes = Number(item.likes ?? item.likeCount ?? item.like_count ?? 0) || 0;
 
@@ -238,7 +583,7 @@ function StoryCard({ item, onOpen, liked, onToggleLike }) {
       className="group h-full flex flex-col bg-white dark:bg-[#1a1d27] border border-slate-200/80 dark:border-white/10 rounded-2xl p-1.5 cursor-pointer shadow-[0_2px_10px_rgba(15,23,42,0.06)] hover:shadow-[0_12px_30px_rgba(15,23,42,0.12)] hover:-translate-y-1 transition-all duration-300"
     >
       {/* Thumbnail (inset, rounded) */}
-      <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800">
+      <div className="relative w-full aspect-video overflow-hidden rounded-xl bg-black">
         <Thumb thumbnail={item.thumbnail} alt={item.title || item.personName} />
         <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
 
@@ -279,14 +624,19 @@ function StoryCard({ item, onOpen, liked, onToggleLike }) {
 
       {/* Body */}
       <div className="flex flex-col flex-1 px-2 pt-2 pb-1.5">
-        <h3 className="m-0 text-sm font-normal text-slate-900 dark:text-slate-100 truncate leading-snug">
-          {item.quote}
-        </h3>
-        {item.summary && (
-          <p className="mt-0.5 mb-0 text-[12px] leading-snug text-slate-500 dark:text-slate-400 truncate">
-            {item.summary}
-          </p>
-        )}
+        <div className="flex items-start justify-between gap-1">
+          <div className="min-w-0 flex-1">
+            <h3 className="m-0 text-sm font-normal text-slate-900 dark:text-slate-100 truncate leading-snug">
+              {item.quote}
+            </h3>
+            {item.summary && (
+              <p className="mt-0.5 mb-0 text-[12px] leading-snug text-slate-500 dark:text-slate-400 truncate">
+                {item.summary}
+              </p>
+            )}
+          </div>
+          <CardMenu onShare={() => onShare?.(item)} />
+        </div>
 
         <div className="mt-auto pt-2 flex items-center justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
@@ -317,7 +667,7 @@ function StoryCard({ item, onOpen, liked, onToggleLike }) {
 function SkeletonCard() {
   return (
     <div className="h-full bg-white dark:bg-[#1a1d27] border border-slate-200 dark:border-white/10 rounded-2xl p-1.5">
-      <div className="aspect-[16/10] rounded-xl bg-slate-200 dark:bg-slate-800 animate-pulse" />
+      <div className="aspect-video rounded-xl bg-slate-200 dark:bg-slate-800 animate-pulse" />
       <div className="px-2 pt-2 pb-1.5 space-y-2">
         <div className="h-4 w-4/5 rounded bg-slate-200 dark:bg-slate-800 animate-pulse" />
         <div className="h-5 w-1/2 rounded bg-slate-200 dark:bg-slate-800 animate-pulse" />
@@ -329,7 +679,7 @@ function SkeletonCard() {
 /* ============================================================
    Journey modal — opens on card click
    ============================================================ */
-function StoryModal({ item, onClose }) {
+function StoryModal({ item, onClose, onShare }) {
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -394,7 +744,7 @@ function StoryModal({ item, onClose }) {
           <div className="p-3 min-w-0 overflow-hidden">
             <div
               onClick={watchFull}
-              className="group relative w-full max-w-full aspect-[16/10] md:aspect-auto md:h-full md:min-h-[260px] overflow-hidden rounded-2xl cursor-pointer bg-black"
+              className="group relative w-full max-w-full aspect-video overflow-hidden rounded-2xl cursor-pointer bg-black"
             >
               <Thumb thumbnail={item.thumbnail} alt={item.personName} />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
@@ -478,6 +828,14 @@ function StoryModal({ item, onClose }) {
               >
                 Start your journey <ArrowRight className="w-4 h-4" />
               </button>
+              <button
+                type="button"
+                onClick={() => onShare?.(item)}
+                aria-label="Share video"
+                className="inline-flex items-center gap-2 bg-transparent text-slate-600 dark:text-slate-300 font-semibold px-3 py-2.5 rounded-xl text-sm border-none hover:text-[#F97316] transition cursor-pointer"
+              >
+                <Share2 className="w-4 h-4" /> Share
+              </button>
             </div>
           </div>
         </div>
@@ -502,7 +860,14 @@ function NavButton({ direction, onClick, className = "" }) {
   );
 }
 
-function WatchNowCarousel({ stories, onSelect, paused, favs, onToggleFav }) {
+function WatchNowCarousel({
+  stories,
+  onSelect,
+  paused,
+  favs,
+  onToggleFav,
+  onShare,
+}) {
   const { visibleCount, isMobile } = useVisibleCount();
 
   const containerRef = useRef(null);
@@ -720,6 +1085,7 @@ function WatchNowCarousel({ stories, onSelect, paused, favs, onToggleFav }) {
                 onOpen={() => onSelect(item)}
                 liked={favs.has(String(item.id))}
                 onToggleLike={() => onToggleFav(item.id)}
+                onShare={onShare}
               />
             </div>
           ))}
@@ -750,6 +1116,25 @@ function WatchNowCarousel({ stories, onSelect, paused, favs, onToggleFav }) {
     </div>
   );
 }
+/* Personality Development videos ke just niche: Explore More */
+function PdExploreMore() {
+  const navigate = useNavigate();
+  return (
+    <div className="flex flex-col items-center gap-1.5 mt-4">
+      <p className="text-[12px] sm:text-[13px] text-slate-500 dark:text-slate-400 m-0 text-center">
+        Want more on personality development? Lessons, a 30-day plan and more videos.
+      </p>
+      <button
+        type="button"
+        onClick={() => navigate(PD_VIDEOS_PATH)}
+        className="inline-flex items-center justify-center gap-2 bg-[#F97316] text-white font-semibold px-5 py-2.5 rounded-xl text-sm hover:bg-[#EA580C] transition-all hover:scale-105 shadow-lg shadow-orange-500/25 border-none cursor-pointer"
+      >
+        Explore More <ArrowRight className="w-4 h-4" />
+      </button>
+    </div>
+  );
+}
+
 /* ============================================================
    Section
    ============================================================ */
@@ -759,6 +1144,7 @@ export default function WatchNowSection() {
   const [loading, setLoading] = useState(true);
   const [activeCat, setActiveCat] = useState("All");
   const [selected, setSelected] = useState(null);
+  const [shareItem, setShareItem] = useState(null);
   const [favs, setFavs] = useState(() => new Set());
   const favsRef = useRef(favs);
   favsRef.current = favs;
@@ -871,6 +1257,9 @@ export default function WatchNowSection() {
       ? "Real stories, demos and guides — pick a topic to see what fits you."
       : CATEGORY_INFO[activeCat] || "";
 
+  const openShare = useCallback((item) => setShareItem(item), []);
+  const closeShare = useCallback(() => setShareItem(null), []);
+
   return (
     <section
       // full-bleed: breaks out of any max-width parent and spans the whole screen
@@ -929,9 +1318,10 @@ export default function WatchNowSection() {
             key={activeCat}
             stories={filtered}
             onSelect={setSelected}
-            paused={!!selected}
+            paused={!!selected || !!shareItem}
             favs={favs}
             onToggleFav={toggleFav}
+            onShare={openShare}
           />
         )}
 
@@ -947,9 +1337,17 @@ export default function WatchNowSection() {
             </button>
           </div>
         )}
+
+        {/* Personality Development videos ke just niche */}
+        {!loading && isPdCategory(activeCat) && <PdExploreMore />}
       </div>
 
-      <StoryModal item={selected} onClose={() => setSelected(null)} />
+      <StoryModal
+        item={selected}
+        onClose={() => setSelected(null)}
+        onShare={openShare}
+      />
+      <ShareModal item={shareItem} onClose={closeShare} />
     </section>
   );
 }

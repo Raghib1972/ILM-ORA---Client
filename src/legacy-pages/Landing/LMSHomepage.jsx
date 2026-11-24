@@ -3586,13 +3586,15 @@ export default function LMSHomepage({ theme, toggleTheme }) {
                                 onClick={goDetails}
                                 className="group relative flex flex-col min-w-0 bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl hover:shadow-slate-300/40 dark:hover:shadow-black/40 hover:-translate-y-1 transition-all duration-300 ease-out overflow-hidden cursor-pointer"
                               >
-                                {/* Thumbnail */}
-                                <div className="relative h-24 sm:h-28 overflow-hidden bg-gradient-to-br from-[#1E293B] via-[#334155] to-[#F97316] flex-shrink-0">
+                                                              {/* Thumbnail - Fully Responsive, No Cropping */}
+                                <div className="relative w-full h-28 sm:h-32 md:h-36 lg:h-40 overflow-hidden rounded-t-2xl bg-gradient-to-br from-[#1E293B] via-[#334155] to-[#F97316] flex-shrink-0">
                                   {course.thumbnailUrl || course.bannerUrl ? (
                                     <img
                                       src={course.thumbnailUrl || course.bannerUrl}
                                       alt={course.title}
-                                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                                      loading="lazy"
+                                      decoding="async"
+                                      className="absolute inset-0 w-full h-full object-contain object-center"
                                     />
                                   ) : (
                                     <div className="absolute inset-0 flex items-center justify-center">
