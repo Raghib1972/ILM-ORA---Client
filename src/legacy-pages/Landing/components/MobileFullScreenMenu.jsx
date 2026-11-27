@@ -31,8 +31,10 @@ import {
   Plus,
   MessageSquare,
   Building2,
-  User,
+    User,
   Megaphone,
+  ShieldCheck,
+  Activity,
 } from "lucide-react";
 
 /* ─────────────────────────────────────────────────────────────────
@@ -104,7 +106,27 @@ export default function MobileFullScreenMenu({
     "life-skills-own": { icon: BookOpen, color: "#06b6d4" },
     "life-skills-storyline": { icon: FileText, color: "#3b82f6" },
     "life-skills-futurism": { icon: Lightbulb, color: "#f97316" },
+    law: { icon: Building2, color: "#f97316" },
   };
+
+  // Headings for each accordion (same names as the desktop mega menu)
+  const COURSE_GROUPS = ["Courses", "Programs"];
+  const COURSE_GROUP = {
+    all: "Courses", "school-boards": "Courses", neet: "Courses", jee: "Courses",
+    "fde-academy": "Programs", "ilm-ora-talk": "Programs", "study-abroad": "Programs", "ilm-ora-gulf": "Programs",
+  };
+  const HUB_GROUPS = ["Hubs", "Tools"];
+  const HUB_GROUP = {
+    student: "Hubs", trainer: "Hubs", admin: "Hubs",
+    whiteboard: "Tools", aiCompanion: "Tools", resume: "Tools", codingLab: "Tools", studyPlan: "Tools",
+  };
+  const PRODUCT_GROUPS = ["Collaboration", "Business Hubs", "Security & Monitoring"];
+  const PRODUCT_GROUP = {
+    meet: "Collaboration", workspace: "Collaboration",
+    hrhub: "Business Hubs", digitalMarketing: "Business Hubs",
+   security: "Security & Monitoring", observability: "Security & Monitoring", cnapp: "Security & Monitoring",
+  };
+  const CAREER_GROUPS = ["Career Tracks", "Personal Growth", "Life Skills", "Assessments", "Legal"];
 
   const AccordionSection = ({ label, isOpen, onToggle, children }) => (
     <div style={{ borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
@@ -152,72 +174,83 @@ export default function MobileFullScreenMenu({
     </div>
     );
 
-  // 2-column grid wrapper shared by Courses / Product / Career Tracks
+  // 2-column grid wrapper shared by every accordion
   const TILE_GRID = { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 };
 
-  // variant: "box"   → icon inside a tinted rounded square (All Courses)
-  //          "bare"  → plain coloured icon (Career Tracks)
-  //          "stack" → light icon box on top, title + desc below (Product)
-  const MenuTile = ({ Icon, color, title, desc, variant = "box", onClick }) => {
-    const centerBox = {
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      flexShrink: 0,
-    };
-    return (
-      <button
-        type="button"
-        onClick={onClick}
-        style={{
-          display: "flex",
-          flexDirection: variant === "stack" ? "column" : "row",
-          alignItems: variant === "stack" ? "flex-start" : "center",
-          gap: variant === "stack" ? 10 : 12,
-          padding: variant === "stack" ? 12 : "12px 10px",
-          minHeight: variant === "stack" ? 0 : 64,
-          minWidth: 0,
-          borderRadius: 12,
-          border: "1px solid rgba(255,255,255,0.06)",
-          background: "#1A1A1A",
-          cursor: "pointer",
-          textAlign: "left",
-        }}
-      >
-        {variant === "stack" && (
-          <div style={{ ...centerBox, width: 40, height: 40, borderRadius: 10, background: "#fff7ed" }}>
-            {Icon && <Icon size={20} style={{ color }} />}
-          </div>
-        )}
-        {variant === "box" && (
-          <div
-            style={{
-              ...centerBox,
-              width: 38,
-              height: 38,
-              borderRadius: 10,
-              background: `${color}1f`,
-              border: `1px solid ${color}33`,
-            }}
-          >
-            {Icon && <Icon size={20} style={{ color }} />}
-          </div>
-        )}
-        {variant === "bare" && Icon && (
-          <Icon size={26} style={{ color, flexShrink: 0 }} />
-        )}
-        <div style={{ minWidth: 0 }}>
-          <p style={{ margin: 0, fontSize: 13.5, fontWeight: 600, color: "#ffffff", lineHeight: 1.25 }}>
-            {title}
-          </p>
-          {desc && (
-            <p style={{ margin: "3px 0 0", fontSize: 12, color: "#9CA3AF", lineHeight: 1.35 }}>
-              {desc}
-            </p>
-          )}
+  // Section heading inside an accordion (same idea as the desktop mega-menu
+  // column headings: PRODUCT / CAREER TRACKS / LIFE SKILLS ...)
+  const GroupHeading = ({ children, first }) => (
+    <p
+      style={{
+        margin: first ? "2px 2px 8px" : "16px 2px 8px",
+        fontSize: 10.5,
+        fontWeight: 700,
+        letterSpacing: "0.08em",
+        textTransform: "uppercase",
+        color: "#9CA3AF",
+      }}
+    >
+      {children}
+    </p>
+  );
+
+  // Compact card — same look as the ILM ORA Feature tiles
+  // (small icon + title, optional one-line description below).
+  const MenuTile = ({ Icon, color, title, desc, onClick }) => (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        gap: 4,
+        padding: 10,
+        minWidth: 0,
+        borderRadius: 10,
+        border: "1px solid rgba(255,255,255,0.05)",
+        background: "#1A1A1A",
+        cursor: "pointer",
+        textAlign: "left",
+      }}
+    >
+      <div style={{ display: "flex", alignItems: "center", gap: 6, minWidth: 0 }}>
+        {Icon && <Icon size={16} style={{ color, flexShrink: 0 }} />}
+        <span
+          style={{
+            fontSize: 12.5,
+            fontWeight: 600,
+            color: "#ffffff",
+            lineHeight: 1.2,
+          }}
+        >
+          {title}
+        </span>
+      </div>
+      {desc && (
+        <span style={{ fontSize: 10.5, color: "#9CA3AF", lineHeight: 1.35 }}>
+          {desc}
+        </span>
+      )}
+    </button>
+  );
+
+  // Renders items under their headings, in the order given by `groups`.
+  // Groups with no items are skipped.
+  const GroupedTiles = ({ items, groups, getGroup, renderTile }) => {
+    let shown = 0;
+    return groups.map((g) => {
+      const list = items.filter((it) => getGroup(it) === g);
+      if (list.length === 0) return null;
+      const first = shown === 0;
+      shown += 1;
+      return (
+        <div key={g}>
+          <GroupHeading first={first}>{g}</GroupHeading>
+          <div style={TILE_GRID}>{list.map(renderTile)}</div>
         </div>
-      </button>
-    );
+      );
+    });
   };
 
   return (
@@ -304,11 +337,13 @@ export default function MobileFullScreenMenu({
           isOpen={coursesOpen}
           onToggle={() => setCoursesOpen((p) => !p)}
         >
-                  <div style={TILE_GRID}>
-            {COURSE_ITEMS.map((item) => (
+          <GroupedTiles
+            items={COURSE_ITEMS}
+            groups={COURSE_GROUPS}
+            getGroup={(i) => COURSE_GROUP[i.key] || "Programs"}
+            renderTile={(item) => (
               <MenuTile
                 key={item.key}
-                variant="box"
                 Icon={item.icon}
                 color={item.color}
                 title={item.title}
@@ -317,8 +352,8 @@ export default function MobileFullScreenMenu({
                   onClose();
                 }}
               />
-            ))}
-          </div>
+            )}
+          />
         </AccordionSection>
 
         {/* Divider */}
@@ -363,61 +398,24 @@ export default function MobileFullScreenMenu({
           isOpen={ilmoraFeatureOpen}
           onToggle={() => setIlmoraFeatureOpen((p) => !p)}
         >
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: 8,
-            }}
-          >
-            {HUB_ITEMS.map((item) => {
-              const Icon = item.icon;
-              return (
-                <button
-                  key={item.key}
-                  onClick={() => {
-                    navigate(item.route);
-                    onClose();
-                  }}
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "flex-start",
-                    gap: 4,
-                    padding: 10,
-                    borderRadius: 10,
-                    border: "1px solid rgba(255,255,255,0.05)",
-                    background: "#1A1A1A",
-                    cursor: "pointer",
-                    textAlign: "left",
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <Icon size={16} style={{ color: item.color, flexShrink: 0 }} />
-                    <span
-                      style={{
-                        fontSize: 12.5,
-                        fontWeight: 600,
-                        color: "#ffffff",
-                        lineHeight: 1.2,
-                      }}
-                    >
-                      {item.title}
-                    </span>
-                  </div>
-                  <span
-                    style={{
-                      fontSize: 10.5,
-                      color: "#9CA3AF",
-                      lineHeight: 1.35,
-                    }}
-                  >
-                    {item.desc}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
+          <GroupedTiles
+            items={HUB_ITEMS}
+            groups={HUB_GROUPS}
+            getGroup={(i) => HUB_GROUP[i.key] || "Tools"}
+            renderTile={(item) => (
+              <MenuTile
+                key={item.key}
+                Icon={item.icon}
+                color={item.color}
+                title={item.title}
+                desc={item.desc}
+                onClick={() => {
+                  navigate(item.route);
+                  onClose();
+                }}
+              />
+            )}
+          />
         </AccordionSection>
 
         {/* ── Product Accordion ── */}
@@ -426,71 +424,49 @@ export default function MobileFullScreenMenu({
           isOpen={productOpen}
           onToggle={() => setProductOpen((p) => !p)}
         >
-                    <div style={TILE_GRID}>
-                        {productMenuItems.map((item) => {
+          <GroupedTiles
+            items={productMenuItems}
+            groups={PRODUCT_GROUPS}
+            getGroup={(i) => PRODUCT_GROUP[i.key] || "Collaboration"}
+            renderTile={(item) => {
               const iconMap = {
+                Cloud,
                 Users,
                 FileText,
                 LayoutDashboard,
                 Sparkles,
                 CalendarCheck,
                 Megaphone,
+                ShieldCheck,
+                Activity,
               };
               const colorMap = {
                 meet: "#f97316",
                 workspace: "#9333ea",
                 hrhub: "#2563eb",
                 digitalMarketing: "#16a34a",
+                security: "#dc2626",
+                observability: "#f97316",
+                cnapp: "#0ea5e9",
               };
               const Icon = iconMap[item.icon] || LayoutGrid;
               const color = colorMap[item.key] || "#f97316";
 
               return (
-                <button
+                <MenuTile
                   key={item.key}
+                  Icon={Icon}
+                  color={color}
+                  title={item.title}
+                  desc={item.description}
                   onClick={() => {
                     navigate(productRoutes[item.key]);
                     onClose();
                   }}
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "flex-start",
-                    gap: 4,
-                    padding: 10,
-                    borderRadius: 10,
-                    border: "1px solid rgba(255,255,255,0.05)",
-                    background: "#1A1A1A",
-                    cursor: "pointer",
-                    textAlign: "left",
-                  }}
-                >
-                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <Icon size={16} style={{ color, flexShrink: 0 }} />
-                    <span
-                      style={{
-                        fontSize: 12.5,
-                        fontWeight: 600,
-                        color: "#ffffff",
-                        lineHeight: 1.2,
-                      }}
-                    >
-                      {item.title}
-                    </span>
-                  </div>
-                  <span
-                    style={{
-                      fontSize: 10.5,
-                      color: "#9CA3AF",
-                      lineHeight: 1.35,
-                    }}
-                  >
-                    {item.description}
-                  </span>
-                </button>
+                />
               );
-            })}
-          </div>
+            }}
+          />
         </AccordionSection>
                 <button
           onClick={() => {
@@ -524,15 +500,17 @@ export default function MobileFullScreenMenu({
           isOpen={careerOpen}
           onToggle={() => setCareerOpen((p) => !p)}
         >
-                    <div style={TILE_GRID}>
-            {careerItems.map((item) => {
-              const s = CAREER_STYLE[item.key] || { icon: LayoutGrid, color: "#f97316" };
+          <GroupedTiles
+            items={careerItems}
+            groups={CAREER_GROUPS}
+            getGroup={(i) => i.group}
+            renderTile={(item) => {
+              const st = CAREER_STYLE[item.key] || { icon: LayoutGrid, color: "#f97316" };
               return (
                 <MenuTile
                   key={item.key}
-                  variant="bare"
-                  Icon={s.icon}
-                  color={s.color}
+                  Icon={st.icon}
+                  color={st.color}
                   title={item.title}
                   onClick={() => {
                     navigate(item.route);
@@ -540,8 +518,8 @@ export default function MobileFullScreenMenu({
                   }}
                 />
               );
-            })}
-          </div>
+            }}
+          />
         </AccordionSection>
 
         {/* ── Skills Accordion — commented out for now

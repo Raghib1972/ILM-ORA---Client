@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -42,8 +41,10 @@ import {
   MessageCircle,
   School,
   Landmark,
-  ChevronRight,
+    ChevronRight,
   Megaphone,
+  ShieldCheck,
+  Activity,
 } from "lucide-react";
 import MobileFullScreenMenu from "./MobileFullScreenMenu";
 
@@ -68,8 +69,11 @@ const PRODUCT_MENU_ITEMS = [
   { key: "meet", title: "ILM ORA Calendry", description: "Live classes & video sessions", icon: "CalendarCheck" },
   { key: "workspace", title: "Workspace", description: "All-in-one collaborative space", icon: "LayoutDashboard" },
   { key: "hrhub", title: "HR Hub", description: "HR Management & Training", icon: "Users" },
-  { key: "digitalMarketing", title: "Digital Marketing Hub", description: "21 modules, labs & real project", icon: "Megaphone" },
-];
+    { key: "digitalMarketing", title: "Digital Marketing Hub", description: "21 modules, labs & real project", icon: "Megaphone" },
+  { key: "security", title: "ILM ORA Cybersecurity", description: "Security services, training & free quiz", icon: "ShieldCheck" },
+   { key: "observability", title: "Texora SecOps", description: "Security services, monitoring & audit in one view", icon: "Activity" },
+  { key: "cnapp", title: "ILM ORA CNAPP", description: "Cloud-native app protection, labs & quiz", icon: "Cloud" },
+]
 
 // Icon name (string) → actual lucide-react component.
 const NAV_ICON_MAP = {
@@ -85,8 +89,10 @@ const NAV_ICON_MAP = {
   Award,
   Cloud,
   Globe,
-  Layers,
+    Layers,
   Megaphone,
+  ShieldCheck,
+  Activity,
 };
 const HUB_ROUTES = {
   student: "/student-hub",
@@ -105,7 +111,10 @@ const PRODUCT_ROUTES = {
    workspace: "/workspace",
   aiCompanion: "/ai-companion",
   whiteboard: "/whiteboard",
-  digitalMarketing: "/digital-marketing-hub",
+    digitalMarketing: "/digital-marketing-hub",
+  security: "/security/overview",
+   observability: "/texorasecops",
+  cnapp: "/cnapp",
 };
 const HUB_ICON_COLORS = {
   student: "text-green-600",
@@ -121,7 +130,10 @@ const PRODUCT_ICON_COLORS = {
   hrhub: "text-blue-600",
   meet: "text-orange-500",
   workspace: "text-purple-500",
-  digitalMarketing: "text-green-600",
+    digitalMarketing: "text-green-600",
+  security: "text-red-600",
+  observability: "text-orange-500",
+  cnapp: "text-sky-500",
 };
 
 // "Skills" dropdown
@@ -202,6 +214,12 @@ const FEATURE_GROUP = {
   student: "Hubs", trainer: "Hubs", admin: "Hubs",
   whiteboard: "Tools", aiCompanion: "Tools", resume: "Tools", codingLab: "Tools", studyPlan: "Tools",
 };
+const PRODUCT_GROUPS = ["Collaboration", "Business Hubs", "Security & Monitoring"];
+const PRODUCT_GROUP = {
+  meet: "Collaboration", workspace: "Collaboration",
+  hrhub: "Business Hubs", digitalMarketing: "Business Hubs",
+  security: "Security & Monitoring", observability: "Security & Monitoring", cnapp: "Security & Monitoring",
+};
 // ── Maven-style mega menu data (built from the SAME items/routes above —
 // nothing is duplicated, so editing the lists above still updates the menu).
 const MEGA_MENUS = {
@@ -226,8 +244,8 @@ const MEGA_MENUS = {
     label: "Product",
     eyebrow: "Explore",
     cardTitle: "Product",
-        groups: ["Product"],
-    items: PRODUCT_MENU_ITEMS.map((i) => ({ key: i.key, title: i.title, route: PRODUCT_ROUTES[i.key], group: "Product" })),
+        groups: PRODUCT_GROUPS,
+    items: PRODUCT_MENU_ITEMS.map((i) => ({ key: i.key, title: i.title, route: PRODUCT_ROUTES[i.key], group: PRODUCT_GROUP[i.key] || "Collaboration" })),
   },
 
   // Skills tab — commented out for now

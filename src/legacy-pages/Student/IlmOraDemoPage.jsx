@@ -133,8 +133,10 @@ import {
   Calendar,
   Atom,
     Plus,
-  MessageSquare,
+   MessageSquare,
   Scale,
+  ShieldCheck,
+  Activity,
 } from "lucide-react";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -145,18 +147,24 @@ gsap.registerPlugin(ScrollTrigger);
 // data file — only the item content (title/description/icon) is shared.
 
 // NAV_ICON_MAP mein Code2 add karo
-const NAV_ICON_MAP = { GraduationCap, Users, BarChart3, FileText, LayoutDashboard, Sparkles, PenTool, Code2, CalendarCheck, Megaphone, Layers };
+const NAV_ICON_MAP = { GraduationCap, Users, BarChart3, FileText, LayoutDashboard, Sparkles, PenTool, Code2, CalendarCheck, Megaphone, Layers, ShieldCheck, Activity, Cloud };
 // HUB_ICON_COLORS mein color add karo
 const HUB_ICON_COLORS = { student: "#16a34a", trainer: "#3b82f6", admin: "#a855f7", whiteboard: "#F97316", studyPlan: "#F97316", aiCompanion: "#a855f7", resume: "#16a34a", codingLab: "#0ea5e9" };
-const PRODUCT_ICON_COLORS = { meet: "#F97316", resume: "#16a34a", workspace: "#a855f7", hrhub: "#2563eb", digitalMarketing: "#16a34a" };
+const PRODUCT_ICON_COLORS = { meet: "#F97316", resume: "#16a34a", workspace: "#a855f7", hrhub: "#2563eb", digitalMarketing: "#16a34a", security: "#dc2626", observability: "#F97316", cnapp: "#0ea5e9" };
 
 // HR Hub + Digital Marketing Hub: Product menu ke extra items (navMenuData.js ko touch nahi kiya)
 const HR_HUB_ITEM = { key: "hrhub", title: "HR Hub", description: "HR Management & Training", icon: "Users" };
 const DM_HUB_ITEM = { key: "digitalMarketing", title: "Digital Marketing Hub", description: "21 modules, labs & real project", icon: "Megaphone" };
+const SECURITY_HUB_ITEM = { key: "security", title: "ILM ORA Cybersecurity", description: "Security services, training & free quiz", icon: "ShieldCheck" };
+const OBSERVABILITY_HUB_ITEM = { key: "observability", title: "Texora SecOps", description: "Security services, monitoring & audit in one view", icon: "Activity" };
+const CNAPP_HUB_ITEM = { key: "cnapp", title: "ILM ORA CNAPP", description: "Cloud-native app protection, labs & quiz", icon: "Cloud" };
 const PRODUCT_ITEMS_ALL = [
-  ...PRODUCT_MENU_ITEMS.filter((i) => i.key !== "hrhub" && i.key !== "digitalMarketing"),
+  ...PRODUCT_MENU_ITEMS.filter((i) => i.key !== "hrhub" && i.key !== "digitalMarketing" && i.key !== "security" && i.key !== "observability" && i.key !== "cnapp"),
   HR_HUB_ITEM,
   DM_HUB_ITEM,
+  SECURITY_HUB_ITEM,
+  OBSERVABILITY_HUB_ITEM,
+  CNAPP_HUB_ITEM,
 ];
 
 // Mobile menu — All Courses tiles (desktop COURSE_CATEGORIES ko touch nahi kiya)
@@ -1707,7 +1715,10 @@ const NAV_SEARCH_PAGES = [
   { title: "ILM ORA Calendry", desc: "Live classes & video sessions", route: "/calendry", group: "product", tag: "Product" },
     { title: "Workspace", desc: "Your all-in-one collaborative space", route: "/workspace", group: "product", tag: "Product" },
     { title: "HR Hub", desc: "HR Management & Training", route: "/Hr-Hub", group: "product", tag: "Product" },
-  { title: "Digital Marketing Hub", desc: "21 modules, labs & real project", route: "/digital-marketing-hub", group: "product", tag: "Product" },
+      { title: "Digital Marketing Hub", desc: "21 modules, labs & real project", route: "/digital-marketing-hub", group: "product", tag: "Product" },
+   { title: "ILM ORA Cybersecurity", desc: "Security services, training & free quiz", route: "/security/overview", group: "product", tag: "Product" },
+    { title: "Texora SecOps", desc: "Security services, monitoring & audit in one view", route: "/texorasecops", group: "product", tag: "Product" },
+    { title: "ILM ORA CNAPP", desc: "Cloud-native app protection, labs & quiz", route: "/cnapp", group: "product", tag: "Product" },
     { title: "All Career Tracks", route: "/career", group: "career", tag: "Career Track" },
   { title: "Development Engineering Platform", route: "/career?platform=dev", group: "career", tag: "Career Track" },
   { title: "AI – Agent AI", route: "/career?platform=ai", group: "career", tag: "Career Track" },
@@ -3087,8 +3098,11 @@ const HUB_ROUTES = {
 };
 
 const PRODUCT_ROUTES = {
-  hrhub: "/Hr-Hub",
+    hrhub: "/Hr-Hub",
   digitalMarketing: "/digital-marketing-hub",
+  security: "/security/overview",
+  observability: "/texorasecops",
+  cnapp: "/cnapp",
   meet: "/calendry",
   resume: "/resume-builder",
   workspace: "/workspace",
@@ -3108,7 +3122,7 @@ const goToHub = (hubKey) => {
 // Product → real public product page
 const goToProductSection = (productKey) => {
   setProductMenuOpen(false);
-    if (productKey === "hrhub" || productKey === "digitalMarketing") { navigate(PRODUCT_ROUTES[productKey]); return; }
+          if (productKey === "hrhub" || productKey === "digitalMarketing" || productKey === "security" || productKey === "observability" || productKey === "cnapp") { navigate(PRODUCT_ROUTES[productKey]); return; }
 
   if (isLoggedIn && hasRole) {
     navigate(PRODUCT_ROUTES[productKey] || "/");

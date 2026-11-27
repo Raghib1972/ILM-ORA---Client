@@ -1,4 +1,5 @@
 ﻿
+
 "use client";
 /**
  * ILM ORA Workshops: ek hi self-contained page component.
@@ -63,6 +64,9 @@ import imgMentorGuidance from '../../assets/Workshop/ILM_ORA_Workshops_Media/Ima
 import vidEnvironment from '../../assets/Workshop/ILM_ORA_Workshops_Media/Videos/01_workshop_environment.mp4';
 import vidInstructor from '../../assets/Workshop/ILM_ORA_Workshops_Media/Videos/02_instructor_workspace.mp4';
 import vidTraining from '../../assets/Workshop/ILM_ORA_Workshops_Media/Videos/03_training_session.mp4';
+// Security workshops ke cover photos (src/assets/security)
+import imgSecA from '../../assets/security/pexels-brett-sayles-5480781.webp';
+import imgSecB from '../../assets/security/pexels-pixabay-60504.webp';
 
 /* ====================================================================
    CONFIG
@@ -166,6 +170,7 @@ const CATEGORY_COVER = {
   HR: { src: IMG.celebration, pos: '70% 40%' },
   'Contact Center': { src: IMG.corp, pos: '75% 45%' },
   Engineering: { src: IMG.coding, pos: '30% 50%' },
+  Security: { src: U(imgSecA), pos: '50% 45%' },
 };
 
 /** Mentors section: role apne real details se badlo. role khali ho to line khali rehti hai. */
@@ -732,6 +737,9 @@ const INSTRUCTORS = {
   ananya: { name: 'Ananya Das', role: 'Applied AI researcher', years: 7, hue: 175, bio: 'Ananya applies language models to analytics and operations. She helps non-technical teams find practical, safe uses for AI.' },
 };
 
+/** Security workshops ka trainer. Real trainer ka naam/bio yahan badal do. */
+INSTRUCTORS.sectrainer = { name: 'ILM ORA Security Trainer', role: 'Cyber security trainer, ILM ORA', years: 0, hue: 195, bio: 'Leads the ILM ORA security labs and live sessions, guiding learners through hands-on exercises in a safe practice environment. Replace this with the real trainer profile.' };
+
 const TPL = {
   AI: { learn: ['How modern language models work, in plain terms', 'Writing instructions that produce reliable output', 'Connecting models to tools and your own data', 'Evaluating answers and catching mistakes', 'Keeping data private and usage safe', 'Turning a prototype into a repeatable workflow'], out: ['Ship a working AI workflow of your own', 'Judge when AI helps and when it does not', 'Write prompts you can reuse across tasks', 'Share a clear plan for your team'], aud: ['Professionals who want practical AI skills', 'Founders and product managers', 'Developers new to AI tooling'], seg: ['Welcome and what we will build', 'Core ideas, demystified', 'Live build lab', 'Testing, Q&A and next steps'] },
   Development: { learn: ['Project structure that stays tidy as it grows', 'Writing and testing code with confidence', 'Reading errors and debugging faster', 'Working with APIs and data', 'Deploying to a live environment', 'Habits that make code reviews painless'], out: ['Build and deploy a small but real project', 'Debug problems without guessing', 'Review code with a clear checklist', 'Leave with a reusable starter template'], aud: ['Developers moving up a level', 'Bootcamp graduates', 'Engineering team leads'], seg: ['Setup and goals', 'Core patterns', 'Hands-on build', 'Review, Q&A and next steps'] },
@@ -743,6 +751,13 @@ const TPL = {
   'Contact Center': { learn: ['Call flow design and quality scripts', 'Handling difficult customers with empathy', 'Core metrics: AHT, CSAT, FCR and SLA', 'Workforce planning and shift scheduling', 'Quality monitoring and coaching agents', 'Using CRM, IVR and AI assist tools'], out: ['Create a QA scorecard', 'Build a call-handling playbook', 'Plan staffing for peak hours', 'Set up a weekly metrics dashboard'], aud: ['Agents and team leaders', 'QA and training specialists', 'Contact center managers and operations heads'], seg: ['Check-in and goals', 'Core practices', 'Live call simulation', 'Q&A and next steps'] },
   Engineering: { learn: ['Cloud fundamentals and reliable architecture', 'CI/CD pipelines and infrastructure as code', 'Monitoring, logging and incident response', 'Testing strategy and QA automation', 'Data pipelines and database basics', 'Security habits for engineering teams'], out: ['Set up a working CI/CD pipeline', 'Write an incident runbook', 'Design a test plan for a service', 'Draft a simple cloud architecture diagram'], aud: ['Engineers and DevOps beginners', 'QA and support engineers', 'Students moving into tech roles'], seg: ['Check-in and goals', 'Core concepts', 'Hands-on lab', 'Review, Q&A and next steps'] },
 };
+TPL.Security = {
+  learn: ['Core security ideas, explained with real attack examples', 'Reading logs, alerts and traffic to spot trouble', 'Hardening identities, systems and cloud settings', 'Using industry tools safely in an isolated lab', 'Writing findings and fixes that teams act on', 'Responding to an incident step by step'],
+  out: ['Complete hands-on labs in a safe practice environment', 'Spot and explain common attack patterns', 'Apply a hardening checklist to a real setup', 'Leave with notes and templates your team can reuse'],
+  aud: ['Students and career switchers entering security', 'IT, cloud and DevOps engineers', 'Managers who own security decisions'],
+  seg: ['Welcome and lab setup', 'Threat and defence concepts', 'Hands-on lab', 'Review, Q&A and next steps'],
+};
+
 const PRE = {
   Beginner: ['No prior experience needed', 'A laptop with a stable internet connection'],
   Intermediate: ['Some hands-on experience in this area', 'A laptop with a stable internet connection', 'Comfort sharing your screen or work'],
@@ -790,6 +805,41 @@ const WORKSHOPS = [
   mk('devops-and-cicd-essentials', 'DevOps and CI/CD essentials', 'Engineering', 'Beginner', 1999, 'live', 8, '19:00', 150, 82, 45, 215, 'tarun', 'devops cicd cloud pipelines', 'Set up a working delivery pipeline from commit to deployment.', 'Hands-on lab covering Git, automated tests, builds and deployment.'),
   mk('cloud-architecture-fundamentals', 'Cloud architecture fundamentals', 'Engineering', 'Intermediate', 1799, 'ondemand', 0, '00:00', 160, 74, null, 220, 'tarun', 'cloud aws azure architecture', 'Design reliable, secure and cost-aware cloud systems.', 'Recorded lessons on networking, storage, scaling and monitoring.'),
 ];
+
+/* ---- SECURITY WORKSHOPS (security pages se inter-connected). Price/dates placeholder hain, real values daalo. ---- */
+WORKSHOPS.push(
+  mk('cloud-security-bootcamp', 'Cloud Security Bootcamp', 'Security', 'Intermediate', 4999, 'live', 12, '19:00', 180, 86, 40, 195, 'sectrainer', 'cloud aws azure iam bootcamp security', 'Secure a cloud account end to end, then audit it, in an intensive lab-heavy bootcamp.', 'A two-week build-and-break programme with daily labs. You harden identity, storage, networking and logging in a practice cloud account, then audit it the way an assessor would. The session length shown is one daily lab block.'),
+  mk('soc-observability-bootcamp', 'SOC and Observability Bootcamp', 'Security', 'Intermediate', 4999, 'live', 14, '19:00', 180, 84, 40, 185, 'sectrainer', 'soc siem logs detection bootcamp security', 'Collect logs, build dashboards, write detections and triage alerts in a SIEM.', 'A two-week bootcamp with daily labs. You onboard log sources, build dashboards, write detection rules and triage alerts like a SOC analyst. The session length shown is one daily lab block.'),
+  mk('ethical-hacking-bootcamp', 'Ethical Hacking Bootcamp', 'Security', 'Intermediate', 5999, 'live', 16, '19:00', 180, 90, 35, 5, 'sectrainer', 'ethical hacking pentest kali bootcamp security', 'Run the full attack lifecycle on a practice lab and finish with a capstone report.', 'A three-week bootcamp with daily labs. You go from reconnaissance to a written, client-ready report on an authorised practice lab. The session length shown is one daily lab block.'),
+  mk('phishing-defence-workshop', 'Phishing defence workshop', 'Security', 'Beginner', 0, 'live', 3, '18:00', 90, 92, 200, 195, 'sectrainer', 'phishing email social engineering awareness security', 'Spot, report and stop phishing before it costs you or your company.', 'A free one-day session on how phishing works, the red flags that give it away and what to do next. Includes a simulated phishing exercise and a reporting checklist.'),
+  mk('zero-trust-workshop', 'Zero Trust security workshop', 'Security', 'Intermediate', 1499, 'live', 5, '19:00', 120, 80, 60, 200, 'sectrainer', 'zero trust mfa segmentation identity security', 'Learn to verify every user, device and request, and enforce least privilege.', 'Map your protect surfaces, plan MFA and device checks, and sketch micro-segmentation for a sample environment.'),
+  mk('ransomware-readiness-workshop', 'Ransomware readiness workshop', 'Security', 'Intermediate', 1499, 'live', 6, '18:30', 120, 85, 60, 10, 'sectrainer', 'ransomware backup recovery segmentation security', 'Prepare to survive a ransomware attack without paying.', 'Walk through prevention, immutable backups, network segmentation and a tabletop drill, then draft your own recovery checklist.'),
+  mk('iam-and-mfa-workshop', 'IAM and MFA workshop', 'Security', 'Beginner', 999, 'live', 7, '17:30', 90, 76, 80, 210, 'sectrainer', 'iam mfa sso passwords access security', 'Get access control right: roles, SSO, MFA and privileged accounts.', 'Design a role model, plan an MFA rollout and review access the way auditors expect.'),
+  mk('cloud-misconfiguration-workshop', 'Cloud misconfiguration workshop', 'Security', 'Intermediate', 1499, 'live', 9, '19:00', 120, 78, 50, 190, 'sectrainer', 'cloud misconfiguration s3 iam cspm security', 'Find and fix the cloud settings that cause most data leaks.', 'Hands-on lab on open storage, over-permissive roles and missing logging, with a baseline checklist to take back to your team.'),
+  mk('log-analysis-workshop', 'Log analysis workshop', 'Security', 'Intermediate', 1499, 'live', 10, '18:00', 120, 74, 50, 205, 'sectrainer', 'logs siem splunk wazuh analysis security', 'Read logs like an analyst and turn noise into findings.', 'Practise searching, correlating and explaining events in a SIEM using sample incident data.'),
+  mk('incident-response-drill', 'Incident response drill', 'Security', 'Advanced', 1999, 'live', 11, '17:00', 150, 70, 40, 15, 'sectrainer', 'incident response tabletop playbook forensics security', 'Rehearse a live incident: contain, eradicate, recover and report.', 'A tabletop and technical drill built around a realistic scenario, finishing with a playbook you can adapt.'),
+  mk('secure-coding-workshop', 'Secure coding workshop', 'Security', 'Intermediate', 1499, 'live', 13, '19:00', 120, 79, 60, 215, 'sectrainer', 'secure coding owasp api devsecops security', 'Find OWASP Top 10 flaws in code and fix them.', 'Exploit and then patch deliberately vulnerable code, and add security checks to a build pipeline.'),
+  mk('network-hardening-workshop', 'Network hardening workshop', 'Security', 'Intermediate', 1499, 'live', 15, '18:00', 120, 72, 50, 200, 'sectrainer', 'network firewall segmentation vpn hardening security', 'Harden firewalls, segments and remote access.', 'Review firewall rules, plan segmentation and lock down VPN and Wi-Fi in a guided lab.'),
+  mk('dpdp-compliance-workshop', 'DPDP and compliance workshop', 'Security', 'Beginner', 999, 'ondemand', 0, '00:00', 100, 68, null, 180, 'sectrainer', 'dpdp gdpr compliance iso privacy security', 'Understand what the DPDP Act, GDPR and ISO 27001 ask of your team.', 'Recorded modules on data inventory, consent, breach duties and an evidence checklist for audits.'),
+);
+
+/** Security workshop detail page se security pages ke links: [label, href]. */
+const SEC_LINKS_DEFAULT = [['Security home', '/security/overview'], ['Cyber Security Training', '/security/training'], ['Leaders & Bootcamps', '/security/leaders']];
+const SEC_LINKS = {
+  'cloud-security-bootcamp': [['Cloud Security (service)', '/security/service-1'], ['Cloud Security course', '/security/course-5'], ['Cloud Protection solution', '/security/solution-5']],
+  'soc-observability-bootcamp': [['SOC service', '/security/service-8'], ['SOC Analyst course', '/security/course-4'], ['Security Monitoring solution', '/security/solution-6']],
+  'ethical-hacking-bootcamp': [['Ethical Hacking course', '/security/course-1'], ['Penetration Testing course', '/security/course-3'], ['Penetration Testing service', '/security/service-7']],
+  'phishing-defence-workshop': [['Cyber Security Fundamentals course', '/security/course-0'], ['Corporate Security Awareness course', '/security/course-7'], ['Take the Phishing quiz', '/security/quiz']],
+  'zero-trust-workshop': [['Zero Trust solution', '/security/solution-3'], ['Network Security course', '/security/course-2'], ['IAM service', '/security/service-5']],
+  'ransomware-readiness-workshop': [['Ransomware Protection solution', '/security/solution-4'], ['Incident Response service', '/security/service-9'], ['Endpoint Security service', '/security/service-4']],
+  'iam-and-mfa-workshop': [['Identity & Access Management service', '/security/service-5'], ['Zero Trust solution', '/security/solution-3'], ['Cyber Security Fundamentals course', '/security/course-0']],
+  'cloud-misconfiguration-workshop': [['Cloud Security service', '/security/service-1'], ['Cloud Security course', '/security/course-5'], ['Cloud Protection solution', '/security/solution-5']],
+  'log-analysis-workshop': [['SOC service', '/security/service-8'], ['SOC Analyst course', '/security/course-4'], ['Security Monitoring solution', '/security/solution-6']],
+  'incident-response-drill': [['Incident Response service', '/security/service-9'], ['Incident Response Guidance', '/security/consult-5'], ['SOC Analyst course', '/security/course-4']],
+  'secure-coding-workshop': [['Application Security service', '/security/service-2'], ['Application Security course', '/security/course-6'], ['Take the Ethical Hacking quiz', '/security/quiz']],
+  'network-hardening-workshop': [['Network Security service', '/security/service-0'], ['Network Security course', '/security/course-2'], ['Zero Trust solution', '/security/solution-3']],
+  'dpdp-compliance-workshop': [['Data Security service', '/security/service-3'], ['Compliance Assessment', '/security/assess-5'], ['Compliance Consulting', '/security/consult-3']],
+};
 
 /** Jo real backend server-side rakhta hai. Authorisation check ke bina browser ko kabhi nahi jata. */
 const PRIVATE = Object.fromEntries(
@@ -1117,7 +1167,7 @@ const useApp = () => useContext(Ctx);
 const CAT_INFO = {
   AI: 'Agents, prompts and AI for work', Development: 'Web, APIs, Git and delivery', Design: 'UX research, Figma and motion',
   Marketing: 'Growth, SEO and brand', Business: 'Finance, pricing and strategy', Leadership: 'Managing people and change',
-  HR: 'Hiring, onboarding and people ops', 'Contact Center': 'QA, coaching and customer handling', Engineering: 'Cloud, DevOps and QA engineering',
+  HR: 'Hiring, onboarding and people ops', 'Contact Center': 'QA, coaching and customer handling', Engineering: 'Cloud, DevOps and QA engineering', Security: 'Cyber security, SOC and ethical hacking labs',
 };
 
 /** Scroll-reveal wrapper (reduced motion mein seedha dikhta hai). */
@@ -1270,11 +1320,12 @@ const P = {
   bell: <><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" /><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0" /></>,
   file: <><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><path d="M14 2v6h6M8 13h8M8 17h8" /></>,
   message: <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />,
+  shield: <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />,
 };
 const I = ({ n, s = 15 }) => (
   <svg width={s} height={s} viewBox="0 0 24 24" fill={n === 'play' ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ flex: 'none' }}>{P[n]}</svg>
 );
-const CAT_ICON = { AI: 'sparkles', Development: 'code', Design: 'palette', Marketing: 'trending', Business: 'briefcase', Leadership: 'compass', HR: 'users', 'Contact Center': 'headset', Engineering: 'cog' };
+const CAT_ICON = { AI: 'sparkles', Development: 'code', Design: 'palette', Marketing: 'trending', Business: 'briefcase', Leadership: 'compass', HR: 'users', 'Contact Center': 'headset', Engineering: 'cog', Security: 'shield' };
 const Icons = {
   cal: <I n="calendar" />, clock: <I n="clock" />, lvl: <I n="level" />, play: <I n="play" s={13} />, search: <I n="search" s={18} />,
 };
@@ -1852,6 +1903,15 @@ function DetailExtras({ w }) {
       </div>
       <div className="panel glass"><h2>What you get</h2><ol className="plist">{PERKS.map(([ic, t, d]) => <li key={t}><div className="pi"><I n={ic} s={16} /></div><b>{t}</b><span>{d}</span></li>)}</ol>
         <div className="share">{gcal && <a className="btn btn-ghost btn-sm" href={gcal} target="_blank" rel="noopener noreferrer">Add to calendar</a>}<button type="button" className="btn btn-ghost btn-sm" onClick={share}>Share</button></div></div>
+      {w.category === 'Security' && (
+        <div className="panel glass">
+          <h2>Related on the Security pages</h2>
+          <ul className="ticks" style={{ marginTop: 14 }}>
+            {(SEC_LINKS[w.slug] || SEC_LINKS_DEFAULT).map(([t, h]) => <li key={h}><a href={h}>{t}</a></li>)}
+          </ul>
+          <div className="share"><a className="btn btn-ghost btn-sm" href="/security/overview">Back to Security</a><a className="btn btn-ghost btn-sm" href="/security/leaders">Leaders &amp; Bootcamps</a></div>
+        </div>
+      )}
       <Faq />
     </>
   );
@@ -2726,7 +2786,7 @@ function CinematicJourney() {
   );
 }
 
-const CATS = ['All', 'AI', 'Development', 'Design', 'Marketing', 'Business', 'Leadership', 'HR', 'Contact Center', 'Engineering'];
+const CATS = ['All', 'AI', 'Development', 'Design', 'Marketing', 'Business', 'Leadership', 'HR', 'Contact Center', 'Engineering', 'Security'];
 const PAGE = 6;
 const DEFAULTS = { date: 'any', price: 'any', level: 'any', sort: 'upcoming' };
 
